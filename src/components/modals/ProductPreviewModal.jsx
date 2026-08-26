@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { getCurrentUser } from '../../lib/authService';
 import {
   X,
   Eye,
@@ -30,7 +32,8 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
   const handleProceedToOrder = async () => {
     const user = await getCurrentUser();
     if (!user) {
-      router.push(`/login?redirect=${encodeURIComponent('/katalog')}&msg=login_required`);
+      onClose();
+      window.location.href = `/login?redirect=${encodeURIComponent('/katalog')}&msg=login_required`;
       return;
     }
     setViewMode('order');
@@ -365,7 +368,7 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
                   </div>
                 </div>
 
-                {/* PROMINENT TOGGLE TO ORDER BUTTON */}
+                {/* PROMINENT TOGGLE TO ORDER BUTTON (STRICT LOGIN GUARD CHECK) */}
                 <div className="pt-4">
                   <button
                     onClick={handleProceedToOrder}
@@ -500,7 +503,7 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
                     placeholder="Nama penuh..."
                     value={customerInfo.name}
                     onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })}
-                    className="w-full px-3.5 py-2 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-medium outline-none focus:bg-white focus:border-[#111111]"
+                    className="w-full px-3.5 py-2 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-medium outline-none focus:bg-[#111111] focus:text-white"
                   />
                 </div>
 
@@ -512,7 +515,7 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
                     placeholder="011-XXXXXXX"
                     value={customerInfo.phone}
                     onChange={(e) => setCustomerInfo({ ...customerInfo, phone: e.target.value })}
-                    className="w-full px-3.5 py-2 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-medium outline-none focus:bg-white focus:border-[#111111]"
+                    className="w-full px-3.5 py-2 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-medium outline-none focus:bg-[#111111] focus:text-white"
                   />
                 </div>
 
@@ -523,7 +526,7 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
                     placeholder="Contoh: FC Harimau"
                     value={customerInfo.teamName}
                     onChange={(e) => setCustomerInfo({ ...customerInfo, teamName: e.target.value })}
-                    className="w-full px-3.5 py-2 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-medium outline-none focus:bg-white focus:border-[#111111]"
+                    className="w-full px-3.5 py-2 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-medium outline-none focus:bg-[#111111] focus:text-white"
                   />
                 </div>
               </div>

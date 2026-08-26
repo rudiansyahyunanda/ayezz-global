@@ -20,12 +20,15 @@ export async function getCurrentUser() {
     }
   }
 
-  // Fallback check localStorage for client session
+  // Check localStorage for client session
   if (typeof window !== 'undefined') {
     const localSession = localStorage.getItem('ayezz_user_session');
     if (localSession) {
       try {
-        return JSON.parse(localSession);
+        const parsed = JSON.parse(localSession);
+        if (parsed && parsed.email && !parsed.isGuest) {
+          return parsed;
+        }
       } catch (e) {
         localStorage.removeItem('ayezz_user_session');
       }
@@ -59,7 +62,7 @@ export async function loginUser(email, password) {
     }
   }
 
-  // Fallback demo local login
+  // Fallback local login
   const demoUser = {
     id: 'usr_' + Date.now(),
     email,
