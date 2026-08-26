@@ -26,6 +26,8 @@ import {
 } from '../../data/sublimationProducts';
 
 export default function ProductPreviewModal({ product, allProducts, onClose, onSelectProduct }) {
+  if (!product) return null;
+
   const router = useRouter();
   const [viewMode, setViewMode] = useState('preview'); // 'preview' | 'order'
   const [orderSuccess, setOrderSuccess] = useState(null);

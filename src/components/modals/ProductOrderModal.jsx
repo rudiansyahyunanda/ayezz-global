@@ -5,6 +5,8 @@ import { SIZE_CHART, FABRIC_TYPES as FALLBACK_FABRICS, CUT_TYPES as FALLBACK_CUT
 import { getCutTypes, getFabricTypes, saveOrderToSupabase, getDesignTemplates } from '../../lib/supabaseService';
 
 export default function ProductOrderModal({ product: initialProduct, onClose, allProducts = [], onSelectProduct }) {
+  if (!initialProduct) return null;
+
   const [currentProduct, setCurrentProduct] = useState(initialProduct);
   const [productList, setProductList] = useState(Array.isArray(allProducts) && allProducts.length > 0 ? allProducts : DESIGN_TEMPLATES);
 
