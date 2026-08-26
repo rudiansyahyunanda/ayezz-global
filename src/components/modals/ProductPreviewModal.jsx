@@ -24,7 +24,17 @@ import {
 } from '../../data/sublimationProducts';
 
 export default function ProductPreviewModal({ product, allProducts, onClose, onSelectProduct }) {
+  const router = useRouter();
   const [viewMode, setViewMode] = useState('preview'); // 'preview' | 'order'
+  
+  const handleProceedToOrder = async () => {
+    const user = await getCurrentUser();
+    if (!user) {
+      router.push(`/login?redirect=${encodeURIComponent('/katalog')}&msg=login_required`);
+      return;
+    }
+    setViewMode('order');
+  };
   
   // Gallery images
   const galleryImages = Array.isArray(product?.images) && product.images.length > 0
@@ -358,7 +368,7 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
                 {/* PROMINENT TOGGLE TO ORDER BUTTON */}
                 <div className="pt-4">
                   <button
-                    onClick={() => setViewMode('order')}
+                    onClick={handleProceedToOrder}
                     className="w-full py-4 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-xs uppercase tracking-widest rounded-2xl transition-all shadow-md active:scale-98 flex items-center justify-center space-x-3"
                   >
                     <ShoppingBag className="w-4 h-4" />
