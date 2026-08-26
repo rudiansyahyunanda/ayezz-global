@@ -42,10 +42,21 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
     setViewMode('order');
   };
   
-  // Gallery images
-  const galleryImages = Array.isArray(product?.images) && product.images.length > 0
-    ? product.images
-    : (product?.thumbnail ? [product.thumbnail] : ['/images/catalog/jersey-olahraga.jfif']);
+  // Gallery images with 100% resilient array & JSON string parser
+  const galleryImages = React.useMemo(() => {
+    if (!product) return ['/images/catalog/jersey-olahraga.jfif'];
+    if (Array.isArray(product.images) && product.images.length > 0) return product.images;
+    if (typeof product.images === 'string') {
+      try {
+        const parsed = JSON.parse(product.images);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      } catch (e) {
+        if (product.images.startsWith('http') || product.images.startsWith('/')) return [product.images];
+      }
+    }
+    if (product.thumbnail) return [product.thumbnail];
+    return ['/images/catalog/jersey-olahraga.jfif'];
+  }, [product]);
 
   const [selectedImgIdx, setSelectedImgIdx] = useState(0);
 
