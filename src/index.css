@@ -59,3 +59,22 @@
   -ms-overflow-style: none !important;
   scrollbar-width: none !important;
 }
+
+/* ANTI-SCREENSHOT BLACKOUT STYLES (DRM-LEVEL IMAGE PROTECTION) */
+body.screenshot-blackout img,
+body.screenshot-blackout canvas,
+body.screenshot-blackout .img-crisp {
+  filter: brightness(0) blur(50px) !important;
+  opacity: 0 !important;
+  transition: all 0.05s ease-in-out !important;
+}
+
+/* Print to PDF protection (Ctrl+P / Cmd+P) */
+@media print {
+  body {
+    display: none !important;
+  }
+  img, canvas {
+    display: none !important;
+  }
+}

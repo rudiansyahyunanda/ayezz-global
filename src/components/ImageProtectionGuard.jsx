@@ -1,16 +1,87 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 export default function ImageProtectionGuard() {
+  const [isBlackout, setIsBlackout] = useState(false);
+
   useEffect(() => {
-    // 1. Block Context Menu (Right-Click) globally on images and document
+    let blackoutTimer = null;
+
+    const triggerBlackout = () => {
+      setIsBlackout(true);
+
+      // Attempt to clear clipboard so pasted screenshot is blank
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText('').catch(() => {});
+        }
+      } catch (err) {
+        // Ignore clipboard permission errors
+      }
+
+      if (blackoutTimer) clearTimeout(blackoutTimer);
+      blackoutTimer = setTimeout(() => {
+        setIsBlackout(false);
+      }, 3000);
+    };
+
+    // 1. Detect PrintScreen and OS Screenshot Shortcuts
+    const handleKeyDown = (e) => {
+      // PrintScreen Key
+      if (e.key === 'PrintScreen' || e.keyCode === 44 || e.code === 'PrintScreen') {
+        triggerBlackout();
+        e.preventDefault();
+        return false;
+      }
+
+      // Windows + Shift + S or Ctrl + Shift + S (Snipping Tool)
+      if ((e.key === 's' || e.key === 'S') && e.shiftKey && (e.metaKey || e.ctrlKey)) {
+        triggerBlackout();
+      }
+
+      // Mac Screenshot Shortcuts: Cmd + Shift + 3 / 4 / 5
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && ['3', '4', '5'].includes(e.key)) {
+        triggerBlackout();
+      }
+
+      // Block Developer Tools & View Source
+      if (
+        e.key === 'F12' ||
+        ((e.ctrlKey || e.metaKey) && e.shiftKey && ['I', 'J', 'C', 'i', 'j', 'c'].includes(e.key)) ||
+        ((e.ctrlKey || e.metaKey) && ['U', 'u', 'S', 's', 'P', 'p'].includes(e.key))
+      ) {
+        e.preventDefault();
+        return false;
+      }
+    };
+
+    const handleKeyUp = (e) => {
+      if (e.key === 'PrintScreen' || e.keyCode === 44 || e.code === 'PrintScreen') {
+        triggerBlackout();
+      }
+    };
+
+    // 2. Detect Window Blur (when user activates external Snipping Tool app)
+    const handleBlur = () => {
+      triggerBlackout();
+    };
+
+    // 3. Detect Visibility Change (tab or app switching)
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        setIsBlackout(true);
+      } else {
+        triggerBlackout();
+      }
+    };
+
+    // 4. Block Context Menu (Right-Click) & Image Dragging
     const handleContextMenu = (e) => {
       e.preventDefault();
       return false;
     };
 
-    // 2. Block Dragging images
     const handleDragStart = (e) => {
       if (e.target.tagName === 'IMG' || e.target.tagName === 'CANVAS') {
         e.preventDefault();
@@ -18,55 +89,32 @@ export default function ImageProtectionGuard() {
       }
     };
 
-    // 3. Block Developer Tools & Inspect Shortcuts
-    const handleKeyDown = (e) => {
-      // F12 key
-      if (e.key === 'F12' || e.keyCode === 123) {
-        e.preventDefault();
-        return false;
-      }
-
-      // Ctrl+Shift+I or Cmd+Opt+I (Inspect)
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'I' || e.key === 'i' || e.keyCode === 73)) {
-        e.preventDefault();
-        return false;
-      }
-
-      // Ctrl+Shift+J or Cmd+Opt+J (Console)
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'J' || e.key === 'j' || e.keyCode === 74)) {
-        e.preventDefault();
-        return false;
-      }
-
-      // Ctrl+Shift+C or Cmd+Opt+C (Inspect Element)
-      if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'C' || e.key === 'c' || e.keyCode === 67)) {
-        e.preventDefault();
-        return false;
-      }
-
-      // Ctrl+U or Cmd+Opt+U (View Source)
-      if ((e.ctrlKey || e.metaKey) && (e.key === 'U' || e.key === 'u' || e.keyCode === 85)) {
-        e.preventDefault();
-        return false;
-      }
-
-      // Ctrl+S or Cmd+S (Save Page)
-      if ((e.ctrlKey || e.metaKey) && (e.key === 'S' || e.key === 's' || e.keyCode === 83)) {
-        e.preventDefault();
-        return false;
-      }
-    };
-
+    window.addEventListener('keydown', handleKeyDown);
+    window.addEventListener('keyup', handleKeyUp);
+    window.addEventListener('blur', handleBlur);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('contextmenu', handleContextMenu);
     window.addEventListener('dragstart', handleDragStart);
-    window.addEventListener('keydown', handleKeyDown);
 
     return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+      window.removeEventListener('keyup', handleKeyUp);
+      window.removeEventListener('blur', handleBlur);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('contextmenu', handleContextMenu);
       window.removeEventListener('dragstart', handleDragStart);
-      window.removeEventListener('keydown', handleKeyDown);
+      if (blackoutTimer) clearTimeout(blackoutTimer);
     };
   }, []);
+
+  // Dynamically add/remove blackout class to body
+  useEffect(() => {
+    if (isBlackout) {
+      document.body.classList.add('screenshot-blackout');
+    } else {
+      document.body.classList.remove('screenshot-blackout');
+    }
+  }, [isBlackout]);
 
   return null;
 }
