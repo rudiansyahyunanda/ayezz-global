@@ -1,16 +1,18 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react';
 import { getDesignTemplates } from '../lib/supabaseService';
 import TransparentImage from './TransparentImage';
 
 export default function AutoBackgroundStrippedHeroCarousel({ onSelectProduct }) {
   const [items, setItems] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     async function loadLatestDesignTemplates() {
+      setIsLoading(true);
       try {
         const templatesData = await getDesignTemplates();
         if (Array.isArray(templatesData) && templatesData.length > 0) {
@@ -27,51 +29,47 @@ export default function AutoBackgroundStrippedHeroCarousel({ onSelectProduct }) 
         }
       } catch (err) {
         console.warn('Error loading carousel templates:', err);
+      } finally {
+        setIsLoading(false);
       }
     }
     loadLatestDesignTemplates();
   }, []);
 
-  const carouselItems = items.length > 0 ? items : [
-    {
-      id: 'tpl_futsal_pro',
-      name: 'Template Jersi Pro Match',
-      image: '/images/catalog/jersey-olahraga.jfif'
-    },
-    {
-      id: 'tpl_esports_cyber',
-      name: 'Template Jersi Esports Quantum',
-      image: '/images/catalog/esport.jfif'
-    },
-    {
-      id: 'tpl_school_pro',
-      name: 'Template Jersi Sekolah Pro',
-      image: '/images/catalog/scholl.jfif'
-    }
-  ];
-
   useEffect(() => {
-    if (carouselItems.length <= 1) return;
+    if (items.length <= 1) return;
     const timer = setInterval(() => {
-      setActiveIndex((prev) => (prev + 1) % carouselItems.length);
+      setActiveIndex((prev) => (prev + 1) % items.length);
     }, 4000);
     return () => clearInterval(timer);
-  }, [carouselItems.length]);
+  }, [items.length]);
 
   const handlePrev = () => {
-    setActiveIndex((prev) => (prev - 1 + carouselItems.length) % carouselItems.length);
+    if (items.length <= 1) return;
+    setActiveIndex((prev) => (prev - 1 + items.length) % items.length);
   };
 
   const handleNext = () => {
-    setActiveIndex((prev) => (prev + 1) % carouselItems.length);
+    if (items.length <= 1) return;
+    setActiveIndex((prev) => (prev + 1) % items.length);
   };
+
+  if (isLoading || items.length === 0) {
+    return (
+      <div className="w-full h-[360px] sm:h-[420px] flex items-center justify-center relative">
+        <div className="w-[260px] sm:w-[320px] h-[340px] sm:h-[380px] bg-neutral-200/50 animate-pulse rounded-3xl flex flex-col items-center justify-center space-y-3">
+          <RefreshCw className="w-6 h-6 text-neutral-400 animate-spin" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full flex flex-col items-center justify-center relative select-none py-2 bg-transparent">
       {/* REAL-TIME CANVAS STRIPPED 100% TRANSPARENT PNG CAROUSEL */}
       <div className="relative w-full h-[360px] sm:h-[420px] flex items-center justify-center overflow-hidden bg-transparent">
-        {carouselItems.map((item, index) => {
-          const count = carouselItems.length;
+        {items.map((item, index) => {
+          const count = items.length;
           let offset = (index - activeIndex + count) % count;
           if (offset > count / 2) offset -= count;
 
@@ -98,7 +96,7 @@ export default function AutoBackgroundStrippedHeroCarousel({ onSelectProduct }) 
               }}
               className={`absolute w-[260px] sm:w-[320px] h-[340px] sm:h-[380px] transition-all duration-700 ease-out flex items-center justify-center bg-transparent border-0 shadow-none outline-none ${positionClasses}`}
             >
-              {/* TRANSPARENT IMAGE COMPONENT: AUTO STRIPS ALL WHITE BACKGROUND PIXELS */}
+              {/* TRANSPARENT IMAGE COMPONENT */}
               <TransparentImage
                 src={item.image}
                 alt={item.name || 'Reka Bentuk PNG'}
@@ -110,35 +108,37 @@ export default function AutoBackgroundStrippedHeroCarousel({ onSelectProduct }) 
       </div>
 
       {/* MINIMALIST CONTROL ARROWS & DOTS */}
-      <div className="flex items-center space-x-4 z-40 mt-1">
-        <button
-          onClick={handlePrev}
-          className="p-2 bg-white hover:bg-neutral-100 text-[#111111] border border-slate-200 rounded-full transition-all active:scale-95 shadow-none"
-          title="Sebelumnya"
-        >
-          <ChevronLeft className="w-4 h-4" />
-        </button>
+      {items.length > 1 && (
+        <div className="flex items-center space-x-4 z-40 mt-1">
+          <button
+            onClick={handlePrev}
+            className="p-2 bg-white hover:bg-neutral-100 text-[#111111] border border-neutral-200 rounded-full transition-all active:scale-95 shadow-none"
+            title="Sebelumnya"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
 
-        <div className="flex items-center space-x-2">
-          {carouselItems.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setActiveIndex(i)}
-              className={`h-1.5 rounded-full transition-all duration-300 ${
-                activeIndex === i ? 'w-5 bg-[#111111]' : 'w-1.5 bg-slate-300 hover:bg-slate-400'
-              }`}
-            />
-          ))}
+          <div className="flex items-center space-x-2">
+            {items.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setActiveIndex(i)}
+                className={`h-1.5 rounded-full transition-all duration-300 ${
+                  activeIndex === i ? 'w-5 bg-[#111111]' : 'w-1.5 bg-neutral-300 hover:bg-neutral-400'
+                }`}
+              />
+            ))}
+          </div>
+
+          <button
+            onClick={handleNext}
+            className="p-2 bg-white hover:bg-neutral-100 text-[#111111] border border-neutral-200 rounded-full transition-all active:scale-95 shadow-none"
+            title="Seterusnya"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
         </div>
-
-        <button
-          onClick={handleNext}
-          className="p-2 bg-white hover:bg-neutral-100 text-[#111111] border border-slate-200 rounded-full transition-all active:scale-95 shadow-none"
-          title="Seterusnya"
-        >
-          <ChevronRight className="w-4 h-4" />
-        </button>
-      </div>
+      )}
     </div>
   );
 }
