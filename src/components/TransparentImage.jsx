@@ -75,12 +75,17 @@ export default function TransparentImage({ src, alt, className, style, onClick }
       alt={alt || 'Product Image'}
       decoding="async"
       fetchPriority="high"
+      draggable={false}
+      onContextMenu={(e) => e.preventDefault()}
+      onDragStart={(e) => e.preventDefault()}
       onClick={onClick}
       className={className}
       style={{
         imageRendering: '-webkit-optimize-contrast',
         backgroundColor: 'transparent',
         background: 'transparent',
+        WebkitUserDrag: 'none',
+        userSelect: 'none',
         ...style
       }}
     />
