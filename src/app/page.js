@@ -333,26 +333,6 @@ export default function SmoothHeaderHomepage() {
 
           </div>
 
-          {/* MONOCHROME METRIC BANNER */}
-          <div className="p-8 sm:p-10 bg-[#111113] border border-neutral-800/80 rounded-3xl grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-neutral-800/60 shadow-lg">
-            <div className="space-y-1">
-              <span className="text-3xl sm:text-4xl font-black text-white font-mono block">100%</span>
-              <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest block">FULL CUSTOM</span>
-            </div>
-            <div className="space-y-1 pl-4 sm:pl-0">
-              <span className="text-3xl sm:text-4xl font-black text-white font-mono block">0 UNIT</span>
-              <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest block">MINIMUM ORDER</span>
-            </div>
-            <div className="space-y-1">
-              <span className="text-3xl sm:text-4xl font-black text-white font-mono block">48 JAM</span>
-              <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest block">PROSES KILANG</span>
-            </div>
-            <div className="space-y-1 pl-4 sm:pl-0">
-              <span className="text-3xl sm:text-4xl font-black text-white font-mono block">GRED 5.0</span>
-              <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest block">SUBLIMASI PRO</span>
-            </div>
-          </div>
-
         </div>
       </section>
 
