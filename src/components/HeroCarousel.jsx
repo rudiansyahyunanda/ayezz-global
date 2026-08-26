@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { getDesignTemplates } from '../lib/supabaseService';
 
-export default function CleanHeroCarousel({ onSelectProduct }) {
+export default function CompletelyFramelessHeroCarousel({ onSelectProduct }) {
   const [items, setItems] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -14,7 +14,6 @@ export default function CleanHeroCarousel({ onSelectProduct }) {
       try {
         const templatesData = await getDesignTemplates();
         if (Array.isArray(templatesData) && templatesData.length > 0) {
-          // Take top 4 latest templates and extract main primary image
           const top4 = templatesData.slice(0, 4).map((tpl) => {
             const primaryImage = Array.isArray(tpl.images) && tpl.images.length > 0
               ? tpl.images[0]
@@ -69,9 +68,9 @@ export default function CleanHeroCarousel({ onSelectProduct }) {
   };
 
   return (
-    <div className="w-full flex flex-col items-center justify-center relative select-none py-2">
-      {/* 3D FLOATING ROTATING STAGE (PURE IMAGES ONLY - NO FRAMES, NO TEXT, TRANSPARENT BACKDROP) */}
-      <div className="relative w-full h-[380px] sm:h-[420px] flex items-center justify-center overflow-hidden">
+    <div className="w-full flex flex-col items-center justify-center relative select-none py-2 bg-transparent">
+      {/* PURE IMAGE CAROUSEL - NO SHADOW, NO BACKGROUND, NO FRAMES */}
+      <div className="relative w-full h-[380px] sm:h-[420px] flex items-center justify-center overflow-hidden bg-transparent">
         {carouselItems.map((item, index) => {
           const count = carouselItems.length;
           let offset = (index - activeIndex + count) % count;
@@ -79,11 +78,11 @@ export default function CleanHeroCarousel({ onSelectProduct }) {
 
           let positionClasses = '';
           if (offset === 0) {
-            positionClasses = 'z-30 scale-100 opacity-100 translate-x-0 cursor-pointer shadow-lg';
+            positionClasses = 'z-30 scale-100 opacity-100 translate-x-0 cursor-pointer';
           } else if (offset === -1 || (offset === count - 1 && count > 2)) {
-            positionClasses = 'z-10 scale-75 opacity-40 -translate-x-[50%] cursor-pointer hover:opacity-70 blur-[0.5px]';
+            positionClasses = 'z-10 scale-75 opacity-30 -translate-x-[48%] cursor-pointer hover:opacity-60';
           } else if (offset === 1) {
-            positionClasses = 'z-10 scale-75 opacity-40 translate-x-[50%] cursor-pointer hover:opacity-70 blur-[0.5px]';
+            positionClasses = 'z-10 scale-75 opacity-30 translate-x-[48%] cursor-pointer hover:opacity-60';
           } else {
             positionClasses = 'z-0 scale-50 opacity-0 pointer-events-none';
           }
@@ -98,15 +97,15 @@ export default function CleanHeroCarousel({ onSelectProduct }) {
                   setActiveIndex(index);
                 }
               }}
-              className={`absolute w-[280px] sm:w-[340px] aspect-square rounded-2xl transition-all duration-700 ease-out bg-transparent flex items-center justify-center ${positionClasses}`}
+              className={`absolute w-[280px] sm:w-[340px] aspect-square rounded-2xl transition-all duration-700 ease-out bg-transparent flex items-center justify-center border-none shadow-none outline-none ${positionClasses}`}
             >
-              {/* PURE IMAGE ONLY (NO TEXT, NO FRAMES, NO BORDERS, NO OVERLAYS) */}
+              {/* PURE IMAGE ONLY (NO SHADOW, NO BACKGROUND, NO BORDER, NO OVERLAY) */}
               <img
                 src={item.image}
                 alt={item.name || 'Reka Bentuk Terbaru'}
                 decoding="async"
                 fetchPriority="high"
-                className="w-full h-full object-cover rounded-2xl transition-transform duration-500 hover:scale-105 img-crisp"
+                className="w-full h-full object-cover rounded-2xl border-none shadow-none outline-none bg-transparent transition-transform duration-500 hover:scale-105 img-crisp"
                 style={{ imageRendering: '-webkit-optimize-contrast' }}
                 onError={(e) => {
                   e.target.onerror = null;
@@ -118,11 +117,11 @@ export default function CleanHeroCarousel({ onSelectProduct }) {
         })}
       </div>
 
-      {/* MINIMALIST CONTROL ARROWS & DOTS */}
+      {/* MINIMALIST CONTROL ARROWS & DOTS (NO HEAVY SHADOWS) */}
       <div className="flex items-center space-x-4 z-40 mt-1">
         <button
           onClick={handlePrev}
-          className="p-2 bg-white hover:bg-neutral-100 text-[#111111] border border-slate-200 rounded-full shadow-xs transition-all active:scale-95"
+          className="p-2 bg-white hover:bg-neutral-100 text-[#111111] border border-slate-200 rounded-full transition-all active:scale-95 shadow-none"
           title="Sebelumnya"
         >
           <ChevronLeft className="w-4 h-4" />
@@ -142,7 +141,7 @@ export default function CleanHeroCarousel({ onSelectProduct }) {
 
         <button
           onClick={handleNext}
-          className="p-2 bg-white hover:bg-neutral-100 text-[#111111] border border-slate-200 rounded-full shadow-xs transition-all active:scale-95"
+          className="p-2 bg-white hover:bg-neutral-100 text-[#111111] border border-slate-200 rounded-full transition-all active:scale-95 shadow-none"
           title="Seterusnya"
         >
           <ChevronRight className="w-4 h-4" />
