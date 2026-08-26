@@ -13,21 +13,36 @@ export async function getCategories() {
   if (!isSupabaseConnected) return INITIAL_CATALOGS;
   try {
     const { data, error } = await supabase.from('categories').select('*').order('code', { ascending: true });
-    if (error || !data || data.length === 0) return INITIAL_CATALOGS;
+    
+    // Combine fetched categories with INITIAL_CATALOGS so no master categories are lost
+    let combinedCategories = data && data.length > 0 ? [...data] : [];
+    
+    INITIAL_CATALOGS.forEach(initCat => {
+      if (!combinedCategories.some(c => c.id === initCat.id || c.title?.toLowerCase() === initCat.title?.toLowerCase())) {
+        combinedCategories.push(initCat);
+      }
+    });
 
     const { data: subData } = await supabase.from('sub_categories').select('*');
 
-    return data.map(item => {
+    return combinedCategories.map(item => {
       const categorySubs = subData ? subData.filter(s => s.category_id === item.id) : [];
-      const subCategoryTitles = categorySubs.map(s => s.title);
+      let subCategoryTitles = categorySubs.map(s => s.title);
+      
+      if (item.subCategories && Array.isArray(item.subCategories)) {
+        item.subCategories.forEach(sTitle => {
+          if (!subCategoryTitles.includes(sTitle)) subCategoryTitles.push(sTitle);
+        });
+      }
+
       if (!subCategoryTitles.includes('Semua')) subCategoryTitles.unshift('Semua');
 
       return {
         id: item.id,
-        code: item.code,
+        code: item.code || 'CAT',
         title: item.title,
         description: item.description || '',
-        itemCount: `${categorySubs.length} Jenis`,
+        itemCount: `${subCategoryTitles.length - 1} Jenis`,
         thumbnail: item.thumbnail || '/images/catalog/jersey-olahraga.jfif',
         subCategories: subCategoryTitles,
         rawSubCategories: categorySubs
@@ -317,15 +332,24 @@ export async function getDesignTemplates() {
   if (!isSupabaseConnected) return INITIAL_TEMPLATES;
   try {
     const { data, error } = await supabase.from('design_templates').select('*').order('created_at', { ascending: false });
-    if (error || !data || data.length === 0) return INITIAL_TEMPLATES;
-    return data.map(item => {
-      const imgList = Array.isArray(item.images) && item.images.length > 0 ? item.images : (item.thumbnail ? [item.thumbnail] : ['/images/catalog/jersey-olahraga.jfif']);
+    
+    let combinedTemplates = data && data.length > 0 ? [...data] : [];
+    INITIAL_TEMPLATES.forEach(initTpl => {
+      if (!combinedTemplates.some(t => t.id === initTpl.id || t.name?.toLowerCase() === initTpl.name?.toLowerCase())) {
+        combinedTemplates.push(initTpl);
+      }
+    });
+
+    return combinedTemplates.map(item => {
+      const imgList = Array.isArray(item.images) && item.images.length > 0
+        ? item.images
+        : (item.thumbnail ? [item.thumbnail] : ['/images/catalog/jersey-olahraga.jfif']);
       return {
         id: item.id,
         name: item.name,
-        category: item.category,
-        subCategory: item.sub_category || '',
-        description: item.description,
+        category: item.category || 'Olahraga',
+        subCategory: item.sub_category || item.subCategory || '',
+        description: item.description || '',
         thumbnail: imgList[0],
         images: imgList
       };

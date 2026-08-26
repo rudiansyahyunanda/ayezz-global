@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import {
   Search,
@@ -8,7 +8,9 @@ import {
   RefreshCw,
   ArrowRight,
   ChevronRight,
-  Database
+  Database,
+  SlidersHorizontal,
+  X
 } from 'lucide-react';
 import SubCatalogModal from '../components/modals/SubCatalogModal';
 import ProductOrderModal from '../components/modals/ProductOrderModal';
@@ -21,16 +23,17 @@ import {
 } from '../lib/supabaseService';
 import { DESIGN_TEMPLATES, MAIN_CATALOGS } from '../data/sublimationProducts';
 
-export default function ProfessionalCleanHomePage() {
+export default function RombakTotalHomePage() {
   const [catalogs, setCatalogs] = useState([]);
   const [templates, setTemplates] = useState([]);
   const [cutTypes, setCutTypes] = useState([]);
   const [fabricTypes, setFabricTypes] = useState([]);
 
-  // Category & Sub-Category Filter States
+  // Category & Sub-Category Selection States
   const [selectedMasterCat, setSelectedMasterCat] = useState('Semua');
   const [selectedSubCat, setSelectedSubCat] = useState('Semua');
   const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState('terbaru');
 
   // Modal States
   const [selectedCatalogModal, setSelectedCatalogModal] = useState(null);
@@ -64,59 +67,80 @@ export default function ProfessionalCleanHomePage() {
     loadAllData();
   }, []);
 
-  // Master Categories
-  const masterCategoryList = ['Semua', ...new Set(templates.map((t) => t.category).filter(Boolean))];
+  // 1. MASTER CATEGORIES LIST (FROM SUPABASE & CATALOGS)
+  const masterCategoryList = useMemo(() => {
+    const fromTemplates = templates.map((t) => t.category).filter(Boolean);
+    const fromCatalogs = catalogs.map((c) => c.title).filter(Boolean);
+    return ['Semua', ...new Set([...fromTemplates, ...fromCatalogs])];
+  }, [templates, catalogs]);
 
-  // Sub-Categories for Selected Master Category
-  const availableSubCategories = React.useMemo(() => {
+  // 2. DYNAMIC SUB-CATEGORIES FOR SELECTED MASTER CATEGORY
+  const availableSubCategories = useMemo(() => {
     if (selectedMasterCat === 'Semua') return [];
     
+    // Find matching templates for this master category
     const matchingTemplates = templates.filter(
       (t) => t.category && t.category.toLowerCase().includes(selectedMasterCat.toLowerCase())
     );
     const subsFromTemplates = matchingTemplates.map((t) => t.subCategory).filter(Boolean);
     
+    // Check matching master catalog
     const matchingCatalog = catalogs.find(
       (c) => c.title && c.title.toLowerCase().includes(selectedMasterCat.toLowerCase())
     );
     const subsFromCatalog = matchingCatalog?.subCategories || [];
 
     const combined = [...new Set([...subsFromTemplates, ...subsFromCatalog])].filter(
-      (s) => s !== 'Semua' && s !== 'All'
+      (s) => s && s !== 'Semua' && s !== 'All'
     );
 
     return combined.length > 0 ? ['Semua', ...combined] : [];
   }, [selectedMasterCat, templates, catalogs]);
 
-  const handleMasterCatSelect = (cat) => {
-    setSelectedMasterCat(cat);
+  // Handle Master Category Change
+  const handleMasterCatSelect = (catTitle) => {
+    setSelectedMasterCat(catTitle);
     setSelectedSubCat('Semua');
   };
 
-  // Filter templates
-  const filteredTemplates = templates.filter((tpl) => {
-    if (selectedMasterCat !== 'Semua') {
-      const matchesMaster = tpl.category && tpl.category.toLowerCase().includes(selectedMasterCat.toLowerCase());
-      if (!matchesMaster) return false;
-    }
+  // 3. FILTER TEMPLATES DYNAMICALLY
+  const filteredTemplates = useMemo(() => {
+    return templates.filter((tpl) => {
+      // Filter Master Category
+      if (selectedMasterCat !== 'Semua') {
+        const matchesMaster = tpl.category && tpl.category.toLowerCase().includes(selectedMasterCat.toLowerCase());
+        if (!matchesMaster) return false;
+      }
 
-    if (selectedSubCat !== 'Semua') {
-      const matchesSub = tpl.subCategory && tpl.subCategory.toLowerCase().includes(selectedSubCat.toLowerCase());
-      if (!matchesSub) return false;
-    }
+      // Filter Sub Category
+      if (selectedSubCat !== 'Semua') {
+        const matchesSub = tpl.subCategory && tpl.subCategory.toLowerCase().includes(selectedSubCat.toLowerCase());
+        if (!matchesSub) return false;
+      }
 
-    if (searchQuery) {
-      const q = searchQuery.toLowerCase();
-      const matchesSearch =
-        tpl.name?.toLowerCase().includes(q) ||
-        tpl.description?.toLowerCase().includes(q) ||
-        tpl.category?.toLowerCase().includes(q) ||
-        tpl.subCategory?.toLowerCase().includes(q);
-      if (!matchesSearch) return false;
-    }
+      // Filter Search Query
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        const matchesSearch =
+          tpl.name?.toLowerCase().includes(q) ||
+          tpl.description?.toLowerCase().includes(q) ||
+          tpl.category?.toLowerCase().includes(q) ||
+          tpl.subCategory?.toLowerCase().includes(q);
+        if (!matchesSearch) return false;
+      }
 
-    return true;
-  });
+      return true;
+    });
+  }, [templates, selectedMasterCat, selectedSubCat, searchQuery]);
+
+  // Sort Templates
+  const sortedTemplates = useMemo(() => {
+    return [...filteredTemplates].sort((a, b) => {
+      if (sortBy === 'nama_asc') return a.name.localeCompare(b.name);
+      if (sortBy === 'nama_desc') return b.name.localeCompare(a.name);
+      return 0;
+    });
+  }, [filteredTemplates, sortBy]);
 
   const featuredProduct = templates[0] || {
     id: 'tpl_futsal_pro',
@@ -126,9 +150,9 @@ export default function ProfessionalCleanHomePage() {
 
   return (
     <div className="min-h-screen bg-white text-[#111111] font-sans antialiased selection:bg-[#111111] selection:text-white flex flex-col">
-      {/* 1. TOP ANNOUNCEMENT LINE (CLEAN NO EMOJI) */}
+      {/* 1. TOP ANNOUNCEMENT LINE */}
       <div className="bg-[#111111] text-white text-[11px] font-mono tracking-widest uppercase py-2 px-4 text-center">
-        AYEZZ GLOBAL — KATALOG SUBLIMASI CUSTOM FULL-PRINT
+        AYEZZ GLOBAL — KATALOG REKA TEMPLATE SUBLIMASI CUSTOM FULL-PRINT
       </div>
 
       {/* 2. MINIMALIST BRAND NAVBAR */}
@@ -143,9 +167,8 @@ export default function ProfessionalCleanHomePage() {
           </Link>
 
           <nav className="hidden md:flex items-center space-x-8 text-xs font-bold uppercase tracking-wider text-[#111111]">
-            <a href="#katalog-desain" className="hover:text-slate-500 transition-colors">Katalog Desain</a>
-            <Link href="/new" className="hover:text-slate-500 transition-colors">What's New</Link>
-            <a href="#kategori-master" className="hover:text-slate-500 transition-colors">Kategori</a>
+            <a href="#kategori-step" className="hover:text-slate-500 transition-colors">1. Kategori</a>
+            <a href="#katalog-desain-step" className="hover:text-slate-500 transition-colors">2. Katalog Desain</a>
             <Link href="/admin" className="hover:text-slate-500 transition-colors font-mono text-[11px] text-slate-400">
               Admin
             </Link>
@@ -166,7 +189,7 @@ export default function ProfessionalCleanHomePage() {
         </div>
       </header>
 
-      {/* 3. HERO SHOWCASE (CLEAN PROFESSIONAL LIGHT DESIGN) */}
+      {/* 3. HERO SHOWCASE SECTION */}
       <section className="py-14 px-6 bg-[#FAFAFA] border-b border-slate-100">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
           <div className="lg:col-span-6 space-y-4 text-left">
@@ -180,15 +203,15 @@ export default function ProfessionalCleanHomePage() {
             </h1>
 
             <p className="text-slate-600 text-xs sm:text-sm leading-relaxed max-w-lg font-normal">
-              Pilih katalog desain mengikut Kategori & Sub-Kategori. Kustomisasikan potongan kolar, jenis fabrik, dan saiz secara langsung.
+              Pilih Kategori & Sub-Kategori pilihan anda, jelajah katalog desain, dan kustomisasikan spesifikasi potongan kolar, jenis fabrik, serta jumlah saiz secara langsung.
             </p>
 
             <div className="pt-2">
               <a
-                href="#katalog-desain"
+                href="#kategori-step"
                 className="px-7 py-3.5 bg-[#111111] hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center space-x-2 active:scale-95"
               >
-                <span>Pilih Desain</span>
+                <span>Mula Pilih Kategori</span>
                 <ArrowRight className="w-3.5 h-3.5 text-white" />
               </a>
             </div>
@@ -205,16 +228,98 @@ export default function ProfessionalCleanHomePage() {
         </div>
       </section>
 
-      {/* 4. CLEAN FUNCTIONAL FILTER SYSTEM */}
-      <section id="katalog-desain" className="py-12 px-6 bg-white border-b border-slate-100">
+      {/* 4. STEP 1: PILIH KATEGORI UTAMA & SUB-KATEGORI (100% SUPABASE INTEGRATED) */}
+      <section id="kategori-step" className="py-12 px-6 bg-white border-b border-slate-100">
         <div className="max-w-7xl mx-auto space-y-6">
           
-          {/* Header & Search Bar */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-100">
             <div>
+              <span className="text-[11px] font-mono font-bold text-slate-400 uppercase tracking-widest block">
+                LANGKAH 1
+              </span>
               <h2 className="text-xl sm:text-2xl font-black text-[#111111] uppercase tracking-tight">
-                {selectedMasterCat === 'Semua' ? 'Katalog Desain' : selectedMasterCat}
-                {selectedSubCat !== 'Semua' && <span className="text-slate-400 font-normal"> — {selectedSubCat}</span>}
+                Pilih Kategori Utama
+              </h2>
+            </div>
+
+            <button
+              onClick={loadAllData}
+              className="p-2 bg-[#FAFAFA] hover:bg-slate-200 rounded-full border border-slate-200 transition-colors self-start md:self-auto"
+              title="Refresh Data Supabase"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 text-[#111111] ${isLoading ? 'animate-spin' : ''}`} />
+            </button>
+          </div>
+
+          {/* MASTER CATEGORY GRID CARDS */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
+            {masterCategoryList.map((catTitle) => {
+              const isSelected = selectedMasterCat === catTitle;
+              const matchingCatObj = catalogs.find((c) => c.title?.toLowerCase() === catTitle.toLowerCase());
+              
+              return (
+                <button
+                  key={catTitle}
+                  onClick={() => {
+                    handleMasterCatSelect(catTitle);
+                    const el = document.getElementById('katalog-desain-step');
+                    if (el) el.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  className={`p-3.5 rounded-xl border text-left transition-all flex flex-col justify-between space-y-2 ${
+                    isSelected
+                      ? 'bg-[#111111] text-white border-[#111111] shadow-xs scale-[1.02]'
+                      : 'bg-[#FAFAFA] text-[#111111] border-slate-200 hover:border-[#111111] hover:bg-white'
+                  }`}
+                >
+                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider block opacity-70">
+                    {matchingCatObj?.code || 'CAT'}
+                  </span>
+                  <span className="text-xs font-black uppercase tracking-tight line-clamp-1">
+                    {catTitle}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* STEP 1B: DYNAMIC SUB-CATEGORY FILTER BAR */}
+          {availableSubCategories.length > 0 && (
+            <div className="space-y-2 pt-4 border-t border-slate-100">
+              <span className="text-[11px] font-mono font-bold text-slate-400 uppercase tracking-wider block">
+                PILIH SUB-KATEGORI ({selectedMasterCat.toUpperCase()}):
+              </span>
+              <div className="flex items-center space-x-2 overflow-x-auto scrollbar-none py-1">
+                {availableSubCategories.map((sub) => (
+                  <button
+                    key={sub}
+                    onClick={() => setSelectedSubCat(sub)}
+                    className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all shrink-0 border ${
+                      selectedSubCat === sub
+                        ? 'bg-slate-900 text-white border-slate-900'
+                        : 'bg-white text-slate-600 border-slate-200 hover:border-slate-400 hover:text-black'
+                    }`}
+                  >
+                    {sub === 'Semua' ? `Semua ${selectedMasterCat}` : sub}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* 5. STEP 2: KATALOG REKA BENTUK (DESAIN GRID) */}
+      <section id="katalog-desain-step" className="py-12 px-6 bg-white border-b border-slate-100">
+        <div className="max-w-7xl mx-auto space-y-6">
+          
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-slate-100">
+            <div>
+              <span className="text-[11px] font-mono font-bold text-slate-400 uppercase tracking-widest block">
+                LANGKAH 2
+              </span>
+              <h2 className="text-xl sm:text-2xl font-black text-[#111111] uppercase tracking-tight">
+                Katalog Desain {selectedMasterCat !== 'Semua' ? `— ${selectedMasterCat}` : ''}
+                {selectedSubCat !== 'Semua' && <span className="text-slate-400 font-normal"> ({selectedSubCat})</span>}
               </h2>
             </div>
 
@@ -230,59 +335,57 @@ export default function ProfessionalCleanHomePage() {
                 />
               </div>
 
-              <button
-                onClick={loadAllData}
-                className="p-2 bg-[#FAFAFA] hover:bg-slate-200 rounded-full border border-slate-200 transition-colors"
-                title="Refresh Data"
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="px-3 py-1.5 bg-white border border-slate-200 rounded-md text-xs font-bold text-[#111111] outline-none cursor-pointer hover:border-[#111111] transition-colors"
               >
-                <RefreshCw className={`w-3.5 h-3.5 text-[#111111] ${isLoading ? 'animate-spin' : ''}`} />
-              </button>
+                <option value="terbaru">Terbaru</option>
+                <option value="nama_asc">Nama (A-Z)</option>
+                <option value="nama_desc">Nama (Z-A)</option>
+              </select>
             </div>
           </div>
 
-          {/* MASTER CATEGORY FILTER TABS */}
-          <div className="flex items-center space-x-2 overflow-x-auto scrollbar-none py-1">
-            {masterCategoryList.map((cat) => (
+          {/* ACTIVE FILTER SUMMARY */}
+          {(selectedMasterCat !== 'Semua' || selectedSubCat !== 'Semua' || searchQuery) && (
+            <div className="flex items-center space-x-2 text-xs">
+              <span className="text-[11px] font-mono text-slate-400">Penapis:</span>
+              {selectedMasterCat !== 'Semua' && (
+                <span className="px-2.5 py-0.5 bg-slate-100 text-slate-800 rounded-full font-mono text-[10px] font-bold">
+                  {selectedMasterCat}
+                </span>
+              )}
+              {selectedSubCat !== 'Semua' && (
+                <span className="px-2.5 py-0.5 bg-slate-900 text-white rounded-full font-mono text-[10px] font-bold">
+                  Sub: {selectedSubCat}
+                </span>
+              )}
+              {searchQuery && (
+                <span className="px-2.5 py-0.5 bg-slate-100 text-slate-800 rounded-full font-mono text-[10px] font-bold">
+                  "{searchQuery}"
+                </span>
+              )}
               <button
-                key={cat}
-                onClick={() => handleMasterCatSelect(cat)}
-                className={`px-4 py-2 rounded-full text-xs font-bold transition-all shrink-0 ${
-                  selectedMasterCat === cat
-                    ? 'bg-[#111111] text-white'
-                    : 'bg-[#FAFAFA] text-slate-600 hover:bg-slate-200 hover:text-[#111111]'
-                }`}
+                onClick={() => {
+                  setSelectedMasterCat('Semua');
+                  setSelectedSubCat('Semua');
+                  setSearchQuery('');
+                }}
+                className="text-[11px] font-mono text-slate-500 underline hover:text-black ml-2"
               >
-                {cat}
+                Reset
               </button>
-            ))}
-          </div>
-
-          {/* DYNAMIC SUB-CATEGORY FILTER BAR */}
-          {availableSubCategories.length > 0 && (
-            <div className="flex items-center space-x-2 overflow-x-auto scrollbar-none py-1 border-t border-slate-100 pt-3">
-              {availableSubCategories.map((sub) => (
-                <button
-                  key={sub}
-                  onClick={() => setSelectedSubCat(sub)}
-                  className={`px-3 py-1.5 rounded-md text-xs font-bold transition-all shrink-0 border ${
-                    selectedSubCat === sub
-                      ? 'bg-slate-900 text-white border-slate-900'
-                      : 'bg-white text-slate-600 border-slate-200 hover:border-slate-400 hover:text-black'
-                  }`}
-                >
-                  {sub === 'Semua' ? `Semua ${selectedMasterCat}` : sub}
-                </button>
-              ))}
             </div>
           )}
 
-          {/* 5. MINIMALIST PRODUCT GRID */}
+          {/* PRODUCT GRID */}
           {isLoading ? (
             <div className="py-20 flex flex-col items-center justify-center space-y-3">
               <RefreshCw className="w-6 h-6 text-[#111111] animate-spin" />
-              <p className="text-xs font-mono text-slate-400">Memuatkan data...</p>
+              <p className="text-xs font-mono text-slate-400">Memuatkan data dari Supabase...</p>
             </div>
-          ) : filteredTemplates.length === 0 ? (
+          ) : sortedTemplates.length === 0 ? (
             <div className="py-16 text-center bg-[#FAFAFA] rounded-xl p-8 space-y-3">
               <p className="text-sm font-bold text-[#111111]">Tiada Template Ditemui</p>
               <button
@@ -298,16 +401,15 @@ export default function ProfessionalCleanHomePage() {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-10 pt-2">
-              {filteredTemplates.map((item, idx) => (
+              {sortedTemplates.map((item, idx) => (
                 <div
                   key={item.id}
                   onClick={() => {
                     setOrderedProduct(item);
-                    setOrderedProductList(filteredTemplates);
+                    setOrderedProductList(sortedTemplates);
                   }}
                   className="group cursor-pointer space-y-2.5 flex flex-col justify-between"
                 >
-                  {/* Clean Light-Grey Stage Box */}
                   <div className="w-full aspect-square bg-[#F5F5F7] overflow-hidden rounded-xl relative flex items-center justify-center">
                     <img
                       src={item.thumbnail}
@@ -323,7 +425,6 @@ export default function ProfessionalCleanHomePage() {
                     />
                   </div>
 
-                  {/* Clean Minimalist Typography */}
                   <div className="space-y-0.5">
                     <div className="flex items-center justify-between text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider">
                       <span>{item.category || 'SUBLIMASI'}</span>
@@ -337,7 +438,7 @@ export default function ProfessionalCleanHomePage() {
                     <div className="pt-1 flex items-center justify-between">
                       <span className="text-xs font-mono font-bold text-[#111111]">RM 70.00+</span>
                       <span className="text-[11px] font-bold text-slate-900 group-hover:underline flex items-center space-x-0.5">
-                        <span>Pilih</span>
+                        <span>Pilih & Order</span>
                         <ChevronRight className="w-3 h-3" />
                       </span>
                     </div>
@@ -346,55 +447,6 @@ export default function ProfessionalCleanHomePage() {
               ))}
             </div>
           )}
-        </div>
-      </section>
-
-      {/* 6. MASTER CATEGORIES REFERENCE GRID */}
-      <section id="kategori-master" className="py-16 px-6 bg-[#FAFAFA] border-b border-slate-100">
-        <div className="max-w-7xl mx-auto space-y-6">
-          <div>
-            <h2 className="text-xl sm:text-2xl font-black text-[#111111] uppercase tracking-tight">
-              Kategori Utama
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {catalogs.map((cat) => (
-              <div
-                key={cat.id}
-                onClick={() => {
-                  setSelectedMasterCat(cat.title);
-                  setSelectedSubCat('Semua');
-                  const targetEl = document.getElementById('katalog-desain');
-                  if (targetEl) targetEl.scrollIntoView({ behavior: 'smooth' });
-                }}
-                className="group cursor-pointer space-y-3"
-              >
-                <div className="w-full aspect-square bg-slate-200 overflow-hidden rounded-xl relative">
-                  <img
-                    src={cat.thumbnail}
-                    alt={cat.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 img-crisp"
-                    style={{ imageRendering: '-webkit-optimize-contrast' }}
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=800&q=80';
-                    }}
-                  />
-                </div>
-
-                <div className="space-y-0.5">
-                  <h3 className="text-sm font-bold text-[#111111] uppercase tracking-tight group-hover:text-slate-600 transition-colors">
-                    {cat.title}
-                  </h3>
-                  <div className="flex items-center justify-between text-xs text-slate-500 font-mono">
-                    <span>{cat.subCategories?.length - 1 || 0} Sub-Kategori</span>
-                    <span className="font-bold text-[#111111] group-hover:underline">Lihat →</span>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -429,7 +481,6 @@ export default function ProfessionalCleanHomePage() {
           </div>
           <div className="flex items-center space-x-6 text-slate-400 font-mono text-[11px]">
             <Link href="/" className="hover:text-white transition-colors">Utama</Link>
-            <Link href="/new" className="hover:text-white transition-colors">What's New</Link>
             <Link href="/admin" className="hover:text-white transition-colors underline">Admin</Link>
           </div>
         </div>
