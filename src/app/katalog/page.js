@@ -44,6 +44,20 @@ function SpaciousCatalogContent() {
   const [selectedSizes, setSelectedSizes] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('terbaru');
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  // Smooth Header Scroll Listener
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 20) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Accordion States
   const [openSections, setOpenSections] = useState({
@@ -53,7 +67,7 @@ function SpaciousCatalogContent() {
     ukuran: true
   });
 
-  // Modal State (Preview Modal with Order Toggle)
+  // Modal State
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -169,14 +183,22 @@ function SpaciousCatalogContent() {
         AYEZZ GLOBAL — KATALOG REKA BENTUK SUBLIMASI CUSTOM 2026
       </div>
 
-      {/* 2. SPACIOUS ELEGANT NAVBAR (96px HEIGHT, SLIM LOGO) */}
-      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-neutral-200/60 shadow-2xs">
-        <div className="w-full px-8 sm:px-12 h-24 flex items-center justify-between">
+      {/* 2. SILKY SMOOTH GLASS NAVBAR (SMOOTH HEIGHT SHRINK & FROSTED GLASS TRANSITION ON SCROLL) */}
+      <header
+        className={`sticky top-0 z-40 w-full transition-all duration-500 ease-in-out ${
+          isScrolled
+            ? 'h-16 bg-white/85 backdrop-blur-md border-b border-neutral-200/80 shadow-xs'
+            : 'h-24 bg-white border-b border-neutral-100'
+        }`}
+      >
+        <div className="w-full px-8 sm:px-12 h-full flex items-center justify-between transition-all duration-500">
           <Link href="/" className="flex items-center space-x-3 group py-2">
             <img
               src="/logo/ayezz-logo-01.svg"
               alt="AYEZZ Logo"
-              className="h-6 sm:h-7 w-auto transition-transform group-hover:scale-[1.02]"
+              className={`w-auto transition-all duration-500 group-hover:scale-[1.02] ${
+                isScrolled ? 'h-5 sm:h-6' : 'h-6 sm:h-7'
+              }`}
             />
           </Link>
 
@@ -193,7 +215,9 @@ function SpaciousCatalogContent() {
                 placeholder="Cari..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-48 lg:w-64 pl-9 pr-4 py-2 bg-[#F5F5F7] border border-neutral-200 focus:bg-white focus:border-[#111111] rounded-full text-xs font-medium outline-none transition-all"
+                className={`pl-9 pr-4 bg-[#F5F5F7] border border-neutral-200 focus:bg-white focus:border-[#111111] rounded-full text-xs font-medium outline-none transition-all duration-500 ${
+                  isScrolled ? 'w-40 lg:w-56 py-1.5' : 'w-48 lg:w-64 py-2'
+                }`}
               />
               <Search className="w-3.5 h-3.5 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2" />
             </div>
@@ -393,7 +417,7 @@ function SpaciousCatalogContent() {
           )}
         </aside>
 
-        {/* RIGHT MAIN PRODUCT GRID (INTERACTIVE HOVER ROTATE & ZOOM CARDS) */}
+        {/* RIGHT MAIN PRODUCT GRID */}
         <main className="flex-1 w-full">
           {isLoading ? (
             <div className="py-28 flex flex-col items-center justify-center space-y-4">
@@ -441,7 +465,7 @@ function SpaciousCatalogContent() {
         />
       )}
 
-      {/* LUXURY FOOTER */}
+      {/* FOOTER */}
       <footer className="bg-[#111111] text-white py-14 px-8 sm:px-12 text-xs border-t border-neutral-800 mt-16">
         <div className="w-full flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center space-x-4">

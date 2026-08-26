@@ -18,12 +18,26 @@ import {
 } from '../lib/supabaseService';
 import { MAIN_CATALOGS, DESIGN_TEMPLATES } from '../data/sublimationProducts';
 
-export default function SpaciousLuxuryHomepage() {
+export default function SmoothHeaderHomepage() {
   const router = useRouter();
   const [categories, setCategories] = useState([]);
   const [templates, setTemplates] = useState([]);
   const [orderedProduct, setOrderedProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  // Smooth Header Scroll Listener
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 20) {
+        setIsScrolled(true);
+      } else {
+        setIsScrolled(false);
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const loadData = async () => {
     setIsLoading(true);
@@ -59,19 +73,27 @@ export default function SpaciousLuxuryHomepage() {
 
   return (
     <div className="min-h-screen bg-white text-[#111111] font-sans antialiased selection:bg-[#111111] selection:text-white flex flex-col">
-      {/* 1. TOP ANNOUNCEMENT BAR (ELEGANT OFF-BLACK STRIP WITH AMPLE ROOM) */}
-      <div className="bg-[#161617] text-[#E8E8ED] text-[11px] font-mono tracking-[0.18em] uppercase py-3 px-6 text-center border-b border-neutral-800 font-medium">
+      {/* 1. TOP ANNOUNCEMENT BAR */}
+      <div className="bg-[#161617] text-[#E8E8ED] text-[11px] font-mono tracking-[0.18em] uppercase py-2.5 px-6 text-center border-b border-neutral-800 font-medium">
         AYEZZ GLOBAL — KILANG PENGLUARAN JERSI SUKAN & SERAGAM CUSTOM • BEBAS REKA BENTUK 100%
       </div>
 
-      {/* 2. PROPORTIONAL SPACIOUS NAVBAR (96px HEIGHT, SLIM SLEEK LOGO) */}
-      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-neutral-200/60 shadow-2xs">
-        <div className="max-w-7xl mx-auto px-8 sm:px-12 h-24 flex items-center justify-between">
+      {/* 2. SILKY SMOOTH GLASS NAVBAR (SMOOTH HEIGHT SHRINK & FROSTED GLASS TRANSITION ON SCROLL) */}
+      <header
+        className={`sticky top-0 z-40 w-full transition-all duration-500 ease-in-out ${
+          isScrolled
+            ? 'h-16 bg-white/85 backdrop-blur-md border-b border-neutral-200/80 shadow-xs'
+            : 'h-24 bg-white border-b border-neutral-100'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-8 sm:px-12 h-full flex items-center justify-between transition-all duration-500">
           <Link href="/" className="flex items-center space-x-3 group py-2">
             <img
               src="/logo/ayezz-logo-01.svg"
               alt="AYEZZ GLOBAL Logo"
-              className="h-6 sm:h-7 w-auto transition-transform group-hover:scale-[1.02]"
+              className={`w-auto transition-all duration-500 group-hover:scale-[1.02] ${
+                isScrolled ? 'h-5 sm:h-6' : 'h-6 sm:h-7'
+              }`}
             />
           </Link>
 
@@ -87,7 +109,9 @@ export default function SpaciousLuxuryHomepage() {
           <div className="flex items-center space-x-4">
             <button
               onClick={() => setOrderedProduct(featuredProduct)}
-              className="px-6 py-2.5 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-[11px] uppercase tracking-[0.12em] rounded-full transition-all active:scale-[0.98] flex items-center space-x-2 shadow-2xs"
+              className={`bg-[#111111] hover:bg-neutral-800 text-white font-bold text-[11px] uppercase tracking-[0.12em] rounded-full transition-all duration-500 active:scale-[0.98] flex items-center space-x-2 shadow-2xs ${
+                isScrolled ? 'px-5 py-2' : 'px-6 py-2.5'
+              }`}
             >
               <ShoppingBag className="w-3.5 h-3.5 text-white" />
               <span>Tempah Custom</span>
@@ -96,7 +120,7 @@ export default function SpaciousLuxuryHomepage() {
         </div>
       </header>
 
-      {/* 3. HERO SHOWCASE SECTION (RICH DISTINCT GREY BACKDROP #EFEFF4 FOR HIGH CONTRAST) */}
+      {/* 3. HERO SHOWCASE SECTION */}
       <section className="py-24 sm:py-32 px-8 sm:px-12 bg-[#EFEFF4] border-b border-neutral-200/80">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-20 items-center">
           <div className="lg:col-span-6 space-y-7 text-left">
@@ -139,7 +163,7 @@ export default function SpaciousLuxuryHomepage() {
         </div>
       </section>
 
-      {/* 4. MASTER CATEGORIES SHOWCASE GRID (PURE CRISP WHITE #FFFFFF WITH GENEROUS SPACIOUS ROOM) */}
+      {/* 4. MASTER CATEGORIES SHOWCASE GRID */}
       <section id="kategori-utama" className="py-28 sm:py-36 px-8 sm:px-12 bg-white border-b border-neutral-200/60">
         <div className="max-w-7xl mx-auto space-y-14">
           <div className="flex items-end justify-between border-b border-neutral-200 pb-8">
@@ -161,7 +185,7 @@ export default function SpaciousLuxuryHomepage() {
             </button>
           </div>
 
-          {/* VISUAL IMAGE COVER CARDS GRID (SPACIOUS 4:3 RATIO CARDS) */}
+          {/* VISUAL IMAGE COVER CARDS GRID */}
           {isLoading ? (
             <div className="py-28 flex flex-col items-center justify-center space-y-4">
               <RefreshCw className="w-8 h-8 text-[#111111] animate-spin" />
@@ -215,7 +239,7 @@ export default function SpaciousLuxuryHomepage() {
         </div>
       </section>
 
-      {/* 5. FACTORY & TECHNICAL FEATURES SECTION (OBSIDIAN DARK #0A0A0C WITH SPACIOUS PADDING) */}
+      {/* 5. FACTORY & TECHNICAL FEATURES SECTION */}
       <section id="teknologi" className="py-28 sm:py-36 px-8 sm:px-12 bg-[#0A0A0C] text-white">
         <div className="max-w-7xl mx-auto space-y-16">
           <div className="text-center max-w-2xl mx-auto space-y-4">
@@ -272,7 +296,7 @@ export default function SpaciousLuxuryHomepage() {
         />
       )}
 
-      {/* LUXURY FOOTER */}
+      {/* FOOTER */}
       <footer className="bg-[#0A0A0C] text-white py-16 px-8 sm:px-12 text-xs border-t border-neutral-900">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center space-x-4">
