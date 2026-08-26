@@ -3,8 +3,9 @@
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { getDesignTemplates } from '../lib/supabaseService';
+import TransparentImage from './TransparentImage';
 
-export default function NativeTransparentPNGCarousel({ onSelectProduct }) {
+export default function AutoBackgroundStrippedHeroCarousel({ onSelectProduct }) {
   const [items, setItems] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -66,9 +67,9 @@ export default function NativeTransparentPNGCarousel({ onSelectProduct }) {
   };
 
   return (
-    <div className="w-full flex flex-col items-center justify-center relative select-none py-2">
-      {/* NATIVE ALPHA TRANSPARENT PNG STAGE (NO OPACITY CANVAS GROUPS, NO MIX-BLEND CONFLICTS) */}
-      <div className="relative w-full h-[360px] sm:h-[420px] flex items-center justify-center overflow-hidden">
+    <div className="w-full flex flex-col items-center justify-center relative select-none py-2 bg-transparent">
+      {/* REAL-TIME CANVAS STRIPPED 100% TRANSPARENT PNG CAROUSEL */}
+      <div className="relative w-full h-[360px] sm:h-[420px] flex items-center justify-center overflow-hidden bg-transparent">
         {carouselItems.map((item, index) => {
           const count = carouselItems.length;
           let offset = (index - activeIndex + count) % count;
@@ -95,22 +96,13 @@ export default function NativeTransparentPNGCarousel({ onSelectProduct }) {
                   setActiveIndex(index);
                 }
               }}
-              className={`absolute w-[260px] sm:w-[320px] h-[340px] sm:h-[380px] transition-all duration-700 ease-out flex items-center justify-center ${positionClasses}`}
+              className={`absolute w-[260px] sm:w-[320px] h-[340px] sm:h-[380px] transition-all duration-700 ease-out flex items-center justify-center bg-transparent border-0 shadow-none outline-none ${positionClasses}`}
             >
-              {/* PURE NATIVE PNG ALPHA TRANSPARENCY - NO BACKGROUND, NO SHADOW, NO MIX-BLEND */}
-              <img
+              {/* TRANSPARENT IMAGE COMPONENT: AUTO STRIPS ALL WHITE BACKGROUND PIXELS */}
+              <TransparentImage
                 src={item.image}
                 alt={item.name || 'Reka Bentuk PNG'}
-                decoding="async"
-                fetchPriority="high"
-                className="w-full h-full object-contain transition-transform duration-500 hover:scale-105 img-crisp"
-                style={{
-                  imageRendering: '-webkit-optimize-contrast'
-                }}
-                onError={(e) => {
-                  e.target.onerror = null;
-                  e.target.src = 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=800&q=80';
-                }}
+                className="w-full h-full object-contain transition-transform duration-500 hover:scale-105 img-crisp bg-transparent border-0 shadow-none outline-none"
               />
             </div>
           );
