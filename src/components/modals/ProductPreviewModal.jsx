@@ -35,6 +35,7 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
 
   // Mouse Cursor Targeted Magnifier Zoom State
   const [zoomPos, setZoomPos] = useState({ x: 50, y: 50, isZoomed: false });
+  const [showZoomText, setShowZoomText] = useState(false);
 
   const handleMouseMove = (e) => {
     const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
@@ -45,7 +46,18 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
 
   const handleMouseLeave = () => {
     setZoomPos({ x: 50, y: 50, isZoomed: false });
+    setShowZoomText(false);
   };
+
+  useEffect(() => {
+    if (zoomPos.isZoomed) {
+      setShowZoomText(true);
+      const timer = setTimeout(() => {
+        setShowZoomText(false);
+      }, 1200);
+      return () => clearTimeout(timer);
+    }
+  }, [zoomPos.isZoomed]);
 
   // DB Data for Order Mode
   const [cutTypes, setCutTypes] = useState(FALLBACK_CUTS);
@@ -243,10 +255,10 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
                         <button
                           key={i}
                           onClick={() => setSelectedImgIdx(i)}
-                          className={`w-16 h-16 sm:w-18 sm:h-18 rounded-2xl overflow-hidden border-2 transition-all p-1.5 bg-[#F5F5F7] shrink-0 outline-none shadow-none ${
+                          className={`w-16 h-16 sm:w-18 sm:h-18 rounded-2xl overflow-hidden border transition-all p-1.5 bg-[#F5F5F7] shrink-0 outline-none shadow-none ${
                             selectedImgIdx === i
                               ? 'border-[#111111] opacity-100'
-                              : 'border-neutral-200/80 opacity-50 hover:opacity-100 hover:border-neutral-400'
+                              : 'border-neutral-200/60 opacity-50 hover:opacity-100 hover:border-neutral-400'
                           }`}
                         >
                           <TransparentImage src={imgUrl} alt={`Thumbnail ${i}`} className="w-full h-full object-contain" />
@@ -276,13 +288,16 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
                       />
                     </div>
 
-                    {/* Zoom Badge Indicator */}
-                    {zoomPos.isZoomed && (
-                      <div className="absolute top-3 left-3 bg-black/75 backdrop-blur-md text-white text-[10px] font-mono px-3 py-1 rounded-full pointer-events-none z-30 flex items-center space-x-1.5 shadow-sm">
-                        <Sparkles className="w-3 h-3 text-amber-400" />
-                        <span>ZOOM 2.5X</span>
-                      </div>
-                    )}
+                    {/* Minimalist Fade-Out Zoom Text (Zero Badge Background, Zero Emojis) */}
+                    <div
+                      className={`absolute top-4 left-4 pointer-events-none z-30 transition-opacity duration-700 ease-out ${
+                        showZoomText ? 'opacity-70' : 'opacity-0'
+                      }`}
+                    >
+                      <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-neutral-500 font-semibold select-none">
+                        ZOOM 2.5X
+                      </span>
+                    </div>
 
                     {/* Template Switcher Buttons */}
                     {allProducts && allProducts.length > 1 && (
