@@ -6,6 +6,14 @@ export default function SubCatalogModal({ catalog, onClose, onSelectProduct }) {
   const [activeSubCategory, setActiveSubCategory] = useState('Semua');
   const [templates, setTemplates] = useState([]);
 
+  // Lock body scroll when modal opens
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
+
   useEffect(() => {
     async function loadTemplatesForCategory() {
       const allTemplates = await getDesignTemplates();

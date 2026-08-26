@@ -17,6 +17,14 @@ export default function ProductOrderModal({ product: initialProduct, onClose, al
   const [playerNumber, setPlayerNumber] = useState('');
   const [activeImageIndex, setActiveImageIndex] = useState(0);
 
+  // Lock body scroll when modal opens
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
+
   // Sync initial product change
   useEffect(() => {
     setCurrentProduct(initialProduct);

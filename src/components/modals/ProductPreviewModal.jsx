@@ -72,6 +72,14 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Lock body scroll when modal opens
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = 'unset';
+    };
+  }, []);
+
   useEffect(() => {
     async function loadConfigData() {
       const [cuts, fabrics] = await Promise.all([
