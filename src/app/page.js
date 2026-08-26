@@ -11,7 +11,8 @@ import {
   ShieldCheck,
   Zap,
   Sparkles,
-  Layers
+  Layers,
+  ChevronRight
 } from 'lucide-react';
 import ProductOrderModal from '../components/modals/ProductOrderModal';
 import HeroCarousel from '../components/HeroCarousel';
@@ -21,7 +22,7 @@ import {
 } from '../lib/supabaseService';
 import { MAIN_CATALOGS, DESIGN_TEMPLATES } from '../data/sublimationProducts';
 
-export default function CleanHomepagePortal() {
+export default function AppleCleanHomepagePortal() {
   const router = useRouter();
   const [categories, setCategories] = useState([]);
   const [templates, setTemplates] = useState([]);
@@ -61,28 +62,28 @@ export default function CleanHomepagePortal() {
   };
 
   return (
-    <div className="min-h-screen bg-white text-[#111111] font-sans antialiased selection:bg-[#111111] selection:text-white flex flex-col">
-      {/* 1. TOP ANNOUNCEMENT BAR */}
-      <div className="bg-[#111111] text-white text-[11px] font-mono tracking-widest uppercase py-2 px-4 text-center">
+    <div className="min-h-screen bg-white text-[#1D1D1F] font-sans antialiased selection:bg-[#1D1D1F] selection:text-white flex flex-col">
+      {/* 1. TOP ANNOUNCEMENT BAR (APPLE STYLE DARK STRIP) */}
+      <div className="bg-[#1D1D1F] text-[#F5F5F7] text-[11px] font-mono tracking-[0.15em] uppercase py-2.5 px-4 text-center border-b border-neutral-800 font-medium">
         AYEZZ GLOBAL — KILANG PENGLUARAN JERSI SUKAN & SERAGAM CUSTOM • BEBAS REKA BENTUK 100%
       </div>
 
-      {/* 2. MINIMALIST BRAND NAVBAR */}
-      <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-neutral-200 shadow-2xs">
-        <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+      {/* 2. APPLE-STYLE GLASS NAVBAR */}
+      <header className="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-neutral-100/80">
+        <div className="max-w-7xl mx-auto px-6 h-18 flex items-center justify-between">
           <Link href="/" className="flex items-center space-x-3 group">
             <img
               src="/logo/ayezz-logo-01.svg"
               alt="AYEZZ GLOBAL Logo"
-              className="h-8 sm:h-9 w-auto transition-transform group-hover:scale-105"
+              className="h-8 w-auto transition-transform group-hover:scale-[1.02]"
             />
           </Link>
 
-          <nav className="hidden md:flex items-center space-x-8 text-xs font-bold uppercase tracking-wider text-[#111111]">
-            <a href="#kategori-utama" className="hover:text-neutral-500 transition-colors">Kategori Utama</a>
-            <Link href="/katalog" className="hover:text-neutral-500 transition-colors">Katalog Desain</Link>
-            <a href="#teknologi" className="hover:text-neutral-500 transition-colors">Teknologi Kilang</a>
-            <Link href="/admin" className="hover:text-neutral-500 transition-colors font-mono text-[11px] text-neutral-400">
+          <nav className="hidden md:flex items-center space-x-9 text-xs font-semibold uppercase tracking-[0.08em] text-[#1D1D1F]">
+            <a href="#kategori-utama" className="hover:text-[#86868B] transition-colors">Kategori Utama</a>
+            <Link href="/katalog" className="hover:text-[#86868B] transition-colors">Katalog Desain</Link>
+            <a href="#teknologi" className="hover:text-[#86868B] transition-colors">Teknologi Kilang</a>
+            <Link href="/admin" className="hover:text-[#86868B] transition-colors font-mono text-[11px] text-[#86868B]">
               Admin
             </Link>
           </nav>
@@ -90,7 +91,7 @@ export default function CleanHomepagePortal() {
           <div className="flex items-center space-x-3">
             <button
               onClick={() => setOrderedProduct(featuredProduct)}
-              className="px-6 py-3 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-xs uppercase tracking-widest rounded-full transition-all active:scale-95 flex items-center space-x-2 shadow-xs"
+              className="px-6 py-2.5 bg-[#1D1D1F] hover:bg-[#333336] text-white font-semibold text-xs uppercase tracking-wider rounded-full transition-all active:scale-[0.98] flex items-center space-x-2 shadow-2xs"
             >
               <ShoppingBag className="w-3.5 h-3.5 text-white" />
               <span>Tempah Custom</span>
@@ -99,27 +100,27 @@ export default function CleanHomepagePortal() {
         </div>
       </header>
 
-      {/* 3. HERO SHOWCASE SECTION */}
-      <section className="py-16 px-6 bg-white border-b border-neutral-100">
+      {/* 3. HERO SHOWCASE SECTION (APPLE STUDIO BACKDROP #FBFBFD) */}
+      <section className="py-20 px-6 bg-[#FBFBFD] border-b border-neutral-100">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-          <div className="lg:col-span-6 space-y-5 text-left">
-            <span className="text-[11px] font-mono font-bold tracking-widest text-neutral-500 uppercase block">
+          <div className="lg:col-span-6 space-y-6 text-left">
+            <span className="text-[11px] font-mono font-semibold tracking-[0.2em] text-[#86868B] uppercase block">
               STUDIO SUBLIMASI HIGH-PERFORMANCE
             </span>
 
-            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-[#111111] tracking-tight leading-[1.05] uppercase">
+            <h1 className="text-4xl sm:text-6xl font-extrabold text-[#1D1D1F] tracking-tight leading-[1.06] uppercase">
               Reka Bentuk Jersi <br />
-              <span className="text-neutral-400 font-bold">Pakaian Custom</span>
+              <span className="text-[#86868B] font-bold">Pakaian Custom</span>
             </h1>
 
-            <p className="text-neutral-600 text-xs sm:text-sm leading-relaxed max-w-lg font-normal">
+            <p className="text-[#6E6E73] text-sm sm:text-base leading-relaxed max-w-xl font-normal">
               Pilih daripada koleksi visual kategori di bawah. Pilih desain jersi, kustomisasikan jenis kolar dan kain sublimasi, dan buat tempahan terus ke WhatsApp.
             </p>
 
             <div className="pt-2 flex items-center space-x-4">
               <a
                 href="#kategori-utama"
-                className="px-8 py-4 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center space-x-3 active:scale-95"
+                className="px-8 py-3.5 bg-[#1D1D1F] hover:bg-[#333336] text-white font-bold text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center space-x-3 active:scale-[0.98] shadow-2xs"
               >
                 <span>Lihat Kategori Utama</span>
                 <ArrowRight className="w-4 h-4 text-white" />
@@ -127,7 +128,7 @@ export default function CleanHomepagePortal() {
 
               <Link
                 href="/katalog"
-                className="px-7 py-4 bg-white border border-[#111111] hover:bg-[#111111] hover:text-white text-[#111111] font-bold text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center space-x-2"
+                className="px-7 py-3.5 bg-white border border-neutral-200 hover:border-[#1D1D1F] text-[#1D1D1F] font-bold text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center space-x-2 active:scale-[0.98]"
               >
                 <span>Semua Katalog</span>
               </Link>
@@ -142,33 +143,33 @@ export default function CleanHomepagePortal() {
         </div>
       </section>
 
-      {/* 4. MASTER CATEGORIES SHOWCASE GRID (FETCHED 100% FROM SUPABASE) */}
-      <section id="kategori-utama" className="py-20 px-6 bg-white border-b border-neutral-200">
-        <div className="max-w-7xl mx-auto space-y-10">
-          <div className="flex items-center justify-between border-b border-neutral-200 pb-5">
-            <div>
-              <span className="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-widest block">
+      {/* 4. MASTER CATEGORIES SHOWCASE GRID (PURE WHITE BACKDROP #FFFFFF) */}
+      <section id="kategori-utama" className="py-24 px-6 bg-white border-b border-neutral-100">
+        <div className="max-w-7xl mx-auto space-y-12">
+          <div className="flex items-end justify-between border-b border-neutral-100 pb-6">
+            <div className="space-y-1">
+              <span className="text-[11px] font-mono font-semibold text-[#86868B] uppercase tracking-[0.2em] block">
                 PILIH KATEGORI UNTUK MELIHAT DESAIN
               </span>
-              <h2 className="text-2xl sm:text-4xl font-black text-[#111111] uppercase tracking-tight mt-1">
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-[#1D1D1F] uppercase tracking-tight">
                 Koleksi Kategori Utama
               </h2>
             </div>
 
             <button
               onClick={loadData}
-              className="p-2.5 bg-neutral-100 hover:bg-neutral-200 rounded-full border border-neutral-200 transition-colors"
+              className="p-2.5 bg-[#F5F5F7] hover:bg-neutral-200 rounded-full border border-neutral-200 transition-colors"
               title="Refresh Database"
             >
-              <RefreshCw className={`w-4 h-4 text-[#111111] ${isLoading ? 'animate-spin' : ''}`} />
+              <RefreshCw className={`w-4 h-4 text-[#1D1D1F] ${isLoading ? 'animate-spin' : ''}`} />
             </button>
           </div>
 
-          {/* VISUAL IMAGE COVER CARDS GRID */}
+          {/* VISUAL IMAGE COVER CARDS GRID (APPLE STYLE CURVED 4:3 CARDS) */}
           {isLoading ? (
             <div className="py-24 flex flex-col items-center justify-center space-y-3">
-              <RefreshCw className="w-7 h-7 text-[#111111] animate-spin" />
-              <p className="text-xs font-mono text-neutral-400 font-bold">Memuatkan kategori dari Supabase...</p>
+              <RefreshCw className="w-7 h-7 text-[#1D1D1F] animate-spin" />
+              <p className="text-xs font-mono text-[#86868B] font-semibold">Memuatkan kategori dari Supabase...</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -176,14 +177,14 @@ export default function CleanHomepagePortal() {
                 <div
                   key={cat.id}
                   onClick={() => handleCategoryClick(cat.title)}
-                  className="group cursor-pointer rounded-2xl overflow-hidden relative border border-neutral-200 hover:border-neutral-400 transition-all duration-300 hover:shadow-lg"
+                  className="group cursor-pointer rounded-3xl overflow-hidden relative border border-neutral-100 hover:border-neutral-300 transition-all duration-500 hover:shadow-xl"
                 >
                   <div className="w-full aspect-[4/3] bg-neutral-900 relative overflow-hidden">
                     <img
                       src={cat.thumbnail}
                       alt={cat.title}
                       decoding="async"
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-95 img-crisp"
+                      className="w-full h-full object-cover group-hover:scale-[1.04] transition-transform duration-700 opacity-95 img-crisp"
                       style={{ imageRendering: '-webkit-optimize-contrast' }}
                       onError={(e) => {
                         e.target.onerror = null;
@@ -191,14 +192,14 @@ export default function CleanHomepagePortal() {
                       }}
                     />
                     
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
 
-                    <div className="absolute bottom-5 left-5 right-5 z-10 text-white flex items-end justify-between">
+                    <div className="absolute bottom-6 left-6 right-6 z-10 text-white flex items-end justify-between">
                       <div className="space-y-1">
-                        <span className="text-[10px] font-mono font-bold uppercase tracking-widest text-neutral-300 block">
+                        <span className="text-[10px] font-mono font-semibold uppercase tracking-[0.15em] text-neutral-300 block">
                           {cat.code || 'SUBLIMASI'}
                         </span>
-                        <h3 className="text-lg font-black uppercase tracking-tight text-white group-hover:text-amber-400 transition-colors">
+                        <h3 className="text-xl font-extrabold uppercase tracking-tight text-white group-hover:text-amber-300 transition-colors">
                           {cat.title}
                         </h3>
                         <p className="text-xs text-neutral-300 font-mono">
@@ -206,7 +207,7 @@ export default function CleanHomepagePortal() {
                         </p>
                       </div>
 
-                      <div className="w-8 h-8 rounded-full bg-white/20 backdrop-blur-xs flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all">
+                      <div className="w-9 h-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all">
                         <ArrowUpRight className="w-4 h-4" />
                       </div>
                     </div>
@@ -218,12 +219,12 @@ export default function CleanHomepagePortal() {
         </div>
       </section>
 
-      {/* 5. FACTORY & TECHNICAL FEATURES SECTION */}
-      <section id="teknologi" className="py-20 px-6 bg-[#111111] text-white">
-        <div className="max-w-7xl mx-auto space-y-12">
+      {/* 5. FACTORY & TECHNICAL FEATURES SECTION (OBSIDIAN DARK #000000) */}
+      <section id="teknologi" className="py-24 px-6 bg-[#000000] text-white">
+        <div className="max-w-7xl mx-auto space-y-16">
           <div className="text-center max-w-2xl mx-auto space-y-3">
-            <span className="text-xs font-mono font-bold text-neutral-400 uppercase tracking-widest">STANDARD KILANG & KUALITI</span>
-            <h2 className="text-3xl sm:text-4xl font-black uppercase tracking-tight text-white">
+            <span className="text-xs font-mono font-semibold text-neutral-400 uppercase tracking-[0.2em]">STANDARD KILANG & KUALITI</span>
+            <h2 className="text-3xl sm:text-5xl font-extrabold uppercase tracking-tight text-white">
               Mengapa Memilih AYEZZ GLOBAL?
             </h2>
             <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed font-normal">
@@ -232,31 +233,31 @@ export default function CleanHomepagePortal() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-neutral-900 border border-neutral-800 p-6 rounded-2xl space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-neutral-800 flex items-center justify-center text-white font-mono font-bold">
+            <div className="bg-neutral-950 border border-neutral-800/80 p-8 rounded-3xl space-y-4 hover:border-neutral-700 transition-all">
+              <div className="w-11 h-11 rounded-2xl bg-neutral-900 border border-neutral-800 flex items-center justify-center text-white font-mono font-bold text-sm">
                 01
               </div>
-              <h3 className="text-base font-bold text-white uppercase">100% Cetakan Sublimasi HD</h3>
+              <h3 className="text-lg font-bold text-white uppercase tracking-tight">100% Cetakan Sublimasi HD</h3>
               <p className="text-xs text-neutral-400 leading-relaxed">
                 Warna tidak akan pudar, merekah, atau bertukar kusam walaupun dicuci berulang kali.
               </p>
             </div>
 
-            <div className="bg-neutral-900 border border-neutral-800 p-6 rounded-2xl space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-neutral-800 flex items-center justify-center text-white font-mono font-bold">
+            <div className="bg-neutral-950 border border-neutral-800/80 p-8 rounded-3xl space-y-4 hover:border-neutral-700 transition-all">
+              <div className="w-11 h-11 rounded-2xl bg-neutral-900 border border-neutral-800 flex items-center justify-center text-white font-mono font-bold text-sm">
                 02
               </div>
-              <h3 className="text-base font-bold text-white uppercase">Fabrik High-Performance</h3>
+              <h3 className="text-lg font-bold text-white uppercase tracking-tight">Fabrik High-Performance</h3>
               <p className="text-xs text-neutral-400 leading-relaxed">
                 Menggunakan fabrik Micro-Polyester, Interlock, dan Jacquard dengan keupayaan serapan peluh berteknologi pantas kering.
               </p>
             </div>
 
-            <div className="bg-neutral-900 border border-neutral-800 p-6 rounded-2xl space-y-3">
-              <div className="w-10 h-10 rounded-xl bg-neutral-800 flex items-center justify-center text-white font-mono font-bold">
+            <div className="bg-neutral-950 border border-neutral-800/80 p-8 rounded-3xl space-y-4 hover:border-neutral-700 transition-all">
+              <div className="w-11 h-11 rounded-2xl bg-neutral-900 border border-neutral-800 flex items-center justify-center text-white font-mono font-bold text-sm">
                 03
               </div>
-              <h3 className="text-base font-bold text-white uppercase">Tanpa Pesanan Minimum</h3>
+              <h3 className="text-lg font-bold text-white uppercase tracking-tight">Tanpa Pesanan Minimum</h3>
               <p className="text-xs text-neutral-400 leading-relaxed">
                 Boleh menempah dari 1 unit jersi hingga beribu-ribu pakaian seragam untuk kejohanan atau korporat.
               </p>
@@ -275,14 +276,14 @@ export default function CleanHomepagePortal() {
         />
       )}
 
-      {/* CLEAN FOOTER */}
-      <footer className="bg-[#111111] text-white py-12 px-6 text-xs border-t border-neutral-800">
-        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
-          <div className="flex items-center space-x-3">
+      {/* APPLE CLEAN FOOTER */}
+      <footer className="bg-[#000000] text-white py-14 px-6 text-xs border-t border-neutral-900">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
+          <div className="flex items-center space-x-4">
             <img src="/logo/ayezz-logo-01.svg" alt="AYEZZ Logo" className="h-5 w-auto brightness-0 invert opacity-90" />
-            <span className="font-medium text-neutral-400">© 2026 AYEZZ GLOBAL — Studio Pakaian Sublimasi</span>
+            <span className="font-medium text-neutral-500">© 2026 AYEZZ GLOBAL — Studio Pakaian Sublimasi</span>
           </div>
-          <div className="flex items-center space-x-6 text-neutral-400 font-mono text-[11px]">
+          <div className="flex items-center space-x-7 text-neutral-400 font-mono text-[11px]">
             <Link href="/" className="hover:text-white transition-colors">Utama</Link>
             <Link href="/katalog" className="hover:text-white transition-colors">Katalog Desain</Link>
             <Link href="/admin" className="hover:text-white transition-colors underline">Admin</Link>
