@@ -5,7 +5,7 @@ import { ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react';
 import { getDesignTemplates } from '../lib/supabaseService';
 import TransparentImage from './TransparentImage';
 
-export default function AutoBackgroundStrippedHeroCarousel({ onSelectProduct }) {
+export default function AutoBackgroundStrippedHeroCarousel() {
   const [items, setItems] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -56,7 +56,7 @@ export default function AutoBackgroundStrippedHeroCarousel({ onSelectProduct }) 
 
   if (isLoading || items.length === 0) {
     return (
-      <div className="w-full h-[360px] sm:h-[420px] flex items-center justify-center relative">
+      <div className="w-full h-[360px] sm:h-[420px] flex items-center justify-center relative select-none pointer-events-none">
         <div className="w-[260px] sm:w-[320px] h-[340px] sm:h-[380px] bg-neutral-200/50 animate-pulse rounded-3xl flex flex-col items-center justify-center space-y-3">
           <RefreshCw className="w-6 h-6 text-neutral-400 animate-spin" />
         </div>
@@ -66,8 +66,8 @@ export default function AutoBackgroundStrippedHeroCarousel({ onSelectProduct }) 
 
   return (
     <div className="w-full flex flex-col items-center justify-center relative select-none py-2 bg-transparent">
-      {/* REAL-TIME CANVAS STRIPPED 100% TRANSPARENT PNG CAROUSEL */}
-      <div className="relative w-full h-[360px] sm:h-[420px] flex items-center justify-center overflow-hidden bg-transparent">
+      {/* REAL-TIME CANVAS STRIPPED 100% TRANSPARENT PNG CAROUSEL (PURE NON-CLICKABLE VISUAL SHOWCASE) */}
+      <div className="relative w-full h-[360px] sm:h-[420px] flex items-center justify-center overflow-hidden bg-transparent cursor-default pointer-events-none">
         {items.map((item, index) => {
           const count = items.length;
           let offset = (index - activeIndex + count) % count;
@@ -75,11 +75,11 @@ export default function AutoBackgroundStrippedHeroCarousel({ onSelectProduct }) 
 
           let positionClasses = '';
           if (offset === 0) {
-            positionClasses = 'z-30 scale-100 translate-x-0 cursor-pointer pointer-events-auto';
+            positionClasses = 'z-30 scale-100 translate-x-0 cursor-default pointer-events-none';
           } else if (offset === -1 || (offset === count - 1 && count > 2)) {
-            positionClasses = 'z-10 scale-75 -translate-x-[55%] cursor-pointer pointer-events-auto blur-[1px]';
+            positionClasses = 'z-10 scale-75 -translate-x-[55%] cursor-default pointer-events-none blur-[1px]';
           } else if (offset === 1) {
-            positionClasses = 'z-10 scale-75 translate-x-[55%] cursor-pointer pointer-events-auto blur-[1px]';
+            positionClasses = 'z-10 scale-75 translate-x-[55%] cursor-default pointer-events-none blur-[1px]';
           } else {
             positionClasses = 'z-0 scale-50 pointer-events-none hidden';
           }
@@ -87,17 +87,13 @@ export default function AutoBackgroundStrippedHeroCarousel({ onSelectProduct }) 
           return (
             <div
               key={item.id + index}
-              onClick={() => {
-                if (onSelectProduct) onSelectProduct(item);
-                setActiveIndex(index);
-              }}
-              className={`absolute w-[260px] sm:w-[320px] h-[340px] sm:h-[380px] transition-all duration-700 ease-out flex items-center justify-center bg-transparent border-0 shadow-none outline-none ${positionClasses}`}
+              className={`absolute w-[260px] sm:w-[320px] h-[340px] sm:h-[380px] transition-all duration-700 ease-out flex items-center justify-center bg-transparent border-0 shadow-none outline-none cursor-default pointer-events-none ${positionClasses}`}
             >
-              {/* TRANSPARENT IMAGE COMPONENT */}
+              {/* TRANSPARENT IMAGE COMPONENT — PURE VISUAL NO CLICK */}
               <TransparentImage
                 src={item.image}
                 alt={item.name || 'Reka Bentuk PNG'}
-                className="w-full h-full object-contain transition-transform duration-500 hover:scale-105 img-crisp bg-transparent border-0 shadow-none outline-none"
+                className="w-full h-full object-contain img-crisp bg-transparent border-0 shadow-none outline-none cursor-default pointer-events-none"
               />
             </div>
           );
@@ -106,10 +102,10 @@ export default function AutoBackgroundStrippedHeroCarousel({ onSelectProduct }) 
 
       {/* MINIMALIST CONTROL ARROWS & DOTS */}
       {items.length > 1 && (
-        <div className="flex items-center space-x-4 z-40 mt-1">
+        <div className="flex items-center space-x-4 z-40 mt-1 pointer-events-auto">
           <button
             onClick={handlePrev}
-            className="p-2 bg-white hover:bg-neutral-100 text-[#111111] border border-neutral-200 rounded-full transition-all active:scale-95 shadow-none"
+            className="p-2 bg-white hover:bg-neutral-100 text-[#111111] border border-neutral-200 rounded-full transition-all active:scale-95 shadow-none cursor-pointer"
             title="Sebelumnya"
           >
             <ChevronLeft className="w-4 h-4" />
@@ -129,7 +125,7 @@ export default function AutoBackgroundStrippedHeroCarousel({ onSelectProduct }) 
 
           <button
             onClick={handleNext}
-            className="p-2 bg-white hover:bg-neutral-100 text-[#111111] border border-neutral-200 rounded-full transition-all active:scale-95 shadow-none"
+            className="p-2 bg-white hover:bg-neutral-100 text-[#111111] border border-neutral-200 rounded-full transition-all active:scale-95 shadow-none cursor-pointer"
             title="Seterusnya"
           >
             <ChevronRight className="w-4 h-4" />

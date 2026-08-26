@@ -166,16 +166,7 @@ export default function SmoothHeaderHomepage() {
           </div>
 
           <div className="lg:col-span-6 flex items-center justify-center">
-            <HeroCarousel
-              onSelectProduct={async (item) => {
-                const user = await getCurrentUser();
-                if (!user) {
-                  window.location.href = `/login?redirect=${encodeURIComponent('/katalog')}&msg=login_required`;
-                  return;
-                }
-                setOrderedProduct(item);
-              }}
-            />
+            <HeroCarousel />
           </div>
         </div>
       </section>
