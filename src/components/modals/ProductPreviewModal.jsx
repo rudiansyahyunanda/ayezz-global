@@ -232,74 +232,78 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
                ======================================================== */
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               
-              {/* Left Column: Image Viewer with Targeted Cursor Magnifier */}
-              <div className="lg:col-span-7 space-y-4">
-                <div
-                  onMouseMove={handleMouseMove}
-                  onMouseLeave={handleMouseLeave}
-                  className="w-full aspect-square bg-[#F5F5F7] rounded-2xl overflow-hidden relative flex items-center justify-center p-4 cursor-crosshair group select-none"
-                >
-                  {/* 2.5x Zoom Image Container Centered on Cursor Position */}
-                  <div
-                    className="w-full h-full transition-transform duration-150 ease-out flex items-center justify-center"
-                    style={{
-                      transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
-                      transform: zoomPos.isZoomed ? 'scale(2.5)' : 'scale(1)'
-                    }}
-                  >
-                    <TransparentImage
-                      src={galleryImages[selectedImgIdx]}
-                      alt={product.name}
-                      className="w-full h-full object-contain img-crisp"
-                    />
-                  </div>
-
-                  {/* Zoom Badge Indicator */}
-                  {zoomPos.isZoomed && (
-                    <div className="absolute top-3 left-3 bg-black/75 backdrop-blur-md text-white text-[10px] font-mono px-3 py-1 rounded-full pointer-events-none z-30 flex items-center space-x-1.5 shadow-sm">
-                      <Sparkles className="w-3 h-3 text-amber-400" />
-                      <span>ZOOM 2.5X</span>
+              {/* Left Column: Image Viewer with Left Vertical Thumbnail Strip */}
+              <div className="lg:col-span-7">
+                <div className="flex flex-col sm:flex-row gap-4 items-start">
+                  
+                  {/* LEFT VERTICAL THUMBNAIL STRIP (E-Commerce Industry Standard) */}
+                  {galleryImages.length > 1 && (
+                    <div className="flex sm:flex-col items-center gap-3 shrink-0 order-2 sm:order-1 overflow-x-auto sm:overflow-y-auto max-h-[440px] py-1">
+                      {galleryImages.map((imgUrl, i) => (
+                        <button
+                          key={i}
+                          onClick={() => setSelectedImgIdx(i)}
+                          className={`w-16 h-16 sm:w-18 sm:h-18 rounded-2xl overflow-hidden border-2 transition-all p-1 bg-[#F5F5F7] shrink-0 ${
+                            selectedImgIdx === i ? 'border-[#111111] scale-105 shadow-sm ring-2 ring-neutral-200' : 'border-transparent opacity-60 hover:opacity-100 hover:border-neutral-300'
+                          }`}
+                        >
+                          <TransparentImage src={imgUrl} alt={`Thumbnail ${i}`} className="w-full h-full object-contain" />
+                        </button>
+                      ))}
                     </div>
                   )}
 
-                  {/* Template Switcher Buttons */}
-                  {allProducts && allProducts.length > 1 && (
-                    <>
-                      <button
-                        onClick={handlePrevProduct}
-                        className="absolute left-3 top-1/2 -translate-y-1/2 p-2.5 bg-white/90 hover:bg-white text-black rounded-full shadow-md transition-all active:scale-95 z-20"
-                        title="Template Sebelumnya"
-                      >
-                        <ChevronLeft className="w-4 h-4" />
-                      </button>
+                  {/* MAIN 1:1 IMAGE VIEWER WITH TARGETED CURSOR ZOOM */}
+                  <div
+                    onMouseMove={handleMouseMove}
+                    onMouseLeave={handleMouseLeave}
+                    className="flex-1 w-full aspect-square bg-[#F5F5F7] rounded-2xl overflow-hidden relative flex items-center justify-center p-4 cursor-crosshair group select-none order-1 sm:order-2"
+                  >
+                    {/* 2.5x Zoom Image Container Centered on Cursor Position */}
+                    <div
+                      className="w-full h-full transition-transform duration-150 ease-out flex items-center justify-center"
+                      style={{
+                        transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
+                        transform: zoomPos.isZoomed ? 'scale(2.5)' : 'scale(1)'
+                      }}
+                    >
+                      <TransparentImage
+                        src={galleryImages[selectedImgIdx]}
+                        alt={product.name}
+                        className="w-full h-full object-contain img-crisp"
+                      />
+                    </div>
 
-                      <button
-                        onClick={handleNextProduct}
-                        className="absolute right-3 top-1/2 -translate-y-1/2 p-2.5 bg-white/90 hover:bg-white text-black rounded-full shadow-md transition-all active:scale-95 z-20"
-                        title="Template Seterusnya"
-                      >
-                        <ChevronRight className="w-4 h-4" />
-                      </button>
-                    </>
-                  )}
-                </div>
+                    {/* Zoom Badge Indicator */}
+                    {zoomPos.isZoomed && (
+                      <div className="absolute top-3 left-3 bg-black/75 backdrop-blur-md text-white text-[10px] font-mono px-3 py-1 rounded-full pointer-events-none z-30 flex items-center space-x-1.5 shadow-sm">
+                        <Sparkles className="w-3 h-3 text-amber-400" />
+                        <span>ZOOM 2.5X</span>
+                      </div>
+                    )}
 
-                {/* Thumbnails list if multiple images */}
-                {galleryImages.length > 1 && (
-                  <div className="flex items-center space-x-3 overflow-x-auto py-1">
-                    {galleryImages.map((imgUrl, i) => (
-                      <button
-                        key={i}
-                        onClick={() => setSelectedImgIdx(i)}
-                        className={`w-16 h-16 rounded-xl overflow-hidden border-2 transition-all p-1 bg-[#F5F5F7] ${
-                          selectedImgIdx === i ? 'border-[#111111] scale-105' : 'border-transparent opacity-60 hover:opacity-100'
-                        }`}
-                      >
-                        <TransparentImage src={imgUrl} alt="Thumbnail" className="w-full h-full object-contain" />
-                      </button>
-                    ))}
+                    {/* Template Switcher Buttons */}
+                    {allProducts && allProducts.length > 1 && (
+                      <>
+                        <button
+                          onClick={handlePrevProduct}
+                          className="absolute left-3 top-1/2 -translate-y-1/2 p-2.5 bg-white/90 hover:bg-white text-black rounded-full shadow-md transition-all active:scale-95 z-20"
+                          title="Template Sebelumnya"
+                        >
+                          <ChevronLeft className="w-4 h-4" />
+                        </button>
+
+                        <button
+                          onClick={handleNextProduct}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 p-2.5 bg-white/90 hover:bg-white text-black rounded-full shadow-md transition-all active:scale-95 z-20"
+                          title="Template Seterusnya"
+                        >
+                          <ChevronRight className="w-4 h-4" />
+                        </button>
+                      </>
+                    )}
                   </div>
-                )}
+                </div>
               </div>
 
               {/* Right Column: Design Details & Specification Highlights */}
