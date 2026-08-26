@@ -238,7 +238,7 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
                   
                   {/* LEFT VERTICAL THUMBNAIL STRIP (E-Commerce Industry Standard) */}
                   {galleryImages.length > 1 && (
-                    <div className="flex sm:flex-col items-center gap-3 shrink-0 order-2 sm:order-1 overflow-x-auto sm:overflow-y-auto max-h-[440px] py-1">
+                    <div className="flex sm:flex-col items-center gap-3 shrink-0 order-2 sm:order-1 overflow-x-auto sm:overflow-y-auto max-h-[440px] py-1 scrollbar-none no-scrollbar">
                       {galleryImages.map((imgUrl, i) => (
                         <button
                           key={i}

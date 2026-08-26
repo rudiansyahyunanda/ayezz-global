@@ -49,11 +49,13 @@
   border-color: rgba(0, 0, 0, 0.15);
 }
 
-/* Hide scrollbar for clean horizontal tab bars */
-.scrollbar-none::-webkit-scrollbar {
-  display: none;
+/* Hide scrollbar for clean gallery strips and tab bars */
+.scrollbar-none::-webkit-scrollbar,
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
 }
-.scrollbar-none {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+.scrollbar-none,
+.no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
 }
