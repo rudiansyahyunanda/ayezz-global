@@ -144,7 +144,7 @@ export default function SmoothHeaderHomepage() {
             </h1>
 
             <p className="text-neutral-600 text-sm sm:text-base leading-relaxed max-w-lg font-normal">
-              Pilih daripada koleksi visual kategori di bawah. Pilih desain jersi, kustomisasikan jenis kolar dan kain sublimasi, dan buat tempahan terus ke WhatsApp.
+              Pilih daripada koleksi visual kategori di bawah. Pilih desain jersi, kustomisasikan jenis kolar dan kain sublimasi, dan proses tempahan terus secara dalam talian menerusi sistem aplikasi ini.
             </p>
 
             <div className="pt-3 flex items-center space-x-4">
@@ -167,7 +167,14 @@ export default function SmoothHeaderHomepage() {
 
           <div className="lg:col-span-6 flex items-center justify-center">
             <HeroCarousel
-              onSelectProduct={(item) => setOrderedProduct(item)}
+              onSelectProduct={async (item) => {
+                const user = await getCurrentUser();
+                if (!user) {
+                  window.location.href = `/login?redirect=${encodeURIComponent('/katalog')}&msg=login_required`;
+                  return;
+                }
+                setOrderedProduct(item);
+              }}
             />
           </div>
         </div>

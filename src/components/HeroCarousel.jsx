@@ -88,11 +88,8 @@ export default function AutoBackgroundStrippedHeroCarousel({ onSelectProduct }) 
             <div
               key={item.id + index}
               onClick={() => {
-                if (offset === 0) {
-                  if (onSelectProduct) onSelectProduct(item);
-                } else {
-                  setActiveIndex(index);
-                }
+                if (onSelectProduct) onSelectProduct(item);
+                setActiveIndex(index);
               }}
               className={`absolute w-[260px] sm:w-[320px] h-[340px] sm:h-[380px] transition-all duration-700 ease-out flex items-center justify-center bg-transparent border-0 shadow-none outline-none ${positionClasses}`}
             >

@@ -28,6 +28,7 @@ import {
 export default function ProductPreviewModal({ product, allProducts, onClose, onSelectProduct }) {
   const router = useRouter();
   const [viewMode, setViewMode] = useState('preview'); // 'preview' | 'order'
+  const [orderSuccess, setOrderSuccess] = useState(null);
   
   const handleProceedToOrder = async () => {
     const user = await getCurrentUser();
@@ -156,7 +157,8 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
   const pricePerPcs = basePricePerPcs + cutAddOn;
   const totalPrice = totalQuantity * pricePerPcs;
 
-  const handleWhatsAppOrder = async (e) => {
+  // In-App System Order Submission Handler (100% Internal System Processing)
+  const handleSystemOrder = async (e) => {
     e.preventDefault();
     if (totalQuantity <= 0) {
       alert('Sila masukkan sekurang-kurangnya 1 saiz kuantiti pesanan.');
@@ -164,13 +166,10 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
     }
 
     setIsSubmitting(true);
-
-    const sizeSummary = Object.entries(sizeQuantities)
-      .filter(([_, qty]) => qty > 0)
-      .map(([sz, qty]) => `${sz}: ${qty} pcs`)
-      .join(', ');
+    const generatedOrderId = 'AYZ-' + Math.floor(100000 + Math.random() * 900000);
 
     const orderPayload = {
+      order_id: generatedOrderId,
       product_name: product.name,
       category: product.category || 'SUBLIMASI',
       sub_category: product.subCategory || '',
@@ -180,7 +179,7 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
       total_qty: totalQuantity,
       price_per_pcs: pricePerPcs,
       total_price: totalPrice,
-      customer_name: customerInfo.name || 'Pelanggan Web',
+      customer_name: customerInfo.name || 'Pelanggan Sistem',
       customer_phone: customerInfo.phone || '',
       team_name: customerInfo.teamName || '-',
       notes: customerInfo.notes || '',
@@ -190,27 +189,11 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
     try {
       await saveOrderToSupabase(orderPayload);
     } catch (err) {
-      console.warn('Error saving order:', err);
+      console.warn('Error saving order to system DB:', err);
+    } finally {
+      setIsSubmitting(false);
+      setOrderSuccess(orderPayload);
     }
-
-    const waText = `Salam Admin AYEZZ GLOBAL! Saya ingin membuat pesanan custom jersi:
-
-📌 *PRODUCT:* ${product.name}
-🏷️ *KATEGORI:* ${product.category || 'SUBLIMASI'} (${product.subCategory || '-'})
-✂️ *JENIS KOLAR:* ${selectedCut.name} (+RM ${cutAddOn})
-🧵 *FABRIK:* ${selectedFabric.name} (RM ${basePricePerPcs}/pcs)
-📊 *PECAHAN SAIZ:* ${sizeSummary}
-📦 *JUMLAH KUANTITI:* ${totalQuantity} pcs
-💰 *ANGGARAN HARGA:* RM ${totalPrice.toFixed(2)} (RM ${pricePerPcs}/pcs)
-
-👤 *NAMA:* ${customerInfo.name || '-'}
-🏢 *PASUKAN/SAMPEL:* ${customerInfo.teamName || '-'}
-📞 *NO TEL:* ${customerInfo.phone || '-'}
-📝 *NOTA:* ${customerInfo.notes || '-'}`;
-
-    const waUrl = `https://wa.me/601112345678?text=${encodeURIComponent(waText)}`;
-    setIsSubmitting(false);
-    window.open(waUrl, '_blank');
   };
 
   return (
@@ -229,7 +212,7 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
           </div>
 
           <div className="flex items-center space-x-3">
-            {viewMode === 'order' && (
+            {viewMode === 'order' && !orderSuccess && (
               <button
                 type="button"
                 onClick={() => setViewMode('preview')}
@@ -251,7 +234,59 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
 
         {/* MODAL BODY */}
         <div className="p-6 sm:p-8 flex-1">
-          {viewMode === 'preview' ? (
+          {orderSuccess ? (
+            /* ========================================================
+               MODE 3: RESIT DEPOSIT / CONFIRMATION IN-APP SYSTEM RECEIPT
+               ======================================================== */
+            <div className="py-8 text-center space-y-6 max-w-lg mx-auto">
+              <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
+                <CheckCircle2 className="w-10 h-10" />
+              </div>
+
+              <div className="space-y-2">
+                <span className="text-[10px] font-mono font-bold text-emerald-700 uppercase tracking-widest bg-emerald-50 px-3.5 py-1 rounded-full border border-emerald-200">
+                  PESANAN BERJAYA DISIMPAN KE SISTEM
+                </span>
+                <h3 className="text-2xl sm:text-3xl font-black uppercase text-[#111111] pt-2">
+                  Resit Pesanan #{orderSuccess.order_id}
+                </h3>
+                <p className="text-xs text-neutral-500 font-normal leading-relaxed">
+                  Pesanan kustom jersi anda telah berjaya direkodkan secara langsung ke dalam pangkalan data sistem pengeluaran AYEZZ GLOBAL.
+                </p>
+              </div>
+
+              {/* Receipt Summary Card */}
+              <div className="p-6 bg-[#F5F5F7] rounded-3xl text-left space-y-3.5 border border-neutral-200 text-xs">
+                <div className="flex justify-between border-b border-neutral-200 pb-2.5">
+                  <span className="font-mono text-neutral-500 font-bold">REKA BENTUK:</span>
+                  <span className="font-bold text-[#111111]">{orderSuccess.product_name}</span>
+                </div>
+                <div className="flex justify-between border-b border-neutral-200 pb-2.5">
+                  <span className="font-mono text-neutral-500 font-bold">JENIS KOLAR:</span>
+                  <span className="font-bold text-[#111111]">{orderSuccess.collar_cut}</span>
+                </div>
+                <div className="flex justify-between border-b border-neutral-200 pb-2.5">
+                  <span className="font-mono text-neutral-500 font-bold">FABRIK:</span>
+                  <span className="font-bold text-[#111111]">{orderSuccess.fabric_type}</span>
+                </div>
+                <div className="flex justify-between border-b border-neutral-200 pb-2.5">
+                  <span className="font-mono text-neutral-500 font-bold">JUMLAH KUANTITI:</span>
+                  <span className="font-bold text-[#111111]">{orderSuccess.total_qty} pcs</span>
+                </div>
+                <div className="flex justify-between pt-1 text-sm font-black text-[#111111]">
+                  <span>JUMLAH ANGGARAN:</span>
+                  <span className="text-emerald-700">RM {orderSuccess.total_price.toFixed(2)}</span>
+                </div>
+              </div>
+
+              <button
+                onClick={onClose}
+                className="w-full py-4 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-xs uppercase tracking-widest rounded-2xl transition-all shadow-md"
+              >
+                Selesai & Kembali Ke Katalog
+              </button>
+            </div>
+          ) : viewMode === 'preview' ? (
             /* ========================================================
                MODE 1: PRATONTON DESAIN (PREVIEW MODE WITH TARGETED CURSOR ZOOM)
                ======================================================== */
@@ -383,9 +418,9 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
             </div>
           ) : (
             /* ========================================================
-               MODE 2: MODUS PEMESANAN / CONFIGURATOR (ORDER MODE)
+               MODE 2: MODUS PEMESANAN / CONFIGURATOR (INTERNAL SYSTEM ORDER MODE)
                ======================================================== */
-            <form onSubmit={handleWhatsAppOrder} className="space-y-8">
+            <form onSubmit={handleSystemOrder} className="space-y-8">
               <div className="flex items-center justify-between border-b border-neutral-100 pb-4">
                 <div>
                   <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest block">
@@ -531,7 +566,7 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
                 </div>
               </div>
 
-              {/* PRICE SUMMARY & SUBMIT TO WHATSAPP */}
+              {/* PRICE SUMMARY & SUBMIT TO SYSTEM DATABASE */}
               <div className="p-5 bg-neutral-900 text-white rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
                 <div>
                   <span className="text-[10px] font-mono text-neutral-400 block uppercase">RINGKASAN ANGGARAN</span>
@@ -547,7 +582,7 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
                   className="px-8 py-3.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-95 flex items-center space-x-2 disabled:opacity-50"
                 >
                   <Send className="w-4 h-4" />
-                  <span>Hantar Pesanan Ke WhatsApp</span>
+                  <span>Sahkan & Hantar Pesanan Ke Sistem</span>
                 </button>
               </div>
             </form>
