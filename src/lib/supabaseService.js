@@ -12,21 +12,16 @@ import {
 export async function getCategories() {
   if (!isSupabaseConnected) return INITIAL_CATALOGS;
   try {
-    const { data, error } = await supabase.from('categories').select('*').order('code', { ascending: true });
+    const { data: catData, error: catErr } = await supabase.from('categories').select('*').order('code', { ascending: true });
     
-    // Combine fetched categories with INITIAL_CATALOGS so no master categories are lost
-    let combinedCategories = data && data.length > 0 ? [...data] : [];
-    
-    INITIAL_CATALOGS.forEach(initCat => {
-      if (!combinedCategories.some(c => c.id === initCat.id || c.title?.toLowerCase() === initCat.title?.toLowerCase())) {
-        combinedCategories.push(initCat);
-      }
-    });
+    // Priority 1: Use Supabase categories directly
+    const categoriesSource = (catData && catData.length > 0) ? catData : INITIAL_CATALOGS;
 
     const { data: subData } = await supabase.from('sub_categories').select('*');
+    const { data: templateData } = await supabase.from('design_templates').select('category');
 
-    return combinedCategories.map(item => {
-      const categorySubs = subData ? subData.filter(s => s.category_id === item.id) : [];
+    return categoriesSource.map(item => {
+      const categorySubs = subData ? subData.filter(s => s.category_id === item.id || s.category_id === item.code) : [];
       let subCategoryTitles = categorySubs.map(s => s.title);
       
       if (item.subCategories && Array.isArray(item.subCategories)) {
@@ -37,12 +32,15 @@ export async function getCategories() {
 
       if (!subCategoryTitles.includes('Semua')) subCategoryTitles.unshift('Semua');
 
+      const tplCount = templateData ? templateData.filter(t => t.category?.toLowerCase() === item.title?.toLowerCase()).length : 0;
+      const countLabel = tplCount > 0 ? `${tplCount} Design` : `${Math.max(subCategoryTitles.length - 1, 0)} Sub-Kategori`;
+
       return {
         id: item.id,
         code: item.code || 'CAT',
         title: item.title,
         description: item.description || '',
-        itemCount: `${subCategoryTitles.length - 1} Jenis`,
+        itemCount: countLabel,
         thumbnail: item.thumbnail || '/images/catalog/jersey-olahraga.jfif',
         subCategories: subCategoryTitles,
         rawSubCategories: categorySubs
@@ -333,14 +331,9 @@ export async function getDesignTemplates() {
   try {
     const { data, error } = await supabase.from('design_templates').select('*').order('created_at', { ascending: false });
     
-    let combinedTemplates = data && data.length > 0 ? [...data] : [];
-    INITIAL_TEMPLATES.forEach(initTpl => {
-      if (!combinedTemplates.some(t => t.id === initTpl.id || t.name?.toLowerCase() === initTpl.name?.toLowerCase())) {
-        combinedTemplates.push(initTpl);
-      }
-    });
+    const templatesSource = (data && data.length > 0) ? data : INITIAL_TEMPLATES;
 
-    return combinedTemplates.map(item => {
+    return templatesSource.map(item => {
       const imgList = Array.isArray(item.images) && item.images.length > 0
         ? item.images
         : (item.thumbnail ? [item.thumbnail] : ['/images/catalog/jersey-olahraga.jfif']);
