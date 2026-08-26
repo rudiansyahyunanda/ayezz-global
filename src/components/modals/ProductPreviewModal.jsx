@@ -204,27 +204,16 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
           </div>
 
           <div className="flex items-center space-x-3">
-            {/* TOGGLE BUTTON PREVIEW VS ORDER */}
-            <button
-              onClick={() => setViewMode(viewMode === 'preview' ? 'order' : 'preview')}
-              className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all flex items-center space-x-2 ${
-                viewMode === 'preview'
-                  ? 'bg-[#111111] text-white hover:bg-neutral-800 shadow-sm'
-                  : 'bg-amber-500 text-white hover:bg-amber-600 shadow-sm'
-              }`}
-            >
-              {viewMode === 'preview' ? (
-                <>
-                  <ShoppingBag className="w-3.5 h-3.5" />
-                  <span>Tempah Desain Ini →</span>
-                </>
-              ) : (
-                <>
-                  <Eye className="w-3.5 h-3.5" />
-                  <span>← Lihat Pratonton</span>
-                </>
-              )}
-            </button>
+            {viewMode === 'order' && (
+              <button
+                type="button"
+                onClick={() => setViewMode('preview')}
+                className="px-3.5 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-[#111111] rounded-full text-xs font-bold transition-all flex items-center space-x-1.5"
+              >
+                <Eye className="w-3.5 h-3.5" />
+                <span>Lihat Pratonton</span>
+              </button>
+            )}
 
             <button
               onClick={onClose}
