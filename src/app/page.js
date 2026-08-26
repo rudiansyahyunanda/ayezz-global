@@ -100,7 +100,7 @@ export default function CleanHomepagePortal() {
       </header>
 
       {/* 3. HERO SHOWCASE SECTION */}
-      <section className="py-16 px-6 bg-[#F8F8F8] border-b border-neutral-200">
+      <section className="py-16 px-6 bg-white border-b border-neutral-100">
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           <div className="lg:col-span-6 space-y-5 text-left">
             <span className="text-[11px] font-mono font-bold tracking-widest text-neutral-500 uppercase block">
