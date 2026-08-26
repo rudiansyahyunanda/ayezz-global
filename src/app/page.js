@@ -96,20 +96,18 @@ export default function SmoothHeaderHomepage() {
 
       {/* 2. SILKY SMOOTH GLASS NAVBAR */}
       <header
-        className={`sticky top-0 z-40 w-full transition-all duration-500 ease-in-out ${
-          isScrolled
+        className={`sticky top-0 z-40 w-full transition-all duration-500 ease-in-out ${isScrolled
             ? 'h-16 bg-white/85 backdrop-blur-md border-b border-neutral-200/80 shadow-xs'
             : 'h-24 bg-white border-b border-neutral-100'
-        }`}
+          }`}
       >
         <div className="max-w-7xl mx-auto px-8 sm:px-12 h-full flex items-center justify-between transition-all duration-500">
           <Link href="/" className="flex items-center space-x-3 group py-2">
             <img
               src="/logo/ayezz-logo-01.svg"
               alt="AYEZZ GLOBAL Logo"
-              className={`w-auto transition-all duration-500 group-hover:scale-[1.02] ${
-                isScrolled ? 'h-5 sm:h-6' : 'h-6 sm:h-7'
-              }`}
+              className={`w-auto transition-all duration-500 group-hover:scale-[1.02] ${isScrolled ? 'h-5 sm:h-6' : 'h-6 sm:h-7'
+                }`}
             />
           </Link>
 
@@ -125,9 +123,8 @@ export default function SmoothHeaderHomepage() {
           <div className="flex items-center space-x-4">
             <button
               onClick={handleTempahCustomClick}
-              className={`bg-[#111111] hover:bg-neutral-800 text-white font-bold text-[11px] uppercase tracking-[0.12em] rounded-full transition-all duration-500 active:scale-[0.98] flex items-center space-x-2 shadow-2xs ${
-                isScrolled ? 'px-5 py-2' : 'px-6 py-2.5'
-              }`}
+              className={`bg-[#111111] hover:bg-neutral-800 text-white font-bold text-[11px] uppercase tracking-[0.12em] rounded-full transition-all duration-500 active:scale-[0.98] flex items-center space-x-2 shadow-2xs ${isScrolled ? 'px-5 py-2' : 'px-6 py-2.5'
+                }`}
             >
               <ShoppingBag className="w-3.5 h-3.5 text-white" />
               <span>Tempah Custom</span>
@@ -244,7 +241,7 @@ export default function SmoothHeaderHomepage() {
       {/* 5. FACTORY & TECHNICAL FEATURES SECTION (PURE APPLE MONOCHROME MINIMALIST) */}
       <section id="teknologi" className="py-28 sm:py-36 px-8 sm:px-12 bg-[#000000] text-white border-t border-neutral-900 relative">
         <div className="max-w-7xl mx-auto space-y-16">
-          
+
           {/* SECTION HEADER */}
           <div className="text-center max-w-3xl mx-auto space-y-4">
             <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-[0.25em] bg-neutral-900 px-4 py-1.5 rounded-full border border-neutral-800 inline-block">
@@ -261,7 +258,7 @@ export default function SmoothHeaderHomepage() {
 
           {/* 3 MONOCHROME APPLE GLASS CARDS GRID */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
-            
+
             {/* CARD 1 */}
             <div className="bg-[#111113] border border-neutral-800/80 hover:border-neutral-600 p-8 sm:p-10 rounded-3xl space-y-6 transition-all duration-300 hover:-translate-y-1 shadow-lg">
               <div className="flex items-center justify-between">
@@ -336,6 +333,26 @@ export default function SmoothHeaderHomepage() {
 
           </div>
 
+          {/* MONOCHROME METRIC BANNER */}
+          <div className="p-8 sm:p-10 bg-[#111113] border border-neutral-800/80 rounded-3xl grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-neutral-800/60 shadow-lg">
+            <div className="space-y-1">
+              <span className="text-3xl sm:text-4xl font-black text-white font-mono block">100%</span>
+              <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest block">FULL CUSTOM</span>
+            </div>
+            <div className="space-y-1 pl-4 sm:pl-0">
+              <span className="text-3xl sm:text-4xl font-black text-white font-mono block">0 UNIT</span>
+              <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest block">MINIMUM ORDER</span>
+            </div>
+            <div className="space-y-1">
+              <span className="text-3xl sm:text-4xl font-black text-white font-mono block">48 JAM</span>
+              <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest block">PROSES KILANG</span>
+            </div>
+            <div className="space-y-1 pl-4 sm:pl-0">
+              <span className="text-3xl sm:text-4xl font-black text-white font-mono block">GRED 5.0</span>
+              <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest block">SUBLIMASI PRO</span>
+            </div>
+          </div>
+
         </div>
       </section>
 
@@ -353,7 +370,7 @@ export default function SmoothHeaderHomepage() {
       <footer className="bg-[#000000] text-white py-16 px-8 sm:px-12 text-xs border-t border-neutral-900">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center space-x-4">
-            <img src="/logo/ayezz-logo-01.svg" alt="AYEZZ Logo" className="h-6 w-auto brightness-200" />
+            <img src="/logo/ayezz-logo-01.svg" alt="AYEZZ Logo" className="h-6 w-auto brightness-0 invert" />
             <span className="text-neutral-500 font-mono">© 2026 AYEZZ GLOBAL — Studio Pakaian Sublimasi</span>
           </div>
 
