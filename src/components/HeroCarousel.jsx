@@ -67,7 +67,7 @@ export default function PureTransparentPNGCarousel({ onSelectProduct }) {
 
   return (
     <div className="w-full flex flex-col items-center justify-center relative select-none py-2 bg-transparent">
-      {/* PURE TRANSPARENT PNG CAROUSEL CONTAINER (NO WHITE BOX, NO CARD BACKGROUND, NO BORDERS) */}
+      {/* 100% TRANSPARENT PNG / MIX-BLEND STAGE (ZERO WHITE BOX, ZERO SHADOW) */}
       <div className="relative w-full h-[360px] sm:h-[420px] flex items-center justify-center overflow-hidden bg-transparent">
         {carouselItems.map((item, index) => {
           const count = carouselItems.length;
@@ -98,17 +98,18 @@ export default function PureTransparentPNGCarousel({ onSelectProduct }) {
               className={`absolute w-[260px] sm:w-[320px] h-[340px] sm:h-[380px] transition-all duration-700 ease-out bg-transparent flex items-center justify-center border-0 shadow-none outline-none ${positionClasses}`}
               style={{ backgroundColor: 'transparent', background: 'transparent' }}
             >
-              {/* PURE TRANSPARENT PNG IMAGE ONLY (OBJECT-CONTAIN FOR FULL PNG TRANSPARENCY) */}
+              {/* MIX-BLEND MULTIPLY REMOVES ANY WHITE BACKGROUND AREA IN PNG/JPG AUTOMATICALLY */}
               <img
                 src={item.image}
                 alt={item.name || 'Reka Bentuk PNG'}
                 decoding="async"
                 fetchPriority="high"
-                className="w-full h-full object-contain bg-transparent border-0 shadow-none outline-none transition-transform duration-500 hover:scale-105 img-crisp"
+                className="w-full h-full object-contain bg-transparent border-0 shadow-none outline-none transition-transform duration-500 hover:scale-105 img-crisp mix-blend-multiply"
                 style={{
                   imageRendering: '-webkit-optimize-contrast',
                   backgroundColor: 'transparent',
-                  background: 'transparent'
+                  background: 'transparent',
+                  mixBlendMode: 'multiply'
                 }}
                 onError={(e) => {
                   e.target.onerror = null;
@@ -120,7 +121,7 @@ export default function PureTransparentPNGCarousel({ onSelectProduct }) {
         })}
       </div>
 
-      {/* MINIMALIST CONTROL BUTTONS & DOTS */}
+      {/* MINIMALIST CONTROL ARROWS & DOTS */}
       <div className="flex items-center space-x-4 z-40 mt-1">
         <button
           onClick={handlePrev}
