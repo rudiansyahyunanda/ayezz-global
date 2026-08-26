@@ -6,15 +6,7 @@ import {
   Search,
   ChevronDown,
   ChevronUp,
-  ShoppingBag,
-  SlidersHorizontal,
-  X,
   RefreshCw,
-  Sliders,
-  ChevronRight,
-  Flame,
-  User,
-  Heart,
   Settings
 } from 'lucide-react';
 import ProductOrderModal from '../../components/modals/ProductOrderModal';
@@ -26,12 +18,11 @@ import {
 } from '../../lib/supabaseService';
 import {
   DESIGN_TEMPLATES,
-  MAIN_CATALOGS,
   CUT_TYPES as FALLBACK_CUTS,
   FABRIC_TYPES as FALLBACK_FABRICS
 } from '../../data/sublimationProducts';
 
-export default function SpecsStyleCatalogPage() {
+export default function CleanSpecsStyleCatalogPage() {
   const [templates, setTemplates] = useState([]);
   const [categories, setCategories] = useState([]);
   const [cutTypes, setCutTypes] = useState([]);
@@ -45,7 +36,7 @@ export default function SpecsStyleCatalogPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('terbaru');
 
-  // Accordion Expand/Collapse States
+  // Accordion States
   const [openSections, setOpenSections] = useState({
     kategori: true,
     potongan: true,
@@ -113,9 +104,7 @@ export default function SpecsStyleCatalogPage() {
     );
   };
 
-  // Filter templates
   const filteredTemplates = templates.filter((tpl) => {
-    // Category Filter
     if (selectedCategories.length > 0) {
       const matchesCat = selectedCategories.some((cat) =>
         tpl.category?.toLowerCase().includes(cat.toLowerCase())
@@ -123,7 +112,6 @@ export default function SpecsStyleCatalogPage() {
       if (!matchesCat) return false;
     }
 
-    // Search Filter
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       const matchesSearch =
@@ -137,14 +125,12 @@ export default function SpecsStyleCatalogPage() {
     return true;
   });
 
-  // Sort templates
   const sortedTemplates = [...filteredTemplates].sort((a, b) => {
     if (sortBy === 'nama_asc') return a.name.localeCompare(b.name);
     if (sortBy === 'nama_desc') return b.name.localeCompare(a.name);
-    return 0; // Default terbaru
+    return 0;
   });
 
-  // Calculate category counts
   const categoryCounts = {};
   templates.forEach((t) => {
     if (t.category) {
@@ -159,52 +145,43 @@ export default function SpecsStyleCatalogPage() {
   const sizesList = ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL'];
 
   return (
-    <div className="min-h-screen bg-white text-[#1A1A1A] font-sans antialiased flex flex-col select-none">
-      {/* 1. TOP ANNOUNCEMENT DISCOUNT BAR */}
-      <div className="bg-[#1A1A1A] text-white text-[11px] font-bold tracking-wider uppercase py-2 px-4 text-center border-b border-neutral-800">
-        PERCUMA CONSULTATION REKA BENTUK & BEBAS CAS SETUP 100% • KATALOG KATALOG REKA TEMPLATE SUBLIMASI 2026
+    <div className="min-h-screen bg-white text-[#111111] font-sans antialiased flex flex-col select-none">
+      {/* 1. TOP ANNOUNCEMENT BAR */}
+      <div className="bg-[#111111] text-white text-[11px] font-mono tracking-wider uppercase py-2 px-4 text-center">
+        AYEZZ GLOBAL — KATALOG REKA TEMPLATE SUBLIMASI 2026
       </div>
 
       {/* 2. SPECS-STYLE CLEAN WHITE HEADER NAVBAR */}
-      <header className="sticky top-0 z-40 bg-white border-b border-[#E5E5E5] shadow-2xs">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between">
-          {/* Brand Logo */}
+      <header className="sticky top-0 z-40 bg-white border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center space-x-3 group">
             <img
               src="/logo/ayezz-logo-01.svg"
               alt="AYEZZ Logo"
-              className="h-8 sm:h-9 w-auto transition-transform group-hover:scale-105"
+              className="h-8 w-auto transition-transform group-hover:scale-105"
             />
           </Link>
 
-          {/* Navigation Links */}
-          <nav className="hidden lg:flex items-center space-x-7 text-xs font-black uppercase tracking-wider text-[#1A1A1A]">
-            <Link href="/new" className="text-[#1A1A1A] border-b-2 border-[#1A1A1A] pb-1 font-black flex items-center space-x-1">
-              <span>NEW</span>
-            </Link>
-            <a href="/#katalog" className="hover:text-[#757575] transition-colors">OLAHRAGA</a>
-            <a href="/#katalog" className="hover:text-[#757575] transition-colors">FUTSAL & BOLA</a>
-            <a href="/#katalog" className="hover:text-[#757575] transition-colors">E-SPORTS</a>
-            <a href="/#katalog" className="hover:text-[#757575] transition-colors">SEKOLAH & KAMPUS</a>
-            <a href="/#katalog" className="hover:text-[#757575] transition-colors">CORPORATE</a>
-            <a href="/#katalog" className="hover:text-[#757575] transition-colors">FASHION</a>
+          <nav className="hidden lg:flex items-center space-x-7 text-xs font-bold uppercase tracking-wider text-[#111111]">
+            <Link href="/" className="hover:text-slate-500 transition-colors">Utama</Link>
+            <Link href="/new" className="text-[#111111] border-b-2 border-[#111111] pb-1 font-bold">New</Link>
+            <a href="/#kategori-master" className="hover:text-slate-500 transition-colors">Kategori</a>
           </nav>
 
-          {/* Right Icons */}
-          <div className="flex items-center space-x-5 text-[#1A1A1A]">
+          <div className="flex items-center space-x-5 text-[#111111]">
             <div className="relative hidden sm:block">
               <input
                 type="text"
                 placeholder="Cari..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-36 lg:w-48 pl-8 pr-3 py-1.5 bg-[#F6F5F3] border border-[#E5E5E5] focus:bg-white focus:border-[#1A1A1A] rounded-full text-xs font-medium outline-none transition-all"
+                className="w-36 lg:w-48 pl-8 pr-3 py-1.5 bg-[#F5F5F7] border border-slate-200 focus:bg-white focus:border-[#111111] rounded-full text-xs font-medium outline-none transition-all"
               />
               <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
             </div>
 
             <Link href="/admin" className="hover:text-slate-600 transition-colors" title="Panel Admin">
-              <Settings className="w-5 h-5" />
+              <Settings className="w-4 h-4 text-slate-500" />
             </Link>
           </div>
         </div>
@@ -212,26 +189,26 @@ export default function SpecsStyleCatalogPage() {
 
       {/* 3. BREADCRUMB & PAGE HEADER BAR */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 pt-6 pb-4 w-full">
-        <div className="flex items-center space-x-2 text-[11px] font-mono text-[#757575] uppercase tracking-wider mb-3">
-          <Link href="/" className="hover:text-[#1A1A1A]">HOME</Link>
+        <div className="flex items-center space-x-2 text-[11px] font-mono text-slate-400 uppercase tracking-wider mb-3">
+          <Link href="/" className="hover:text-[#111111]">HOME</Link>
           <span>/</span>
-          <span className="font-extrabold text-[#1A1A1A]">NEW</span>
+          <span className="font-bold text-[#111111]">NEW</span>
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-[#E5E5E5]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200">
           <div className="flex items-baseline space-x-3">
-            <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-[#1A1A1A]">New</h1>
-            <span className="text-xs font-mono text-[#757575] font-normal">
-              [{sortedTemplates.length} Katalog Template Tersedia]
+            <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-[#111111]">New</h1>
+            <span className="text-xs font-mono text-slate-500 font-normal">
+              [{sortedTemplates.length} Template]
             </span>
           </div>
 
           <div className="flex items-center space-x-3">
-            <span className="text-xs font-mono font-bold text-[#757575] uppercase">SUSUN:</span>
+            <span className="text-xs font-mono font-bold text-slate-500 uppercase">SUSUN:</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-3 py-1.5 bg-white border border-[#E5E5E5] rounded-md text-xs font-bold text-[#1A1A1A] outline-none cursor-pointer hover:border-[#1A1A1A] transition-colors"
+              className="px-3 py-1.5 bg-white border border-slate-200 rounded-md text-xs font-bold text-[#111111] outline-none cursor-pointer hover:border-[#111111] transition-colors"
             >
               <option value="terbaru">Terbaru</option>
               <option value="nama_asc">Nama (A-Z)</option>
@@ -241,40 +218,40 @@ export default function SpecsStyleCatalogPage() {
         </div>
       </div>
 
-      {/* 4. MAIN 2-COLUMN CATALOG CONTAINER (SIDEBAR + PRODUCT GRID) */}
+      {/* 4. MAIN 2-COLUMN CATALOG CONTAINER */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 w-full flex-1 flex flex-col md:flex-row items-start gap-8">
         
-        {/* LEFT SIDEBAR FILTERS (SPECS.ID ACCORDION DESIGN) */}
-        <aside className="w-full md:w-64 shrink-0 space-y-6 select-none border-b md:border-b-0 pb-6 md:pb-0 border-[#E5E5E5]">
+        {/* LEFT SIDEBAR FILTERS */}
+        <aside className="w-full md:w-64 shrink-0 space-y-6 select-none border-b md:border-b-0 pb-6 md:pb-0 border-slate-200">
           
           {/* ACCORDION 1: KATEGORI */}
-          <div className="border-b border-[#E5E5E5] pb-5">
+          <div className="border-b border-slate-200 pb-5">
             <button
               onClick={() => toggleSection('kategori')}
-              className="w-full flex items-center justify-between py-2 text-xs font-black uppercase tracking-wider text-[#1A1A1A]"
+              className="w-full flex items-center justify-between py-2 text-xs font-bold uppercase tracking-wider text-[#111111]"
             >
               <span>KATEGORI</span>
               {openSections.kategori ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
             </button>
 
             {openSections.kategori && (
-              <div className="mt-3 space-y-2 text-xs font-medium text-[#757575]">
+              <div className="mt-3 space-y-2 text-xs font-medium text-slate-600">
                 {availableCategories.map((cat) => {
                   const count = categoryCounts[cat] || 0;
                   const isChecked = selectedCategories.includes(cat);
                   return (
                     <label
                       key={cat}
-                      className="flex items-center justify-between cursor-pointer hover:text-[#1A1A1A] transition-colors py-0.5"
+                      className="flex items-center justify-between cursor-pointer hover:text-[#111111] transition-colors py-0.5"
                     >
                       <div className="flex items-center space-x-2">
                         <input
                           type="checkbox"
                           checked={isChecked}
                           onChange={() => toggleCategoryFilter(cat)}
-                          className="w-3.5 h-3.5 accent-[#1A1A1A] rounded cursor-pointer"
+                          className="w-3.5 h-3.5 accent-[#111111] rounded cursor-pointer"
                         />
-                        <span className={isChecked ? 'font-bold text-[#1A1A1A]' : ''}>{cat}</span>
+                        <span className={isChecked ? 'font-bold text-[#111111]' : ''}>{cat}</span>
                       </div>
                       <span className="text-[11px] font-mono text-slate-400">({count})</span>
                     </label>
@@ -285,31 +262,31 @@ export default function SpecsStyleCatalogPage() {
           </div>
 
           {/* ACCORDION 2: JENIS POTONGAN / KOLAR */}
-          <div className="border-b border-[#E5E5E5] pb-5">
+          <div className="border-b border-slate-200 pb-5">
             <button
               onClick={() => toggleSection('potongan')}
-              className="w-full flex items-center justify-between py-2 text-xs font-black uppercase tracking-wider text-[#1A1A1A]"
+              className="w-full flex items-center justify-between py-2 text-xs font-bold uppercase tracking-wider text-[#111111]"
             >
               <span>JENIS POTONGAN / KOLAR</span>
               {openSections.potongan ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
             </button>
 
             {openSections.potongan && (
-              <div className="mt-3 space-y-2 text-xs font-medium text-[#757575]">
+              <div className="mt-3 space-y-2 text-xs font-medium text-slate-600">
                 {cutTypes.map((cut) => {
                   const isChecked = selectedCuts.includes(cut.name);
                   return (
                     <label
                       key={cut.id || cut.name}
-                      className="flex items-center space-x-2 cursor-pointer hover:text-[#1A1A1A] transition-colors py-0.5"
+                      className="flex items-center space-x-2 cursor-pointer hover:text-[#111111] transition-colors py-0.5"
                     >
                       <input
                         type="checkbox"
                         checked={isChecked}
                         onChange={() => toggleCutFilter(cut.name)}
-                        className="w-3.5 h-3.5 accent-[#1A1A1A] rounded cursor-pointer"
+                        className="w-3.5 h-3.5 accent-[#111111] rounded cursor-pointer"
                       />
-                      <span className={isChecked ? 'font-bold text-[#1A1A1A]' : ''}>{cut.name}</span>
+                      <span className={isChecked ? 'font-bold text-[#111111]' : ''}>{cut.name}</span>
                     </label>
                   );
                 })}
@@ -318,31 +295,31 @@ export default function SpecsStyleCatalogPage() {
           </div>
 
           {/* ACCORDION 3: JENIS KAIN / FABRIK */}
-          <div className="border-b border-[#E5E5E5] pb-5">
+          <div className="border-b border-slate-200 pb-5">
             <button
               onClick={() => toggleSection('fabrik')}
-              className="w-full flex items-center justify-between py-2 text-xs font-black uppercase tracking-wider text-[#1A1A1A]"
+              className="w-full flex items-center justify-between py-2 text-xs font-bold uppercase tracking-wider text-[#111111]"
             >
               <span>JENIS KAIN / FABRIK</span>
               {openSections.fabrik ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
             </button>
 
             {openSections.fabrik && (
-              <div className="mt-3 space-y-2 text-xs font-medium text-[#757575]">
+              <div className="mt-3 space-y-2 text-xs font-medium text-slate-600">
                 {fabricTypes.map((fab) => {
                   const isChecked = selectedFabrics.includes(fab.name);
                   return (
                     <label
                       key={fab.id || fab.name}
-                      className="flex items-center space-x-2 cursor-pointer hover:text-[#1A1A1A] transition-colors py-0.5"
+                      className="flex items-center space-x-2 cursor-pointer hover:text-[#111111] transition-colors py-0.5"
                     >
                       <input
                         type="checkbox"
                         checked={isChecked}
                         onChange={() => toggleFabricFilter(fab.name)}
-                        className="w-3.5 h-3.5 accent-[#1A1A1A] rounded cursor-pointer"
+                        className="w-3.5 h-3.5 accent-[#111111] rounded cursor-pointer"
                       />
-                      <span className={isChecked ? 'font-bold text-[#1A1A1A]' : ''}>{fab.name}</span>
+                      <span className={isChecked ? 'font-bold text-[#111111]' : ''}>{fab.name}</span>
                     </label>
                   );
                 })}
@@ -354,7 +331,7 @@ export default function SpecsStyleCatalogPage() {
           <div className="pb-5">
             <button
               onClick={() => toggleSection('ukuran')}
-              className="w-full flex items-center justify-between py-2 text-xs font-black uppercase tracking-wider text-[#1A1A1A]"
+              className="w-full flex items-center justify-between py-2 text-xs font-bold uppercase tracking-wider text-[#111111]"
             >
               <span>UKURAN SAIZ</span>
               {openSections.ukuran ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -370,8 +347,8 @@ export default function SpecsStyleCatalogPage() {
                       onClick={() => toggleSizeFilter(sz)}
                       className={`py-2 text-[11px] font-mono font-bold rounded border transition-all ${
                         isSelected
-                          ? 'bg-[#1A1A1A] text-white border-[#1A1A1A]'
-                          : 'bg-white text-[#1A1A1A] border-[#E5E5E5] hover:border-[#1A1A1A]'
+                          ? 'bg-[#111111] text-white border-[#111111]'
+                          : 'bg-white text-[#111111] border-slate-200 hover:border-[#111111]'
                       }`}
                     >
                       {sz}
@@ -382,7 +359,6 @@ export default function SpecsStyleCatalogPage() {
             )}
           </div>
 
-          {/* RESET FILTERS BUTTON */}
           {(selectedCategories.length > 0 || selectedCuts.length > 0 || selectedFabrics.length > 0 || selectedSizes.length > 0 || searchQuery) && (
             <button
               onClick={() => {
@@ -392,24 +368,23 @@ export default function SpecsStyleCatalogPage() {
                 setSelectedSizes([]);
                 setSearchQuery('');
               }}
-              className="w-full py-2 bg-[#F6F5F3] hover:bg-slate-200 text-[#1A1A1A] text-xs font-bold rounded-md transition-colors"
+              className="w-full py-2 bg-[#F5F5F7] hover:bg-slate-200 text-[#111111] text-xs font-bold rounded-md transition-colors"
             >
               Reset Semua Penapis
             </button>
           )}
         </aside>
 
-        {/* RIGHT MAIN CATALOG GRID (SPECS.ID CLEAN 4-COLUMN DESIGN) */}
+        {/* RIGHT MAIN CATALOG GRID */}
         <main className="flex-1 w-full">
           {isLoading ? (
             <div className="py-24 flex flex-col items-center justify-center space-y-3">
-              <RefreshCw className="w-8 h-8 text-[#1A1A1A] animate-spin" />
-              <p className="text-xs font-mono text-slate-500 font-bold">Memuatkan katalog produk dari Supabase...</p>
+              <RefreshCw className="w-6 h-6 text-[#111111] animate-spin" />
+              <p className="text-xs font-mono text-slate-400 font-bold">Memuatkan katalog...</p>
             </div>
           ) : sortedTemplates.length === 0 ? (
-            <div className="py-20 text-center bg-[#F8F8F8] rounded-xl border border-[#E5E5E5] p-8 space-y-3">
-              <p className="text-sm font-bold text-[#1A1A1A]">Tiada Produk Ditemui</p>
-              <p className="text-xs text-[#757575]">Sila padam beberapa kriteria penapis untuk melihat lebih banyak produk katalog.</p>
+            <div className="py-20 text-center bg-[#F5F5F7] rounded-xl border border-slate-200 p-8 space-y-3">
+              <p className="text-sm font-bold text-[#111111]">Tiada Produk Ditemui</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
@@ -417,16 +392,15 @@ export default function SpecsStyleCatalogPage() {
                 <div
                   key={item.id}
                   onClick={() => setSelectedProduct(item)}
-                  className="group cursor-pointer space-y-3 flex flex-col justify-between"
+                  className="group cursor-pointer space-y-2 flex flex-col justify-between"
                 >
-                  {/* Clean Light-Grey Studio Stage Image Box (Specs.id Style) */}
-                  <div className="w-full aspect-square bg-[#F3F3F3] overflow-hidden rounded-sm relative flex items-center justify-center p-3">
+                  <div className="w-full aspect-square bg-[#F5F5F7] overflow-hidden rounded-xl relative flex items-center justify-center">
                     <img
                       src={item.thumbnail}
                       alt={item.name}
                       decoding="async"
                       fetchPriority={idx < 4 ? 'high' : 'auto'}
-                      className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 img-crisp"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 img-crisp"
                       style={{ imageRendering: '-webkit-optimize-contrast' }}
                       onError={(e) => {
                         e.target.onerror = null;
@@ -435,16 +409,15 @@ export default function SpecsStyleCatalogPage() {
                     />
                   </div>
 
-                  {/* Minimalist Specs-Style Typography */}
-                  <div className="text-center space-y-1">
-                    <span className="text-[10px] font-mono font-bold text-[#757575] uppercase tracking-widest block">
-                      {item.category || 'AYEZZ SUBLIMATION'}
+                  <div className="space-y-0.5">
+                    <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest block">
+                      {item.category || 'SUBLIMASI'}
                     </span>
-                    <h3 className="text-xs font-black text-[#1A1A1A] uppercase tracking-tight group-hover:text-slate-600 transition-colors line-clamp-2 leading-snug">
+                    <h3 className="text-xs font-bold text-[#111111] uppercase tracking-tight group-hover:text-slate-600 transition-colors line-clamp-1 leading-snug">
                       {item.name}
                     </h3>
-                    <p className="text-xs font-mono font-normal text-[#757575]">
-                      RM 70.00+ / pcs
+                    <p className="text-xs font-mono font-normal text-[#111111]">
+                      RM 70.00+
                     </p>
                   </div>
                 </div>
@@ -454,7 +427,6 @@ export default function SpecsStyleCatalogPage() {
         </main>
       </div>
 
-      {/* 5. PRODUCT DETAIL & CUSTOM SPECIFICATION ORDER MODAL */}
       {selectedProduct && (
         <ProductOrderModal
           product={selectedProduct}
@@ -464,8 +436,8 @@ export default function SpecsStyleCatalogPage() {
         />
       )}
 
-      {/* 6. CLEAN FOOTER */}
-      <footer className="bg-[#1A1A1A] text-white py-10 px-6 text-xs border-t border-neutral-800 mt-12">
+      {/* CLEAN FOOTER */}
+      <footer className="bg-[#111111] text-white py-10 px-6 text-xs border-t border-slate-800 mt-12">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center space-x-3">
             <img
@@ -473,12 +445,12 @@ export default function SpecsStyleCatalogPage() {
               alt="AYEZZ Logo"
               className="h-5 w-auto brightness-0 invert opacity-90"
             />
-            <span className="font-bold text-slate-300">© 2026 AYEZZ GLOBAL — Studio Katalog Pakaian Sublimasi</span>
+            <span className="font-medium text-slate-400">© 2026 AYEZZ GLOBAL — Studio Pakaian Sublimasi</span>
           </div>
           <div className="flex items-center space-x-6 text-slate-400 font-mono text-[11px]">
             <Link href="/" className="hover:text-white transition-colors">Utama</Link>
-            <Link href="/new" className="hover:text-white transition-colors">Katalog New</Link>
-            <Link href="/admin" className="hover:text-white transition-colors underline">Panel Admin</Link>
+            <Link href="/new" className="hover:text-white transition-colors">New</Link>
+            <Link href="/admin" className="hover:text-white transition-colors underline">Admin</Link>
           </div>
         </div>
       </footer>
