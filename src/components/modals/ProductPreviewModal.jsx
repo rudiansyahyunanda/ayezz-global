@@ -243,8 +243,10 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
                         <button
                           key={i}
                           onClick={() => setSelectedImgIdx(i)}
-                          className={`w-16 h-16 sm:w-18 sm:h-18 rounded-2xl overflow-hidden border-2 transition-all p-1 bg-[#F5F5F7] shrink-0 ${
-                            selectedImgIdx === i ? 'border-[#111111] scale-105 shadow-sm ring-2 ring-neutral-200' : 'border-transparent opacity-60 hover:opacity-100 hover:border-neutral-300'
+                          className={`w-16 h-16 sm:w-18 sm:h-18 rounded-2xl overflow-hidden border-2 transition-all p-1.5 bg-[#F5F5F7] shrink-0 outline-none shadow-none ${
+                            selectedImgIdx === i
+                              ? 'border-[#111111] opacity-100'
+                              : 'border-neutral-200/80 opacity-50 hover:opacity-100 hover:border-neutral-400'
                           }`}
                         >
                           <TransparentImage src={imgUrl} alt={`Thumbnail ${i}`} className="w-full h-full object-contain" />
