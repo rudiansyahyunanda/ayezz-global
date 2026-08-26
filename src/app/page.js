@@ -12,6 +12,7 @@ import {
 } from 'lucide-react';
 import ProductOrderModal from '../components/modals/ProductOrderModal';
 import HeroCarousel from '../components/HeroCarousel';
+import { getCurrentUser } from '../lib/authService';
 import {
   getCategories,
   getDesignTemplates
@@ -25,6 +26,15 @@ export default function SmoothHeaderHomepage() {
   const [orderedProduct, setOrderedProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
+
+  const handleTempahCustomClick = async () => {
+    const user = await getCurrentUser();
+    if (!user) {
+      window.location.href = `/login?redirect=${encodeURIComponent('/katalog')}&msg=login_required`;
+      return;
+    }
+    setOrderedProduct(featuredProduct);
+  };
 
   // Smooth Header Scroll Listener
   useEffect(() => {
@@ -108,7 +118,7 @@ export default function SmoothHeaderHomepage() {
 
           <div className="flex items-center space-x-4">
             <button
-              onClick={() => setOrderedProduct(featuredProduct)}
+              onClick={handleTempahCustomClick}
               className={`bg-[#111111] hover:bg-neutral-800 text-white font-bold text-[11px] uppercase tracking-[0.12em] rounded-full transition-all duration-500 active:scale-[0.98] flex items-center space-x-2 shadow-2xs ${
                 isScrolled ? 'px-5 py-2' : 'px-6 py-2.5'
               }`}
