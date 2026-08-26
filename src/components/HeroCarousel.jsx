@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { getDesignTemplates } from '../lib/supabaseService';
 
-export default function PureTransparentPNGCarousel({ onSelectProduct }) {
+export default function NativeTransparentPNGCarousel({ onSelectProduct }) {
   const [items, setItems] = useState([]);
   const [activeIndex, setActiveIndex] = useState(0);
 
@@ -66,9 +66,9 @@ export default function PureTransparentPNGCarousel({ onSelectProduct }) {
   };
 
   return (
-    <div className="w-full flex flex-col items-center justify-center relative select-none py-2 bg-transparent">
-      {/* 100% TRANSPARENT PNG / MIX-BLEND STAGE (ZERO WHITE BOX, ZERO SHADOW) */}
-      <div className="relative w-full h-[360px] sm:h-[420px] flex items-center justify-center overflow-hidden bg-transparent">
+    <div className="w-full flex flex-col items-center justify-center relative select-none py-2">
+      {/* NATIVE ALPHA TRANSPARENT PNG STAGE (NO OPACITY CANVAS GROUPS, NO MIX-BLEND CONFLICTS) */}
+      <div className="relative w-full h-[360px] sm:h-[420px] flex items-center justify-center overflow-hidden">
         {carouselItems.map((item, index) => {
           const count = carouselItems.length;
           let offset = (index - activeIndex + count) % count;
@@ -76,13 +76,13 @@ export default function PureTransparentPNGCarousel({ onSelectProduct }) {
 
           let positionClasses = '';
           if (offset === 0) {
-            positionClasses = 'z-30 scale-100 opacity-100 translate-x-0 cursor-pointer';
+            positionClasses = 'z-30 scale-100 translate-x-0 cursor-pointer pointer-events-auto';
           } else if (offset === -1 || (offset === count - 1 && count > 2)) {
-            positionClasses = 'z-10 scale-75 opacity-30 -translate-x-[52%] cursor-pointer hover:opacity-60';
+            positionClasses = 'z-10 scale-75 -translate-x-[55%] cursor-pointer pointer-events-auto blur-[1px]';
           } else if (offset === 1) {
-            positionClasses = 'z-10 scale-75 opacity-30 translate-x-[52%] cursor-pointer hover:opacity-60';
+            positionClasses = 'z-10 scale-75 translate-x-[55%] cursor-pointer pointer-events-auto blur-[1px]';
           } else {
-            positionClasses = 'z-0 scale-50 opacity-0 pointer-events-none';
+            positionClasses = 'z-0 scale-50 pointer-events-none hidden';
           }
 
           return (
@@ -95,21 +95,17 @@ export default function PureTransparentPNGCarousel({ onSelectProduct }) {
                   setActiveIndex(index);
                 }
               }}
-              className={`absolute w-[260px] sm:w-[320px] h-[340px] sm:h-[380px] transition-all duration-700 ease-out bg-transparent flex items-center justify-center border-0 shadow-none outline-none ${positionClasses}`}
-              style={{ backgroundColor: 'transparent', background: 'transparent' }}
+              className={`absolute w-[260px] sm:w-[320px] h-[340px] sm:h-[380px] transition-all duration-700 ease-out flex items-center justify-center ${positionClasses}`}
             >
-              {/* MIX-BLEND MULTIPLY REMOVES ANY WHITE BACKGROUND AREA IN PNG/JPG AUTOMATICALLY */}
+              {/* PURE NATIVE PNG ALPHA TRANSPARENCY - NO BACKGROUND, NO SHADOW, NO MIX-BLEND */}
               <img
                 src={item.image}
                 alt={item.name || 'Reka Bentuk PNG'}
                 decoding="async"
                 fetchPriority="high"
-                className="w-full h-full object-contain bg-transparent border-0 shadow-none outline-none transition-transform duration-500 hover:scale-105 img-crisp mix-blend-multiply"
+                className="w-full h-full object-contain transition-transform duration-500 hover:scale-105 img-crisp"
                 style={{
-                  imageRendering: '-webkit-optimize-contrast',
-                  backgroundColor: 'transparent',
-                  background: 'transparent',
-                  mixBlendMode: 'multiply'
+                  imageRendering: '-webkit-optimize-contrast'
                 }}
                 onError={(e) => {
                   e.target.onerror = null;
