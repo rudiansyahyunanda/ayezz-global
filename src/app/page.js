@@ -12,8 +12,8 @@ import {
   Printer,
   Zap,
   PackageCheck,
+  CheckCircle2,
   ShieldCheck,
-  Sparkles,
   Clock
 } from 'lucide-react';
 import ProductOrderModal from '../components/modals/ProductOrderModal';
@@ -141,7 +141,7 @@ export default function SmoothHeaderHomepage() {
         <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-20 items-center">
           <div className="lg:col-span-6 space-y-8 text-left">
             <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-white border border-neutral-300 shadow-2xs text-[10px] font-mono font-bold tracking-widest text-neutral-600 uppercase">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-[#111111] animate-pulse" />
               <span>STUDIO SUBLIMASI HIGH-PERFORMANCE</span>
             </div>
 
@@ -216,12 +216,12 @@ export default function SmoothHeaderHomepage() {
                     className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105 img-crisp"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-8 flex flex-col justify-end text-left space-y-3">
-                    <span className="text-[10px] font-mono font-bold text-amber-400 uppercase tracking-widest">
+                    <span className="text-[10px] font-mono font-bold text-neutral-300 uppercase tracking-widest">
                       {cat.code || 'CATALOG'}
                     </span>
                     <div className="flex items-center justify-between">
                       <div>
-                        <h3 className="text-xl font-black uppercase tracking-tight text-white group-hover:text-amber-300 transition-colors">
+                        <h3 className="text-xl font-black uppercase tracking-tight text-white transition-colors">
                           {cat.title}
                         </h3>
                         <p className="text-xs text-neutral-300 font-mono">
@@ -241,129 +241,118 @@ export default function SmoothHeaderHomepage() {
         </div>
       </section>
 
-      {/* 5. FACTORY & TECHNICAL FEATURES SECTION (STUNNING HIGH-END GLASSMORPHIC TECH CARDS) */}
-      <section id="teknologi" className="py-28 sm:py-36 px-8 sm:px-12 bg-[#09090B] text-white relative overflow-hidden">
-        {/* Subtle Ambient Background Gradient Lighting */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[500px] bg-neutral-800/10 blur-[140px] pointer-events-none rounded-full" />
-
-        <div className="max-w-7xl mx-auto space-y-20 relative z-10">
+      {/* 5. FACTORY & TECHNICAL FEATURES SECTION (PURE APPLE MONOCHROME MINIMALIST) */}
+      <section id="teknologi" className="py-28 sm:py-36 px-8 sm:px-12 bg-[#000000] text-white border-t border-neutral-900 relative">
+        <div className="max-w-7xl mx-auto space-y-16">
           
           {/* SECTION HEADER */}
           <div className="text-center max-w-3xl mx-auto space-y-4">
-            <span className="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-[0.25em] bg-neutral-900/80 px-4 py-1.5 rounded-full border border-neutral-800 inline-block">
+            <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-[0.25em] bg-neutral-900 px-4 py-1.5 rounded-full border border-neutral-800 inline-block">
               STANDARD KILANG & KUALITI INDUSTRI
             </span>
             <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight text-white leading-tight">
               Mengapa Memilih <br className="hidden sm:inline" />
-              <span className="bg-gradient-to-r from-white via-neutral-200 to-neutral-500 bg-clip-text text-transparent">
-                AYEZZ GLOBAL?
-              </span>
+              AYEZZ GLOBAL?
             </h2>
             <p className="text-xs sm:text-sm text-neutral-400 leading-relaxed font-normal max-w-xl mx-auto">
               Kami memproses pesanan pakaian anda di kilang pengeluaran sendiri dengan teknologi mesin cetakan sublimasi berkelajuan tinggi berpiawaian antarabangsa.
             </p>
           </div>
 
-          {/* 3 HIGH-END GLASSMORPHIC FEATURE CARDS GRID */}
+          {/* 3 MONOCHROME APPLE GLASS CARDS GRID */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
             
-            {/* CARD 1: SUBLIMASI HD */}
-            <div className="group relative p-[1px] rounded-3xl bg-gradient-to-b from-neutral-800 to-neutral-900/40 hover:from-amber-500/40 hover:to-neutral-800 transition-all duration-500 shadow-2xl hover:-translate-y-2">
-              <div className="h-full bg-[#121214]/90 backdrop-blur-xl p-8 sm:p-10 rounded-3xl space-y-6 flex flex-col justify-between border border-white/5">
-                <div className="space-y-5">
-                  <div className="flex items-center justify-between">
-                    <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-400 flex items-center justify-center font-bold shadow-xs">
-                      <Printer className="w-6 h-6" />
-                    </div>
-                    <span className="text-xs font-mono font-bold text-neutral-500 group-hover:text-amber-400 transition-colors">
-                      01 / HD PRINT
-                    </span>
-                  </div>
-                  <h3 className="text-xl font-extrabold text-white uppercase tracking-tight group-hover:text-amber-300 transition-colors">
-                    100% Cetakan Sublimasi HD
-                  </h3>
-                  <p className="text-xs text-neutral-400 leading-relaxed font-normal">
-                    Warna pigmen meresap 100% terus ke dalam serat kain. Tidak akan pudar, merekah, atau bertukar kusam walaupun dicuci berulang kali.
-                  </p>
+            {/* CARD 1 */}
+            <div className="bg-[#111113] border border-neutral-800/80 hover:border-neutral-600 p-8 sm:p-10 rounded-3xl space-y-6 transition-all duration-300 hover:-translate-y-1 shadow-lg">
+              <div className="flex items-center justify-between">
+                <div className="w-12 h-12 rounded-2xl bg-neutral-900 border border-neutral-800 text-white flex items-center justify-center">
+                  <Printer className="w-5 h-5 text-neutral-200" />
                 </div>
-                <div className="pt-4 border-t border-neutral-800/60 flex items-center space-x-2 text-[11px] font-mono text-neutral-400">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Teknologi Ink High-Definition Japan</span>
-                </div>
+                <span className="text-xs font-mono font-bold text-neutral-500">
+                  01 / HD PRINT
+                </span>
+              </div>
+              <div className="space-y-3">
+                <h3 className="text-lg font-bold text-white uppercase tracking-tight">
+                  100% Cetakan Sublimasi HD
+                </h3>
+                <p className="text-xs text-neutral-400 leading-relaxed font-normal">
+                  Warna pigmen meresap 100% terus ke dalam serat kain. Tidak akan pudar, merekah, atau bertukar kusam walaupun dicuci berulang kali.
+                </p>
+              </div>
+              <div className="pt-4 border-t border-neutral-800/60 flex items-center space-x-2 text-[11px] font-mono text-neutral-400">
+                <CheckCircle2 className="w-3.5 h-3.5 text-neutral-400" />
+                <span>Teknologi Ink Japan High-Definition</span>
               </div>
             </div>
 
-            {/* CARD 2: FABRIK HIGH-PERFORMANCE */}
-            <div className="group relative p-[1px] rounded-3xl bg-gradient-to-b from-neutral-800 to-neutral-900/40 hover:from-cyan-500/40 hover:to-neutral-800 transition-all duration-500 shadow-2xl hover:-translate-y-2">
-              <div className="h-full bg-[#121214]/90 backdrop-blur-xl p-8 sm:p-10 rounded-3xl space-y-6 flex flex-col justify-between border border-white/5">
-                <div className="space-y-5">
-                  <div className="flex items-center justify-between">
-                    <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 flex items-center justify-center font-bold shadow-xs">
-                      <Zap className="w-6 h-6" />
-                    </div>
-                    <span className="text-xs font-mono font-bold text-neutral-500 group-hover:text-cyan-400 transition-colors">
-                      02 / MATERIAL
-                    </span>
-                  </div>
-                  <h3 className="text-xl font-extrabold text-white uppercase tracking-tight group-hover:text-cyan-300 transition-colors">
-                    Fabrik High-Performance
-                  </h3>
-                  <p className="text-xs text-neutral-400 leading-relaxed font-normal">
-                    Menggunakan fabrik Micro-Polyester, Interlock, dan Jacquard dengan keupayaan serapan peluh berteknologi pantas kering (*quick-dry*).
-                  </p>
+            {/* CARD 2 */}
+            <div className="bg-[#111113] border border-neutral-800/80 hover:border-neutral-600 p-8 sm:p-10 rounded-3xl space-y-6 transition-all duration-300 hover:-translate-y-1 shadow-lg">
+              <div className="flex items-center justify-between">
+                <div className="w-12 h-12 rounded-2xl bg-neutral-900 border border-neutral-800 text-white flex items-center justify-center">
+                  <Zap className="w-5 h-5 text-neutral-200" />
                 </div>
-                <div className="pt-4 border-t border-neutral-800/60 flex items-center space-x-2 text-[11px] font-mono text-neutral-400">
-                  <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-                  <span>Selesai & Sejuk Untuk Sukan Pro</span>
-                </div>
+                <span className="text-xs font-mono font-bold text-neutral-500">
+                  02 / MATERIAL
+                </span>
+              </div>
+              <div className="space-y-3">
+                <h3 className="text-lg font-bold text-white uppercase tracking-tight">
+                  Fabrik High-Performance
+                </h3>
+                <p className="text-xs text-neutral-400 leading-relaxed font-normal">
+                  Menggunakan fabrik Micro-Polyester, Interlock, dan Jacquard dengan keupayaan serapan peluh berteknologi pantas kering.
+                </p>
+              </div>
+              <div className="pt-4 border-t border-neutral-800/60 flex items-center space-x-2 text-[11px] font-mono text-neutral-400">
+                <CheckCircle2 className="w-3.5 h-3.5 text-neutral-400" />
+                <span>Selesai & Sejuk Untuk Sukan Pro</span>
               </div>
             </div>
 
-            {/* CARD 3: TANPA PESANAN MINIMUM */}
-            <div className="group relative p-[1px] rounded-3xl bg-gradient-to-b from-neutral-800 to-neutral-900/40 hover:from-emerald-500/40 hover:to-neutral-800 transition-all duration-500 shadow-2xl hover:-translate-y-2">
-              <div className="h-full bg-[#121214]/90 backdrop-blur-xl p-8 sm:p-10 rounded-3xl space-y-6 flex flex-col justify-between border border-white/5">
-                <div className="space-y-5">
-                  <div className="flex items-center justify-between">
-                    <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold shadow-xs">
-                      <PackageCheck className="w-6 h-6" />
-                    </div>
-                    <span className="text-xs font-mono font-bold text-neutral-500 group-hover:text-emerald-400 transition-colors">
-                      03 / FLEKSIBEL
-                    </span>
-                  </div>
-                  <h3 className="text-xl font-extrabold text-white uppercase tracking-tight group-hover:text-emerald-300 transition-colors">
-                    Tanpa Pesanan Minimum
-                  </h3>
-                  <p className="text-xs text-neutral-400 leading-relaxed font-normal">
-                    Boleh menempah dari 1 unit jersi hingga beribu-ribu pakaian seragam untuk kejohanan, kelab sukan, mahupun tempahan korporat.
-                  </p>
+            {/* CARD 3 */}
+            <div className="bg-[#111113] border border-neutral-800/80 hover:border-neutral-600 p-8 sm:p-10 rounded-3xl space-y-6 transition-all duration-300 hover:-translate-y-1 shadow-lg">
+              <div className="flex items-center justify-between">
+                <div className="w-12 h-12 rounded-2xl bg-neutral-900 border border-neutral-800 text-white flex items-center justify-center">
+                  <PackageCheck className="w-5 h-5 text-neutral-200" />
                 </div>
-                <div className="pt-4 border-t border-neutral-800/60 flex items-center space-x-2 text-[11px] font-mono text-neutral-400">
-                  <Sparkles className="w-3.5 h-3.5 text-emerald-400" />
-                  <span>MOQ 0 Unit • Bebas Kustomisasi</span>
-                </div>
+                <span className="text-xs font-mono font-bold text-neutral-500">
+                  03 / FLEKSIBEL
+                </span>
+              </div>
+              <div className="space-y-3">
+                <h3 className="text-lg font-bold text-white uppercase tracking-tight">
+                  Tanpa Pesanan Minimum
+                </h3>
+                <p className="text-xs text-neutral-400 leading-relaxed font-normal">
+                  Boleh menempah dari 1 unit jersi hingga beribu-ribu pakaian seragam untuk kejohanan, kelab sukan, mahupun tempahan korporat.
+                </p>
+              </div>
+              <div className="pt-4 border-t border-neutral-800/60 flex items-center space-x-2 text-[11px] font-mono text-neutral-400">
+                <CheckCircle2 className="w-3.5 h-3.5 text-neutral-400" />
+                <span>MOQ 0 Unit • Bebas Kustomisasi</span>
               </div>
             </div>
 
           </div>
 
-          {/* HIGH-END METRIC COUNTER STRIP BANNER */}
-          <div className="p-8 sm:p-10 bg-[#121214] border border-neutral-800 rounded-3xl grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-neutral-800/60 shadow-xl">
+          {/* MONOCHROME METRIC BANNER */}
+          <div className="p-8 sm:p-10 bg-[#111113] border border-neutral-800/80 rounded-3xl grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-neutral-800/60 shadow-lg">
             <div className="space-y-1">
               <span className="text-3xl sm:text-4xl font-black text-white font-mono block">100%</span>
-              <span className="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-widest block">FULL CUSTOM</span>
+              <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest block">FULL CUSTOM</span>
             </div>
             <div className="space-y-1 pl-4 sm:pl-0">
-              <span className="text-3xl sm:text-4xl font-black text-emerald-400 font-mono block">0 UNIT</span>
-              <span className="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-widest block">MINIMUM ORDER</span>
+              <span className="text-3xl sm:text-4xl font-black text-white font-mono block">0 UNIT</span>
+              <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest block">MINIMUM ORDER</span>
             </div>
             <div className="space-y-1">
               <span className="text-3xl sm:text-4xl font-black text-white font-mono block">48 JAM</span>
-              <span className="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-widest block">PROSES KILANG</span>
+              <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest block">PROSES KILANG</span>
             </div>
             <div className="space-y-1 pl-4 sm:pl-0">
-              <span className="text-3xl sm:text-4xl font-black text-amber-400 font-mono block">5.0 ★</span>
-              <span className="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-widest block">GRED SUBLIMASI</span>
+              <span className="text-3xl sm:text-4xl font-black text-white font-mono block">GRED 5.0</span>
+              <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest block">SUBLIMASI PRO</span>
             </div>
           </div>
 
@@ -381,7 +370,7 @@ export default function SmoothHeaderHomepage() {
       )}
 
       {/* FOOTER */}
-      <footer className="bg-[#0A0A0C] text-white py-16 px-8 sm:px-12 text-xs border-t border-neutral-900">
+      <footer className="bg-[#000000] text-white py-16 px-8 sm:px-12 text-xs border-t border-neutral-900">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center space-x-4">
             <img src="/logo/ayezz-logo-01.svg" alt="AYEZZ Logo" className="h-6 w-auto brightness-200" />
