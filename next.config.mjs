@@ -17,7 +17,15 @@ const nextConfig = {
     return [
       {
         source: '/new.html',
-        destination: '/new',
+        destination: '/katalog',
+      },
+      {
+        source: '/new',
+        destination: '/katalog',
+      },
+      {
+        source: '/katalog.html',
+        destination: '/katalog',
       },
     ];
   },
