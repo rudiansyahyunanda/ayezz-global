@@ -127,22 +127,28 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
   }, []);
 
   // Card Switcher (Next / Prev template)
-  const currentIndex = (allProducts || []).findIndex((p) => p.id === product?.id);
+  const currentIndex = (allProducts || []).findIndex((p) => p?.id === product?.id);
 
   const handlePrevProduct = () => {
     if (!allProducts || allProducts.length <= 1) return;
-    const prevIdx = (currentIndex - 1 + allProducts.length) % allProducts.length;
-    onSelectProduct(allProducts[prevIdx]);
-    setSelectedImgIdx(0);
-    setViewMode('preview');
+    const safeCurrIdx = currentIndex < 0 ? 0 : currentIndex;
+    const prevIdx = (safeCurrIdx - 1 + allProducts.length) % allProducts.length;
+    if (allProducts[prevIdx]) {
+      onSelectProduct(allProducts[prevIdx]);
+      setSelectedImgIdx(0);
+      setViewMode('preview');
+    }
   };
 
   const handleNextProduct = () => {
     if (!allProducts || allProducts.length <= 1) return;
-    const nextIdx = (currentIndex + 1) % allProducts.length;
-    onSelectProduct(allProducts[nextIdx]);
-    setSelectedImgIdx(0);
-    setViewMode('preview');
+    const safeCurrIdx = currentIndex < 0 ? 0 : currentIndex;
+    const nextIdx = (safeCurrIdx + 1) % allProducts.length;
+    if (allProducts[nextIdx]) {
+      onSelectProduct(allProducts[nextIdx]);
+      setSelectedImgIdx(0);
+      setViewMode('preview');
+    }
   };
 
   // Size matrix counter
