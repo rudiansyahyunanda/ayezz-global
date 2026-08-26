@@ -156,8 +156,10 @@ function SpaciousCatalogContent() {
   });
 
   const sortedTemplates = [...filteredTemplates].sort((a, b) => {
-    if (sortBy === 'nama_asc') return a.name.localeCompare(b.name);
-    if (sortBy === 'nama_desc') return b.name.localeCompare(a.name);
+    const nameA = a?.name || '';
+    const nameB = b?.name || '';
+    if (sortBy === 'nama_asc') return nameA.localeCompare(nameB);
+    if (sortBy === 'nama_desc') return nameB.localeCompare(nameA);
     return 0;
   });
 
