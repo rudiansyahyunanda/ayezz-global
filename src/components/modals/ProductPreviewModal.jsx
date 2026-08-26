@@ -9,9 +9,7 @@ import {
   ChevronRight,
   CheckCircle2,
   Sparkles,
-  ShieldCheck,
   Send,
-  SlidersHorizontal,
   ArrowRight
 } from 'lucide-react';
 import TransparentImage from '../TransparentImage';
@@ -34,6 +32,20 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
     : (product?.thumbnail ? [product.thumbnail] : ['/images/catalog/jersey-olahraga.jfif']);
 
   const [selectedImgIdx, setSelectedImgIdx] = useState(0);
+
+  // Mouse Cursor Targeted Magnifier Zoom State
+  const [zoomPos, setZoomPos] = useState({ x: 50, y: 50, isZoomed: false });
+
+  const handleMouseMove = (e) => {
+    const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
+    const x = Math.max(0, Math.min(100, ((e.clientX - left) / width) * 100));
+    const y = Math.max(0, Math.min(100, ((e.clientY - top) / height) * 100));
+    setZoomPos({ x, y, isZoomed: true });
+  };
+
+  const handleMouseLeave = () => {
+    setZoomPos({ x: 50, y: 50, isZoomed: false });
+  };
 
   // DB Data for Order Mode
   const [cutTypes, setCutTypes] = useState(FALLBACK_CUTS);
@@ -189,8 +201,8 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
               onClick={() => setViewMode(viewMode === 'preview' ? 'order' : 'preview')}
               className={`px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider transition-all flex items-center space-x-2 ${
                 viewMode === 'preview'
-                  ? 'bg-[#111111] text-white hover:bg-neutral-800'
-                  : 'bg-amber-500 text-white hover:bg-amber-600'
+                  ? 'bg-[#111111] text-white hover:bg-neutral-800 shadow-sm'
+                  : 'bg-amber-500 text-white hover:bg-amber-600 shadow-sm'
               }`}
             >
               {viewMode === 'preview' ? (
@@ -219,18 +231,39 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
         <div className="p-6 sm:p-8 flex-1">
           {viewMode === 'preview' ? (
             /* ========================================================
-               MODE 1: PRATONTON DESAIN (PREVIEW MODE)
+               MODE 1: PRATONTON DESAIN (PREVIEW MODE WITH TARGETED CURSOR ZOOM)
                ======================================================== */
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
               
-              {/* Left Column: Image Viewer with Gallery Switcher */}
+              {/* Left Column: Image Viewer with Targeted Cursor Magnifier */}
               <div className="lg:col-span-7 space-y-4">
-                <div className="w-full aspect-square bg-[#F5F5F7] rounded-2xl overflow-hidden relative flex items-center justify-center p-4">
-                  <TransparentImage
-                    src={galleryImages[selectedImgIdx]}
-                    alt={product.name}
-                    className="w-full h-full object-contain img-crisp"
-                  />
+                <div
+                  onMouseMove={handleMouseMove}
+                  onMouseLeave={handleMouseLeave}
+                  className="w-full aspect-square bg-[#F5F5F7] rounded-2xl overflow-hidden relative flex items-center justify-center p-4 cursor-crosshair group select-none"
+                >
+                  {/* 2.5x Zoom Image Container Centered on Cursor Position */}
+                  <div
+                    className="w-full h-full transition-transform duration-150 ease-out flex items-center justify-center"
+                    style={{
+                      transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
+                      transform: zoomPos.isZoomed ? 'scale(2.5)' : 'scale(1)'
+                    }}
+                  >
+                    <TransparentImage
+                      src={galleryImages[selectedImgIdx]}
+                      alt={product.name}
+                      className="w-full h-full object-contain img-crisp"
+                    />
+                  </div>
+
+                  {/* Zoom Badge Indicator */}
+                  {zoomPos.isZoomed && (
+                    <div className="absolute top-3 left-3 bg-black/75 backdrop-blur-md text-white text-[10px] font-mono px-3 py-1 rounded-full pointer-events-none z-30 flex items-center space-x-1.5 shadow-sm">
+                      <Sparkles className="w-3 h-3 text-amber-400" />
+                      <span>ZOOM 2.5X</span>
+                    </div>
+                  )}
 
                   {/* Template Switcher Buttons */}
                   {allProducts && allProducts.length > 1 && (
@@ -282,9 +315,6 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
                   <h2 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-[#111111]">
                     {product.name}
                   </h2>
-                  <p className="text-sm font-mono font-bold text-[#111111]">
-                    HARGA ASAS: RM 70.00+ / pcs
-                  </p>
                 </div>
 
                 <p className="text-xs sm:text-sm text-neutral-600 leading-relaxed font-normal">
