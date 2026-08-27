@@ -206,19 +206,19 @@ function SpaciousCatalogContent() {
   return (
     <div className="min-h-screen bg-white text-[#111111] font-sans antialiased flex flex-col select-none">
       {/* 1. TOP ANNOUNCEMENT BAR */}
-      <div className="bg-[#161617] text-[#E8E8ED] text-[11px] font-mono tracking-[0.18em] uppercase py-3 px-6 text-center border-b border-neutral-800 font-medium">
+      <div className="bg-[#161617] text-[#E8E8ED] text-[9px] sm:text-[11px] font-mono tracking-[0.06em] sm:tracking-[0.18em] uppercase py-1.5 sm:py-2.5 px-3 sm:px-6 text-center border-b border-neutral-800 font-medium truncate">
         AYEZZ GLOBAL — KATALOG REKA BENTUK SUBLIMASI CUSTOM 2026
       </div>
 
-      {/* 2. SILKY SMOOTH GLASS NAVBAR (SMOOTH HEIGHT SHRINK & FROSTED GLASS TRANSITION ON SCROLL) */}
+      {/* 2. SILKY SMOOTH GLASS NAVBAR */}
       <header
         className={`sticky top-0 z-40 w-full transition-all duration-500 ease-in-out ${
           isScrolled
-            ? 'h-16 bg-white/85 backdrop-blur-md border-b border-neutral-200/80 shadow-xs'
-            : 'h-24 bg-white border-b border-neutral-100'
+            ? 'h-14 sm:h-16 bg-white/85 backdrop-blur-md border-b border-neutral-200/80 shadow-xs'
+            : 'h-18 sm:h-24 bg-white border-b border-neutral-100'
         }`}
       >
-        <div className="w-full px-8 sm:px-12 h-full flex items-center justify-between transition-all duration-500">
+        <div className="w-full px-4 sm:px-8 lg:px-12 h-full flex items-center justify-between transition-all duration-500">
           <Link href="/" className="flex items-center space-x-3 group py-2">
             <img
               src="/logo/ayezz-logo-01.svg"

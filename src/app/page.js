@@ -104,18 +104,18 @@ export default function SmoothHeaderHomepage() {
   return (
     <div className="min-h-screen bg-white text-[#111111] font-sans antialiased selection:bg-[#111111] selection:text-white flex flex-col">
       {/* 1. TOP ANNOUNCEMENT BAR */}
-      <div className="bg-[#161617] text-[#E8E8ED] text-[11px] font-mono tracking-[0.18em] uppercase py-2.5 px-6 text-center border-b border-neutral-800 font-medium">
+      <div className="bg-[#161617] text-[#E8E8ED] text-[9px] sm:text-[11px] font-mono tracking-[0.06em] sm:tracking-[0.18em] uppercase py-1.5 sm:py-2.5 px-3 sm:px-6 text-center border-b border-neutral-800 font-medium truncate">
         AYEZZ GLOBAL — KILANG PENGLUARAN JERSI SUKAN & SERAGAM CUSTOM • BEBAS REKA BENTUK 100%
       </div>
 
       {/* 2. SILKY SMOOTH GLASS NAVBAR */}
       <header
         className={`sticky top-0 z-40 w-full transition-all duration-500 ease-in-out ${isScrolled
-            ? 'h-16 bg-white/85 backdrop-blur-md border-b border-neutral-200/80 shadow-xs'
-            : 'h-24 bg-white border-b border-neutral-100'
+            ? 'h-14 sm:h-16 bg-white/85 backdrop-blur-md border-b border-neutral-200/80 shadow-xs'
+            : 'h-18 sm:h-24 bg-white border-b border-neutral-100'
           }`}
       >
-        <div className="max-w-7xl mx-auto px-8 sm:px-12 h-full flex items-center justify-between transition-all duration-500">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 h-full flex items-center justify-between transition-all duration-500">
           <Link href="/" className="flex items-center space-x-3 group py-2">
             <img
               src="/logo/ayezz-logo-01.svg"
