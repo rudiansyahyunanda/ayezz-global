@@ -429,11 +429,11 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
                 <div className="pt-4">
                   <button
                     onClick={handleProceedToOrder}
-                    className="w-full py-4 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-xs uppercase tracking-widest rounded-2xl transition-all shadow-md active:scale-98 flex items-center justify-center space-x-3"
+                    className="w-full py-3.5 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-xs uppercase tracking-widest rounded-2xl transition-all shadow-md active:scale-98 flex items-center justify-center space-x-2.5 whitespace-nowrap"
                   >
-                    <ShoppingBag className="w-4 h-4" />
-                    <span>Konfigurasi & Tempah Desain Ini</span>
-                    <ArrowRight className="w-4 h-4" />
+                    <ShoppingBag className="w-4 h-4 text-white" />
+                    <span>Tempah Desain Ini</span>
+                    <ArrowRight className="w-4 h-4 text-white" />
                   </button>
                 </div>
               </div>
@@ -601,10 +601,10 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
                 <button
                   type="submit"
                   disabled={isSubmitting || totalQuantity <= 0}
-                  className="px-8 py-3.5 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-95 flex items-center space-x-2 disabled:opacity-50"
+                  className="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-95 flex items-center space-x-2 disabled:opacity-50 whitespace-nowrap"
                 >
-                  <Send className="w-4 h-4" />
-                  <span>Sahkan & Hantar Pesanan Ke Sistem</span>
+                  <Send className="w-4 h-4 text-white" />
+                  <span>Hantar Pesanan</span>
                 </button>
               </div>
             </form>

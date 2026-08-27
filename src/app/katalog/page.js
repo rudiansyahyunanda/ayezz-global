@@ -13,7 +13,8 @@ import {
   Settings,
   ShoppingBag,
   SlidersHorizontal,
-  User
+  User,
+  RotateCcw
 } from 'lucide-react';
 import InteractiveProductCard from '../../components/InteractiveProductCard';
 import ProductPreviewModal from '../../components/modals/ProductPreviewModal';
@@ -461,9 +462,10 @@ function SpaciousCatalogContent() {
                 setSelectedSubCategory('Semua');
                 setSearchQuery('');
               }}
-              className="w-full py-2.5 bg-[#F5F5F7] hover:bg-neutral-200 text-[#111111] text-xs font-bold rounded-xl transition-colors whitespace-nowrap"
+              className="w-full py-2.5 bg-[#F5F5F7] hover:bg-neutral-200 text-[#111111] text-xs font-bold rounded-xl transition-colors whitespace-nowrap flex items-center justify-center space-x-2"
             >
-              Reset Semua Penapis
+              <RotateCcw className="w-3.5 h-3.5 text-[#111111]" />
+              <span>Reset Penapis</span>
             </button>
           )}
         </aside>
