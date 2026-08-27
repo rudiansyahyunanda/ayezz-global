@@ -203,6 +203,56 @@ export async function updateUserProfile(profileData) {
 }
 
 /**
+ * Sign in with Google OAuth
+ */
+export async function signInWithGoogle() {
+  if (!isSupabaseConnected) {
+    throw new Error('Supabase client belum disambungkan.');
+  }
+
+  const redirectUrl = typeof window !== 'undefined'
+    ? `${window.location.origin}/auth/callback`
+    : 'https://ayezz-global.vercel.app/auth/callback';
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: redirectUrl,
+      queryParams: {
+        access_type: 'offline',
+        prompt: 'consent'
+      }
+    }
+  });
+
+  if (error) throw error;
+  return data;
+}
+
+/**
+ * Sign in with Apple OAuth
+ */
+export async function signInWithApple() {
+  if (!isSupabaseConnected) {
+    throw new Error('Supabase client belum disambungkan.');
+  }
+
+  const redirectUrl = typeof window !== 'undefined'
+    ? `${window.location.origin}/auth/callback`
+    : 'https://ayezz-global.vercel.app/auth/callback';
+
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'apple',
+    options: {
+      redirectTo: redirectUrl
+    }
+  });
+
+  if (error) throw error;
+  return data;
+}
+
+/**
  * Logout user
  */
 export async function logoutUser() {
