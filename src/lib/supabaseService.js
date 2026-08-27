@@ -617,3 +617,69 @@ export async function updateStoreSettingsInSupabase(settings) {
     updated_at: new Date()
   });
 }
+
+// ==========================================
+// 7. PENGURUSAN PENGGUNA (USERS MANAGEMENT)
+// ==========================================
+export async function getUsersFromSupabase() {
+  if (isSupabaseConnected) {
+    try {
+      const { data, error } = await supabase
+        .from('users')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (!error && data) {
+        return data.map(item => ({
+          id: item.id,
+          email: item.email,
+          fullName: item.full_name || item.email.split('@')[0],
+          phone: item.phone || '-',
+          address: item.address || '-',
+          role: item.role || 'customer',
+          date: new Date(item.created_at).toLocaleDateString('en-MY', { day: '2-digit', month: 'short', year: 'numeric' })
+        }));
+      }
+    } catch (err) {
+      console.warn('Supabase getUsersFromSupabase error:', err);
+    }
+  }
+
+  // Fallback: Read from local storage session or orders cache if database is empty
+  if (typeof window !== 'undefined') {
+    try {
+      const localUser = JSON.parse(localStorage.getItem('ayezz_user_session') || 'null');
+      if (localUser && localUser.email) {
+        return [{
+          id: localUser.id || 'usr_1',
+          email: localUser.email,
+          fullName: localUser.fullName || localUser.email.split('@')[0],
+          phone: localUser.phone || '-',
+          address: localUser.address || '-',
+          role: 'customer',
+          date: new Date().toLocaleDateString('en-MY', { day: '2-digit', month: 'short', year: 'numeric' })
+        }];
+      }
+    } catch (e) {}
+  }
+
+  return [];
+}
+
+export async function deleteUserFromSupabase(userId) {
+  if (!isSupabaseConnected || !userId) return;
+  try {
+    await supabase.from('users').delete().eq('id', userId);
+  } catch (err) {
+    console.error('Error deleting user from Supabase:', err);
+  }
+}
+
+export async function updateUserRoleInSupabase(userId, newRole) {
+  if (!isSupabaseConnected || !userId) return;
+  try {
+    await supabase.from('users').update({ role: newRole }).eq('id', userId);
+  } catch (err) {
+    console.error('Error updating user role in Supabase:', err);
+  }
+}
