@@ -214,7 +214,7 @@ export async function signInWithGoogle() {
 
   const redirectUrl = typeof window !== 'undefined'
     ? `${window.location.origin}/auth/callback`
-    : 'https://ayezz-global.vercel.app/auth/callback';
+    : 'https://www.ayezz.com/auth/callback';
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
@@ -241,7 +241,7 @@ export async function signInWithApple() {
 
   const redirectUrl = typeof window !== 'undefined'
     ? `${window.location.origin}/auth/callback`
-    : 'https://ayezz-global.vercel.app/auth/callback';
+    : 'https://www.ayezz.com/auth/callback';
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'apple',
