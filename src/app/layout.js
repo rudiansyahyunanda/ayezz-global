@@ -4,7 +4,10 @@ import ImageProtectionGuard from '../components/ImageProtectionGuard';
 export const metadata = {
   title: 'AYEZZ GLOBAL — Studio Pakaian Sublimasi High-End',
   description: 'Kilang pengeluaran jersi sukan, esports, dan pakaian seragam komuniti cetakan penuh berpiawaian antarabangsa. Bebas reka bentuk 100%, tanpa pesanan minimum.',
-  keywords: ['Sublimation Jersey', 'Jersi Sukan', 'Jersi Futsal', 'Jersi Esports', 'Custom Apparel Malaysia', 'AYEZZ GLOBAL']
+  keywords: ['Sublimation Jersey', 'Jersi Sukan', 'Jersi Futsal', 'Jersi Esports', 'Custom Apparel Malaysia', 'AYEZZ GLOBAL'],
+  verification: {
+    google: 'google5824a082129debc6'
+  }
 };
 
 export default function RootLayout({ children }) {
