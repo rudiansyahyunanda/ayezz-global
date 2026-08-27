@@ -26,6 +26,7 @@ import {
 } from '../../lib/supabaseService';
 import {
   DESIGN_TEMPLATES,
+  MAIN_CATALOGS,
   CUT_TYPES as FALLBACK_CUTS,
   FABRIC_TYPES as FALLBACK_FABRICS
 } from '../../data/sublimationProducts';
@@ -39,13 +40,11 @@ function SpaciousCatalogContent() {
   const [cutTypes, setCutTypes] = useState([]);
   const [fabricTypes, setFabricTypes] = useState([]);
   
-  // Filter States
-  const [selectedCategories, setSelectedCategories] = useState(
-    initialCategoryQuery ? [initialCategoryQuery] : []
+  // Single active category & sub-category states
+  const [selectedCategory, setSelectedCategory] = useState(
+    initialCategoryQuery || 'Semua'
   );
-  const [selectedCuts, setSelectedCuts] = useState([]);
-  const [selectedFabrics, setSelectedFabrics] = useState([]);
-  const [selectedSizes, setSelectedSizes] = useState([]);
+  const [selectedSubCategory, setSelectedSubCategory] = useState('Semua');
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('terbaru');
   const [isScrolled, setIsScrolled] = useState(false);
@@ -108,54 +107,52 @@ function SpaciousCatalogContent() {
 
   useEffect(() => {
     if (initialCategoryQuery) {
-      setSelectedCategories([initialCategoryQuery]);
+      setSelectedCategory(initialCategoryQuery);
+      setSelectedSubCategory('Semua');
     }
   }, [initialCategoryQuery]);
 
-  const toggleSection = (section) => {
-    setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }));
-  };
-
-  const toggleCategoryFilter = (catTitle) => {
-    setSelectedCategories((prev) =>
-      prev.includes(catTitle) ? prev.filter((c) => c !== catTitle) : [...prev, catTitle]
+  // Helper to find sub-categories for selected category
+  const getSubCategoriesForCategory = (catTitle) => {
+    if (!catTitle || catTitle === 'Semua') return [];
+    const found = MAIN_CATALOGS.find(
+      (c) => c.title.toLowerCase() === catTitle.toLowerCase() ||
+             c.id.toLowerCase() === catTitle.toLowerCase()
     );
-  };
-
-  const toggleCutFilter = (cutName) => {
-    setSelectedCuts((prev) =>
-      prev.includes(cutName) ? prev.filter((c) => c !== cutName) : [...prev, cutName]
-    );
-  };
-
-  const toggleFabricFilter = (fabName) => {
-    setSelectedFabrics((prev) =>
-      prev.includes(fabName) ? prev.filter((f) => f !== fabName) : [...prev, fabName]
-    );
-  };
-
-  const toggleSizeFilter = (size) => {
-    setSelectedSizes((prev) =>
-      prev.includes(size) ? prev.filter((s) => s !== size) : [...prev, size]
-    );
+    if (found && Array.isArray(found.subCategories)) {
+      return found.subCategories;
+    }
+    return ['Semua', 'Jersey Match', 'Training Kit', 'Polo', 'Jaket / Outer'];
   };
 
   // Filter Templates
   const filteredTemplates = templates.filter((tpl) => {
-    if (selectedCategories.length > 0) {
-      const matchesCat = selectedCategories.some((cat) =>
-        tpl.category?.toLowerCase().includes(cat.toLowerCase())
-      );
+    // 1. Main Category filter
+    if (selectedCategory && selectedCategory !== 'Semua') {
+      const tplCat = (tpl.category || '').toLowerCase();
+      const selCat = selectedCategory.toLowerCase();
+      const matchesCat = tplCat.includes(selCat) || selCat.includes(tplCat) ||
+                         (selCat === 'olahraga' && tplCat === 'sukan') ||
+                         (selCat === 'sukan' && tplCat === 'olahraga');
       if (!matchesCat) return false;
     }
 
+    // 2. Sub-Category filter
+    if (selectedSubCategory && selectedSubCategory !== 'Semua') {
+      const tplSub = (tpl.subCategory || '').toLowerCase();
+      const selSub = selectedSubCategory.toLowerCase();
+      const matchesSub = tplSub.includes(selSub) || selSub.includes(tplSub);
+      if (!matchesSub) return false;
+    }
+
+    // 3. Search query filter
     if (searchQuery) {
       const q = searchQuery.toLowerCase();
       const matchesSearch =
-        tpl.name?.toLowerCase().includes(q) ||
-        tpl.description?.toLowerCase().includes(q) ||
-        tpl.category?.toLowerCase().includes(q) ||
-        tpl.subCategory?.toLowerCase().includes(q);
+        (tpl.name || '').toLowerCase().includes(q) ||
+        (tpl.description || '').toLowerCase().includes(q) ||
+        (tpl.category || '').toLowerCase().includes(q) ||
+        (tpl.subCategory || '').toLowerCase().includes(q);
       if (!matchesSearch) return false;
     }
 
@@ -260,12 +257,16 @@ function SpaciousCatalogContent() {
         <div className="flex items-center space-x-2 text-[11px] font-mono text-neutral-400 uppercase tracking-[0.15em] mb-4">
           <Link href="/" className="hover:text-[#111111]">UTAMA</Link>
           <span>/</span>
-          <span className="font-bold text-[#111111]">KATALOG REKA BENTUK</span>
+          <span className="font-bold text-[#111111]">
+            {selectedCategory === 'Semua' ? 'KATALOG REKA BENTUK' : `KATALOG / ${selectedCategory.toUpperCase()}`}
+          </span>
         </div>
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-neutral-200">
           <div className="flex items-baseline space-x-3">
-            <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-tight text-[#111111]">Katalog Desain</h1>
+            <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-tight text-[#111111]">
+              {selectedCategory === 'Semua' ? 'Katalog Desain' : selectedCategory}
+            </h1>
             <span className="text-xs font-mono text-neutral-500 font-normal">
               [{sortedTemplates.length} Template]
             </span>
@@ -292,148 +293,87 @@ function SpaciousCatalogContent() {
         {/* LEFT SIDEBAR ACCORDION FILTERS */}
         <aside className="w-full md:w-64 shrink-0 space-y-6 select-none border-b md:border-b-0 pb-6 md:pb-0 border-neutral-200">
           
-          {/* ACCORDION 1: KATEGORI UTAMA */}
+          {/* SECTION 1: KATEGORI UTAMA */}
           <div className="border-b border-neutral-200 pb-5">
-            <button
-              onClick={() => toggleSection('kategori')}
-              className="w-full flex items-center justify-between py-2 text-xs font-bold uppercase tracking-wider text-[#111111]"
-            >
+            <div className="w-full flex items-center justify-between py-2 text-xs font-bold uppercase tracking-wider text-[#111111]">
               <span>KATEGORI UTAMA</span>
-              {openSections.kategori ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-            </button>
+            </div>
 
-            {openSections.kategori && (
-              <div className="mt-3 space-y-2 text-xs font-medium text-neutral-600">
-                {availableCategories.map((cat) => {
-                  const count = categoryCounts[cat] || 0;
-                  const isChecked = selectedCategories.includes(cat);
-                  return (
-                    <label
-                      key={cat}
-                      className="flex items-center justify-between cursor-pointer hover:text-[#111111] transition-colors py-0.5"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <input
-                          type="checkbox"
-                          checked={isChecked}
-                          onChange={() => toggleCategoryFilter(cat)}
-                          className="w-3.5 h-3.5 accent-[#111111] rounded cursor-pointer"
-                        />
-                        <span className={isChecked ? 'font-bold text-[#111111]' : ''}>{cat}</span>
-                      </div>
-                      <span className="text-[11px] font-mono text-neutral-400">({count})</span>
-                    </label>
-                  );
-                })}
-              </div>
-            )}
+            <div className="mt-3 space-y-1 text-xs font-medium">
+              <button
+                onClick={() => {
+                  setSelectedCategory('Semua');
+                  setSelectedSubCategory('Semua');
+                }}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all ${
+                  selectedCategory === 'Semua'
+                    ? 'bg-[#111111] text-white font-bold shadow-xs'
+                    : 'text-neutral-600 hover:bg-neutral-100 hover:text-[#111111]'
+                }`}
+              >
+                <span>Semua Kategori</span>
+                <span className="text-[11px] font-mono opacity-80">({templates.length})</span>
+              </button>
+
+              {availableCategories.map((cat) => {
+                const count = categoryCounts[cat] || 0;
+                const isSelected = selectedCategory.toLowerCase() === cat.toLowerCase();
+                return (
+                  <button
+                    key={cat}
+                    onClick={() => {
+                      setSelectedCategory(cat);
+                      setSelectedSubCategory('Semua');
+                    }}
+                    className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all ${
+                      isSelected
+                        ? 'bg-[#111111] text-white font-bold shadow-xs'
+                        : 'text-neutral-600 hover:bg-neutral-100 hover:text-[#111111]'
+                    }`}
+                  >
+                    <span>{cat}</span>
+                    <span className="text-[11px] font-mono opacity-80">({count})</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
-          {/* ACCORDION 2: JENIS POTONGAN / KOLAR */}
-          <div className="border-b border-neutral-200 pb-5">
-            <button
-              onClick={() => toggleSection('potongan')}
-              className="w-full flex items-center justify-between py-2 text-xs font-bold uppercase tracking-wider text-[#111111]"
-            >
-              <span>JENIS POTONGAN / KOLAR</span>
-              {openSections.potongan ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-            </button>
-
-            {openSections.potongan && (
-              <div className="mt-3 space-y-2 text-xs font-medium text-neutral-600">
-                {cutTypes.map((cut) => {
-                  const isChecked = selectedCuts.includes(cut.name);
-                  return (
-                    <label
-                      key={cut.id || cut.name}
-                      className="flex items-center space-x-2 cursor-pointer hover:text-[#111111] transition-colors py-0.5"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={isChecked}
-                        onChange={() => toggleCutFilter(cut.name)}
-                        className="w-3.5 h-3.5 accent-[#111111] rounded cursor-pointer"
-                      />
-                      <span className={isChecked ? 'font-bold text-[#111111]' : ''}>{cut.name}</span>
-                    </label>
-                  );
-                })}
+          {/* SECTION 2: SUB KATEGORI (MEMANPUNG SUB-KATEGORI KHAS UNTUK KATEGORI YANG DIPILIH) */}
+          {selectedCategory !== 'Semua' && (
+            <div className="border-b border-neutral-200 pb-5 animate-fadeIn">
+              <div className="w-full flex items-center justify-between py-2 text-xs font-bold uppercase tracking-wider text-[#111111]">
+                <span>SUB KATEGORI</span>
               </div>
-            )}
-          </div>
 
-          {/* ACCORDION 3: JENIS KAIN / FABRIK */}
-          <div className="border-b border-neutral-200 pb-5">
-            <button
-              onClick={() => toggleSection('fabrik')}
-              className="w-full flex items-center justify-between py-2 text-xs font-bold uppercase tracking-wider text-[#111111]"
-            >
-              <span>JENIS KAIN / FABRIK</span>
-              {openSections.fabrik ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-            </button>
-
-            {openSections.fabrik && (
-              <div className="mt-3 space-y-2 text-xs font-medium text-neutral-600">
-                {fabricTypes.map((fab) => {
-                  const isChecked = selectedFabrics.includes(fab.name);
-                  return (
-                    <label
-                      key={fab.id || fab.name}
-                      className="flex items-center space-x-2 cursor-pointer hover:text-[#111111] transition-colors py-0.5"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={isChecked}
-                        onChange={() => toggleFabricFilter(fab.name)}
-                        className="w-3.5 h-3.5 accent-[#111111] rounded cursor-pointer"
-                      />
-                      <span className={isChecked ? 'font-bold text-[#111111]' : ''}>{fab.name}</span>
-                    </label>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
-          {/* ACCORDION 4: UKURAN SAIZ */}
-          <div className="pb-5">
-            <button
-              onClick={() => toggleSection('ukuran')}
-              className="w-full flex items-center justify-between py-2 text-xs font-bold uppercase tracking-wider text-[#111111]"
-            >
-              <span>UKURAN SAIZ</span>
-              {openSections.ukuran ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
-            </button>
-
-            {openSections.ukuran && (
-              <div className="mt-3 grid grid-cols-4 gap-1.5">
-                {sizesList.map((sz) => {
-                  const isSelected = selectedSizes.includes(sz);
+              <div className="mt-3 space-y-1 text-xs font-medium">
+                {getSubCategoriesForCategory(selectedCategory).map((sub) => {
+                  const isSubSelected = selectedSubCategory.toLowerCase() === sub.toLowerCase();
                   return (
                     <button
-                      key={sz}
-                      onClick={() => toggleSizeFilter(sz)}
-                      className={`py-2 text-[11px] font-mono font-bold rounded-lg border transition-all ${
-                        isSelected
-                          ? 'bg-[#111111] text-white border-[#111111]'
-                          : 'bg-white text-[#111111] border-neutral-200 hover:border-[#111111]'
+                      key={sub}
+                      onClick={() => setSelectedSubCategory(sub)}
+                      className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all ${
+                        isSubSelected
+                          ? 'bg-neutral-200 text-[#111111] font-bold'
+                          : 'text-neutral-600 hover:bg-neutral-100 hover:text-[#111111]'
                       }`}
                     >
-                      {sz}
+                      <span>{sub}</span>
+                      {isSubSelected && <span className="w-1.5 h-1.5 rounded-full bg-[#111111]" />}
                     </button>
                   );
                 })}
               </div>
-            )}
-          </div>
+            </div>
+          )}
 
-          {(selectedCategories.length > 0 || selectedCuts.length > 0 || selectedFabrics.length > 0 || selectedSizes.length > 0 || searchQuery) && (
+          {/* RESET BUTTON */}
+          {(selectedCategory !== 'Semua' || selectedSubCategory !== 'Semua' || searchQuery) && (
             <button
               onClick={() => {
-                setSelectedCategories([]);
-                setSelectedCuts([]);
-                setSelectedFabrics([]);
-                setSelectedSizes([]);
+                setSelectedCategory('Semua');
+                setSelectedSubCategory('Semua');
                 setSearchQuery('');
               }}
               className="w-full py-2.5 bg-[#F5F5F7] hover:bg-neutral-200 text-[#111111] text-xs font-bold rounded-xl transition-colors"
