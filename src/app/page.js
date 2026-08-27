@@ -403,6 +403,8 @@ export default function SmoothHeaderHomepage() {
             <Link href="/admin" className="hover:text-white transition-colors">Admin</Link>
           </div>
         </div>
+      </footer>
+
       {/* 8. NATIVE MOBILE APP BOTTOM NAVIGATION BAR */}
       <MobileBottomNav currentUser={currentUser} />
     </div>
