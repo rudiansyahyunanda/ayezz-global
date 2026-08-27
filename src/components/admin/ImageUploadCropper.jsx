@@ -58,8 +58,7 @@ export default function ImageUploadCropper({ value, onChange, label = "Gambar Co
             offsetY = (naturalHeight - naturalWidth) / 2;
           }
 
-          ctx.fillStyle = '#FFFFFF';
-          ctx.fillRect(0, 0, targetSize, targetSize);
+          ctx.clearRect(0, 0, targetSize, targetSize);
           ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight, 0, 0, targetSize, targetSize);
 
           const croppedDataUrl = canvas.toDataURL('image/png', 1.0);

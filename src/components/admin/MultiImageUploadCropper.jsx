@@ -29,7 +29,7 @@ export default function MultiImageUploadCropper({ images = [], onChange, maxImag
           const targetSize = 1000;
           canvas.width = targetSize;
           canvas.height = targetSize;
-          const ctx = canvas.getContext('2d', { alpha: false });
+          const ctx = canvas.getContext('2d');
           ctx.imageSmoothingEnabled = true;
           ctx.imageSmoothingQuality = 'high';
 
@@ -49,11 +49,10 @@ export default function MultiImageUploadCropper({ images = [], onChange, maxImag
             offsetY = (naturalHeight - naturalWidth) / 2;
           }
 
-          ctx.fillStyle = '#FFFFFF';
-          ctx.fillRect(0, 0, targetSize, targetSize);
+          ctx.clearRect(0, 0, targetSize, targetSize);
           ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight, 0, 0, targetSize, targetSize);
 
-          const croppedDataUrl = canvas.toDataURL('image/jpeg', 0.98);
+          const croppedDataUrl = canvas.toDataURL('image/png', 1.0);
           const newImages = [...images, croppedDataUrl].slice(0, maxImages);
           onChange(newImages);
         };
