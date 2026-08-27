@@ -97,6 +97,29 @@ CREATE TABLE IF NOT EXISTS public.users (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
+-- 8.1. AUTO-SYNC TRIGGER FROM AUTH.USERS TO PUBLIC.USERS FOR GOOGLE OAUTH
+CREATE OR REPLACE FUNCTION public.handle_new_user()
+RETURNS TRIGGER AS $$
+BEGIN
+  INSERT INTO public.users (id, email, full_name, role)
+  VALUES (
+    NEW.id::text,
+    NEW.email,
+    COALESCE(NEW.raw_user_meta_data->>'full_name', NEW.raw_user_meta_data->>'name', split_part(NEW.email, '@', 1)),
+    'customer'
+  )
+  ON CONFLICT (email) DO UPDATE
+  SET full_name = EXCLUDED.full_name;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER;
+
+DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
+
+CREATE TRIGGER on_auth_user_created
+  AFTER INSERT ON auth.users
+  FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
 -- 9. CREATE STORE SETTINGS TABLE
 CREATE TABLE public.store_settings (
     id TEXT PRIMARY KEY DEFAULT 'default',

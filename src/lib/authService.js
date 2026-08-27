@@ -36,11 +36,13 @@ export async function getCurrentUser() {
         currentUser = {
           id: session.user.id,
           email: session.user.email,
-          fullName: session.user.user_metadata?.full_name || session.user.email.split('@')[0],
+          fullName: session.user.user_metadata?.full_name || session.user.user_metadata?.name || session.user.email.split('@')[0],
           phone: session.user.user_metadata?.phone || '',
           address: session.user.user_metadata?.address || '',
           isGuest: false
         };
+        // Auto-sync Google user profile to public.users table
+        syncUserToDatabase(currentUser);
       }
     } catch (err) {
       console.warn('Supabase auth getSession error:', err);

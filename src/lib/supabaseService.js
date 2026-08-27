@@ -622,35 +622,64 @@ export async function updateStoreSettingsInSupabase(settings) {
 // 7. PENGURUSAN PENGGUNA (USERS MANAGEMENT)
 // ==========================================
 export async function getUsersFromSupabase() {
+  const usersMap = new Map();
+
   if (isSupabaseConnected) {
     try {
-      const { data, error } = await supabase
+      // 1. Fetch from public.users table
+      const { data: dbUsers } = await supabase
         .from('users')
         .select('*')
         .order('created_at', { ascending: false });
-      
-      if (!error && data) {
-        return data.map(item => ({
-          id: item.id,
-          email: item.email,
-          fullName: item.full_name || item.email.split('@')[0],
-          phone: item.phone || '-',
-          address: item.address || '-',
-          role: item.role || 'customer',
-          date: new Date(item.created_at).toLocaleDateString('en-MY', { day: '2-digit', month: 'short', year: 'numeric' })
-        }));
+
+      if (dbUsers && Array.isArray(dbUsers)) {
+        dbUsers.forEach(item => {
+          if (item.email) {
+            usersMap.set(item.email.toLowerCase(), {
+              id: item.id,
+              email: item.email,
+              fullName: item.full_name || item.email.split('@')[0],
+              phone: item.phone || '-',
+              address: item.address || '-',
+              role: item.role || 'customer',
+              date: new Date(item.created_at || Date.now()).toLocaleDateString('en-MY', { day: '2-digit', month: 'short', year: 'numeric' })
+            });
+          }
+        });
+      }
+
+      // 2. Cross-check with public.orders table for any user emails
+      const { data: dbOrders } = await supabase
+        .from('orders')
+        .select('user_email, client_name, customer_phone, created_at')
+        .not('user_email', 'is', null);
+
+      if (dbOrders && Array.isArray(dbOrders)) {
+        dbOrders.forEach(ord => {
+          if (ord.user_email && !usersMap.has(ord.user_email.toLowerCase())) {
+            usersMap.set(ord.user_email.toLowerCase(), {
+              id: `usr_${Math.random().toString(36).substr(2, 9)}`,
+              email: ord.user_email,
+              fullName: ord.client_name || ord.user_email.split('@')[0],
+              phone: ord.customer_phone || '-',
+              address: '-',
+              role: 'customer',
+              date: new Date(ord.created_at || Date.now()).toLocaleDateString('en-MY', { day: '2-digit', month: 'short', year: 'numeric' })
+            });
+          }
+        });
       }
     } catch (err) {
       console.warn('Supabase getUsersFromSupabase error:', err);
     }
   }
 
-  // Fallback: Read from local storage session or orders cache if database is empty
+  // 3. Fallback to local session if present
   if (typeof window !== 'undefined') {
     try {
       const localUser = JSON.parse(localStorage.getItem('ayezz_user_session') || 'null');
-      if (localUser && localUser.email) {
-        return [{
+      if (localUser && localUser.email && !usersMap.has(localUser.email.toLowerCase())) {
+        usersMap.set(localUser.email.toLowerCase(), {
           id: localUser.id || 'usr_1',
           email: localUser.email,
           fullName: localUser.fullName || localUser.email.split('@')[0],
@@ -658,12 +687,12 @@ export async function getUsersFromSupabase() {
           address: localUser.address || '-',
           role: 'customer',
           date: new Date().toLocaleDateString('en-MY', { day: '2-digit', month: 'short', year: 'numeric' })
-        }];
+        });
       }
     } catch (e) {}
   }
 
-  return [];
+  return Array.from(usersMap.values());
 }
 
 export async function deleteUserFromSupabase(userId) {
