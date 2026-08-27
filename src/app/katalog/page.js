@@ -112,17 +112,37 @@ function SpaciousCatalogContent() {
     }
   }, [initialCategoryQuery]);
 
-  // Helper to find sub-categories for selected category
+  // Helper to find sub-categories dynamically from Supabase database categories & templates
   const getSubCategoriesForCategory = (catTitle) => {
     if (!catTitle || catTitle === 'Semua') return [];
-    const found = MAIN_CATALOGS.find(
-      (c) => c.title.toLowerCase() === catTitle.toLowerCase() ||
-             c.id.toLowerCase() === catTitle.toLowerCase()
+    
+    // Find category in loaded categories state (from Supabase)
+    const catObj = categories.find(
+      (c) => (c.title || '').toLowerCase() === catTitle.toLowerCase() ||
+             (c.id || '').toLowerCase() === catTitle.toLowerCase() ||
+             (c.code || '').toLowerCase() === catTitle.toLowerCase()
     );
-    if (found && Array.isArray(found.subCategories)) {
-      return found.subCategories;
+
+    let list = [];
+    if (catObj && Array.isArray(catObj.subCategories)) {
+      list = catObj.subCategories.filter(s => s !== 'Semua');
     }
-    return ['Semua', 'Jersey Match', 'Training Kit', 'Polo', 'Jaket / Outer'];
+
+    // Also collect any subCategory values from loaded templates for this category
+    templates.forEach((t) => {
+      const tplCat = (t.category || '').toLowerCase();
+      const selCat = catTitle.toLowerCase();
+      const isMatch = tplCat === selCat || tplCat.includes(selCat) || selCat.includes(tplCat) ||
+                      (selCat === 'olahraga' && tplCat === 'sukan') ||
+                      (selCat === 'sukan' && tplCat === 'olahraga');
+      if (isMatch && t.subCategory && !list.includes(t.subCategory)) {
+        list.push(t.subCategory);
+      }
+    });
+
+    const uniqueSubs = Array.from(new Set(list)).filter(Boolean);
+    uniqueSubs.unshift('Semua');
+    return uniqueSubs;
   };
 
   // Filter Templates
