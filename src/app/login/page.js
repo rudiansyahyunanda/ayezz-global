@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { ArrowLeft, Lock, Mail, User, ShieldCheck, ArrowRight, AlertCircle, Eye, EyeOff } from 'lucide-react';
 import { loginUser, signUpUser, getCurrentUser } from '../../lib/authService';
+import MobileBottomNav from '../../components/MobileBottomNav';
 
 function LoginContent() {
   const router = useRouter();
@@ -246,9 +247,12 @@ function LoginContent() {
       </main>
 
       {/* FOOTER */}
-      <footer className="py-6 text-center text-xs font-mono text-neutral-400">
+      <footer className="py-6 text-center text-xs font-mono text-neutral-400 pb-20 md:pb-6">
         © 2026 AYEZZ GLOBAL — Sistem Keselamatan Log Masuk Pelanggan
       </footer>
+
+      {/* MOBILE APP BOTTOM NAVIGATION DOCK */}
+      <MobileBottomNav />
     </div>
   );
 }

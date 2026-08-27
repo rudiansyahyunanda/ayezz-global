@@ -20,6 +20,7 @@ import {
 } from 'lucide-react';
 import ProductOrderModal from '../components/modals/ProductOrderModal';
 import HeroCarousel from '../components/HeroCarousel';
+import MobileBottomNav from '../components/MobileBottomNav';
 import { getCurrentUser } from '../lib/authService';
 import {
   getCategories,
@@ -402,7 +403,8 @@ export default function SmoothHeaderHomepage() {
             <Link href="/admin" className="hover:text-white transition-colors">Admin</Link>
           </div>
         </div>
-      </footer>
+      {/* 8. NATIVE MOBILE APP BOTTOM NAVIGATION BAR */}
+      <MobileBottomNav currentUser={currentUser} />
     </div>
   );
 }

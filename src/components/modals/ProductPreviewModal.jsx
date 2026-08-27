@@ -219,8 +219,8 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/70 backdrop-blur-md select-none overflow-y-auto">
-      <div className="bg-white text-[#111111] rounded-3xl max-w-5xl w-full max-h-[92vh] overflow-y-auto shadow-2xl relative flex flex-col my-auto border border-neutral-100">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6 bg-black/75 backdrop-blur-md select-none overflow-y-auto">
+      <div className="bg-white text-[#111111] rounded-t-3xl sm:rounded-3xl max-w-5xl w-full max-h-[95vh] sm:max-h-[92vh] overflow-y-auto shadow-2xl relative flex flex-col my-0 sm:my-auto border-t sm:border border-neutral-100 pb-16 md:pb-0">
         
         {/* HEADER BAR MODAL */}
         <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md px-6 py-4 border-b border-neutral-100 flex items-center justify-between">

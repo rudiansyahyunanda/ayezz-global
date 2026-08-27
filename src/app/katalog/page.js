@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import InteractiveProductCard from '../../components/InteractiveProductCard';
 import ProductPreviewModal from '../../components/modals/ProductPreviewModal';
+import MobileBottomNav from '../../components/MobileBottomNav';
 import { getCurrentUser } from '../../lib/authService';
 import {
   getDesignTemplates,
@@ -427,7 +428,7 @@ function SpaciousCatalogContent() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-8">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3.5 sm:gap-8">
               {sortedTemplates.map((item, idx) => (
                 <InteractiveProductCard
                   key={item.id}
@@ -469,6 +470,9 @@ function SpaciousCatalogContent() {
           </div>
         </div>
       </footer>
+
+      {/* MOBILE APP BOTTOM NAVIGATION DOCK */}
+      <MobileBottomNav currentUser={currentUser} />
     </div>
   );
 }

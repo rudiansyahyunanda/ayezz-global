@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { getCurrentUser, logoutUser, updateUserProfile } from '../../lib/authService';
 import { getUserOrdersFromSupabase } from '../../lib/supabaseService';
+import MobileBottomNav from '../../components/MobileBottomNav';
 
 export default function UserDashboardPage() {
   const router = useRouter();
@@ -548,8 +549,8 @@ export default function UserDashboardPage() {
       )}
 
       {/* FOOTER */}
-      <footer className="bg-[#111111] text-white py-10 px-8 sm:px-12 text-xs border-t border-neutral-800 mt-auto">
-        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
+      <footer className="bg-[#111111] text-white py-6 border-t border-neutral-900 mt-auto pb-20 md:pb-6">
+        <div className="max-w-7xl mx-auto px-6 sm:px-12 flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <span className="font-mono text-neutral-400 text-[10px] tracking-widest uppercase">
             © 2026 AYEZZ GLOBAL — HAK CIPTA TERELIHARA
           </span>
@@ -559,6 +560,9 @@ export default function UserDashboardPage() {
           </div>
         </div>
       </footer>
+
+      {/* MOBILE APP BOTTOM NAVIGATION DOCK */}
+      <MobileBottomNav currentUser={user} />
     </div>
   );
 }
