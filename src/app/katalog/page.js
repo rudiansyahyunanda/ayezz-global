@@ -273,32 +273,32 @@ function SpaciousCatalogContent() {
         </div>
       </header>
 
-      {/* 3. BREADCRUMB & HEADER BAR WITH SPACIOUS PADDING */}
-      <div className="w-full px-8 sm:px-12 pt-8 pb-6">
-        <div className="flex items-center space-x-2 text-[11px] font-mono text-neutral-400 uppercase tracking-[0.15em] mb-4">
+      {/* 3. BREADCRUMB & HEADER BAR WITH SPACIOUS RESPONSIVE PADDING */}
+      <div className="w-full px-4 sm:px-8 lg:px-12 pt-6 sm:pt-8 pb-4 sm:pb-6">
+        <div className="flex items-center space-x-2 text-[10px] sm:text-[11px] font-mono text-neutral-400 uppercase tracking-[0.15em] mb-3">
           <Link href="/" className="hover:text-[#111111]">UTAMA</Link>
           <span>/</span>
-          <span className="font-bold text-[#111111]">
+          <span className="font-bold text-[#111111] truncate">
             {selectedCategory === 'Semua' ? 'KATALOG REKA BENTUK' : `KATALOG / ${selectedCategory.toUpperCase()}`}
           </span>
         </div>
 
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-neutral-200">
-          <div className="flex items-baseline space-x-3">
-            <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-tight text-[#111111]">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 sm:pb-6 border-b border-neutral-200">
+          <div className="flex items-baseline space-x-2.5">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black uppercase tracking-tight text-[#111111]">
               {selectedCategory === 'Semua' ? 'Katalog Desain' : selectedCategory}
             </h1>
-            <span className="text-xs font-mono text-neutral-500 font-normal">
+            <span className="text-[11px] sm:text-xs font-mono text-neutral-500 font-medium whitespace-nowrap">
               [{sortedTemplates.length} Template]
             </span>
           </div>
 
-          <div className="flex items-center space-x-3">
-            <span className="text-xs font-mono font-bold text-neutral-500 uppercase">SUSUN:</span>
+          <div className="flex items-center space-x-2.5 self-end sm:self-auto">
+            <span className="text-[10px] sm:text-xs font-mono font-bold text-neutral-500 uppercase whitespace-nowrap">SUSUN:</span>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
-              className="px-4 py-2 bg-white border border-neutral-200 rounded-lg text-xs font-bold text-[#111111] outline-none cursor-pointer hover:border-[#111111] transition-colors"
+              className="px-3 py-1.5 bg-white border border-neutral-200 rounded-lg text-xs font-bold text-[#111111] outline-none cursor-pointer hover:border-[#111111] transition-colors"
             >
               <option value="terbaru">Terbaru</option>
               <option value="nama_asc">Nama (A-Z)</option>
@@ -308,11 +308,75 @@ function SpaciousCatalogContent() {
         </div>
       </div>
 
-      {/* 4. SPACIOUS 2-COLUMN CATALOG CONTAINER WITH STICKY 2-PANEL NAVIGATION */}
-      <div className="w-full px-8 sm:px-12 py-8 flex-1 flex flex-col md:flex-row items-start gap-10 lg:gap-14">
+      {/* 4. SPACIOUS RESPONSIVE CATALOG CONTAINER */}
+      <div className="w-full px-4 sm:px-8 lg:px-12 py-4 sm:py-8 flex-1 flex flex-col md:flex-row items-start gap-6 md:gap-10 lg:gap-14">
         
-        {/* LEFT SIDEBAR PANEL (STICKY 2-PANEL NAVIGATION) */}
-        <aside className="w-full md:w-64 lg:w-72 shrink-0 space-y-6 select-none border-b md:border-b-0 pb-6 md:pb-0 border-neutral-200 md:sticky md:top-24 md:max-h-[calc(100vh-7rem)] md:overflow-y-auto pr-2 scrollbar-none">
+        {/* MOBILE HORIZONTAL SCROLL FILTER DOCK (MD:HIDDEN — FAST NATIVE MOBILE APP NAVIGATION) */}
+        <div className="w-full md:hidden space-y-3 pb-2 select-none">
+          {/* Main Categories Pills */}
+          <div className="flex items-center space-x-2 overflow-x-auto scrollbar-none pb-1" style={{ scrollbarWidth: 'none' }}>
+            <button
+              onClick={() => {
+                setSelectedCategory('Semua');
+                setSelectedSubCategory('Semua');
+              }}
+              className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all shrink-0 ${
+                selectedCategory === 'Semua'
+                  ? 'bg-[#111111] text-white shadow-xs'
+                  : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+              }`}
+            >
+              Semua Kategori ({templates.length})
+            </button>
+
+            {availableCategories.map((cat) => {
+              const isSelected = selectedCategory.toLowerCase() === cat.toLowerCase();
+              const count = categoryCounts[cat] || 0;
+              return (
+                <button
+                  key={cat}
+                  onClick={() => {
+                    setSelectedCategory(cat);
+                    setSelectedSubCategory('Semua');
+                  }}
+                  className={`px-3.5 py-1.5 rounded-full text-xs font-bold whitespace-nowrap transition-all shrink-0 ${
+                    isSelected
+                      ? 'bg-[#111111] text-white shadow-xs'
+                      : 'bg-neutral-100 text-neutral-600 hover:bg-neutral-200'
+                  }`}
+                >
+                  {cat} ({count})
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Sub Categories Pills (When Main Category Selected) */}
+          {selectedCategory !== 'Semua' && (
+            <div className="flex items-center space-x-2 overflow-x-auto scrollbar-none pb-1 animate-fadeIn" style={{ scrollbarWidth: 'none' }}>
+              <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase shrink-0 pr-1">SUB:</span>
+              {getSubCategoriesForCategory(selectedCategory).map((sub) => {
+                const isSubSelected = selectedSubCategory.toLowerCase() === sub.toLowerCase();
+                return (
+                  <button
+                    key={sub}
+                    onClick={() => setSelectedSubCategory(sub)}
+                    className={`px-3 py-1 rounded-lg text-[11px] font-medium whitespace-nowrap transition-all shrink-0 border ${
+                      isSubSelected
+                        ? 'bg-neutral-800 text-white border-neutral-800 font-bold'
+                        : 'bg-white text-neutral-600 border-neutral-200 hover:border-neutral-400'
+                    }`}
+                  >
+                    {sub}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+        
+        {/* DESKTOP LEFT SIDEBAR PANEL (HIDDEN ON MOBILE, STICKY ON DESKTOP) */}
+        <aside className="hidden md:block w-64 lg:w-72 shrink-0 space-y-6 select-none border-neutral-200 sticky top-24 max-h-[calc(100vh-7rem)] overflow-y-auto pr-2 scrollbar-none">
           
           {/* SECTION 1: KATEGORI UTAMA */}
           <div className="border-b border-neutral-200 pb-5">
@@ -326,14 +390,14 @@ function SpaciousCatalogContent() {
                   setSelectedCategory('Semua');
                   setSelectedSubCategory('Semua');
                 }}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all ${
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all whitespace-nowrap ${
                   selectedCategory === 'Semua'
                     ? 'bg-[#111111] text-white font-bold shadow-xs'
                     : 'text-neutral-600 hover:bg-neutral-100 hover:text-[#111111]'
                 }`}
               >
-                <span>Semua Kategori</span>
-                <span className="text-[11px] font-mono opacity-80">({templates.length})</span>
+                <span className="truncate">Semua Kategori</span>
+                <span className="text-[11px] font-mono opacity-80 shrink-0">({templates.length})</span>
               </button>
 
               {availableCategories.map((cat) => {
@@ -346,21 +410,21 @@ function SpaciousCatalogContent() {
                       setSelectedCategory(cat);
                       setSelectedSubCategory('Semua');
                     }}
-                    className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all ${
+                    className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl transition-all whitespace-nowrap ${
                       isSelected
                         ? 'bg-[#111111] text-white font-bold shadow-xs'
                         : 'text-neutral-600 hover:bg-neutral-100 hover:text-[#111111]'
                     }`}
                   >
-                    <span>{cat}</span>
-                    <span className="text-[11px] font-mono opacity-80">({count})</span>
+                    <span className="truncate">{cat}</span>
+                    <span className="text-[11px] font-mono opacity-80 shrink-0">({count})</span>
                   </button>
                 );
               })}
             </div>
           </div>
 
-          {/* SECTION 2: SUB KATEGORI (MEMANPUNG SUB-KATEGORI KHAS UNTUK KATEGORI YANG DIPILIH) */}
+          {/* SECTION 2: SUB KATEGORI */}
           {selectedCategory !== 'Semua' && (
             <div className="border-b border-neutral-200 pb-5 animate-fadeIn">
               <div className="w-full flex items-center justify-between py-2 text-xs font-bold uppercase tracking-wider text-[#111111]">
@@ -374,14 +438,14 @@ function SpaciousCatalogContent() {
                     <button
                       key={sub}
                       onClick={() => setSelectedSubCategory(sub)}
-                      className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all ${
+                      className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl transition-all whitespace-nowrap ${
                         isSubSelected
                           ? 'bg-neutral-200 text-[#111111] font-bold'
                           : 'text-neutral-600 hover:bg-neutral-100 hover:text-[#111111]'
                       }`}
                     >
-                      <span>{sub}</span>
-                      {isSubSelected && <span className="w-1.5 h-1.5 rounded-full bg-[#111111]" />}
+                      <span className="truncate">{sub}</span>
+                      {isSubSelected && <span className="w-1.5 h-1.5 rounded-full bg-[#111111] shrink-0" />}
                     </button>
                   );
                 })}
@@ -397,7 +461,7 @@ function SpaciousCatalogContent() {
                 setSelectedSubCategory('Semua');
                 setSearchQuery('');
               }}
-              className="w-full py-2.5 bg-[#F5F5F7] hover:bg-neutral-200 text-[#111111] text-xs font-bold rounded-xl transition-colors"
+              className="w-full py-2.5 bg-[#F5F5F7] hover:bg-neutral-200 text-[#111111] text-xs font-bold rounded-xl transition-colors whitespace-nowrap"
             >
               Reset Semua Penapis
             </button>

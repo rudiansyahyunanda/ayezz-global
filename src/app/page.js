@@ -182,18 +182,18 @@ export default function SmoothHeaderHomepage() {
               Pilih daripada koleksi visual kategori di bawah. Pilih desain jersi, kustomisasikan jenis kolar dan kain sublimasi, dan proses tempahan terus secara dalam talian menerusi sistem aplikasi ini.
             </p>
 
-            <div className="pt-3 flex items-center space-x-4">
+            <div className="pt-3 flex flex-wrap items-center gap-3 sm:gap-4">
               <a
                 href="#kategori-utama"
-                className="px-8 py-4 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center space-x-3 active:scale-[0.98] shadow-2xs"
+                className="px-6 sm:px-8 py-3.5 sm:py-4 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-[11px] sm:text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center space-x-2.5 active:scale-[0.98] shadow-2xs whitespace-nowrap"
               >
                 <span>Lihat Kategori Utama</span>
-                <ArrowRight className="w-4 h-4 text-white" />
+                <ArrowRight className="w-3.5 h-3.5 text-white" />
               </a>
 
               <Link
                 href="/katalog"
-                className="px-7 py-4 bg-white border border-neutral-300 hover:border-[#111111] text-[#111111] font-bold text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center space-x-2 active:scale-[0.98]"
+                className="px-6 sm:px-7 py-3.5 sm:py-4 bg-white border border-neutral-300 hover:border-[#111111] text-[#111111] font-bold text-[11px] sm:text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center space-x-2 active:scale-[0.98] whitespace-nowrap"
               >
                 <span>Semua Katalog</span>
               </Link>
