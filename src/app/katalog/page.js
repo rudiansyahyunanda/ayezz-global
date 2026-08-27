@@ -307,11 +307,11 @@ function SpaciousCatalogContent() {
         </div>
       </div>
 
-      {/* 4. SPACIOUS 2-COLUMN CATALOG CONTAINER */}
-      <div className="w-full px-8 sm:px-12 py-8 flex-1 flex flex-col md:flex-row items-start gap-12">
+      {/* 4. SPACIOUS 2-COLUMN CATALOG CONTAINER WITH STICKY 2-PANEL NAVIGATION */}
+      <div className="w-full px-8 sm:px-12 py-8 flex-1 flex flex-col md:flex-row items-start gap-10 lg:gap-14">
         
-        {/* LEFT SIDEBAR ACCORDION FILTERS */}
-        <aside className="w-full md:w-64 shrink-0 space-y-6 select-none border-b md:border-b-0 pb-6 md:pb-0 border-neutral-200">
+        {/* LEFT SIDEBAR PANEL (STICKY 2-PANEL NAVIGATION) */}
+        <aside className="w-full md:w-64 lg:w-72 shrink-0 space-y-6 select-none border-b md:border-b-0 pb-6 md:pb-0 border-neutral-200 md:sticky md:top-24 md:max-h-[calc(100vh-7rem)] md:overflow-y-auto pr-2 scrollbar-none">
           
           {/* SECTION 1: KATEGORI UTAMA */}
           <div className="border-b border-neutral-200 pb-5">
