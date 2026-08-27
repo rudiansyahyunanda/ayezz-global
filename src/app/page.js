@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
@@ -8,6 +8,7 @@ import {
   RefreshCw,
   ArrowRight,
   ArrowUpRight,
+  ChevronLeft,
   ChevronRight,
   Printer,
   Zap,
@@ -34,6 +35,14 @@ export default function SmoothHeaderHomepage() {
   const [orderedProduct, setOrderedProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
+  const categoryScrollRef = useRef(null);
+
+  const scrollCategories = (direction) => {
+    if (categoryScrollRef.current) {
+      const scrollAmount = direction === 'left' ? -380 : 380;
+      categoryScrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+    }
+  };
 
   const handleTempahCustomClick = async () => {
     const user = await getCurrentUser();
@@ -196,23 +205,36 @@ export default function SmoothHeaderHomepage() {
         </div>
       </section>
 
-      {/* 4. MASTER CATEGORIES SHOWCASE GRID */}
-      <section id="kategori-utama" className="py-28 sm:py-36 px-8 sm:px-12 bg-white border-b border-neutral-200/60">
-        <div className="max-w-7xl mx-auto space-y-14">
-          <div className="flex items-end justify-between border-b border-neutral-200 pb-8">
-            <div className="space-y-2">
-              <span className="text-[11px] font-mono font-bold text-neutral-400 uppercase tracking-[0.2em]">KOLEKSI KATEGORI</span>
-              <h2 className="text-3xl sm:text-5xl font-black uppercase tracking-tight text-[#111111]">
-                Kategori Utama Pakaian
+      {/* 4. MASTER CATEGORIES SHOWCASE CAROUSEL (NIKE / APPLE MINIMALIST CLEAN SWIPE) */}
+      <section id="kategori-utama" className="py-20 sm:py-28 px-6 sm:px-12 bg-white border-b border-neutral-200/60 select-none">
+        <div className="max-w-7xl mx-auto space-y-8">
+          
+          {/* TITLE HEADER & CIRCULAR SWIPE NAVIGATION BUTTONS */}
+          <div className="flex items-center justify-between">
+            <div className="space-y-1">
+              <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-[#111111]">
+                Kategori Pilihan
               </h2>
             </div>
-            <Link
-              href="/katalog"
-              className="text-xs font-bold uppercase tracking-widest text-neutral-500 hover:text-black flex items-center space-x-1.5 transition-colors hidden sm:flex"
-            >
-              <span>Terokai Semua Desain</span>
-              <ChevronRight className="w-4 h-4" />
-            </Link>
+
+            <div className="flex items-center space-x-2.5">
+              <button
+                onClick={() => scrollCategories('left')}
+                className="w-10 h-10 rounded-full bg-[#F5F5F7] hover:bg-neutral-200 text-[#111111] flex items-center justify-center transition-all active:scale-95 border border-neutral-200/60 shadow-2xs"
+                aria-label="Scroll ke kiri"
+                title="Scroll ke kiri"
+              >
+                <ChevronLeft className="w-5 h-5 text-[#111111]" />
+              </button>
+              <button
+                onClick={() => scrollCategories('right')}
+                className="w-10 h-10 rounded-full bg-[#F5F5F7] hover:bg-neutral-200 text-[#111111] flex items-center justify-center transition-all active:scale-95 border border-neutral-200/60 shadow-2xs"
+                aria-label="Scroll ke kanan"
+                title="Scroll ke kanan"
+              >
+                <ChevronRight className="w-5 h-5 text-[#111111]" />
+              </button>
+            </div>
           </div>
 
           {isLoading ? (
@@ -221,36 +243,35 @@ export default function SmoothHeaderHomepage() {
               <span className="text-xs font-mono text-neutral-400 uppercase tracking-widest">Memuatkan Kategori...</span>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            /* HORIZONTAL SWIPE CAROUSEL */
+            <div
+              ref={categoryScrollRef}
+              className="flex space-x-5 sm:space-x-6 overflow-x-auto scrollbar-none snap-x snap-mandatory scroll-smooth pb-4 pt-1"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
               {categories.map((cat) => (
                 <div
                   key={cat.id || cat.code}
                   onClick={() => handleCategoryClick(cat.title)}
-                  className="group relative h-[420px] rounded-3xl overflow-hidden cursor-pointer bg-[#F5F5F7] border border-neutral-200/80 hover:border-neutral-400 transition-all duration-500 hover:-translate-y-2 hover:shadow-xl"
+                  className="group shrink-0 w-[270px] sm:w-[350px] lg:w-[380px] snap-start cursor-pointer space-y-3"
                 >
-                  <img
-                    src={cat.thumbnail || '/images/catalog/jersey-olahraga.jfif'}
-                    alt={cat.title}
-                    className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105 img-crisp"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent p-8 flex flex-col justify-end text-left space-y-3">
-                    <span className="text-[10px] font-mono font-bold text-neutral-300 uppercase tracking-widest">
-                      {cat.code || 'CATALOG'}
-                    </span>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <h3 className="text-xl font-black uppercase tracking-tight text-white transition-colors">
-                          {cat.title}
-                        </h3>
-                        <p className="text-xs text-neutral-300 font-mono">
-                          {cat.itemCount || 'Pilih Desain'}
-                        </p>
-                      </div>
+                  {/* CLEAN TALL RECTANGULAR IMAGE CONTAINER */}
+                  <div className="relative aspect-[3/4] w-full rounded-2xl overflow-hidden bg-[#F5F5F7] border border-neutral-200/60 shadow-xs">
+                    <img
+                      src={cat.thumbnail || '/images/catalog/jersey-olahraga.jfif'}
+                      alt={cat.title}
+                      className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105 img-crisp"
+                    />
+                  </div>
 
-                      <div className="w-10 h-10 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all">
-                        <ArrowUpRight className="w-4 h-4" />
-                      </div>
-                    </div>
+                  {/* MINIMALIST TEXT BELOW IMAGE */}
+                  <div className="pt-1">
+                    <h3 className="text-base sm:text-lg font-bold text-[#111111] tracking-tight group-hover:underline">
+                      {cat.title}
+                    </h3>
+                    <p className="text-xs text-neutral-500 font-medium">
+                      {cat.itemCount || 'Desain Sublimasi Custom'}
+                    </p>
                   </div>
                 </div>
               ))}
