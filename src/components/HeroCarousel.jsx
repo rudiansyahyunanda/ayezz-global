@@ -56,8 +56,8 @@ export default function AutoBackgroundStrippedHeroCarousel() {
 
   if (isLoading || items.length === 0) {
     return (
-      <div className="w-full h-[360px] sm:h-[420px] flex items-center justify-center relative select-none pointer-events-none">
-        <div className="w-[260px] sm:w-[320px] h-[340px] sm:h-[380px] bg-neutral-200/50 animate-pulse rounded-3xl flex flex-col items-center justify-center space-y-3">
+      <div className="w-full h-[280px] sm:h-[420px] flex items-center justify-center relative select-none pointer-events-none">
+        <div className="w-[220px] sm:w-[320px] h-[260px] sm:h-[380px] bg-neutral-200/50 animate-pulse rounded-3xl flex flex-col items-center justify-center space-y-3">
           <RefreshCw className="w-6 h-6 text-neutral-400 animate-spin" />
         </div>
       </div>
@@ -65,9 +65,9 @@ export default function AutoBackgroundStrippedHeroCarousel() {
   }
 
   return (
-    <div className="w-full flex flex-col items-center justify-center relative select-none py-2 bg-transparent">
+    <div className="w-full flex flex-col items-center justify-center relative select-none py-1 bg-transparent">
       {/* REAL-TIME CANVAS STRIPPED 100% TRANSPARENT PNG CAROUSEL (PURE NON-CLICKABLE VISUAL SHOWCASE) */}
-      <div className="relative w-full h-[360px] sm:h-[420px] flex items-center justify-center overflow-hidden bg-transparent cursor-default pointer-events-none">
+      <div className="relative w-full h-[280px] sm:h-[420px] flex items-center justify-center overflow-hidden bg-transparent cursor-default pointer-events-none">
         {items.map((item, index) => {
           const count = items.length;
           let offset = (index - activeIndex + count) % count;
@@ -77,9 +77,9 @@ export default function AutoBackgroundStrippedHeroCarousel() {
           if (offset === 0) {
             positionClasses = 'z-30 scale-100 translate-x-0 cursor-default pointer-events-none';
           } else if (offset === -1 || (offset === count - 1 && count > 2)) {
-            positionClasses = 'z-10 scale-75 -translate-x-[55%] cursor-default pointer-events-none blur-[1px]';
+            positionClasses = 'z-10 scale-75 -translate-x-[45%] sm:-translate-x-[55%] cursor-default pointer-events-none opacity-80 sm:opacity-100';
           } else if (offset === 1) {
-            positionClasses = 'z-10 scale-75 translate-x-[55%] cursor-default pointer-events-none blur-[1px]';
+            positionClasses = 'z-10 scale-75 translate-x-[45%] sm:translate-x-[55%] cursor-default pointer-events-none opacity-80 sm:opacity-100';
           } else {
             positionClasses = 'z-0 scale-50 pointer-events-none hidden';
           }
@@ -87,7 +87,7 @@ export default function AutoBackgroundStrippedHeroCarousel() {
           return (
             <div
               key={item.id + index}
-              className={`absolute w-[260px] sm:w-[320px] h-[340px] sm:h-[380px] transition-all duration-700 ease-out flex items-center justify-center bg-transparent border-0 shadow-none outline-none cursor-default pointer-events-none ${positionClasses}`}
+              className={`absolute w-[210px] sm:w-[320px] h-[260px] sm:h-[380px] transition-all duration-700 ease-out flex items-center justify-center bg-transparent border-0 shadow-none outline-none cursor-default pointer-events-none ${positionClasses}`}
             >
               {/* TRANSPARENT IMAGE COMPONENT — PURE VISUAL NO CLICK */}
               <TransparentImage

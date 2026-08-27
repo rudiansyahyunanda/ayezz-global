@@ -60,11 +60,18 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
 
   const [selectedImgIdx, setSelectedImgIdx] = useState(0);
 
-  // Mouse Cursor Targeted Magnifier Zoom State
+  // Mouse Cursor Targeted Magnifier Zoom State (Fine Pointer / Mouse only)
   const [zoomPos, setZoomPos] = useState({ x: 50, y: 50, isZoomed: false });
   const [showZoomText, setShowZoomText] = useState(false);
+  const [isManualTouchZoom, setIsManualTouchZoom] = useState(false);
 
   const handleMouseMove = (e) => {
+    // Only trigger mouse hover zoom on real mouse/trackpad pointer devices
+    if (typeof window !== 'undefined' && window.matchMedia) {
+      const isFinePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+      if (!isFinePointer) return; // Prevent touch events from triggering hover zoom
+    }
+
     const { left, top, width, height } = e.currentTarget.getBoundingClientRect();
     const x = Math.max(0, Math.min(100, ((e.clientX - left) / width) * 100));
     const y = Math.max(0, Math.min(100, ((e.clientY - top) / height) * 100));
@@ -77,14 +84,14 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
   };
 
   useEffect(() => {
-    if (zoomPos.isZoomed) {
+    if (zoomPos.isZoomed || isManualTouchZoom) {
       setShowZoomText(true);
       const timer = setTimeout(() => {
         setShowZoomText(false);
       }, 1200);
       return () => clearTimeout(timer);
     }
-  }, [zoomPos.isZoomed]);
+  }, [zoomPos.isZoomed, isManualTouchZoom]);
 
   // DB Data for Order Mode
   const [cutTypes, setCutTypes] = useState(FALLBACK_CUTS);
@@ -148,6 +155,7 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
       onSelectProduct(allProducts[prevIdx]);
       setSelectedImgIdx(0);
       setViewMode('preview');
+      setIsManualTouchZoom(false);
     }
   };
 
@@ -159,6 +167,7 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
       onSelectProduct(allProducts[nextIdx]);
       setSelectedImgIdx(0);
       setViewMode('preview');
+      setIsManualTouchZoom(false);
     }
   };
 
@@ -220,34 +229,34 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
 
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6 bg-black/75 backdrop-blur-md select-none overflow-y-auto">
-      <div className="bg-white text-[#111111] rounded-t-3xl sm:rounded-3xl max-w-5xl w-full max-h-[95vh] sm:max-h-[92vh] overflow-y-auto shadow-2xl relative flex flex-col my-0 sm:my-auto border-t sm:border border-neutral-100 pb-16 md:pb-0">
+      <div className="bg-white text-[#111111] rounded-t-3xl sm:rounded-3xl max-w-5xl w-full max-h-[96vh] sm:max-h-[92vh] overflow-y-auto shadow-2xl relative flex flex-col my-0 sm:my-auto border-t sm:border border-neutral-100 pb-14 sm:pb-0">
         
         {/* HEADER BAR MODAL */}
-        <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md px-6 py-4 border-b border-neutral-100 flex items-center justify-between">
-          <div className="flex items-center space-x-3">
-            <span className="text-[10px] font-mono font-bold uppercase tracking-widest px-2.5 py-1 bg-neutral-100 rounded-full text-neutral-600">
+        <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md px-4 sm:px-6 py-3 sm:py-4 border-b border-neutral-100 flex items-center justify-between">
+          <div className="flex items-center space-x-2.5 min-w-0 pr-2">
+            <span className="text-[9px] sm:text-[10px] font-mono font-bold uppercase tracking-widest px-2 py-0.5 sm:px-2.5 sm:py-1 bg-neutral-100 rounded-full text-neutral-600 shrink-0">
               {product.category || 'SUBLIMASI'}
             </span>
-            <h3 className="text-sm sm:text-base font-bold text-[#111111] uppercase tracking-tight line-clamp-1">
+            <h3 className="text-xs sm:text-base font-bold text-[#111111] uppercase tracking-tight truncate">
               {product.name}
             </h3>
           </div>
 
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2 shrink-0">
             {viewMode === 'order' && !orderSuccess && (
               <button
                 type="button"
                 onClick={() => setViewMode('preview')}
-                className="px-3.5 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-[#111111] rounded-full text-xs font-bold transition-all flex items-center space-x-1.5"
+                className="px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-[#111111] rounded-full text-[11px] font-bold transition-all flex items-center space-x-1"
               >
                 <Eye className="w-3.5 h-3.5" />
-                <span>Lihat Pratonton</span>
+                <span className="hidden sm:inline">Pratonton</span>
               </button>
             )}
 
             <button
               onClick={onClose}
-              className="p-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-600 rounded-full transition-colors"
+              className="p-1.5 sm:p-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-600 rounded-full transition-colors"
             >
               <X className="w-4 h-4" />
             </button>
@@ -255,21 +264,21 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
         </div>
 
         {/* MODAL BODY */}
-        <div className="p-6 sm:p-8 flex-1">
+        <div className="p-4 sm:p-8 flex-1">
           {orderSuccess ? (
             /* ========================================================
                MODE 3: RESIT DEPOSIT / CONFIRMATION IN-APP SYSTEM RECEIPT
                ======================================================== */
-            <div className="py-8 text-center space-y-6 max-w-lg mx-auto">
-              <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
-                <CheckCircle2 className="w-10 h-10" />
+            <div className="py-6 text-center space-y-5 max-w-lg mx-auto">
+              <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto shadow-sm">
+                <CheckCircle2 className="w-8 h-8" />
               </div>
 
-              <div className="space-y-2">
-                <span className="text-[10px] font-mono font-bold text-emerald-700 uppercase tracking-widest bg-emerald-50 px-3.5 py-1 rounded-full border border-emerald-200">
+              <div className="space-y-1.5">
+                <span className="text-[9px] sm:text-[10px] font-mono font-bold text-emerald-700 uppercase tracking-widest bg-emerald-50 px-3 py-1 rounded-full border border-emerald-200">
                   PESANAN BERJAYA DISIMPAN KE SISTEM
                 </span>
-                <h3 className="text-2xl sm:text-3xl font-black uppercase text-[#111111] pt-2">
+                <h3 className="text-xl sm:text-3xl font-black uppercase text-[#111111] pt-1">
                   Resit Pesanan #{orderSuccess.order_id}
                 </h3>
                 <p className="text-xs text-neutral-500 font-normal leading-relaxed">
@@ -278,20 +287,20 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
               </div>
 
               {/* Receipt Summary Card */}
-              <div className="p-6 bg-[#F5F5F7] rounded-3xl text-left space-y-3.5 border border-neutral-200 text-xs">
-                <div className="flex justify-between border-b border-neutral-200 pb-2.5">
+              <div className="p-4 sm:p-6 bg-[#F5F5F7] rounded-2xl text-left space-y-3 border border-neutral-200 text-xs">
+                <div className="flex justify-between border-b border-neutral-200 pb-2">
                   <span className="font-mono text-neutral-500 font-bold">REKA BENTUK:</span>
                   <span className="font-bold text-[#111111]">{orderSuccess.product_name}</span>
                 </div>
-                <div className="flex justify-between border-b border-neutral-200 pb-2.5">
+                <div className="flex justify-between border-b border-neutral-200 pb-2">
                   <span className="font-mono text-neutral-500 font-bold">JENIS KOLAR:</span>
                   <span className="font-bold text-[#111111]">{orderSuccess.collar_cut}</span>
                 </div>
-                <div className="flex justify-between border-b border-neutral-200 pb-2.5">
+                <div className="flex justify-between border-b border-neutral-200 pb-2">
                   <span className="font-mono text-neutral-500 font-bold">FABRIK:</span>
                   <span className="font-bold text-[#111111]">{orderSuccess.fabric_type}</span>
                 </div>
-                <div className="flex justify-between border-b border-neutral-200 pb-2.5">
+                <div className="flex justify-between border-b border-neutral-200 pb-2">
                   <span className="font-mono text-neutral-500 font-bold">JUMLAH KUANTITI:</span>
                   <span className="font-bold text-[#111111]">{orderSuccess.total_qty} pcs</span>
                 </div>
@@ -303,31 +312,31 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
 
               <button
                 onClick={onClose}
-                className="w-full py-4 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-xs uppercase tracking-widest rounded-2xl transition-all shadow-md"
+                className="w-full py-3.5 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-xs uppercase tracking-widest rounded-2xl transition-all shadow-md"
               >
                 Selesai & Kembali Ke Katalog
               </button>
             </div>
           ) : viewMode === 'preview' ? (
             /* ========================================================
-               MODE 1: PRATONTON DESAIN (PREVIEW MODE WITH TARGETED CURSOR ZOOM)
+               MODE 1: PRATONTON DESAIN (PREVIEW MODE WITH TOUCH-SAFE ZOOM)
                ======================================================== */
-            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
               
-              {/* Left Column: Image Viewer with Left Vertical Thumbnail Strip */}
+              {/* Left Column: Image Viewer with Responsive Thumbnail Strip */}
               <div className="lg:col-span-7">
-                <div className="flex flex-col sm:flex-row gap-4 items-start">
+                <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 items-start">
                   
-                  {/* LEFT VERTICAL THUMBNAIL STRIP (E-Commerce Industry Standard) */}
+                  {/* THUMBNAIL STRIP (Horizontal on Mobile, Vertical on Desktop) */}
                   {galleryImages.length > 1 && (
-                    <div className="flex sm:flex-col items-center gap-3 shrink-0 order-2 sm:order-1 overflow-x-auto sm:overflow-y-auto max-h-[440px] py-1 scrollbar-none no-scrollbar">
+                    <div className="flex sm:flex-col items-center gap-2 shrink-0 order-2 sm:order-1 overflow-x-auto sm:overflow-y-auto max-h-[440px] w-full sm:w-auto py-1 scrollbar-none no-scrollbar">
                       {galleryImages.map((imgUrl, i) => (
                         <button
                           key={i}
                           onClick={() => setSelectedImgIdx(i)}
-                          className={`w-16 h-16 sm:w-18 sm:h-18 rounded-2xl overflow-hidden border transition-all p-1.5 bg-[#F5F5F7] shrink-0 outline-none shadow-none ${
+                          className={`w-14 h-14 sm:w-18 sm:h-18 rounded-xl sm:rounded-2xl overflow-hidden border transition-all p-1 bg-[#F5F5F7] shrink-0 outline-none shadow-none ${
                             selectedImgIdx === i
-                              ? 'border-[#111111] opacity-100'
+                              ? 'border-[#111111] opacity-100 ring-1 ring-[#111111]'
                               : 'border-neutral-200/60 opacity-50 hover:opacity-100 hover:border-neutral-400'
                           }`}
                         >
@@ -337,58 +346,96 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
                     </div>
                   )}
 
-                  {/* MAIN 1:1 IMAGE VIEWER WITH TARGETED CURSOR ZOOM */}
-                  <div
-                    onMouseMove={handleMouseMove}
-                    onMouseLeave={handleMouseLeave}
-                    className="flex-1 w-full aspect-square bg-[#F5F5F7] rounded-2xl overflow-hidden relative flex items-center justify-center p-4 cursor-crosshair group select-none order-1 sm:order-2"
-                  >
-                    {/* 2.5x Zoom Image Container Centered on Cursor Position */}
+                  {/* MAIN 1:1 IMAGE VIEWER CONTAINER */}
+                  <div className="flex-1 w-full space-y-3 order-1 sm:order-2">
                     <div
-                      className="w-full h-full transition-transform duration-150 ease-out flex items-center justify-center"
-                      style={{
-                        transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
-                        transform: zoomPos.isZoomed ? 'scale(2.5)' : 'scale(1)'
-                      }}
+                      onMouseMove={handleMouseMove}
+                      onMouseLeave={handleMouseLeave}
+                      className="w-full aspect-square bg-[#F5F5F7] rounded-2xl overflow-hidden relative flex items-center justify-center p-3 sm:p-4 cursor-crosshair group select-none"
                     >
-                      <TransparentImage
-                        src={galleryImages[selectedImgIdx]}
-                        alt={product.name}
-                        className="w-full h-full object-contain img-crisp"
-                      />
+                      {/* 2.5x Zoom Image Container */}
+                      <div
+                        className="w-full h-full transition-transform duration-150 ease-out flex items-center justify-center"
+                        style={{
+                          transformOrigin: isManualTouchZoom ? 'center center' : `${zoomPos.x}% ${zoomPos.y}%`,
+                          transform: (zoomPos.isZoomed || isManualTouchZoom) ? 'scale(2.2)' : 'scale(1)'
+                        }}
+                      >
+                        <TransparentImage
+                          src={galleryImages[selectedImgIdx]}
+                          alt={product.name}
+                          className="w-full h-full object-contain img-crisp"
+                        />
+                      </div>
+
+                      {/* Zoom Status Text Indicator */}
+                      <div
+                        className={`absolute top-3 left-3 pointer-events-none z-30 transition-opacity duration-500 ${
+                          (showZoomText || isManualTouchZoom) ? 'opacity-80' : 'opacity-0'
+                        }`}
+                      >
+                        <span className="text-[9px] font-mono tracking-[0.18em] uppercase text-neutral-500 font-semibold bg-white/80 backdrop-blur-xs px-2 py-0.5 rounded-full border border-neutral-200/60">
+                          ZOOM 2.2X
+                        </span>
+                      </div>
+
+                      {/* Desktop Hover Next/Prev Buttons (Hidden on Mobile) */}
+                      {allProducts && allProducts.length > 1 && (
+                        <>
+                          <button
+                            onClick={handlePrevProduct}
+                            className="hidden sm:flex absolute left-3 top-1/2 -translate-y-1/2 p-2.5 bg-white/90 hover:bg-white text-black rounded-full shadow-md transition-all active:scale-95 z-20 items-center justify-center"
+                            title="Template Sebelumnya"
+                          >
+                            <ChevronLeft className="w-4 h-4" />
+                          </button>
+
+                          <button
+                            onClick={handleNextProduct}
+                            className="hidden sm:flex absolute right-3 top-1/2 -translate-y-1/2 p-2.5 bg-white/90 hover:bg-white text-black rounded-full shadow-md transition-all active:scale-95 z-20 items-center justify-center"
+                            title="Template Seterusnya"
+                          >
+                            <ChevronRight className="w-4 h-4" />
+                          </button>
+                        </>
+                      )}
                     </div>
 
-                    {/* Minimalist Fade-Out Zoom Text (Zero Badge Background, Zero Emojis) */}
-                    <div
-                      className={`absolute top-4 left-4 pointer-events-none z-30 transition-opacity duration-700 ease-out ${
-                        showZoomText ? 'opacity-70' : 'opacity-0'
-                      }`}
-                    >
-                      <span className="text-[10px] font-mono tracking-[0.2em] uppercase text-neutral-500 font-semibold select-none">
-                        ZOOM 2.5X
-                      </span>
+                    {/* DEDICATED MOBILE CONTROL BAR: THUMB NAVIGATION & ZOOM TOGGLE */}
+                    <div className="flex items-center justify-between gap-2 px-1">
+                      {allProducts && allProducts.length > 1 ? (
+                        <div className="flex items-center space-x-2">
+                          <button
+                            onClick={handlePrevProduct}
+                            className="px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 active:scale-95 text-[#111111] rounded-xl text-xs font-bold transition-all flex items-center space-x-1 border border-neutral-200"
+                          >
+                            <ChevronLeft className="w-3.5 h-3.5" />
+                            <span>Sebelum</span>
+                          </button>
+
+                          <button
+                            onClick={handleNextProduct}
+                            className="px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 active:scale-95 text-[#111111] rounded-xl text-xs font-bold transition-all flex items-center space-x-1 border border-neutral-200"
+                          >
+                            <span>Seterusnya</span>
+                            <ChevronRight className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ) : <div />}
+
+                      {/* Dedicated Mobile Zoom Toggle */}
+                      <button
+                        onClick={() => setIsManualTouchZoom(!isManualTouchZoom)}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-1 border ${
+                          isManualTouchZoom
+                            ? 'bg-[#111111] text-white border-[#111111]'
+                            : 'bg-neutral-100 text-neutral-700 border-neutral-200 hover:bg-neutral-200'
+                        }`}
+                      >
+                        <Sparkles className="w-3 h-3" />
+                        <span>{isManualTouchZoom ? 'Reset Zoom' : 'Zoom 2.2x'}</span>
+                      </button>
                     </div>
-
-                    {/* Template Switcher Buttons */}
-                    {allProducts && allProducts.length > 1 && (
-                      <>
-                        <button
-                          onClick={handlePrevProduct}
-                          className="absolute left-3 top-1/2 -translate-y-1/2 p-2.5 bg-white/90 hover:bg-white text-black rounded-full shadow-md transition-all active:scale-95 z-20"
-                          title="Template Sebelumnya"
-                        >
-                          <ChevronLeft className="w-4 h-4" />
-                        </button>
-
-                        <button
-                          onClick={handleNextProduct}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 p-2.5 bg-white/90 hover:bg-white text-black rounded-full shadow-md transition-all active:scale-95 z-20"
-                          title="Template Seterusnya"
-                        >
-                          <ChevronRight className="w-4 h-4" />
-                        </button>
-                      </>
-                    )}
                   </div>
                 </div>
               </div>

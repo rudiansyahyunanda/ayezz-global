@@ -165,27 +165,27 @@ export default function SmoothHeaderHomepage() {
       </header>
 
       {/* 3. HERO SHOWCASE SECTION */}
-      <section className="py-24 sm:py-32 px-8 sm:px-12 bg-[#EFEFF4] border-b border-neutral-200/80">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 lg:gap-20 items-center">
-          <div className="lg:col-span-6 space-y-8 text-left">
-            <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 rounded-full bg-white border border-neutral-300 shadow-2xs text-[10px] font-mono font-bold tracking-widest text-neutral-600 uppercase">
-              <span className="w-2 h-2 rounded-full bg-[#111111] animate-pulse" />
+      <section className="py-10 sm:py-32 px-4 sm:px-12 bg-[#EFEFF4] border-b border-neutral-200/80">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-16 lg:gap-20 items-center">
+          <div className="lg:col-span-6 space-y-4 sm:space-y-8 text-left">
+            <div className="inline-flex items-center space-x-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-white border border-neutral-300 shadow-2xs text-[9px] sm:text-[10px] font-mono font-bold tracking-widest text-neutral-600 uppercase">
+              <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#111111] animate-pulse" />
               <span>STUDIO SUBLIMASI HIGH-PERFORMANCE</span>
             </div>
 
-            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-[#111111] tracking-tight leading-[1.04] uppercase">
+            <h1 className="text-2.5xl sm:text-5xl lg:text-7xl font-black text-[#111111] tracking-tight leading-[1.06] uppercase">
               Reka Bentuk Jersi <br />
               <span className="text-neutral-500 font-bold">Pakaian Custom</span>
             </h1>
 
-            <p className="text-neutral-600 text-sm sm:text-base leading-relaxed max-w-lg font-normal">
+            <p className="text-neutral-600 text-xs sm:text-base leading-relaxed max-w-lg font-normal">
               Pilih daripada koleksi visual kategori di bawah. Pilih desain jersi, kustomisasikan jenis kolar dan kain sublimasi, dan proses tempahan terus secara dalam talian menerusi sistem aplikasi ini.
             </p>
 
-            <div className="pt-3 flex flex-wrap items-center gap-3 sm:gap-4">
+            <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-4">
               <a
                 href="#kategori-utama"
-                className="px-6 sm:px-8 py-3.5 sm:py-4 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-[11px] sm:text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center space-x-2.5 active:scale-[0.98] shadow-2xs whitespace-nowrap"
+                className="px-5 py-3 sm:px-8 sm:py-4 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-[11px] sm:text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center justify-center space-x-2 active:scale-[0.98] shadow-2xs whitespace-nowrap"
               >
                 <span>Lihat Kategori Utama</span>
                 <ArrowRight className="w-3.5 h-3.5 text-white" />
@@ -193,53 +193,53 @@ export default function SmoothHeaderHomepage() {
 
               <Link
                 href="/katalog"
-                className="px-6 sm:px-7 py-3.5 sm:py-4 bg-white border border-neutral-300 hover:border-[#111111] text-[#111111] font-bold text-[11px] sm:text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center space-x-2 active:scale-[0.98] whitespace-nowrap"
+                className="px-5 py-3 sm:px-7 sm:py-4 bg-white border border-neutral-300 hover:border-[#111111] text-[#111111] font-bold text-[11px] sm:text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center justify-center space-x-2 active:scale-[0.98] whitespace-nowrap"
               >
                 <span>Semua Katalog</span>
               </Link>
             </div>
           </div>
 
-          <div className="lg:col-span-6 flex items-center justify-center">
+          <div className="lg:col-span-6 flex items-center justify-center pt-2 sm:pt-0">
             <HeroCarousel />
           </div>
         </div>
       </section>
 
       {/* 4. MASTER CATEGORIES SHOWCASE CAROUSEL (NIKE / APPLE MINIMALIST CLEAN SWIPE) */}
-      <section id="kategori-utama" className="py-20 sm:py-28 px-6 sm:px-12 bg-white border-b border-neutral-200/60 select-none">
-        <div className="max-w-7xl mx-auto space-y-8">
+      <section id="kategori-utama" className="py-12 sm:py-28 px-4 sm:px-12 bg-white border-b border-neutral-200/60 select-none">
+        <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
           
           {/* TITLE HEADER & CIRCULAR SWIPE NAVIGATION BUTTONS */}
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <h2 className="text-2xl sm:text-4xl font-bold tracking-tight text-[#111111]">
+              <h2 className="text-xl sm:text-4xl font-bold tracking-tight text-[#111111]">
                 Kategori Pilihan
               </h2>
             </div>
 
-            <div className="flex items-center space-x-2.5">
+            <div className="flex items-center space-x-2">
               <button
                 onClick={() => scrollCategories('left')}
-                className="w-10 h-10 rounded-full bg-[#F5F5F7] hover:bg-neutral-200 text-[#111111] flex items-center justify-center transition-all active:scale-95 border border-neutral-200/60 shadow-2xs"
+                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#F5F5F7] hover:bg-neutral-200 text-[#111111] flex items-center justify-center transition-all active:scale-95 border border-neutral-200/60 shadow-2xs"
                 aria-label="Scroll ke kiri"
                 title="Scroll ke kiri"
               >
-                <ChevronLeft className="w-5 h-5 text-[#111111]" />
+                <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-[#111111]" />
               </button>
               <button
                 onClick={() => scrollCategories('right')}
-                className="w-10 h-10 rounded-full bg-[#F5F5F7] hover:bg-neutral-200 text-[#111111] flex items-center justify-center transition-all active:scale-95 border border-neutral-200/60 shadow-2xs"
+                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#F5F5F7] hover:bg-neutral-200 text-[#111111] flex items-center justify-center transition-all active:scale-95 border border-neutral-200/60 shadow-2xs"
                 aria-label="Scroll ke kanan"
                 title="Scroll ke kanan"
               >
-                <ChevronRight className="w-5 h-5 text-[#111111]" />
+                <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-[#111111]" />
               </button>
             </div>
           </div>
 
           {isLoading ? (
-            <div className="py-24 flex flex-col items-center justify-center space-y-4">
+            <div className="py-16 flex flex-col items-center justify-center space-y-4">
               <RefreshCw className="w-8 h-8 text-neutral-400 animate-spin" />
               <span className="text-xs font-mono text-neutral-400 uppercase tracking-widest">Memuatkan Kategori...</span>
             </div>
@@ -247,14 +247,14 @@ export default function SmoothHeaderHomepage() {
             /* HORIZONTAL SWIPE CAROUSEL */
             <div
               ref={categoryScrollRef}
-              className="flex space-x-5 sm:space-x-6 overflow-x-auto scrollbar-none snap-x snap-mandatory scroll-smooth pb-4 pt-1"
+              className="flex space-x-4 sm:space-x-6 overflow-x-auto scrollbar-none snap-x snap-mandatory scroll-smooth pb-3 pt-1"
               style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
             >
               {categories.map((cat) => (
                 <div
                   key={cat.id || cat.code}
                   onClick={() => handleCategoryClick(cat.title)}
-                  className="group shrink-0 w-[270px] sm:w-[350px] lg:w-[380px] snap-start cursor-pointer space-y-3"
+                  className="group shrink-0 w-[210px] sm:w-[350px] lg:w-[380px] snap-start cursor-pointer space-y-2 sm:space-y-3"
                 >
                   {/* CLEAN TALL RECTANGULAR IMAGE CONTAINER */}
                   <div className="relative aspect-[3/4] w-full rounded-2xl overflow-hidden bg-[#F5F5F7] border border-neutral-200/60 shadow-xs">
@@ -267,10 +267,10 @@ export default function SmoothHeaderHomepage() {
 
                   {/* MINIMALIST TEXT BELOW IMAGE */}
                   <div className="pt-1">
-                    <h3 className="text-base sm:text-lg font-bold text-[#111111] tracking-tight group-hover:underline">
+                    <h3 className="text-sm sm:text-lg font-bold text-[#111111] tracking-tight group-hover:underline">
                       {cat.title}
                     </h3>
-                    <p className="text-xs text-neutral-500 font-medium">
+                    <p className="text-[11px] sm:text-xs text-neutral-500 font-medium">
                       {cat.itemCount || 'Desain Sublimasi Custom'}
                     </p>
                   </div>
@@ -282,15 +282,15 @@ export default function SmoothHeaderHomepage() {
       </section>
 
       {/* 5. FACTORY & TECHNICAL FEATURES SECTION (PURE APPLE MONOCHROME MINIMALIST) */}
-      <section id="teknologi" className="py-28 sm:py-36 px-8 sm:px-12 bg-[#000000] text-white border-t border-neutral-900 relative">
-        <div className="max-w-7xl mx-auto space-y-16">
+      <section id="teknologi" className="py-16 sm:py-36 px-4 sm:px-12 bg-[#000000] text-white border-t border-neutral-900 relative">
+        <div className="max-w-7xl mx-auto space-y-10 sm:space-y-16">
 
           {/* SECTION HEADER */}
-          <div className="text-center max-w-3xl mx-auto space-y-4">
-            <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-[0.25em] bg-neutral-900 px-4 py-1.5 rounded-full border border-neutral-800 inline-block">
+          <div className="text-center max-w-3xl mx-auto space-y-3 sm:space-y-4">
+            <span className="text-[9px] sm:text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-[0.2em] bg-neutral-900 px-3 py-1 sm:px-4 sm:py-1.5 rounded-full border border-neutral-800 inline-block">
               STANDARD KILANG & KUALITI INDUSTRI
             </span>
-            <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight text-white leading-tight">
+            <h2 className="text-2.5xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight text-white leading-tight">
               Mengapa Memilih <br className="hidden sm:inline" />
               AYEZZ GLOBAL?
             </h2>
@@ -300,75 +300,75 @@ export default function SmoothHeaderHomepage() {
           </div>
 
           {/* 3 MONOCHROME APPLE GLASS CARDS GRID */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-8">
 
             {/* CARD 1 */}
-            <div className="bg-[#111113] border border-neutral-800/80 hover:border-neutral-600 p-8 sm:p-10 rounded-3xl space-y-6 transition-all duration-300 hover:-translate-y-1 shadow-lg">
+            <div className="bg-[#111113] border border-neutral-800/80 hover:border-neutral-600 p-5 sm:p-10 rounded-2xl sm:rounded-3xl space-y-4 sm:space-y-6 transition-all duration-300 shadow-lg">
               <div className="flex items-center justify-between">
-                <div className="w-12 h-12 rounded-2xl bg-neutral-900 border border-neutral-800 text-white flex items-center justify-center">
-                  <Printer className="w-5 h-5 text-neutral-200" />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-neutral-900 border border-neutral-800 text-white flex items-center justify-center">
+                  <Printer className="w-4 h-4 sm:w-5 sm:h-5 text-neutral-200" />
                 </div>
                 <span className="text-xs font-mono font-bold text-neutral-500">
                   01 / HD PRINT
                 </span>
               </div>
-              <div className="space-y-3">
-                <h3 className="text-lg font-bold text-white uppercase tracking-tight">
+              <div className="space-y-2 sm:space-y-3">
+                <h3 className="text-base sm:text-lg font-bold text-white uppercase tracking-tight">
                   100% Cetakan Sublimasi HD
                 </h3>
                 <p className="text-xs text-neutral-400 leading-relaxed font-normal">
                   Warna pigmen meresap 100% terus ke dalam serat kain. Tidak akan pudar, merekah, atau bertukar kusam walaupun dicuci berulang kali.
                 </p>
               </div>
-              <div className="pt-4 border-t border-neutral-800/60 flex items-center space-x-2 text-[11px] font-mono text-neutral-400">
+              <div className="pt-3 border-t border-neutral-800/60 flex items-center space-x-2 text-[10px] sm:text-[11px] font-mono text-neutral-400">
                 <CheckCircle2 className="w-3.5 h-3.5 text-neutral-400" />
                 <span>Teknologi Ink Japan High-Definition</span>
               </div>
             </div>
 
             {/* CARD 2 */}
-            <div className="bg-[#111113] border border-neutral-800/80 hover:border-neutral-600 p-8 sm:p-10 rounded-3xl space-y-6 transition-all duration-300 hover:-translate-y-1 shadow-lg">
+            <div className="bg-[#111113] border border-neutral-800/80 hover:border-neutral-600 p-5 sm:p-10 rounded-2xl sm:rounded-3xl space-y-4 sm:space-y-6 transition-all duration-300 shadow-lg">
               <div className="flex items-center justify-between">
-                <div className="w-12 h-12 rounded-2xl bg-neutral-900 border border-neutral-800 text-white flex items-center justify-center">
-                  <Zap className="w-5 h-5 text-neutral-200" />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-neutral-900 border border-neutral-800 text-white flex items-center justify-center">
+                  <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-neutral-200" />
                 </div>
                 <span className="text-xs font-mono font-bold text-neutral-500">
                   02 / MATERIAL
                 </span>
               </div>
-              <div className="space-y-3">
-                <h3 className="text-lg font-bold text-white uppercase tracking-tight">
+              <div className="space-y-2 sm:space-y-3">
+                <h3 className="text-base sm:text-lg font-bold text-white uppercase tracking-tight">
                   Fabrik High-Performance
                 </h3>
                 <p className="text-xs text-neutral-400 leading-relaxed font-normal">
                   Menggunakan fabrik Micro-Polyester, Interlock, dan Jacquard dengan keupayaan serapan peluh berteknologi pantas kering.
                 </p>
               </div>
-              <div className="pt-4 border-t border-neutral-800/60 flex items-center space-x-2 text-[11px] font-mono text-neutral-400">
+              <div className="pt-3 border-t border-neutral-800/60 flex items-center space-x-2 text-[10px] sm:text-[11px] font-mono text-neutral-400">
                 <CheckCircle2 className="w-3.5 h-3.5 text-neutral-400" />
                 <span>Selesai & Sejuk Untuk Sukan Pro</span>
               </div>
             </div>
 
             {/* CARD 3 */}
-            <div className="bg-[#111113] border border-neutral-800/80 hover:border-neutral-600 p-8 sm:p-10 rounded-3xl space-y-6 transition-all duration-300 hover:-translate-y-1 shadow-lg">
+            <div className="bg-[#111113] border border-neutral-800/80 hover:border-neutral-600 p-5 sm:p-10 rounded-2xl sm:rounded-3xl space-y-4 sm:space-y-6 transition-all duration-300 shadow-lg">
               <div className="flex items-center justify-between">
-                <div className="w-12 h-12 rounded-2xl bg-neutral-900 border border-neutral-800 text-white flex items-center justify-center">
-                  <PackageCheck className="w-5 h-5 text-neutral-200" />
+                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-neutral-900 border border-neutral-800 text-white flex items-center justify-center">
+                  <PackageCheck className="w-4 h-4 sm:w-5 sm:h-5 text-neutral-200" />
                 </div>
                 <span className="text-xs font-mono font-bold text-neutral-500">
                   03 / FLEKSIBEL
                 </span>
               </div>
-              <div className="space-y-3">
-                <h3 className="text-lg font-bold text-white uppercase tracking-tight">
+              <div className="space-y-2 sm:space-y-3">
+                <h3 className="text-base sm:text-lg font-bold text-white uppercase tracking-tight">
                   Tanpa Pesanan Minimum
                 </h3>
                 <p className="text-xs text-neutral-400 leading-relaxed font-normal">
                   Boleh menempah dari 1 unit jersi hingga beribu-ribu pakaian seragam untuk kejohanan, kelab sukan, mahupun tempahan korporat.
                 </p>
               </div>
-              <div className="pt-4 border-t border-neutral-800/60 flex items-center space-x-2 text-[11px] font-mono text-neutral-400">
+              <div className="pt-3 border-t border-neutral-800/60 flex items-center space-x-2 text-[10px] sm:text-[11px] font-mono text-neutral-400">
                 <CheckCircle2 className="w-3.5 h-3.5 text-neutral-400" />
                 <span>MOQ 0 Unit • Bebas Kustomisasi</span>
               </div>
