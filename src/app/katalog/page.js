@@ -12,10 +12,12 @@ import {
   RefreshCw,
   Settings,
   ShoppingBag,
-  SlidersHorizontal
+  SlidersHorizontal,
+  User
 } from 'lucide-react';
 import InteractiveProductCard from '../../components/InteractiveProductCard';
 import ProductPreviewModal from '../../components/modals/ProductPreviewModal';
+import { getCurrentUser } from '../../lib/authService';
 import {
   getDesignTemplates,
   getCategories,
@@ -70,6 +72,7 @@ function SpaciousCatalogContent() {
   });
 
   // Modal State
+  const [currentUser, setCurrentUser] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -77,11 +80,12 @@ function SpaciousCatalogContent() {
     async function loadAllData() {
       setIsLoading(true);
       try {
-        const [fetchedTemplates, fetchedCategories, fetchedCuts, fetchedFabrics] = await Promise.all([
+        const [fetchedTemplates, fetchedCategories, fetchedCuts, fetchedFabrics, usr] = await Promise.all([
           getDesignTemplates(),
           getCategories(),
           getCutTypes(),
-          getFabricTypes()
+          getFabricTypes(),
+          getCurrentUser()
         ]);
 
         const finalTemplates = Array.isArray(fetchedTemplates) && fetchedTemplates.length > 0 ? fetchedTemplates : DESIGN_TEMPLATES;
@@ -89,6 +93,7 @@ function SpaciousCatalogContent() {
         setCategories(fetchedCategories || []);
         setCutTypes(fetchedCuts || FALLBACK_CUTS);
         setFabricTypes(fetchedFabrics || FALLBACK_FABRICS);
+        setCurrentUser(usr);
       } catch (err) {
         console.error('Error loading catalog data from Supabase:', err);
         setTemplates(DESIGN_TEMPLATES);
@@ -225,6 +230,23 @@ function SpaciousCatalogContent() {
               />
               <Search className="w-3.5 h-3.5 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2" />
             </div>
+
+            {currentUser ? (
+              <Link
+                href="/dashboard"
+                className="px-3.5 py-1.5 bg-[#111111] text-white hover:bg-neutral-800 font-bold text-[11px] uppercase tracking-widest rounded-full transition-all flex items-center space-x-1.5"
+              >
+                <User className="w-3.5 h-3.5 text-white" />
+                <span className="line-clamp-1 max-w-[100px]">{currentUser.fullName || 'Dashboard'}</span>
+              </Link>
+            ) : (
+              <Link
+                href="/login?redirect=/katalog"
+                className="px-3.5 py-1.5 bg-[#111111] text-white hover:bg-neutral-800 font-bold text-[11px] uppercase tracking-widest rounded-full transition-all"
+              >
+                Log Masuk
+              </Link>
+            )}
 
             <Link href="/admin" className="hover:text-neutral-600 transition-colors" title="Panel Admin">
               <Settings className="w-4 h-4 text-neutral-500" />

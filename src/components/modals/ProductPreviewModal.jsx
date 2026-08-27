@@ -185,24 +185,27 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
     }
 
     setIsSubmitting(true);
+    const currentUser = await getCurrentUser();
     const generatedOrderId = 'AYZ-' + Math.floor(100000 + Math.random() * 900000);
 
     const orderPayload = {
       order_id: generatedOrderId,
-      product_name: product.name,
+      userEmail: currentUser?.email || '',
+      userId: currentUser?.id || '',
+      templateName: product.name,
       category: product.category || 'SUBLIMASI',
       sub_category: product.subCategory || '',
-      collar_cut: selectedCut.name,
-      fabric_type: selectedFabric.name,
-      size_breakdown: sizeQuantities,
-      total_qty: totalQuantity,
-      price_per_pcs: pricePerPcs,
-      total_price: totalPrice,
-      customer_name: customerInfo.name || 'Pelanggan Sistem',
-      customer_phone: customerInfo.phone || '',
+      cutType: selectedCut.name,
+      fabricMaterial: selectedFabric.name,
+      sizeBreakdown: sizeQuantities,
+      totalQty: totalQuantity,
+      unitPrice: pricePerPcs,
+      totalPrice: totalPrice,
+      clientName: customerInfo.name || currentUser?.fullName || 'Pelanggan Sistem',
+      customer_phone: customerInfo.phone || currentUser?.phone || '',
       team_name: customerInfo.teamName || '-',
       notes: customerInfo.notes || '',
-      status: 'pending'
+      status: 'Pesanan Diterima'
     };
 
     try {

@@ -72,6 +72,8 @@ CREATE TABLE public.design_templates (
 -- 7. CREATE ORDERS TABLE
 CREATE TABLE public.orders (
     id TEXT PRIMARY KEY,
+    user_email TEXT,
+    user_id TEXT,
     client_name TEXT NOT NULL,
     template_name TEXT NOT NULL,
     cut_type TEXT NOT NULL,
@@ -80,11 +82,22 @@ CREATE TABLE public.orders (
     total_qty INTEGER DEFAULT 1,
     unit_price NUMERIC(10, 2) DEFAULT 70.00,
     total_price NUMERIC(10, 2) DEFAULT 70.00,
-    status TEXT DEFAULT 'Menunggu WhatsApp',
+    status TEXT DEFAULT 'Pesanan Diterima',
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- 8. CREATE STORE SETTINGS TABLE
+-- 8. CREATE USERS DATABASE TABLE
+CREATE TABLE IF NOT EXISTS public.users (
+    id TEXT PRIMARY KEY,
+    email TEXT UNIQUE NOT NULL,
+    full_name TEXT,
+    phone TEXT,
+    address TEXT,
+    role TEXT DEFAULT 'customer',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+-- 9. CREATE STORE SETTINGS TABLE
 CREATE TABLE public.store_settings (
     id TEXT PRIMARY KEY DEFAULT 'default',
     store_name TEXT DEFAULT 'AYEZZ GLOBAL',
@@ -94,13 +107,14 @@ CREATE TABLE public.store_settings (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- 9. DISABLE ROW LEVEL SECURITY (RLS) FOR FULL ANONYMOUS ACCESS
+-- 10. DISABLE ROW LEVEL SECURITY (RLS) FOR FULL ACCESS
 ALTER TABLE public.categories DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.sub_categories DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.cut_types DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.fabric_types DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.design_templates DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.orders DISABLE ROW LEVEL SECURITY;
+ALTER TABLE public.users DISABLE ROW LEVEL SECURITY;
 ALTER TABLE public.store_settings DISABLE ROW LEVEL SECURITY;
 
 -- 10. GRANT FULL PERMISSIONS TO ALL ROLES

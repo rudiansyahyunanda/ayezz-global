@@ -14,7 +14,8 @@ import {
   PackageCheck,
   CheckCircle2,
   ShieldCheck,
-  Clock
+  Clock,
+  User
 } from 'lucide-react';
 import ProductOrderModal from '../components/modals/ProductOrderModal';
 import HeroCarousel from '../components/HeroCarousel';
@@ -27,6 +28,7 @@ import { MAIN_CATALOGS, DESIGN_TEMPLATES } from '../data/sublimationProducts';
 
 export default function SmoothHeaderHomepage() {
   const router = useRouter();
+  const [currentUser, setCurrentUser] = useState(null);
   const [categories, setCategories] = useState([]);
   const [templates, setTemplates] = useState([]);
   const [orderedProduct, setOrderedProduct] = useState(null);
@@ -58,12 +60,14 @@ export default function SmoothHeaderHomepage() {
   const loadData = async () => {
     setIsLoading(true);
     try {
-      const [cats, tpls] = await Promise.all([
+      const [cats, tpls, usr] = await Promise.all([
         getCategories(),
-        getDesignTemplates()
+        getDesignTemplates(),
+        getCurrentUser()
       ]);
       setCategories(Array.isArray(cats) && cats.length > 0 ? cats : MAIN_CATALOGS);
       setTemplates(Array.isArray(tpls) && tpls.length > 0 ? tpls : DESIGN_TEMPLATES);
+      setCurrentUser(usr);
     } catch (err) {
       console.warn('Error loading homepage data from Supabase:', err);
       setCategories(MAIN_CATALOGS);
@@ -120,7 +124,24 @@ export default function SmoothHeaderHomepage() {
             </Link>
           </nav>
 
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-3 sm:space-x-4">
+            {currentUser ? (
+              <Link
+                href="/dashboard"
+                className="px-4 py-2 bg-neutral-100 hover:bg-neutral-200 text-[#111111] font-bold text-[11px] uppercase tracking-[0.12em] rounded-full transition-all flex items-center space-x-1.5 border border-neutral-200"
+              >
+                <User className="w-3.5 h-3.5 text-[#111111]" />
+                <span className="line-clamp-1 max-w-[110px]">{currentUser.fullName || 'Dashboard'}</span>
+              </Link>
+            ) : (
+              <Link
+                href="/login"
+                className="px-4 py-2 text-[#111111] hover:text-neutral-500 font-bold text-[11px] uppercase tracking-[0.12em] transition-colors hidden sm:block"
+              >
+                Log Masuk
+              </Link>
+            )}
+
             <button
               onClick={handleTempahCustomClick}
               className={`bg-[#111111] hover:bg-neutral-800 text-white font-bold text-[11px] uppercase tracking-[0.12em] rounded-full transition-all duration-500 active:scale-[0.98] flex items-center space-x-2 shadow-2xs ${isScrolled ? 'px-5 py-2' : 'px-6 py-2.5'

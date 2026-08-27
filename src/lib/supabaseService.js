@@ -461,14 +461,18 @@ export async function getOrdersFromSupabase() {
     if (error || !data) return [];
     return data.map(item => ({
       id: item.id,
+      userEmail: item.user_email || '',
       client: item.client_name,
       template: item.template_name || 'Template Reka Bentuk',
       cutType: item.cut_type || 'Standard',
       fabricMaterial: item.fabric_material || 'Dry-Fit',
+      sizeBreakdown: item.size_breakdown || {},
       qty: item.total_qty || 1,
+      unitPrice: item.unit_price || 70,
+      totalPrice: item.total_price || 70,
       total: `RM ${Number(item.total_price || 0).toFixed(2)}`,
-      date: new Date(item.created_at).toLocaleDateString('en-MY'),
-      status: item.status || 'Menunggu WhatsApp'
+      date: new Date(item.created_at).toLocaleDateString('en-MY', { day: '2-digit', month: 'short', year: 'numeric' }),
+      status: item.status || 'Pesanan Diterima'
     }));
   } catch (err) {
     console.warn('Supabase getOrdersFromSupabase error:', err);
@@ -476,20 +480,99 @@ export async function getOrdersFromSupabase() {
   }
 }
 
+export async function getUserOrdersFromSupabase(userEmail) {
+  if (!userEmail) return [];
+  
+  if (isSupabaseConnected) {
+    try {
+      const { data, error } = await supabase
+        .from('orders')
+        .select('*')
+        .eq('user_email', userEmail)
+        .order('created_at', { ascending: false });
+      
+      if (!error && data && data.length > 0) {
+        return data.map(item => ({
+          id: item.id,
+          userEmail: item.user_email || userEmail,
+          client: item.client_name,
+          template: item.template_name || 'Template Reka Bentuk',
+          cutType: item.cut_type || 'Standard',
+          fabricMaterial: item.fabric_material || 'Dry-Fit',
+          sizeBreakdown: item.size_breakdown || {},
+          qty: item.total_qty || 1,
+          unitPrice: item.unit_price || 70,
+          totalPrice: item.total_price || 70,
+          total: `RM ${Number(item.total_price || 0).toFixed(2)}`,
+          date: new Date(item.created_at).toLocaleDateString('en-MY', { day: '2-digit', month: 'short', year: 'numeric' }),
+          status: item.status || 'Pesanan Diterima'
+        }));
+      }
+    } catch (err) {
+      console.warn('Supabase getUserOrders error:', err);
+    }
+  }
+
+  // Fallback to checking local storage orders
+  if (typeof window !== 'undefined') {
+    try {
+      const localOrders = JSON.parse(localStorage.getItem('ayezz_user_orders') || '[]');
+      return localOrders.filter(o => o.userEmail === userEmail);
+    } catch (e) {
+      return [];
+    }
+  }
+
+  return [];
+}
+
 export async function saveOrderToSupabase(orderData) {
+  const payload = {
+    user_email: orderData.userEmail || orderData.email || '',
+    user_id: orderData.userId || '',
+    client_name: orderData.clientName || 'Pelanggan Sistem',
+    template_name: orderData.templateName,
+    cut_type: orderData.cutType,
+    fabric_material: orderData.fabricMaterial,
+    size_breakdown: orderData.sizeBreakdown,
+    total_qty: orderData.totalQty,
+    unit_price: orderData.unitPrice,
+    total_price: orderData.totalPrice,
+    status: 'Pesanan Diterima'
+  };
+
+  // Save to local storage cache as fallback
+  if (typeof window !== 'undefined') {
+    try {
+      const existing = JSON.parse(localStorage.getItem('ayezz_user_orders') || '[]');
+      const newLocalOrder = {
+        id: `AYZ-${Math.floor(100000 + Math.random() * 900000)}`,
+        userEmail: payload.user_email,
+        client: payload.client_name,
+        template: payload.template_name,
+        cutType: payload.cut_type,
+        fabricMaterial: payload.fabric_material,
+        sizeBreakdown: payload.size_breakdown,
+        qty: payload.total_qty,
+        unitPrice: payload.unit_price,
+        totalPrice: payload.total_price,
+        total: `RM ${Number(payload.total_price || 0).toFixed(2)}`,
+        date: new Date().toLocaleDateString('en-MY', { day: '2-digit', month: 'short', year: 'numeric' }),
+        status: 'Pesanan Diterima'
+      };
+      localStorage.setItem('ayezz_user_orders', JSON.stringify([newLocalOrder, ...existing]));
+    } catch (e) {}
+  }
+
   if (!isSupabaseConnected) return;
+
   try {
-    await supabase.from('orders').insert([{
-      client_name: orderData.clientName || 'Pelanggan WhatsApp',
-      template_name: orderData.templateName,
-      cut_type: orderData.cutType,
-      fabric_material: orderData.fabricMaterial,
-      size_breakdown: orderData.sizeBreakdown,
-      total_qty: orderData.totalQty,
-      unit_price: orderData.unitPrice,
-      total_price: orderData.totalPrice,
-      status: 'Menunggu WhatsApp'
-    }]);
+    const { error } = await supabase.from('orders').insert([payload]);
+    if (error) {
+      // Fallback: If user_email column is missing in schema cache, retry without user_email
+      const { user_email, user_id, ...fallbackPayload } = payload;
+      await supabase.from('orders').insert([fallbackPayload]);
+    }
   } catch (err) {
     console.error('Error saving order to Supabase:', err);
   }
