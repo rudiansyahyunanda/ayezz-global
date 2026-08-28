@@ -42,6 +42,8 @@ import {
 import { getCurrentUser, logoutUser, updateUserProfile } from '../../lib/authService';
 import {
   getUserOrdersFromSupabase,
+  getCategories,
+  getSubCategories,
   getCutTypes,
   getFabricTypes,
   getDesignTemplates,
@@ -63,6 +65,8 @@ function DashboardContent() {
   const [user, setUser] = useState(null);
   const [orders, setOrders] = useState([]);
   const [templates, setTemplates] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
   const [cutTypes, setCutTypes] = useState(FALLBACK_CUTS);
   const [fabricTypes, setFabricTypes] = useState(FALLBACK_FABRICS);
   const [loading, setLoading] = useState(true);
@@ -121,7 +125,7 @@ function DashboardContent() {
   const [orderSuccessData, setOrderSuccessData] = useState(null);
 
   // ----------------------------------------------------
-  // INITIAL DATA LOADING & AUTH CHECK
+  // INITIAL DATA LOADING FROM SUPABASE DATABASE
   // ----------------------------------------------------
   useEffect(() => {
     async function initDashboard() {
@@ -143,15 +147,20 @@ function DashboardContent() {
         phone: currentUser.phone || ''
       }));
 
-      // Load User Orders, Cut Types, Fabric Types, Design Templates
-      const [userOrders, cuts, fabrics, tpls] = await Promise.all([
+      // Load User Orders, Cut Types, Fabric Types, Design Templates, Categories & Subcategories directly from Supabase DB
+      const [userOrders, cuts, fabrics, tpls, cats, subs] = await Promise.all([
         getUserOrdersFromSupabase(currentUser.email),
         getCutTypes(),
         getFabricTypes(),
-        getDesignTemplates()
+        getDesignTemplates(),
+        getCategories(),
+        getSubCategories()
       ]);
 
       setOrders(userOrders || []);
+      if (cats && cats.length > 0) setCategories(cats);
+      if (subs && subs.length > 0) setSubCategories(subs);
+
       if (cuts && cuts.length > 0) {
         setCutTypes(cuts);
         setSelectedCut(cuts[0]);
@@ -182,6 +191,11 @@ function DashboardContent() {
     }
     initDashboard();
   }, [router, searchParams]);
+
+  // Selected template object for live thumbnail preview
+  const selectedTemplateObj = useMemo(() => {
+    return templates.find((t) => t.name === orderTemplateName) || templates[0];
+  }, [templates, orderTemplateName]);
 
   // ----------------------------------------------------
   // LOGOUT HANDLER
@@ -734,11 +748,35 @@ function DashboardContent() {
             </div>
           )}
 
-          {/* TAB 2: BUAT PESANAN BARU */}
+          {/* TAB 2: BUAT PESANAN BARU (WIDE MODERN PANEL LAYOUT - NO CONSTRAINED CARD BOX) */}
           {activeTab === 'new-order' && (
-            <div className="space-y-8 max-w-4xl mx-auto">
+            <div className="w-full space-y-8">
+              {/* HEADER BAR FOR NEW ORDER (NO CARD WRAPPER!) */}
+              <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-slate-200/80 pb-4 gap-4">
+                <div>
+                  <span className="text-[10px] font-mono font-bold text-amber-600 uppercase tracking-widest block">
+                    KONFIGURASI SUBLIMASI HIGH-PERFORMANCE
+                  </span>
+                  <h2 className="text-xl sm:text-2xl font-black uppercase text-slate-900 pt-0.5">
+                    Borang Tempahan Jersi Custom
+                  </h2>
+                  <p className="text-xs text-slate-500 font-medium">
+                    Pilih spesifikasi potongan kolar, fabrik, kuantiti saiz, dan muat naik logo pasukan anda secara dalam talian.
+                  </p>
+                </div>
+
+                {/* QUICK TEMPLATE COUNTER BADGE */}
+                <div className="flex items-center space-x-2 bg-white px-3.5 py-2 rounded-xl border border-slate-200 shadow-2xs shrink-0">
+                  <Layers className="w-4 h-4 text-amber-500" />
+                  <span className="text-xs font-mono font-bold text-slate-700">
+                    {templates.length} Template Pilihan Sedia Ada
+                  </span>
+                </div>
+              </div>
+
               {orderSuccessData ? (
-                <div className="bg-white p-8 rounded-2xl border border-slate-200/80 shadow-md text-center space-y-6">
+                /* ORDER SUCCESS RECEIPT CONFIRMATION BANNER */
+                <div className="bg-white p-8 rounded-2xl border border-slate-200/80 shadow-md text-center space-y-6 max-w-2xl mx-auto">
                   <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
                     <CheckCircle2 className="w-9 h-9" />
                   </div>
@@ -788,243 +826,305 @@ function DashboardContent() {
                   </div>
                 </div>
               ) : (
-                <form onSubmit={handleCreateNewOrder} className="bg-white rounded-2xl border border-slate-200/80 shadow-md p-6 sm:p-10 space-y-8">
-                  <div className="border-b border-slate-100 pb-5">
-                    <span className="text-[10px] font-mono font-bold text-amber-600 uppercase tracking-widest block">
-                      BORANG TEMPAHAN JERSI CUSTOM
-                    </span>
-                    <h2 className="text-xl sm:text-2xl font-black uppercase text-slate-900 pt-1">
-                      Konfigurasi Spesifikasi Pesanan
-                    </h2>
-                  </div>
-
-                  {/* 1. PILIH TEMPLATE REKA BENTUK */}
-                  <div className="space-y-3">
-                    <label className="text-xs font-extrabold uppercase tracking-wider text-slate-900 block">
-                      1. TEMPLATE REKA BENTUK
-                    </label>
-                    {templates.length > 0 ? (
-                      <select
-                        value={orderTemplateName}
-                        onChange={(e) => {
-                          setOrderTemplateName(e.target.value);
-                          const t = templates.find((tpl) => tpl.name === e.target.value);
-                          if (t) {
-                            setOrderCategory(t.category || 'SUBLIMASI');
-                            setOrderSubCategory(t.subCategory || '');
-                          }
-                        }}
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold text-slate-900 outline-none focus:border-slate-900 focus:bg-white transition-all cursor-pointer"
-                      >
-                        {templates.map((tpl) => (
-                          <option key={tpl.id} value={tpl.name}>
-                            {tpl.name} ({tpl.category} {tpl.subCategory ? `• ${tpl.subCategory}` : ''})
-                          </option>
-                        ))}
-                      </select>
-                    ) : (
-                      <input
-                        type="text"
-                        required
-                        value={orderTemplateName}
-                        onChange={(e) => setOrderTemplateName(e.target.value)}
-                        placeholder="Nama template reka bentuk..."
-                        className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-bold text-slate-900 outline-none focus:border-slate-900 focus:bg-white transition-all"
-                      />
-                    )}
-                  </div>
-
-                  {/* 2. SELEKSI JENIS POTONGAN / KOLAR */}
-                  <div className="space-y-3">
-                    <label className="text-xs font-extrabold uppercase tracking-wider text-slate-900 block">
-                      2. PILIH JENIS POTONGAN / KOLAR:
-                    </label>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                      {cutTypes.map((cut) => {
-                        const isSelected = selectedCut.id === cut.id;
-                        const addOn = Number(cut.addOnPrice ?? cut.add_on_price ?? 0);
-                        return (
-                          <div
-                            key={cut.id}
-                            onClick={() => setSelectedCut(cut)}
-                            className={`p-3.5 rounded-xl border cursor-pointer transition-all ${
-                              isSelected
-                                ? 'bg-slate-900 text-white border-slate-900 shadow-md scale-[1.02]'
-                                : 'bg-slate-50 text-slate-800 border-slate-200 hover:border-slate-400'
-                            }`}
-                          >
-                            <span className="text-xs font-bold uppercase block line-clamp-1">{cut.name}</span>
-                            <span className="text-[10px] font-mono opacity-80 block pt-1">
-                              {addOn > 0 ? `+RM ${addOn}.00` : 'FREE / STANDARD'}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* 3. SELEKSI BAHAN KAIN SUBLIMASI */}
-                  <div className="space-y-3">
-                    <label className="text-xs font-extrabold uppercase tracking-wider text-slate-900 block">
-                      3. PILIH JENIS KAIN / FABRIK:
-                    </label>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                      {fabricTypes.map((fab) => {
-                        const isSelected = selectedFabric.id === fab.id;
-                        const baseP = Number(fab.basePrice ?? fab.base_price ?? 70);
-                        return (
-                          <div
-                            key={fab.id}
-                            onClick={() => setSelectedFabric(fab)}
-                            className={`p-3.5 rounded-xl border cursor-pointer transition-all ${
-                              isSelected
-                                ? 'bg-slate-900 text-white border-slate-900 shadow-md scale-[1.02]'
-                                : 'bg-slate-50 text-slate-800 border-slate-200 hover:border-slate-400'
-                            }`}
-                          >
-                            <span className="text-xs font-bold uppercase block line-clamp-1">{fab.name}</span>
-                            <span className="text-[10px] font-mono opacity-80 block pt-1">
-                              RM {baseP}.00 / pcs
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-
-                  {/* 4. MATRIKS KUANTITI SAIZ */}
-                  <div className="space-y-3">
-                    <label className="text-xs font-extrabold uppercase tracking-wider text-slate-900 block">
-                      4. MASUKKAN KUANTITI SAIZ:
-                    </label>
-                    <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
-                      {Object.keys(sizeQuantities).map((sz) => (
-                        <div key={sz} className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-center space-y-2">
-                          <span className="text-xs font-mono font-bold text-slate-700 block">{sz}</span>
-                          <div className="flex items-center justify-center space-x-2">
-                            <button
-                              type="button"
-                              onClick={() => updateSizeQty(sz, -1)}
-                              className="w-6 h-6 rounded-full bg-white border border-slate-300 text-xs font-bold text-slate-800 hover:bg-slate-200 active:scale-95 cursor-pointer"
-                            >
-                              -
-                            </button>
-                            <span className="text-xs font-mono font-bold w-5 text-slate-900">{sizeQuantities[sz]}</span>
-                            <button
-                              type="button"
-                              onClick={() => updateSizeQty(sz, 1)}
-                              className="w-6 h-6 rounded-full bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 active:scale-95 cursor-pointer"
-                            >
-                              +
-                            </button>
-                          </div>
+                /* FULL WIDE MODERN CONFIGURATOR (NO CARD WRAPPER!) */
+                <form onSubmit={handleCreateNewOrder} className="w-full space-y-8">
+                  
+                  {/* TOP CONFIGURATION SECTION: 2-COLUMN WIDE GRID */}
+                  <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                    
+                    {/* LEFT 7 COLS: VISUAL CONFIGURATOR (TEMPLATE, CUT, FABRIC, SIZE MATRIX) */}
+                    <div className="lg:col-span-7 space-y-6">
+                      
+                      {/* 1. SELEKSI TEMPLATE REKA BENTUK (FETCHED DIRECTLY FROM DATABASE) */}
+                      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs space-y-4">
+                        <div className="flex items-center justify-between">
+                          <label className="text-xs font-extrabold uppercase tracking-wider text-slate-900 flex items-center space-x-2">
+                            <span className="w-5 h-5 rounded-full bg-slate-900 text-white text-[10px] flex items-center justify-center font-mono">1</span>
+                            <span>PILIH TEMPLATE REKA BENTUK</span>
+                          </label>
+                          <span className="text-[10px] font-mono text-slate-400">Database Direct</span>
                         </div>
-                      ))}
-                    </div>
-                  </div>
 
-                  {/* 5. MAKLUMAT MAKLUMAT KUSTOMISASI & MUAT NAIK LOGO */}
-                  <div className="space-y-4 pt-2 border-t border-slate-100">
-                    <label className="text-xs font-extrabold uppercase tracking-wider text-slate-900 block">
-                      5. MAKLUMAT PELANGGAN & LOGO PASUKAN:
-                    </label>
+                        <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
+                          {/* TEMPLATE DROPDOWN SELECTOR */}
+                          <div className="sm:col-span-8 space-y-2">
+                            <select
+                              value={orderTemplateName}
+                              onChange={(e) => {
+                                setOrderTemplateName(e.target.value);
+                                const t = templates.find((tpl) => tpl.name === e.target.value);
+                                if (t) {
+                                  setOrderCategory(t.category || 'SUBLIMASI');
+                                  setOrderSubCategory(t.subCategory || '');
+                                }
+                              }}
+                              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-extrabold text-slate-900 outline-none focus:border-slate-900 focus:bg-white transition-all cursor-pointer shadow-2xs"
+                            >
+                              {templates.map((tpl) => (
+                                <option key={tpl.id} value={tpl.name}>
+                                  {tpl.name} ({tpl.category} {tpl.subCategory ? `• ${tpl.subCategory}` : ''})
+                                </option>
+                              ))}
+                            </select>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                      <div>
-                        <label className="text-[10px] font-mono font-bold text-slate-500 block mb-1">NAMA PELANGGAN</label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="Nama penuh..."
-                          value={customerInfo.name}
-                          onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })}
-                          className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 outline-none focus:bg-white focus:border-slate-900"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="text-[10px] font-mono font-bold text-slate-500 block mb-1">NO. TELEFON / WHATSAPP</label>
-                        <input
-                          type="text"
-                          required
-                          placeholder="011-XXXXXXX"
-                          value={customerInfo.phone}
-                          onChange={(e) => setCustomerInfo({ ...customerInfo, phone: e.target.value })}
-                          className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 outline-none focus:bg-white focus:border-slate-900"
-                        />
-                      </div>
-
-                      <div>
-                        <label className="text-[10px] font-mono font-bold text-slate-500 block mb-1">NAMA PASUKAN / KELAB</label>
-                        <input
-                          type="text"
-                          placeholder="Contoh: FC Harimau"
-                          value={customerInfo.teamName}
-                          onChange={(e) => setCustomerInfo({ ...customerInfo, teamName: e.target.value })}
-                          className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 outline-none focus:bg-white focus:border-slate-900"
-                        />
-                      </div>
-                    </div>
-
-                    {/* LOGO UPLOAD INPUT */}
-                    <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-4">
-                      <div className="flex items-center space-x-3">
-                        {customLogoUrl ? (
-                          <img src={customLogoUrl} alt="Custom Logo" className="w-12 h-12 object-contain bg-white rounded-lg p-1 border border-slate-200" />
-                        ) : (
-                          <div className="w-12 h-12 rounded-lg bg-slate-200 flex items-center justify-center text-slate-500">
-                            <Upload className="w-5 h-5" />
+                            <div className="flex items-center space-x-2 text-[10px] font-mono text-slate-500 pt-0.5">
+                              <span className="px-2 py-0.5 bg-slate-100 rounded font-bold text-slate-700">{orderCategory}</span>
+                              {orderSubCategory && <span className="px-2 py-0.5 bg-slate-100 rounded text-slate-600">• {orderSubCategory}</span>}
+                            </div>
                           </div>
-                        )}
-                        <div>
-                          <span className="text-xs font-bold text-slate-900 block">Muat Naik Logo Pasukan / Sponsor (Opsional)</span>
-                          <span className="text-[10px] text-slate-500 block">Format PNG / JPG / SVG / WebP</span>
+
+                          {/* VISUAL THUMBNAIL PREVIEW */}
+                          <div className="sm:col-span-4 flex items-center justify-center bg-slate-100 rounded-xl p-2 h-24 border border-slate-200/80 relative overflow-hidden">
+                            {selectedTemplateObj ? (
+                              <img
+                                src={Array.isArray(selectedTemplateObj.images) && selectedTemplateObj.images.length > 0 ? selectedTemplateObj.images[0] : (selectedTemplateObj.thumbnail || PLACEHOLDER_IMAGE)}
+                                alt={selectedTemplateObj.name}
+                                className="w-full h-full object-contain img-crisp"
+                              />
+                            ) : (
+                              <span className="text-[10px] text-slate-400 font-mono">Tiada Gambar</span>
+                            )}
+                          </div>
                         </div>
                       </div>
 
-                      <label className="px-4 py-2 bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 font-bold text-xs rounded-xl cursor-pointer transition-all shrink-0">
-                        {isUploadingLogo ? 'Memuat Naik...' : customLogoUrl ? 'Tukar Logo' : 'Pilih Fail Logo'}
-                        <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" />
-                      </label>
-                    </div>
+                      {/* 2. SELEKSI JENIS POTONGAN / KOLAR (FETCHED DIRECTLY FROM DATABASE) */}
+                      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs space-y-3">
+                        <div className="flex items-center justify-between">
+                          <label className="text-xs font-extrabold uppercase tracking-wider text-slate-900 flex items-center space-x-2">
+                            <span className="w-5 h-5 rounded-full bg-slate-900 text-white text-[10px] flex items-center justify-center font-mono">2</span>
+                            <span>JENIS POTONGAN / KOLAR ({cutTypes.length} Pilihan)</span>
+                          </label>
+                        </div>
 
-                    <div>
-                      <label className="text-[10px] font-mono font-bold text-slate-500 block mb-1">NOTA TAMBAHAN REKA BENTUK</label>
-                      <textarea
-                        rows={2}
-                        placeholder="Contoh: Cetak nama pemain di belakang baju, nombor di dada kanan..."
-                        value={customerInfo.notes}
-                        onChange={(e) => setCustomerInfo({ ...customerInfo, notes: e.target.value })}
-                        className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 outline-none focus:bg-white focus:border-slate-900 resize-none"
-                      />
-                    </div>
-                  </div>
-
-                  {/* LIVE PRICE SUMMARY & SUBMIT BUTTON */}
-                  <div className="p-6 bg-slate-900 text-white rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4">
-                    <div>
-                      <span className="text-[10px] font-mono text-slate-400 block uppercase tracking-widest">RINGKASAN ANGGARAN ANGGARAN</span>
-                      <div className="flex items-baseline space-x-2 pt-1">
-                        <span className="text-2xl sm:text-3xl font-black font-mono text-amber-400">RM {totalPrice.toFixed(2)}</span>
-                        <span className="text-xs font-mono text-slate-400">({totalQuantity} pcs x RM {pricePerPcs})</span>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                          {cutTypes.map((cut) => {
+                            const isSelected = selectedCut.id === cut.id;
+                            const addOn = Number(cut.addOnPrice ?? cut.add_on_price ?? 0);
+                            return (
+                              <div
+                                key={cut.id}
+                                onClick={() => setSelectedCut(cut)}
+                                className={`p-3.5 rounded-xl border cursor-pointer transition-all flex flex-col justify-between ${
+                                  isSelected
+                                    ? 'bg-slate-900 text-white border-slate-900 shadow-md ring-2 ring-slate-900/20'
+                                    : 'bg-slate-50 text-slate-800 border-slate-200 hover:border-slate-400 hover:bg-slate-100'
+                                }`}
+                              >
+                                <span className="text-xs font-extrabold uppercase line-clamp-1">{cut.name}</span>
+                                <span className="text-[10px] font-mono font-bold opacity-80 pt-2">
+                                  {addOn > 0 ? `+RM ${addOn}.00` : 'PERCUMA / STANDARD'}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
+
+                      {/* 3. SELEKSI BAHAN KAIN SUBLIMASI (FETCHED DIRECTLY FROM DATABASE) */}
+                      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs space-y-3">
+                        <div className="flex items-center justify-between">
+                          <label className="text-xs font-extrabold uppercase tracking-wider text-slate-900 flex items-center space-x-2">
+                            <span className="w-5 h-5 rounded-full bg-slate-900 text-white text-[10px] flex items-center justify-center font-mono">3</span>
+                            <span>BAHAN KAIN / FABRIK SUBLIMASI ({fabricTypes.length} Pilihan)</span>
+                          </label>
+                        </div>
+
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                          {fabricTypes.map((fab) => {
+                            const isSelected = selectedFabric.id === fab.id;
+                            const baseP = Number(fab.basePrice ?? fab.base_price ?? 70);
+                            return (
+                              <div
+                                key={fab.id}
+                                onClick={() => setSelectedFabric(fab)}
+                                className={`p-3.5 rounded-xl border cursor-pointer transition-all flex flex-col justify-between ${
+                                  isSelected
+                                    ? 'bg-slate-900 text-white border-slate-900 shadow-md ring-2 ring-slate-900/20'
+                                    : 'bg-slate-50 text-slate-800 border-slate-200 hover:border-slate-400 hover:bg-slate-100'
+                                }`}
+                              >
+                                <span className="text-xs font-extrabold uppercase line-clamp-1">{fab.name}</span>
+                                <span className="text-[10px] font-mono font-bold opacity-80 pt-2">
+                                  RM {baseP}.00 / pcs
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      {/* 4. MATRIKS KUANTITI SAIZ (S-3XL) */}
+                      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs space-y-3">
+                        <div className="flex items-center justify-between">
+                          <label className="text-xs font-extrabold uppercase tracking-wider text-slate-900 flex items-center space-x-2">
+                            <span className="w-5 h-5 rounded-full bg-slate-900 text-white text-[10px] flex items-center justify-center font-mono">4</span>
+                            <span>MATRIKS SAIZ & KUANTITI</span>
+                          </label>
+                          <span className="text-xs font-mono font-black text-slate-900 bg-slate-100 px-3 py-1 rounded-lg">
+                            JUMLAH: {totalQuantity} pcs
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                          {Object.keys(sizeQuantities).map((sz) => (
+                            <div key={sz} className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-center space-y-2">
+                              <span className="text-xs font-mono font-bold text-slate-700 block">{sz}</span>
+                              <div className="flex items-center justify-center space-x-2">
+                                <button
+                                  type="button"
+                                  onClick={() => updateSizeQty(sz, -1)}
+                                  className="w-6 h-6 rounded-full bg-white border border-slate-300 text-xs font-bold text-slate-800 hover:bg-slate-200 active:scale-95 cursor-pointer"
+                                >
+                                  -
+                                </button>
+                                <span className="text-xs font-mono font-black text-slate-900 w-5">{sizeQuantities[sz]}</span>
+                                <button
+                                  type="button"
+                                  onClick={() => updateSizeQty(sz, 1)}
+                                  className="w-6 h-6 rounded-full bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 active:scale-95 cursor-pointer"
+                                >
+                                  +
+                                </button>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+
                     </div>
 
-                    <button
-                      type="submit"
-                      disabled={isSubmittingOrder || totalQuantity <= 0}
-                      className="px-8 py-3.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-md active:scale-95 flex items-center space-x-2 disabled:opacity-50 cursor-pointer shrink-0"
-                    >
-                      {isSubmittingOrder ? (
-                        <RefreshCw className="w-4 h-4 animate-spin text-slate-950" />
-                      ) : (
-                        <>
-                          <Send className="w-4 h-4 text-slate-950" />
-                          <span>Hantar Tempahan Ke Sistem →</span>
-                        </>
-                      )}
-                    </button>
+                    {/* RIGHT 5 COLS: CUSTOMER INFO, LOGO UPLOAD & STICKY ORDER SUMMARY */}
+                    <div className="lg:col-span-5 space-y-6">
+                      
+                      {/* MAKLUMAT PELANGGAN & PASUKAN */}
+                      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs space-y-4">
+                        <label className="text-xs font-extrabold uppercase tracking-wider text-slate-900 flex items-center space-x-2 border-b border-slate-100 pb-3">
+                          <span className="w-5 h-5 rounded-full bg-slate-900 text-white text-[10px] flex items-center justify-center font-mono">5</span>
+                          <span>MAKLUMAT TEMPAHAN & LOGO</span>
+                        </label>
+
+                        <div className="space-y-3">
+                          <div>
+                            <label className="text-[10px] font-mono font-bold text-slate-500 block mb-1">NAMA PELANGGAN</label>
+                            <input
+                              type="text"
+                              required
+                              placeholder="Nama penuh..."
+                              value={customerInfo.name}
+                              onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })}
+                              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 outline-none focus:bg-white focus:border-slate-900"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] font-mono font-bold text-slate-500 block mb-1">NO. TELEFON / WHATSAPP</label>
+                            <input
+                              type="text"
+                              required
+                              placeholder="011-XXXXXXX"
+                              value={customerInfo.phone}
+                              onChange={(e) => setCustomerInfo({ ...customerInfo, phone: e.target.value })}
+                              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 outline-none focus:bg-white focus:border-slate-900"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] font-mono font-bold text-slate-500 block mb-1">NAMA PASUKAN / KELAB</label>
+                            <input
+                              type="text"
+                              placeholder="Contoh: FC Harimau"
+                              value={customerInfo.teamName}
+                              onChange={(e) => setCustomerInfo({ ...customerInfo, teamName: e.target.value })}
+                              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 outline-none focus:bg-white focus:border-slate-900"
+                            />
+                          </div>
+
+                          {/* LOGO UPLOAD INPUT */}
+                          <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                            <span className="text-[10px] font-mono font-bold text-slate-600 block">LOGO PASUKAN / SPONSOR</span>
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center space-x-2">
+                                {customLogoUrl ? (
+                                  <img src={customLogoUrl} alt="Custom Logo" className="w-10 h-10 object-contain bg-white rounded-lg p-1 border border-slate-200" />
+                                ) : (
+                                  <div className="w-10 h-10 rounded-lg bg-slate-200 flex items-center justify-center text-slate-500">
+                                    <Upload className="w-4 h-4" />
+                                  </div>
+                                )}
+                                <span className="text-[10px] text-slate-500 truncate max-w-[120px]">
+                                  {customLogoUrl ? 'Logo Terunggah' : 'Format PNG/JPG'}
+                                </span>
+                              </div>
+
+                              <label className="px-3 py-1.5 bg-white hover:bg-slate-100 text-slate-800 border border-slate-300 font-bold text-[11px] rounded-lg cursor-pointer transition-all shrink-0">
+                                {isUploadingLogo ? 'Muat Naik...' : customLogoUrl ? 'Tukar' : 'Pilih Logo'}
+                                <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" />
+                              </label>
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="text-[10px] font-mono font-bold text-slate-500 block mb-1">NOTA REKA BENTUK</label>
+                            <textarea
+                              rows={2}
+                              placeholder="Contoh: Nama pemain di belakang baju..."
+                              value={customerInfo.notes}
+                              onChange={(e) => setCustomerInfo({ ...customerInfo, notes: e.target.value })}
+                              className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 outline-none focus:bg-white focus:border-slate-900 resize-none"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* STICKY LIVE PRICE SUMMARY BAR & SUBMIT BUTTON */}
+                      <div className="bg-slate-900 text-white p-6 rounded-2xl shadow-xl space-y-4 sticky top-20 border border-slate-800">
+                        <span className="text-[10px] font-mono text-slate-400 block uppercase tracking-widest border-b border-slate-800 pb-2">
+                          RINGKASAN ANGGARAN HARGA KILANG
+                        </span>
+
+                        <div className="space-y-2 text-xs font-mono text-slate-300">
+                          <div className="flex justify-between">
+                            <span>Harga Asas Fabrik ({selectedFabric?.name}):</span>
+                            <span>RM {basePricePerPcs.toFixed(2)}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span>Caj Kolar ({selectedCut?.name}):</span>
+                            <span>+RM {cutAddOn.toFixed(2)}</span>
+                          </div>
+                          <div className="flex justify-between border-t border-slate-800 pt-2 font-bold text-white">
+                            <span>Harga per Pcs:</span>
+                            <span>RM {pricePerPcs.toFixed(2)}</span>
+                          </div>
+                        </div>
+
+                        <div className="border-t border-slate-800 pt-3">
+                          <span className="text-[10px] font-mono text-slate-400 block">JUMLAH KESELURUHAN ({totalQuantity} pcs):</span>
+                          <span className="text-3xl font-black font-mono text-amber-400 block pt-0.5">
+                            RM {totalPrice.toFixed(2)}
+                          </span>
+                        </div>
+
+                        <button
+                          type="submit"
+                          disabled={isSubmittingOrder || totalQuantity <= 0}
+                          className="w-full py-4 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer"
+                        >
+                          {isSubmittingOrder ? (
+                            <RefreshCw className="w-4 h-4 animate-spin text-slate-950" />
+                          ) : (
+                            <>
+                              <Send className="w-4 h-4 text-slate-950" />
+                              <span>Hantar Tempahan Ke Sistem →</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
+
+                    </div>
+
                   </div>
+
                 </form>
               )}
             </div>
