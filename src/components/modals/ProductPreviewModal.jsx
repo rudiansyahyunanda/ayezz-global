@@ -61,6 +61,10 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
 
   const [selectedImgIdx, setSelectedImgIdx] = useState(0);
 
+  useEffect(() => {
+    setSelectedImgIdx(0);
+  }, [product]);
+
   // Mouse Cursor Targeted Magnifier Zoom State (Fine Pointer / Mouse only)
   const [zoomPos, setZoomPos] = useState({ x: 50, y: 50, isZoomed: false });
   const [showZoomText, setShowZoomText] = useState(false);
@@ -368,6 +372,7 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
                         }}
                       >
                         <TransparentImage
+                          key={`main-img-${selectedImgIdx}`}
                           src={galleryImages[selectedImgIdx]}
                           alt={product.name}
                           className="w-full h-full object-contain img-crisp"
