@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import * as LucideIcons from 'lucide-react';
+import { PLACEHOLDER_IMAGE } from '../../lib/supabaseService';
 
 const { X, ChevronLeft, ChevronRight, Play, Pause, ArrowLeft, ArrowRight } = LucideIcons;
 
@@ -25,7 +26,7 @@ export default function TemplateGalleryViewModal({ template: initialTemplate, on
 
   const galleryImages = Array.isArray(activeTemplate.images) && activeTemplate.images.length > 0
     ? activeTemplate.images
-    : [activeTemplate.thumbnail || '/images/catalog/jersey-olahraga.jfif'];
+    : [activeTemplate.thumbnail || PLACEHOLDER_IMAGE];
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);

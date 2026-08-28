@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { X, ShoppingBag, MessageSquare, Plus, Minus, Calculator, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { SIZE_CHART, FABRIC_TYPES as FALLBACK_FABRICS, CUT_TYPES as FALLBACK_CUTS, DESIGN_TEMPLATES } from '../../data/sublimationProducts';
-import { getCutTypes, getFabricTypes, saveOrderToSupabase, getDesignTemplates } from '../../lib/supabaseService';
+import { getCutTypes, getFabricTypes, saveOrderToSupabase, getDesignTemplates, PLACEHOLDER_IMAGE } from '../../lib/supabaseService';
 
 export default function ProductOrderModal({ product: initialProduct, onClose, allProducts = [], onSelectProduct }) {
   if (!initialProduct) return null;
@@ -320,12 +320,12 @@ Sila maklumkan sebut harga rasmi dan langkah pembayaran. Terima kasih!`;
                   }`}
                 >
                   <img
-                    src={cut.thumbnail || '/images/catalog/jersey-olahraga.jfif'}
+                    src={cut.thumbnail || PLACEHOLDER_IMAGE}
                     alt={cut.name}
                     className="w-12 h-12 object-cover rounded-lg border border-[#E5E5E5] shrink-0 aspect-square"
                     onError={(e) => {
                       e.target.onerror = null;
-                      e.target.src = 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80';
+                      e.target.src = PLACEHOLDER_IMAGE;
                     }}
                   />
                   <div className="flex-1 min-w-0">
@@ -347,27 +347,27 @@ Sila maklumkan sebut harga rasmi dan langkah pembayaran. Terima kasih!`;
           {/* Fabric Selection with 1:1 Cover Images & GSM */}
           <div className="space-y-2">
             <label className="block text-xs font-bold text-[#1A1A1A] uppercase tracking-wider">
-              2. Jenis Kain Sublimasi (Gambar 1:1, Gramasi GSM & Ciri-Ciri)
+              2. Jenis Fabric Sublimasi
             </label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
               {fabricTypes.map((f) => (
                 <button
-                  type="button"
                   key={f.id}
+                  type="button"
                   onClick={() => setSelectedFabric(f)}
-                  className={`p-3 rounded-xl border text-left transition-all flex items-center space-x-3 ${
+                  className={`flex items-center space-x-3 p-3 rounded-2xl border text-left transition-all ${
                     selectedFabric?.id === f.id
-                      ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white shadow-sm font-bold'
-                      : 'border-[#E5E5E5] bg-white text-[#1A1A1A] hover:bg-slate-50'
+                      ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white shadow-xs'
+                      : 'border-[#E5E5E5] bg-white text-[#1A1A1A] hover:border-[#757575]'
                   }`}
                 >
                   <img
-                    src={f.thumbnail || '/images/catalog/jersey-olahraga.jfif'}
+                    src={f.thumbnail || PLACEHOLDER_IMAGE}
                     alt={f.name}
                     className="w-12 h-12 object-cover rounded-lg border border-[#E5E5E5] shrink-0 aspect-square"
                     onError={(e) => {
                       e.target.onerror = null;
-                      e.target.src = 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80';
+                      e.target.src = PLACEHOLDER_IMAGE;
                     }}
                   />
                   <div className="flex-1 min-w-0">

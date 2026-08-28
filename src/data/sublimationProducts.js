@@ -7,7 +7,7 @@ export const DESIGN_TEMPLATES = [
     subCategory: 'Futsal',
     icon: '⚽',
     description: 'Reka bentuk jersi sublimasi corak geometri moden.',
-    thumbnail: '/images/catalog/jersey-olahraga.jfif'
+    thumbnail: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80'
   },
   {
     id: 'tpl_cycling_aero',
@@ -34,7 +34,7 @@ export const DESIGN_TEMPLATES = [
     subCategory: 'Mobile Legends',
     icon: '🎮',
     description: 'Reka bentuk jersi esports siber gaya profesional.',
-    thumbnail: '/images/catalog/esport.jfif'
+    thumbnail: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80'
   },
   {
     id: 'tpl_hoodie_stealth',
@@ -63,7 +63,7 @@ export const CUT_TYPES = [
     name: 'V-Neck (Leher V)',
     addOnPrice: 2,
     desc: 'Potongan leher gaya V yang kemas dan memberikan ruang leher lebih luas.',
-    thumbnail: '/images/catalog/jersey-olahraga.jfif'
+    thumbnail: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80'
   },
   {
     id: 'raglan_vneck',
@@ -108,7 +108,7 @@ export const FABRIC_TYPES = [
     gsm: '170 GSM',
     features: 'Tekstur Sarang Lebah • Sejuk • Tahan Lasak',
     desc: 'Tekstur sarang lebah eksklusif yang sejuk, berstruktur tegap dan tahan lasak.',
-    thumbnail: '/images/catalog/jersey-olahraga.jfif'
+    thumbnail: 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80'
   },
   {
     id: 'pique_premium',
@@ -140,7 +140,7 @@ export const MAIN_CATALOGS = [
     title: 'Olahraga',
     itemCount: '11 Jenis',
     iconName: 'Trophy',
-    thumbnail: '/images/catalog/jersey-olahraga.jfif',
+    thumbnail: 'https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80',
     subCategories: [
       'Semua', 'Sepak Bola', 'Futsal', 'Sepak Takraw', 'Badminton', 'Bola Voli', 'Bola Basket', 'Bersepeda', 'Motocross', 'Memancing', 'Lari / Marathon', 'Panahan'
     ]
@@ -151,7 +151,7 @@ export const MAIN_CATALOGS = [
     title: 'E-Sport & Gaming',
     itemCount: '7 Jenis',
     iconName: 'Gamepad2',
-    thumbnail: '/images/catalog/esport.jfif',
+    thumbnail: 'https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=800&q=80',
     subCategories: [
       'Semua', 'Mobile Legends', 'PUBG Mobile', 'Free Fire', 'Valorant', 'Dota 2', 'EA Sports', 'Sim Racing'
     ]
@@ -162,7 +162,7 @@ export const MAIN_CATALOGS = [
     title: 'Sekolah & Kampus',
     itemCount: '5 Jenis',
     iconName: 'GraduationCap',
-    thumbnail: '/images/catalog/scholl.jfif',
+    thumbnail: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80',
     subCategories: [
       'Semua', 'Baju Olahraga', 'Baju Kelas / Angkatan', 'Seragam Ekstrakurikuler', 'Event Sekolah / Classmeet', 'Jaket / Almamater Kampus'
     ]

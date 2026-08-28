@@ -20,9 +20,10 @@ import {
   ZoomIn
 } from 'lucide-react';
 import { DESIGN_TEMPLATES } from '../../data/sublimationProducts';
+import { PLACEHOLDER_IMAGE } from '../../lib/supabaseService';
 
 export default function Jersey3DMockupViewer({
-  initialTextureUrl = '/images/catalog/jersey-olahraga.jfif',
+  initialTextureUrl = PLACEHOLDER_IMAGE,
   modelPath = '/models/Jersey-Mockup.glb'
 }) {
   const containerRef = useRef(null);
@@ -775,7 +776,7 @@ export default function Jersey3DMockupViewer({
         {/* ACTIVE PREVIEW FOOTER */}
         <div className="p-3.5 bg-slate-900 text-white rounded-2xl border border-slate-800 flex items-center justify-between mt-4 shadow-md">
           <div className="flex items-center space-x-3 overflow-hidden">
-            <img src={frontTextureUrl || '/images/catalog/jersey-olahraga.jfif'} alt="Active Texture" className="w-10 h-10 object-cover rounded-xl border border-slate-700 aspect-square shrink-0" />
+            <img src={frontTextureUrl || PLACEHOLDER_IMAGE} alt="Active Texture" className="w-10 h-10 object-cover rounded-xl border border-slate-700 aspect-square shrink-0" />
             <div className="overflow-hidden">
               <span className="text-[10px] font-mono font-bold text-amber-400 uppercase block">STATUS TEXTURE 3D</span>
               <span className="text-xs font-bold text-slate-200 truncate block">Dimuatkan Secara Langsung</span>

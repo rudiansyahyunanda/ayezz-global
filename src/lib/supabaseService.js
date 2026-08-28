@@ -6,6 +6,8 @@ import {
   FABRIC_TYPES as INITIAL_FABRICS
 } from '../data/sublimationProducts';
 
+export const PLACEHOLDER_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%23F5F5F7'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='16' fill='%2386868B'%3EAYEZZ GLOBAL%3C/text%3E%3C/svg%3E";
+
 // ==========================================
 // 1. KATEGORI UTAMA (Full CRUD with Cover Image)
 // ==========================================
@@ -41,7 +43,7 @@ export async function getCategories() {
         title: item.title,
         description: item.description || '',
         itemCount: countLabel,
-        thumbnail: item.thumbnail || '/images/catalog/jersey-olahraga.jfif',
+        thumbnail: item.thumbnail || PLACEHOLDER_IMAGE,
         subCategories: subCategoryTitles,
         rawSubCategories: categorySubs
       };
@@ -60,7 +62,7 @@ export async function insertCategoryToSupabase(category) {
     title: category.title,
     description: category.description || '',
     item_count: category.itemCount || '0 Jenis',
-    thumbnail: category.thumbnail || '/images/catalog/jersey-olahraga.jfif'
+    thumbnail: category.thumbnail || PLACEHOLDER_IMAGE
   }]);
 }
 
@@ -97,7 +99,7 @@ export async function getSubCategories(categoryId) {
       code: item.code,
       title: item.title,
       description: item.description || '',
-      thumbnail: item.thumbnail || '/images/catalog/jersey-olahraga.jfif'
+      thumbnail: item.thumbnail || PLACEHOLDER_IMAGE
     }));
   } catch (err) {
     console.warn('Supabase getSubCategories error:', err);
@@ -113,7 +115,7 @@ export async function insertSubCategoryToSupabase(subCat) {
     code: subCat.code,
     title: subCat.title,
     description: subCat.description || '',
-    thumbnail: subCat.thumbnail || '/images/catalog/jersey-olahraga.jfif'
+    thumbnail: subCat.thumbnail || PLACEHOLDER_IMAGE
   }]);
 }
 
@@ -145,7 +147,7 @@ export async function getCutTypes() {
       name: item.name,
       addOnPrice: Number(item.add_on_price) || 0,
       desc: item.description || '',
-      thumbnail: item.thumbnail || '/images/catalog/jersey-olahraga.jfif'
+      thumbnail: item.thumbnail || PLACEHOLDER_IMAGE
     }));
   } catch (err) {
     console.warn('Supabase getCutTypes error:', err);
@@ -161,7 +163,7 @@ export async function insertCutTypeToSupabase(cut) {
       name: cut.name,
       add_on_price: Number(cut.addOnPrice ?? cut.add_on_price ?? 0),
       description: cut.desc || cut.description || 'Potongan kustom',
-      thumbnail: cut.thumbnail || '/images/catalog/jersey-olahraga.jfif'
+      thumbnail: cut.thumbnail || PLACEHOLDER_IMAGE
     };
     const { error } = await supabase.from('cut_types').insert([payload]);
     if (error) {
@@ -200,7 +202,7 @@ export async function updateCutTypeInSupabase(cutId, updatedCut) {
       name: cutData.name,
       add_on_price: Number(cutData.addOnPrice ?? cutData.add_on_price ?? 0),
       description: cutData.desc || cutData.description || '',
-      thumbnail: cutData.thumbnail || '/images/catalog/jersey-olahraga.jfif'
+      thumbnail: cutData.thumbnail || PLACEHOLDER_IMAGE
     };
     const { error } = await supabase.from('cut_types').update(payload).eq('id', targetId);
     if (error) {
@@ -239,7 +241,7 @@ export async function getFabricTypes() {
       gsm: item.gsm || '150 GSM',
       features: item.features || 'Pantas Kering • Ringan',
       desc: item.description || item.desc || '',
-      thumbnail: item.thumbnail || '/images/catalog/jersey-olahraga.jfif'
+      thumbnail: item.thumbnail || PLACEHOLDER_IMAGE
     }));
   } catch (err) {
     console.warn('Supabase getFabricTypes error:', err);
@@ -258,7 +260,7 @@ export async function insertFabricTypeToSupabase(fabric) {
       gsm: fabric.gsm || '150 GSM',
       features: fabric.features || '',
       description: fabric.desc || fabric.description || 'Bahan kain sublimasi',
-      thumbnail: fabric.thumbnail || '/images/catalog/jersey-olahraga.jfif'
+      thumbnail: fabric.thumbnail || PLACEHOLDER_IMAGE
     };
     const { error } = await supabase.from('fabric_types').insert([payload]);
     if (error) {
@@ -300,7 +302,7 @@ export async function updateFabricTypeInSupabase(fabricId, updatedFabric) {
       gsm: fabData.gsm || '150 GSM',
       features: fabData.features || '',
       description: fabData.desc || fabData.description || '',
-      thumbnail: fabData.thumbnail || '/images/catalog/jersey-olahraga.jfif'
+      thumbnail: fabData.thumbnail || PLACEHOLDER_IMAGE
     };
     const { error } = await supabase.from('fabric_types').update(payload).eq('id', targetId);
     if (error) {
@@ -336,7 +338,7 @@ export async function getDesignTemplates() {
     return templatesSource.map(item => {
       const imgList = Array.isArray(item.images) && item.images.length > 0
         ? item.images
-        : (item.thumbnail ? [item.thumbnail] : ['/images/catalog/jersey-olahraga.jfif']);
+        : (item.thumbnail ? [item.thumbnail] : [PLACEHOLDER_IMAGE]);
       return {
         id: item.id,
         name: item.name,
@@ -357,7 +359,7 @@ export async function insertDesignTemplateToSupabase(template) {
   if (!isSupabaseConnected || !template) return;
   const imgList = Array.isArray(template?.images) && template.images.length > 0
     ? template.images
-    : (template?.thumbnail ? [template.thumbnail] : ['/images/catalog/jersey-olahraga.jfif']);
+    : (template?.thumbnail ? [template.thumbnail] : [PLACEHOLDER_IMAGE]);
   
   const payloadWithImages = {
     id: template.id,
@@ -365,7 +367,7 @@ export async function insertDesignTemplateToSupabase(template) {
     category: template.category,
     sub_category: template.subCategory || '',
     description: template.description || '',
-    thumbnail: imgList[0] || '/images/catalog/jersey-olahraga.jfif',
+    thumbnail: imgList[0] || PLACEHOLDER_IMAGE,
     images: imgList
   };
 
@@ -408,14 +410,14 @@ export async function updateDesignTemplateInSupabase(templateId, updatedTpl) {
 
   const imgList = Array.isArray(tplData?.images) && tplData.images.length > 0
     ? tplData.images
-    : (tplData?.thumbnail ? [tplData.thumbnail] : ['/images/catalog/jersey-olahraga.jfif']);
+    : (tplData?.thumbnail ? [tplData.thumbnail] : [PLACEHOLDER_IMAGE]);
 
   const payloadWithImages = {
     name: tplData.name,
     category: tplData.category,
     sub_category: tplData.subCategory || '',
     description: tplData.description || '',
-    thumbnail: imgList[0] || '/images/catalog/jersey-olahraga.jfif',
+    thumbnail: imgList[0] || PLACEHOLDER_IMAGE,
     images: imgList
   };
 
@@ -721,7 +723,7 @@ export const DEFAULT_SHOWCASE_FEATURE = {
   sectionTitle: 'Lihat lebih dekat.',
   headline: 'Tur Terpandu Kilang Sublimasi AYEZZ GLOBAL',
   subHeadline: 'Lihat proses pengeluaran cetakan sublimasi HD, pemotongan fabrik berpresisi tinggi, dan hasil seragam custom berkualiti standard kilang.',
-  coverImage: '/images/catalog/jersey-olahraga.jfif',
+  coverImage: PLACEHOLDER_IMAGE,
   buttonText: 'Tonton video',
   videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
   isActive: true

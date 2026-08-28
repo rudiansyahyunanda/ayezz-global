@@ -251,7 +251,7 @@ export default function AdminDashboard({ onSwitchToStorefront }) {
     e.preventDefault();
     if (modalType === 'category') {
       if (!catName) return;
-      const coverImg = catCover || '/images/catalog/jersey-olahraga.jfif';
+      const coverImg = catCover || PLACEHOLDER_IMAGE;
 
       if (modalMode === 'add') {
         const newCat = {
@@ -297,7 +297,7 @@ export default function AdminDashboard({ onSwitchToStorefront }) {
       }
     } else if (modalType === 'cut') {
       if (!cutName) return;
-      const coverImg = cutCover || '/images/catalog/jersey-olahraga.jfif';
+      const coverImg = cutCover || PLACEHOLDER_IMAGE;
 
       if (modalMode === 'add') {
         const newCut = { id: `cut_${Date.now()}`, name: cutName, addOnPrice: parseFloat(cutPrice) || 0, desc: cutDesc || 'Potongan kustom', thumbnail: coverImg };
@@ -310,7 +310,7 @@ export default function AdminDashboard({ onSwitchToStorefront }) {
       }
     } else if (modalType === 'fabric') {
       if (!fabName) return;
-      const coverImg = fabCover || '/images/catalog/jersey-olahraga.jfif';
+      const coverImg = fabCover || PLACEHOLDER_IMAGE;
 
       if (modalMode === 'add') {
         const newFab = {
@@ -340,7 +340,7 @@ export default function AdminDashboard({ onSwitchToStorefront }) {
       }
     } else if (modalType === 'template') {
       if (!tplName) return;
-      const finalImgs = tplImages.length > 0 ? tplImages : ['/images/catalog/jersey-olahraga.jfif'];
+      const finalImgs = tplImages.length > 0 ? tplImages : [PLACEHOLDER_IMAGE];
       if (modalMode === 'add') {
         const newTpl = {
           id: `tpl_${Date.now()}`,
@@ -607,7 +607,7 @@ export default function AdminDashboard({ onSwitchToStorefront }) {
                           <tr key={cat.id} className="hover:bg-slate-50/60 transition-colors">
                             <td className="py-3 px-4">
                               <img
-                                src={cat.thumbnail || '/images/catalog/jersey-olahraga.jfif'}
+                                src={cat.thumbnail || PLACEHOLDER_IMAGE}
                                 alt={cat.title}
                                 className="w-12 h-12 object-cover rounded-lg border border-slate-200/80 shadow-2xs"
                                 onError={(e) => {
@@ -769,7 +769,7 @@ export default function AdminDashboard({ onSwitchToStorefront }) {
                       <tr key={cut.id} className="hover:bg-slate-50/60 transition-colors">
                         <td className="py-3 px-4">
                           <img
-                            src={cut.thumbnail || '/images/catalog/jersey-olahraga.jfif'}
+                            src={cut.thumbnail || PLACEHOLDER_IMAGE}
                             alt={cut.name}
                             className="w-12 h-12 object-cover rounded-lg border border-slate-200/80 shadow-2xs"
                             onError={(e) => {
@@ -824,7 +824,7 @@ export default function AdminDashboard({ onSwitchToStorefront }) {
                       <tr key={fab.id} className="hover:bg-slate-50/60 transition-colors">
                         <td className="py-3 px-4">
                           <img
-                            src={fab.thumbnail || '/images/catalog/jersey-olahraga.jfif'}
+                            src={fab.thumbnail || PLACEHOLDER_IMAGE}
                             alt={fab.name}
                             className="w-12 h-12 object-cover rounded-lg border border-slate-200/80 shadow-2xs"
                             onError={(e) => {

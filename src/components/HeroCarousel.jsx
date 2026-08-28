@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react';
-import { getDesignTemplates } from '../lib/supabaseService';
+import { getDesignTemplates, PLACEHOLDER_IMAGE } from '../lib/supabaseService';
 import TransparentImage from './TransparentImage';
 
 export default function AutoBackgroundStrippedHeroCarousel() {
@@ -19,7 +19,7 @@ export default function AutoBackgroundStrippedHeroCarousel() {
           const top4 = templatesData.slice(0, 4).map((tpl) => {
             const primaryImage = Array.isArray(tpl.images) && tpl.images.length > 0
               ? tpl.images[0]
-              : (tpl.thumbnail || '/images/catalog/jersey-olahraga.jfif');
+              : (tpl.thumbnail || PLACEHOLDER_IMAGE);
             return {
               ...tpl,
               image: primaryImage

@@ -29,7 +29,8 @@ import {
   getCategories,
   getDesignTemplates,
   getShowcaseFeatureFromSupabase,
-  DEFAULT_SHOWCASE_FEATURE
+  DEFAULT_SHOWCASE_FEATURE,
+  PLACEHOLDER_IMAGE
 } from '../lib/supabaseService';
 import { MAIN_CATALOGS, DESIGN_TEMPLATES } from '../data/sublimationProducts';
 
@@ -104,7 +105,7 @@ export default function SmoothHeaderHomepage() {
   const featuredProduct = templates[0] || {
     id: 'tpl_futsal_pro',
     name: 'Template Jersi Pro Match',
-    thumbnail: '/images/catalog/jersey-olahraga.jfif'
+    thumbnail: PLACEHOLDER_IMAGE
   };
 
   const handleCategoryClick = (catTitle) => {
@@ -254,8 +255,10 @@ export default function SmoothHeaderHomepage() {
                     {/* APPLE SQUIRCLE CARD CONTAINER (FRAMELESS / BORDERLESS FULL EDGE-TO-EDGE IMAGE) */}
                     <div className="w-full aspect-[4/4.5] sm:aspect-square rounded-[28px] sm:rounded-[32px] overflow-hidden bg-[#F5F5F7] relative flex items-center justify-center p-0 shadow-xs hover:shadow-md transition-all duration-500 border-none">
                       <img
-                        src={cat.thumbnail || '/images/catalog/jersey-olahraga.jfif'}
+                        src={cat.thumbnail || PLACEHOLDER_IMAGE}
                         alt={cat.title}
+                        loading="eager"
+                        decoding="async"
                         className="w-full h-full object-cover rounded-[28px] sm:rounded-[32px] transition-transform duration-700 ease-out group-hover:scale-[1.05] img-crisp"
                       />
                     </div>
@@ -327,8 +330,10 @@ export default function SmoothHeaderHomepage() {
             <div className="relative w-full aspect-[16/9] sm:aspect-[21/9] min-h-[320px] sm:min-h-[420px] rounded-[28px] sm:rounded-[36px] overflow-hidden bg-[#111111] shadow-md flex items-center justify-center p-6 sm:p-12 border border-neutral-200/50 group">
               {/* Cover Background Image */}
               <img
-                src={showcaseFeature.coverImage || '/images/catalog/jersey-olahraga.jfif'}
+                src={showcaseFeature.coverImage || PLACEHOLDER_IMAGE}
                 alt={showcaseFeature.headline || 'Showcase'}
+                loading="eager"
+                decoding="async"
                 className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-1000 ease-out group-hover:scale-[1.03] opacity-75"
               />
 

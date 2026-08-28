@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect } from 'react';
 import TransparentImage from './TransparentImage';
+import { PLACEHOLDER_IMAGE } from '../lib/supabaseService';
 
 export default function CleanPricelessProductCard({ item, onClick, isPriority }) {
   const imageList = Array.isArray(item.images) && item.images.length > 0
     ? item.images
-    : (item.thumbnail ? [item.thumbnail] : ['/images/catalog/jersey-olahraga.jfif']);
+    : (item.thumbnail ? [item.thumbnail] : [PLACEHOLDER_IMAGE]);
 
   const [activeImgIdx, setActiveImgIdx] = useState(0);
   const [isHovered, setIsHovered] = useState(false);

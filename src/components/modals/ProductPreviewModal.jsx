@@ -18,7 +18,8 @@ import TransparentImage from '../TransparentImage';
 import {
   getCutTypes,
   getFabricTypes,
-  saveOrderToSupabase
+  saveOrderToSupabase,
+  PLACEHOLDER_IMAGE
 } from '../../lib/supabaseService';
 import {
   CUT_TYPES as FALLBACK_CUTS,
@@ -42,20 +43,20 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
     setViewMode('order');
   };
   
-  // Gallery images with 100% resilient array & JSON string parser
-  const galleryImages = React.useMemo(() => {
-    if (!product) return ['/images/catalog/jersey-olahraga.jfif'];
+  // Extract template images safely
+  const galleryImages = useMemo(() => {
+    if (!product) return [PLACEHOLDER_IMAGE];
     if (Array.isArray(product.images) && product.images.length > 0) return product.images;
     if (typeof product.images === 'string') {
       try {
         const parsed = JSON.parse(product.images);
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
       } catch (e) {
-        if (product.images.startsWith('http') || product.images.startsWith('/')) return [product.images];
+        if (product.images.startsWith('http') || product.images.startsWith('/') || product.images.startsWith('data:')) return [product.images];
       }
     }
     if (product.thumbnail) return [product.thumbnail];
-    return ['/images/catalog/jersey-olahraga.jfif'];
+    return [PLACEHOLDER_IMAGE];
   }, [product]);
 
   const [selectedImgIdx, setSelectedImgIdx] = useState(0);
