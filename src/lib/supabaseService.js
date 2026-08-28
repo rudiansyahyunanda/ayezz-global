@@ -668,23 +668,18 @@ export async function getOrdersFromSupabase() {
 }
 
 export async function getUserOrdersFromSupabase(userEmail) {
-  if (!userEmail) return [];
-  
   if (isSupabaseConnected) {
     try {
-      const { data, error } = await supabase
-        .from('orders')
-        .select('*')
-        .eq('user_email', userEmail)
-        .order('created_at', { ascending: false });
+      let query = supabase.from('orders').select('*').order('created_at', { ascending: false });
+      if (userEmail && userEmail !== 'pelanggan@ayezz.com') {
+        query = query.eq('user_email', userEmail);
+      }
+      const { data, error } = await query;
       
-      if (!error && data) {
-        if (data.length === 0 && typeof window !== 'undefined') {
-          localStorage.removeItem('ayezz_user_orders');
-        }
+      if (!error && data && data.length > 0) {
         return data.map(item => ({
           id: item.id,
-          orderId: item.order_id || item.id,
+          orderId: item.id,
           userEmail: item.user_email || userEmail,
           client: item.client_name,
           customerPhone: item.customer_phone || '',
@@ -697,15 +692,14 @@ export async function getUserOrdersFromSupabase(userEmail) {
           customLogoUrl: item.custom_logo_url || '',
           sponsorLogoUrl: item.sponsor_logo_url || '',
           playerListFileUrl: item.player_list_file_url || '',
-          customDesignRefUrl: item.custom_design_ref_url || '',
           notes: item.notes || '',
           sizeBreakdown: item.size_breakdown || {},
           qty: item.total_qty || 1,
           unitPrice: item.unit_price || 70,
           totalPrice: item.total_price || 70,
           total: `RM ${Number(item.total_price || 0).toFixed(2)}`,
-          paymentStatus: item.payment_status || 'pending',
-          date: new Date(item.created_at).toLocaleDateString('en-MY', { day: '2-digit', month: 'short', year: 'numeric' }),
+          paymentStatus: (item.status || '').includes('Lunas') ? 'paid' : 'pending',
+          date: new Date(item.created_at || Date.now()).toLocaleDateString('en-MY', { day: '2-digit', month: 'short', year: 'numeric' }),
           status: item.status || 'Pesanan Diterima'
         }));
       }
@@ -714,11 +708,14 @@ export async function getUserOrdersFromSupabase(userEmail) {
     }
   }
 
-  // Fallback to checking local storage orders only if offline
-  if (typeof window !== 'undefined' && !isSupabaseConnected) {
+  // Fallback checking local storage
+  if (typeof window !== 'undefined') {
     try {
       const localOrders = JSON.parse(localStorage.getItem('ayezz_user_orders') || '[]');
-      return localOrders.filter(o => o.userEmail === userEmail);
+      if (userEmail && userEmail !== 'pelanggan@ayezz.com') {
+        return localOrders.filter(o => o.userEmail === userEmail || !o.userEmail);
+      }
+      return localOrders;
     } catch (e) {
       return [];
     }
@@ -727,102 +724,94 @@ export async function getUserOrdersFromSupabase(userEmail) {
   return [];
 }
 
-export async function saveOrderToSupabase(orderData) {
-  const generatedOrderId = orderData.orderId || `AYZ-${Math.floor(100000 + Math.random() * 900000)}`;
 
-  const payload = {
-    order_id: generatedOrderId,
-    user_email: orderData.userEmail || orderData.email || '',
-    user_id: orderData.userId || '',
-    client_name: orderData.clientName || 'Pelanggan Sistem',
-    customer_phone: orderData.customerPhone || '',
-    team_name: orderData.teamName || '',
-    template_name: orderData.templateName || 'Template Reka Bentuk',
-    cut_type: orderData.cutType || 'Standard',
-    fabric_material: orderData.fabricMaterial || 'Dry-Fit',
-    cut_groups: orderData.cutGroups || [],
-    player_rows: orderData.playerRows || [],
-    custom_logo_url: orderData.customLogoUrl || '',
-    sponsor_logo_url: orderData.sponsorLogoUrl || '',
-    player_list_file_url: orderData.playerListFileUrl || '',
-    custom_design_ref_url: orderData.customDesignRefUrl || '',
-    notes: orderData.notes || '',
-    size_breakdown: orderData.sizeBreakdown || {},
-    total_qty: Number(orderData.totalQty || 1),
-    unit_price: Number(orderData.unitPrice || 70),
-    total_price: Number(orderData.totalPrice || 70),
-    payment_status: orderData.paymentStatus || 'pending',
-    status: orderData.status || 'Menunggu Pembayaran'
+export async function saveOrderToSupabase(orderData) {
+  const generatedOrderId = orderData.orderId || orderData.id || `AYZ-${Math.floor(100000 + Math.random() * 900000)}`;
+  const userEmail = orderData.userEmail || orderData.user_email || orderData.email || '';
+  const clientName = orderData.clientName || orderData.client_name || orderData.client || 'Pelanggan Sistem';
+  const customerPhone = orderData.customerPhone || orderData.customer_phone || '';
+
+  // Essential payload using EXACT Supabase DB columns (`id`, `client_name`, `template_name`, etc.)
+  const essentialPayload = {
+    id: generatedOrderId,
+    user_email: userEmail,
+    client_name: clientName,
+    template_name: orderData.templateName || orderData.template || 'Template Reka Bentuk',
+    cut_type: orderData.cutType || orderData.cut_type || 'Standard',
+    fabric_material: orderData.fabricMaterial || orderData.fabric_material || 'Dry-Fit',
+    size_breakdown: orderData.sizeBreakdown || orderData.size_breakdown || {},
+    total_qty: Number(orderData.totalQty || orderData.total_qty || orderData.qty || 1),
+    unit_price: Number(orderData.unitPrice || orderData.unit_price || 70),
+    total_price: Number(orderData.totalPrice || orderData.total_price || 70),
+    status: orderData.status || 'Pesanan Diterima'
   };
 
-  // Auto-sync user to public.users table in Supabase
-  if (payload.user_email) {
+  // Full rich payload (if extra columns exist)
+  const fullPayload = {
+    ...essentialPayload,
+    team_name: orderData.teamName || orderData.team_name || '',
+    customer_phone: customerPhone,
+    notes: orderData.notes || '',
+    cut_groups: orderData.cutGroups || orderData.cut_groups || [],
+    player_rows: orderData.playerRows || orderData.player_rows || [],
+    custom_logo_url: orderData.customLogoUrl || orderData.custom_logo_url || '',
+    sponsor_logo_url: orderData.sponsorLogoUrl || orderData.sponsor_logo_url || '',
+    player_list_file_url: orderData.playerListFileUrl || orderData.player_list_file_url || ''
+  };
+
+  // Auto-sync user profile to public.users table
+  if (userEmail) {
     try {
       await supabase.from('users').upsert([{
-        email: payload.user_email,
-        full_name: payload.client_name,
-        phone: payload.customer_phone,
+        email: userEmail,
+        full_name: clientName,
+        phone: customerPhone,
         role: 'customer'
       }], { onConflict: 'email' });
     } catch (e) {
-      console.warn('Auto sync user to DB warning:', e);
+      console.warn('Auto sync user to DB notice:', e);
     }
   }
 
-  // Save to local storage cache as fallback
+  // Save local storage fallback
   if (typeof window !== 'undefined') {
     try {
+      localStorage.setItem('ayezz_last_order_id', generatedOrderId);
       const existing = JSON.parse(localStorage.getItem('ayezz_user_orders') || '[]');
       const newLocalOrder = {
         id: generatedOrderId,
         orderId: generatedOrderId,
-        userEmail: payload.user_email,
-        client: payload.client_name,
-        customerPhone: payload.customer_phone,
-        teamName: payload.team_name,
-        template: payload.template_name,
-        cutType: payload.cut_type,
-        fabricMaterial: payload.fabric_material,
-        cutGroups: payload.cut_groups,
-        playerRows: payload.player_rows,
-        customLogoUrl: payload.custom_logo_url,
-        sponsorLogoUrl: payload.sponsor_logo_url,
-        playerListFileUrl: payload.player_list_file_url,
-        customDesignRefUrl: payload.custom_design_ref_url,
-        notes: payload.notes,
-        sizeBreakdown: payload.size_breakdown,
-        qty: payload.total_qty,
-        unitPrice: payload.unit_price,
-        totalPrice: payload.total_price,
-        total: `RM ${Number(payload.total_price || 0).toFixed(2)}`,
-        paymentStatus: payload.payment_status,
+        userEmail: userEmail,
+        client: clientName,
+        customerPhone: customerPhone,
+        teamName: orderData.teamName || orderData.team_name || '',
+        template: essentialPayload.template_name,
+        cutType: essentialPayload.cut_type,
+        fabricMaterial: essentialPayload.fabric_material,
+        cutGroups: fullPayload.cut_groups,
+        playerRows: fullPayload.player_rows,
+        customLogoUrl: fullPayload.custom_logo_url,
+        sponsorLogoUrl: fullPayload.sponsor_logo_url,
+        playerListFileUrl: fullPayload.player_list_file_url,
+        notes: fullPayload.notes,
+        qty: essentialPayload.total_qty,
+        unitPrice: essentialPayload.unit_price,
+        totalPrice: essentialPayload.total_price,
+        total: `RM ${Number(essentialPayload.total_price || 0).toFixed(2)}`,
         date: new Date().toLocaleDateString('en-MY', { day: '2-digit', month: 'short', year: 'numeric' }),
-        status: payload.status
+        status: essentialPayload.status
       };
-      localStorage.setItem('ayezz_user_orders', JSON.stringify([newLocalOrder, ...existing]));
+      localStorage.setItem('ayezz_user_orders', JSON.stringify([newLocalOrder, ...existing.filter(o => o.id !== generatedOrderId)]));
     } catch (e) {}
   }
 
   if (!isSupabaseConnected) return { success: true, orderId: generatedOrderId };
 
   try {
-    const { data, error } = await supabase.from('orders').insert([payload]).select('id, order_id').single();
-    if (error) {
-      console.warn('Supabase insert order warning (retrying simple payload):', error.message);
-      // Fallback if rich columns aren't created yet in DB: insert essential columns
-      const simplePayload = {
-        order_id: generatedOrderId,
-        user_email: payload.user_email,
-        client_name: payload.client_name,
-        template_name: payload.template_name,
-        cut_type: payload.cut_type,
-        fabric_material: payload.fabric_material,
-        total_qty: payload.total_qty,
-        unit_price: payload.unit_price,
-        total_price: payload.total_price,
-        status: payload.status
-      };
-      await supabase.from('orders').insert([simplePayload]);
+    const { error: fullErr } = await supabase.from('orders').upsert([fullPayload], { onConflict: 'id' });
+    if (fullErr) {
+      console.warn('Full payload insert notice, trying essential payload:', fullErr.message);
+      await supabase.from('orders').upsert([essentialPayload], { onConflict: 'id' });
     }
     return { success: true, orderId: generatedOrderId };
   } catch (err) {
@@ -831,20 +820,16 @@ export async function saveOrderToSupabase(orderData) {
   }
 }
 
-export async function updateOrderStatusInSupabase(orderId, newStatus, rejectReason = '') {
-  const isRejected = newStatus.toLowerCase().includes('ditolak') || newStatus.toLowerCase().includes('batal');
-  const updatePayload = {
-    status: newStatus,
-    ...(isRejected ? { payment_status: 'rejected' } : {})
-  };
+export async function updateOrderStatusInSupabase(orderId, newStatus) {
+  if (!orderId) return;
 
-  // Also update local storage cache
+  // Update local storage cache
   if (typeof window !== 'undefined') {
     try {
       const existing = JSON.parse(localStorage.getItem('ayezz_user_orders') || '[]');
       const updated = existing.map(item => {
         if (item.id === orderId || item.orderId === orderId) {
-          return { ...item, status: newStatus, ...(isRejected ? { paymentStatus: 'rejected' } : {}) };
+          return { ...item, status: newStatus };
         }
         return item;
       });
@@ -852,11 +837,10 @@ export async function updateOrderStatusInSupabase(orderId, newStatus, rejectReas
     } catch (e) {}
   }
 
-  if (!isSupabaseConnected || !orderId) return;
+  if (!isSupabaseConnected) return;
 
   try {
-    await supabase.from('orders').update(updatePayload).eq('id', orderId);
-    await supabase.from('orders').update(updatePayload).eq('order_id', orderId);
+    await supabase.from('orders').update({ status: newStatus }).eq('id', orderId);
   } catch (err) {
     console.error('Error updating order status in Supabase:', err);
   }
