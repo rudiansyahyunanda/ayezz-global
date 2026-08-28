@@ -28,6 +28,7 @@ import {
   X,
   Printer,
   Download,
+  CreditCard,
   Menu,
   ArrowRight,
   Sparkles,
@@ -36,7 +37,6 @@ import {
   Send,
   Sliders,
   Layers,
-  CreditCard,
   Globe,
   Palette,
   Image as ImageIcon,
@@ -262,14 +262,23 @@ function DashboardContent() {
         setOrderTemplateName('Template Jersi Pro Match');
       }
 
-      // Check URL search params for tab and template auto-fill (e.g. from Catalog redirect!)
+      // Check URL search params for tab, status, and payment callback
       const tabParam = searchParams.get('tab');
       const tplParam = searchParams.get('templateName');
       const catParam = searchParams.get('cat');
+      const statusParam = searchParams.get('status');
+      const orderIdParam = searchParams.get('orderId');
 
       if (tabParam) setActiveTab(tabParam);
       if (tplParam) setOrderTemplateName(tplParam);
       if (catParam) setOrderCategory(catParam);
+
+      if (statusParam === 'paid' || statusParam === 'simulated_paid') {
+        if (orderIdParam) {
+          updateOrderStatusInSupabase(orderIdParam, 'Pesanan Diterima & Lunas');
+        }
+        setActiveTab('orders');
+      }
 
       setLoading(false);
     }
@@ -582,7 +591,32 @@ function DashboardContent() {
       await saveOrderToSupabase(orderPayload);
       const updatedUserOrders = await getUserOrdersFromSupabase(user?.email);
       setOrders(updatedUserOrders || []);
-      setOrderSuccessData(orderPayload);
+
+      // Initiate CHIP (chip-in.asia) Payment Gateway Checkout
+      const chipRes = await fetch('/api/chip-payment', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId: generatedOrderId,
+          amount: groupCalculations.totalPrice,
+          clientName: orderPayload.clientName,
+          clientPhone: orderPayload.customer_phone,
+          clientEmail: user?.email || '',
+          templateName: finalTemplateTitle
+        })
+      });
+
+      const chipData = await chipRes.json();
+
+      if (chipData.success && chipData.checkoutUrl) {
+        if (chipData.isSimulation) {
+          alert(`[CHIP Payment Mode Info]\n\n${chipData.message}\n\nTekan OK untuk meneruskan simulasi pembayaran.`);
+        }
+        window.location.href = chipData.checkoutUrl;
+      } else {
+        alert(chipData.message || 'Gagal menyambung ke CHIP Payment Gateway. Sila cuba lagi.');
+        setOrderSuccessData(orderPayload);
+      }
     } catch (err) {
       console.warn('Error saving new order to DB:', err);
     } finally {
@@ -2076,8 +2110,8 @@ function DashboardContent() {
                               <RefreshCw className="w-4 h-4 animate-spin text-slate-900" />
                             ) : (
                               <>
-                                <Send className="w-4 h-4 text-slate-900" />
-                                <span>Hantar Tempahan Ke Kilang →</span>
+                                <CreditCard className="w-4 h-4 text-slate-900" />
+                                <span>Teruskan Ke Pembayaran (ChipIn) →</span>
                               </>
                             )}
                           </button>

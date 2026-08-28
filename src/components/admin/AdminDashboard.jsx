@@ -93,6 +93,9 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
   const [sleeveTypes, setSleeveTypes] = useState([]);
   const [fabricTypes, setFabricTypes] = useState([]);
   const [orders, setOrders] = useState([]);
+  const [selectedOrderForDetail, setSelectedOrderForDetail] = useState(null);
+  const [isOrderDetailOpen, setIsOrderDetailOpen] = useState(false);
+  const [orderSearchQuery, setOrderSearchQuery] = useState('');
   const [systemUsers, setSystemUsers] = useState([]);
   const [userSearchQuery, setUserSearchQuery] = useState('');
   const [isUsersLoading, setIsUsersLoading] = useState(false);
@@ -749,8 +752,225 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
               </div>
             </div>
           )}
+
+          {/* TAB 4: ORDERS DATATABLE */}
+          {currentTab === 'orders' && (
+            <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs p-6 space-y-6">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b border-slate-100">
+                <div>
+                  <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">Senarai Pesanan Pelanggan (Supabase DB)</h2>
+                  <p className="text-xs text-slate-500 mt-0.5">Semua tempahan jersi kustom dari pelanggan beserta status bayaran CHIP-IN dan butiran pemain.</p>
+                </div>
+
+                <div className="relative w-full sm:w-72">
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+                  <input
+                    type="text"
+                    value={orderSearchQuery}
+                    onChange={(e) => setOrderSearchQuery(e.target.value)}
+                    placeholder="Cari ID Pesanan / Nama..."
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-3 py-1.5 text-xs font-semibold text-slate-900 outline-none focus:bg-white focus:border-slate-900"
+                  />
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs font-sans">
+                  <thead>
+                    <tr className="bg-slate-50/80 border-b border-slate-200 text-[11px] font-mono font-semibold text-slate-500 uppercase tracking-wider">
+                      <th className="py-3 px-4">KOD PESANAN</th>
+                      <th className="py-3 px-4">PELANGGAN & TEL</th>
+                      <th className="py-3 px-4">REKA BENTUK</th>
+                      <th className="py-3 px-4">SPESIFIKASI</th>
+                      <th className="py-3 px-4">JUMLAH (RM)</th>
+                      <th className="py-3 px-4">BAYARAN (CHIP)</th>
+                      <th className="py-3 px-4">STATUS KILANG</th>
+                      <th className="py-3 px-4 text-right">TINDAKAN</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 font-medium text-slate-800">
+                    {orders.length === 0 ? (
+                      <tr>
+                        <td colSpan={8} className="py-12 text-center text-slate-400 font-mono text-xs">
+                          Belum ada pesanan terrekod dalam Supabase DB.
+                        </td>
+                      </tr>
+                    ) : (
+                      orders
+                        .filter(o => {
+                          const q = orderSearchQuery.toLowerCase();
+                          if (!q) return true;
+                          return (
+                            (o.orderId || o.id || '').toLowerCase().includes(q) ||
+                            (o.client || '').toLowerCase().includes(q) ||
+                            (o.userEmail || '').toLowerCase().includes(q) ||
+                            (o.template || '').toLowerCase().includes(q)
+                          );
+                        })
+                        .map(ord => (
+                          <tr key={ord.id} className="hover:bg-slate-50/60 transition-colors">
+                            <td className="py-3.5 px-4 font-mono font-bold text-slate-900">
+                              #{ord.orderId || ord.id}
+                              <span className="text-[10px] font-mono text-slate-400 block font-normal">{ord.date}</span>
+                            </td>
+                            <td className="py-3.5 px-4">
+                              <span className="font-bold text-slate-900 block">{ord.client}</span>
+                              <span className="text-[10px] text-slate-500 font-mono block">{ord.customerPhone || ord.userEmail || '-'}</span>
+                            </td>
+                            <td className="py-3.5 px-4 font-extrabold uppercase text-slate-900">{ord.template}</td>
+                            <td className="py-3.5 px-4 text-slate-600 max-w-xs truncate">
+                              {ord.cutType} • {ord.fabricMaterial}
+                            </td>
+                            <td className="py-3.5 px-4 font-mono font-bold text-slate-900">
+                              {ord.total}
+                              <span className="text-[10px] text-slate-500 block font-mono font-normal">({ord.qty} pcs)</span>
+                            </td>
+                            <td className="py-3.5 px-4">
+                              <span className={`px-2 py-1 rounded text-[10px] font-mono font-bold uppercase ${
+                                ord.paymentStatus === 'paid' || ord.status?.includes('Lunas')
+                                  ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                                  : 'bg-amber-100 text-amber-800 border border-amber-300'
+                              }`}>
+                                {ord.paymentStatus === 'paid' || ord.status?.includes('Lunas') ? '✓ LUNAS (CHIP)' : 'PENDING'}
+                              </span>
+                            </td>
+                            <td className="py-3.5 px-4">
+                              <select
+                                value={ord.status}
+                                onChange={async (e) => {
+                                  const newSt = e.target.value;
+                                  setOrders(prev => prev.map(item => item.id === ord.id ? { ...item, status: newSt } : item));
+                                  await updateOrderStatusInSupabase(ord.id, newSt);
+                                }}
+                                className="bg-slate-50 border border-slate-200 rounded px-2 py-1 text-[11px] font-bold text-slate-900 outline-none"
+                              >
+                                <option value="Pesanan Diterima">Pesanan Diterima</option>
+                                <option value="Pesanan Diterima & Lunas">Pesanan Diterima & Lunas</option>
+                                <option value="Dalam Cetakan Kilang">Dalam Cetakan Kilang</option>
+                                <option value="Siap & Dihantar">Siap & Dihantar</option>
+                              </select>
+                            </td>
+                            <td className="py-3.5 px-4 text-right space-x-1">
+                              <button
+                                onClick={() => {
+                                  setSelectedOrderForDetail(ord);
+                                  setIsOrderDetailOpen(true);
+                                }}
+                                className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded text-[10px] font-bold uppercase transition-colors"
+                              >
+                                Butiran
+                              </button>
+                              <button
+                                onClick={async () => {
+                                  if (confirm('Adakah anda pasti mahu memadam pesanan ini?')) {
+                                    setOrders(prev => prev.filter(o => o.id !== ord.id));
+                                    await deleteOrderFromSupabase(ord.id);
+                                  }
+                                }}
+                                className="p-1.5 text-rose-500 hover:bg-rose-50 rounded transition-colors"
+                                title="Padam"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
         </div>
       </main>
+
+      {/* ORDER DETAIL MODAL */}
+      {isOrderDetailOpen && selectedOrderForDetail && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs font-sans">
+          <div className="bg-white w-full max-w-3xl rounded-2xl border border-slate-200 shadow-2xl p-6 sm:p-8 space-y-6 overflow-y-auto max-h-[90vh]">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+              <div>
+                <span className="text-[10px] font-mono text-slate-400 font-bold uppercase tracking-widest block">BUTIRAN PESANAN KILANG</span>
+                <h3 className="text-lg font-black text-slate-900 font-mono">#{selectedOrderForDetail.orderId || selectedOrderForDetail.id}</h3>
+              </div>
+              <button onClick={() => setIsOrderDetailOpen(false)} className="p-1.5 text-slate-400 hover:text-slate-900 rounded-lg">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs font-mono">
+              <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+                <span className="text-slate-400 block text-[10px]">MAKLUMAT PELANGGAN</span>
+                <p className="font-bold text-slate-900 text-sm">{selectedOrderForDetail.client}</p>
+                <p className="text-slate-600">Tel: {selectedOrderForDetail.customerPhone || '-'}</p>
+                <p className="text-slate-600">Pasukan: {selectedOrderForDetail.teamName || '-'}</p>
+              </div>
+
+              <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-1">
+                <span className="text-slate-400 block text-[10px]">RINGKASAN HARGA & BAYARAN</span>
+                <p className="font-black text-slate-900 text-base">{selectedOrderForDetail.total} ({selectedOrderForDetail.qty} pcs)</p>
+                <p className="text-slate-600">Status Bayaran: <strong className="text-emerald-700">{selectedOrderForDetail.paymentStatus === 'paid' ? 'LUNAS (CHIP-IN)' : 'PENDING'}</strong></p>
+                <p className="text-slate-600">Tarikh: {selectedOrderForDetail.date}</p>
+              </div>
+            </div>
+
+            {/* PLAYER NAMES TABLE IF AVAILABLE */}
+            {Array.isArray(selectedOrderForDetail.playerRows) && selectedOrderForDetail.playerRows.length > 0 && (
+              <div className="space-y-2">
+                <h4 className="text-xs font-bold font-mono uppercase text-slate-800">SENARAI NAMA & NOMBOR PEMAIN (MANUAL TABLE)</h4>
+                <div className="border border-slate-200 rounded-xl overflow-hidden">
+                  <table className="w-full text-left text-xs font-sans">
+                    <thead className="bg-slate-100 border-b border-slate-200 font-mono text-[10px] text-slate-600 uppercase">
+                      <tr>
+                        <th className="py-2 px-3">BIL</th>
+                        <th className="py-2 px-3">NAMA PEMAIN</th>
+                        <th className="py-2 px-3">NOMBOR BAJU</th>
+                        <th className="py-2 px-3">SAIZ</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 font-mono">
+                      {selectedOrderForDetail.playerRows.map((p, idx) => (
+                        <tr key={p.id || idx}>
+                          <td className="py-2 px-3 text-slate-400">{idx + 1}</td>
+                          <td className="py-2 px-3 font-bold text-slate-900">{p.name || '-'}</td>
+                          <td className="py-2 px-3 font-bold text-slate-900">{p.number || '-'}</td>
+                          <td className="py-2 px-3 text-slate-600">{p.size || 'L'}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+
+            {/* ATTACHMENTS / FILE LINKS */}
+            <div className="space-y-2 pt-2 border-t border-slate-100">
+              <h4 className="text-xs font-bold font-mono uppercase text-slate-800">DOKUMEN & LOGO TERUNGGAH</h4>
+              <div className="flex flex-wrap gap-3 text-xs font-mono">
+                {selectedOrderForDetail.customLogoUrl && (
+                  <a href={selectedOrderForDetail.customLogoUrl} target="_blank" rel="noreferrer" className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold rounded-lg border border-slate-300 flex items-center space-x-1.5">
+                    <span>🖼️ Logo Pasukan</span>
+                  </a>
+                )}
+                {selectedOrderForDetail.sponsorLogoUrl && (
+                  <a href={selectedOrderForDetail.sponsorLogoUrl} target="_blank" rel="noreferrer" className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold rounded-lg border border-slate-300 flex items-center space-x-1.5">
+                    <span>🖼️ Logo Sponsor</span>
+                  </a>
+                )}
+                {selectedOrderForDetail.playerListFileUrl && (
+                  <a href={selectedOrderForDetail.playerListFileUrl} target="_blank" rel="noreferrer" className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold rounded-lg border border-slate-300 flex items-center space-x-1.5">
+                    <span>📄 Fail Senarai Pemain</span>
+                  </a>
+                )}
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-slate-100 flex justify-end">
+              <button onClick={() => setIsOrderDetailOpen(false)} className="px-5 py-2.5 bg-slate-900 text-white font-bold text-xs uppercase rounded-xl">Tutup</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* DYNAMIC MODALS */}
       {isModalOpen && (
