@@ -63,7 +63,7 @@ export default function ProductOrderModal({ product: initialProduct, onClose, al
     : (activeProduct?.thumbnail ? [activeProduct.thumbnail] : []);
 
   // Card navigation index
-  const currentIndex = productList.findIndex(p => p.id === activeProduct.id || p.name === activeProduct.name);
+  const currentIndex = (Array.isArray(productList) ? productList : []).findIndex(p => (p?.id && activeProduct?.id && p.id === activeProduct.id) || (p?.name && activeProduct?.name && p.name === activeProduct.name));
 
   const handlePrevProduct = () => {
     if (productList.length <= 1) return;

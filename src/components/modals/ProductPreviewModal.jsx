@@ -202,15 +202,20 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
       order_id: generatedOrderId,
       userEmail: currentUser?.email || '',
       userId: currentUser?.id || '',
-      templateName: product.name,
-      category: product.category || 'SUBLIMASI',
-      sub_category: product.subCategory || '',
-      cutType: selectedCut.name,
-      fabricMaterial: selectedFabric.name,
+      templateName: product?.name || 'Template Reka Bentuk',
+      product_name: product?.name || 'Template Reka Bentuk',
+      category: product?.category || 'SUBLIMASI',
+      sub_category: product?.subCategory || '',
+      cutType: selectedCut?.name || '',
+      collar_cut: selectedCut?.name || '',
+      fabricMaterial: selectedFabric?.name || '',
+      fabric_type: selectedFabric?.name || '',
       sizeBreakdown: sizeQuantities,
       totalQty: totalQuantity,
+      total_qty: totalQuantity,
       unitPrice: pricePerPcs,
       totalPrice: totalPrice,
+      total_price: totalPrice,
       clientName: customerInfo.name || currentUser?.fullName || 'Pelanggan Sistem',
       customer_phone: customerInfo.phone || currentUser?.phone || '',
       team_name: customerInfo.teamName || '-',
@@ -236,10 +241,10 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
         <div className="sticky top-0 z-30 bg-white/95 backdrop-blur-md px-4 sm:px-6 py-3 sm:py-4 border-b border-neutral-100 flex items-center justify-between">
           <div className="flex items-center space-x-2.5 min-w-0 pr-2">
             <span className="text-[9px] sm:text-[10px] font-mono font-bold uppercase tracking-widest px-2 py-0.5 sm:px-2.5 sm:py-1 bg-neutral-100 rounded-full text-neutral-600 shrink-0">
-              {product.category || 'SUBLIMASI'}
+              {product?.category || 'SUBLIMASI'}
             </span>
             <h3 className="text-xs sm:text-base font-bold text-[#111111] uppercase tracking-tight truncate">
-              {product.name}
+              {product?.name || 'Template Reka Bentuk'}
             </h3>
           </div>
 
@@ -280,7 +285,7 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
                   PESANAN BERJAYA DISIMPAN KE SISTEM
                 </span>
                 <h3 className="text-xl sm:text-3xl font-black uppercase text-[#111111] pt-1">
-                  Resit Pesanan #{orderSuccess.order_id}
+                  Resit Pesanan #{orderSuccess?.order_id || 'AYZ-000000'}
                 </h3>
                 <p className="text-xs text-neutral-500 font-normal leading-relaxed">
                   Pesanan kustom jersi anda telah berjaya direkodkan secara langsung ke dalam pangkalan data sistem pengeluaran AYEZZ GLOBAL.
@@ -291,23 +296,23 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
               <div className="p-4 sm:p-6 bg-[#F5F5F7] rounded-2xl text-left space-y-3 border border-neutral-200 text-xs">
                 <div className="flex justify-between border-b border-neutral-200 pb-2">
                   <span className="font-mono text-neutral-500 font-bold">REKA BENTUK:</span>
-                  <span className="font-bold text-[#111111]">{orderSuccess.product_name}</span>
+                  <span className="font-bold text-[#111111]">{orderSuccess?.templateName || orderSuccess?.product_name || '-'}</span>
                 </div>
                 <div className="flex justify-between border-b border-neutral-200 pb-2">
                   <span className="font-mono text-neutral-500 font-bold">JENIS KOLAR:</span>
-                  <span className="font-bold text-[#111111]">{orderSuccess.collar_cut}</span>
+                  <span className="font-bold text-[#111111]">{orderSuccess?.cutType || orderSuccess?.collar_cut || '-'}</span>
                 </div>
                 <div className="flex justify-between border-b border-neutral-200 pb-2">
                   <span className="font-mono text-neutral-500 font-bold">FABRIK:</span>
-                  <span className="font-bold text-[#111111]">{orderSuccess.fabric_type}</span>
+                  <span className="font-bold text-[#111111]">{orderSuccess?.fabricMaterial || orderSuccess?.fabric_type || '-'}</span>
                 </div>
                 <div className="flex justify-between border-b border-neutral-200 pb-2">
                   <span className="font-mono text-neutral-500 font-bold">JUMLAH KUANTITI:</span>
-                  <span className="font-bold text-[#111111]">{orderSuccess.total_qty} pcs</span>
+                  <span className="font-bold text-[#111111]">{orderSuccess?.totalQty ?? orderSuccess?.total_qty ?? 0} pcs</span>
                 </div>
                 <div className="flex justify-between pt-1 text-sm font-black text-[#111111]">
                   <span>JUMLAH ANGGARAN:</span>
-                  <span className="text-emerald-700">RM {orderSuccess.total_price.toFixed(2)}</span>
+                  <span className="text-emerald-700">RM {Number(orderSuccess?.totalPrice ?? orderSuccess?.total_price ?? 0).toFixed(2)}</span>
                 </div>
               </div>
 
