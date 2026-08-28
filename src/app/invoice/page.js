@@ -69,6 +69,21 @@ function InvoiceContent() {
               }
             }
 
+            let parsedBreakdown = data.size_breakdown || {};
+            if (typeof parsedBreakdown === 'string') {
+              try { parsedBreakdown = JSON.parse(parsedBreakdown); } catch (e) {}
+            }
+
+            let parsedPlayers = data.player_rows || [];
+            if (typeof parsedPlayers === 'string') {
+              try { parsedPlayers = JSON.parse(parsedPlayers); } catch (e) {}
+            }
+
+            let parsedCutGrp = data.cut_groups || [];
+            if (typeof parsedCutGrp === 'string') {
+              try { parsedCutGrp = JSON.parse(parsedCutGrp); } catch (e) {}
+            }
+
             foundOrder = {
               id: data.id,
               orderId: data.id,
@@ -80,14 +95,14 @@ function InvoiceContent() {
               templateImage: templateImg,
               cutType: data.cut_type || 'Standard Roundneck',
               fabricMaterial: data.fabric_material || 'Micro-Dryfit',
-              cutGroups: data.cut_groups || [],
-              playerRows: data.player_rows || [],
+              cutGroups: parsedCutGrp,
+              playerRows: parsedPlayers,
               customLogoUrl: data.custom_logo_url || '',
               sponsorLogoUrl: data.sponsor_logo_url || '',
               playerListFileUrl: data.player_list_file_url || '',
               customDesignRefUrl: data.custom_design_ref_url || '',
               notes: data.notes || '',
-              sizeBreakdown: data.size_breakdown || {},
+              sizeBreakdown: parsedBreakdown,
               qty: totalQty,
               unitPrice: unitPrice,
               totalPrice: totalPrice,
@@ -370,14 +385,19 @@ function InvoiceContent() {
         {/* DOCUMENT VIEW 2: JOB SHEET KILANG (FACTORY PRODUCTION SHEET) */}
         {/* ========================================================== */}
         {activeDocument === 'jobsheet' && (() => {
-          // Dynamic Size Breakdown Matrix Calculation
+          // Dynamic Size Breakdown Matrix Calculation (4-Level Failsafe Parser)
           const sizeKeys = ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL'];
           const sizeCounts = { XS: 0, S: 0, M: 0, L: 0, XL: 0, '2XL': 0, '3XL': 0, '4XL': 0, '5XL': 0 };
           let totalCountFromRows = 0;
 
-          if (Array.isArray(order?.playerRows) && order.playerRows.length > 0) {
-            order.playerRows.forEach(p => {
-              const sz = (p.size || 'L').trim().toUpperCase();
+          // 1. Calculate from playerRows
+          let pRows = order?.playerRows;
+          if (typeof pRows === 'string') {
+            try { pRows = JSON.parse(pRows); } catch (e) {}
+          }
+          if (Array.isArray(pRows) && pRows.length > 0) {
+            pRows.forEach(p => {
+              const sz = (p.size || p.sz || 'L').toString().trim().toUpperCase();
               if (sizeCounts[sz] !== undefined) {
                 sizeCounts[sz]++;
               } else {
@@ -385,17 +405,62 @@ function InvoiceContent() {
               }
               totalCountFromRows++;
             });
-          } else if (order?.sizeBreakdown && typeof order.sizeBreakdown === 'object') {
-            Object.keys(order.sizeBreakdown).forEach(k => {
-              const val = Number(order.sizeBreakdown[k]) || 0;
-              const upperK = k.toUpperCase();
-              if (sizeCounts[upperK] !== undefined) {
-                sizeCounts[upperK] = val;
-              }
-              totalCountFromRows += val;
-            });
           }
+
+          // 2. Calculate from sizeBreakdown object if playerRows gave 0 count
+          if (totalCountFromRows === 0) {
+            let sb = order?.sizeBreakdown;
+            if (typeof sb === 'string') {
+              try { sb = JSON.parse(sb); } catch (e) {}
+            }
+            if (sb && typeof sb === 'object') {
+              Object.keys(sb).forEach(k => {
+                const val = Number(sb[k]) || 0;
+                const upperK = k.toString().trim().toUpperCase();
+                if (val > 0) {
+                  if (sizeCounts[upperK] !== undefined) {
+                    sizeCounts[upperK] = (sizeCounts[upperK] || 0) + val;
+                  } else {
+                    sizeCounts[upperK] = val;
+                  }
+                  totalCountFromRows += val;
+                }
+              });
+            }
+          }
+
+          // 3. Calculate from cutGroups if still 0
+          if (totalCountFromRows === 0) {
+            let cg = order?.cutGroups;
+            if (typeof cg === 'string') {
+              try { cg = JSON.parse(cg); } catch (e) {}
+            }
+            if (Array.isArray(cg) && cg.length > 0) {
+              cg.forEach(group => {
+                const grpBreakdown = group.sizeBreakdown || group.sizes || {};
+                Object.keys(grpBreakdown).forEach(k => {
+                  const val = Number(grpBreakdown[k]) || 0;
+                  const upperK = k.toString().trim().toUpperCase();
+                  if (val > 0) {
+                    if (sizeCounts[upperK] !== undefined) {
+                      sizeCounts[upperK] = (sizeCounts[upperK] || 0) + val;
+                    } else {
+                      sizeCounts[upperK] = val;
+                    }
+                    totalCountFromRows += val;
+                  }
+                });
+              });
+            }
+          }
+
           const finalTotalPcs = totalCountFromRows > 0 ? totalCountFromRows : (order?.qty || 1);
+
+          // 4. Smart Fallback for test/quick checkout orders created without size breakdown:
+          // If totalCountFromRows is still 0, distribute finalTotalPcs into size L
+          if (totalCountFromRows === 0 && finalTotalPcs > 0) {
+            sizeCounts['L'] = finalTotalPcs;
+          }
 
           return (
             <div className="bg-white p-8 sm:p-12 rounded-2xl border-2 border-slate-900 shadow-none space-y-8 print:border-none print:p-4 font-sans">
