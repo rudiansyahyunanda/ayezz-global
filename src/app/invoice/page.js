@@ -358,159 +358,250 @@ function InvoiceContent() {
         {/* ========================================================== */}
         {/* DOCUMENT VIEW 2: JOB SHEET KILANG (FACTORY PRODUCTION SHEET) */}
         {/* ========================================================== */}
-        {activeDocument === 'jobsheet' && (
-          <div className="bg-white p-8 sm:p-12 rounded-3xl border border-slate-200 shadow-xl space-y-8 print:shadow-none print:border-none print:rounded-none print:p-6 font-sans">
-            
-            {/* JOB SHEET HEADER */}
-            <div className="flex flex-col sm:flex-row justify-between items-start gap-6 border-b-2 border-slate-900 pb-6">
-              <div className="space-y-1">
-                <span className="px-2.5 py-0.5 bg-slate-900 text-white font-mono font-bold text-[10px] rounded uppercase tracking-widest inline-block">
-                  TIKET ARAHAN KILANG (FACTORY JOB SHEET)
-                </span>
-                <h2 className="text-2xl font-black tracking-tight text-slate-900 font-mono">AYEZZ PRODUCTION</h2>
-                <p className="text-xs text-slate-500 font-mono">Borang Cetakan Sublimasi, Potongan & Jahitan Jersi Kustom</p>
+        {activeDocument === 'jobsheet' && (() => {
+          // Dynamic Size Breakdown Matrix Calculation
+          const sizeKeys = ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL'];
+          const sizeCounts = { XS: 0, S: 0, M: 0, L: 0, XL: 0, '2XL': 0, '3XL': 0, '4XL': 0, '5XL': 0 };
+          let totalCountFromRows = 0;
+
+          if (Array.isArray(order?.playerRows) && order.playerRows.length > 0) {
+            order.playerRows.forEach(p => {
+              const sz = (p.size || 'L').trim().toUpperCase();
+              if (sizeCounts[sz] !== undefined) {
+                sizeCounts[sz]++;
+              } else {
+                sizeCounts[sz] = 1;
+              }
+              totalCountFromRows++;
+            });
+          } else if (order?.sizeBreakdown && typeof order.sizeBreakdown === 'object') {
+            Object.keys(order.sizeBreakdown).forEach(k => {
+              const val = Number(order.sizeBreakdown[k]) || 0;
+              const upperK = k.toUpperCase();
+              if (sizeCounts[upperK] !== undefined) {
+                sizeCounts[upperK] = val;
+              }
+              totalCountFromRows += val;
+            });
+          }
+          const finalTotalPcs = totalCountFromRows > 0 ? totalCountFromRows : (order?.qty || 1);
+
+          return (
+            <div className="bg-white p-8 sm:p-12 rounded-3xl border border-slate-200 shadow-xl space-y-8 print:shadow-none print:border-none print:rounded-none print:p-6 font-sans">
+              
+              {/* JOB SHEET HEADER */}
+              <div className="flex flex-col sm:flex-row justify-between items-start gap-6 border-b-2 border-slate-900 pb-6">
+                <div className="space-y-1">
+                  <span className="px-2.5 py-0.5 bg-slate-900 text-white font-mono font-bold text-[10px] rounded uppercase tracking-widest inline-block">
+                    TIKET ARAHAN KILANG (FACTORY JOB SHEET)
+                  </span>
+                  <h2 className="text-2xl font-black tracking-tight text-slate-900 font-mono">AYEZZ PRODUCTION</h2>
+                  <p className="text-xs text-slate-500 font-mono">Borang Cetakan Sublimasi, Potongan & Jahitan Jersi Kustom</p>
+                </div>
+
+                <div className="text-left sm:text-right space-y-1 font-mono text-xs">
+                  <p><strong className="text-slate-900">NO. JOB SHEET:</strong> <span className="font-bold text-blue-700">{jobSheetNo}</span></p>
+                  <p><strong className="text-slate-900">KOD PESANAN:</strong> #{order?.orderId}</p>
+                  <p><strong className="text-slate-900">TARIKH KILANG:</strong> {order?.date}</p>
+                  <p><strong className="text-slate-900">PRIORITI:</strong> <span className="text-emerald-700 font-bold">UTAMA (LUNAS)</span></p>
+                </div>
               </div>
 
-              <div className="text-left sm:text-right space-y-1 font-mono text-xs">
-                <p><strong className="text-slate-900">NO. JOB SHEET:</strong> <span className="font-bold text-blue-700">{jobSheetNo}</span></p>
-                <p><strong className="text-slate-900">KOD PESANAN:</strong> #{order?.orderId}</p>
-                <p><strong className="text-slate-900">TARIKH KILANG:</strong> {order?.date}</p>
-                <p><strong className="text-slate-900">PRIORITI:</strong> <span className="text-emerald-700 font-bold">UTAMA (LUNAS)</span></p>
-              </div>
-            </div>
+              {/* CLIENT & SPECIFICATION SUMMARY */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 bg-slate-100 p-6 rounded-2xl border border-slate-300">
+                <div className="space-y-1 text-xs">
+                  <span className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest block">PELANGGAN / PASUKAN:</span>
+                  <h4 className="text-sm font-extrabold uppercase text-slate-900">{order?.client}</h4>
+                  <p className="text-slate-700 font-mono">Pasukan: <strong className="text-slate-900">{order?.teamName || '-'}</strong></p>
+                  <p className="text-slate-700 font-mono">Tel Client: <strong className="text-slate-900">{order?.customerPhone || '-'}</strong></p>
+                  <p className="text-slate-700 font-mono">Email: <strong className="text-slate-900">{order?.userEmail || '-'}</strong></p>
+                </div>
 
-            {/* CLIENT & SPECIFICATION SUMMARY */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 bg-slate-100 p-6 rounded-2xl border border-slate-300">
-              <div className="space-y-1 text-xs">
-                <span className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest block">PELANGGAN / PASUKAN:</span>
-                <h4 className="text-sm font-extrabold uppercase text-slate-900">{order?.client}</h4>
-                <p className="text-slate-700 font-mono">Pasukan: <strong className="text-slate-900">{order?.teamName || '-'}</strong></p>
-                <p className="text-slate-700 font-mono">Tel Client: <strong className="text-slate-900">{order?.customerPhone || '-'}</strong></p>
+                <div className="space-y-1 text-xs font-mono">
+                  <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block">SPESIFIKASI PRODUKSI KILANG:</span>
+                  <p className="text-slate-800">REKA BENTUK: <strong className="uppercase text-slate-900">{order?.template}</strong></p>
+                  <p className="text-slate-800">POTONGAN & KOLAR: <strong className="uppercase text-slate-900">{order?.cutType}</strong></p>
+                  <p className="text-slate-800">BAHAN KAIN: <strong className="uppercase text-slate-900">{order?.fabricMaterial}</strong></p>
+                  <p className="text-slate-800">JUMLAH PRODUKSI: <strong className="text-blue-700 text-sm">{finalTotalPcs} PCS</strong></p>
+                </div>
               </div>
 
-              <div className="space-y-1 text-xs font-mono">
-                <span className="text-[10px] font-bold text-slate-500 uppercase tracking-widest block">SPESIFIKASI PRODUKSI:</span>
-                <p className="text-slate-800">REKA BENTUK: <strong className="uppercase text-slate-900">{order?.template}</strong></p>
-                <p className="text-slate-800">POTONGAN & KOLAR: <strong className="uppercase text-slate-900">{order?.cutType}</strong></p>
-                <p className="text-slate-800">BAHAN KAIN: <strong className="uppercase text-slate-900">{order?.fabricMaterial}</strong></p>
-                <p className="text-slate-800">JUMLAH BAJU: <strong className="text-blue-700 text-sm">{order?.qty} PCS</strong></p>
-              </div>
-            </div>
-
-            {/* PLAYER NAMES & NUMBERS MATRIX TABLE */}
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
+              {/* VISUAL DESIGN & LOGOS PREVIEW BOX */}
+              <div className="space-y-3">
                 <span className="text-[11px] font-mono font-extrabold text-slate-900 uppercase tracking-wider block">
-                  1. MATRIKS NAMA, NOMBOR & SAIZ PEMAIN (PRINTING MATRIX)
+                  1. VISUAL REKA BENTUK, LOGO PASUKAN & SPONSOR (DESIGN & LOGO PREVIEW)
                 </span>
-                <span className="text-xs font-mono font-bold text-slate-600">
-                  {Array.isArray(order?.playerRows) ? order.playerRows.length : 0} Orang Terrekod
-                </span>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 font-mono text-xs">
+                  {/* TEMPLATE / REF IMAGE */}
+                  <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
+                    <span className="text-[10px] text-slate-400 font-bold uppercase block">REKA BENTUK TEMPLATE / REF:</span>
+                    <div className="flex flex-col items-center justify-center p-2 bg-white rounded-xl border border-slate-200 min-h-36">
+                      {order?.customDesignRefUrl || order?.templateImage ? (
+                        <img
+                          src={order?.customDesignRefUrl || order?.templateImage}
+                          alt="Visual Template"
+                          className="max-h-32 w-auto object-contain rounded"
+                        />
+                      ) : (
+                        <div className="text-center p-2">
+                          <span className="text-2xl block mb-1">👕</span>
+                          <span className="text-[10px] text-slate-500 font-bold uppercase block">{order?.template}</span>
+                        </div>
+                      )}
+                    </div>
+                    {order?.customDesignRefUrl && (
+                      <a href={order.customDesignRefUrl} target="_blank" rel="noreferrer" className="text-[10px] font-bold text-blue-600 hover:underline block text-center">Buka Fail HD Design →</a>
+                    )}
+                  </div>
+
+                  {/* LOGO PASUKAN */}
+                  <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
+                    <span className="text-[10px] text-slate-400 font-bold uppercase block">LOGO PASUKAN (CREST):</span>
+                    <div className="flex flex-col items-center justify-center p-2 bg-white rounded-xl border border-slate-200 min-h-36">
+                      {order?.customLogoUrl ? (
+                        <img src={order.customLogoUrl} alt="Logo Pasukan" className="max-h-28 w-auto object-contain p-1" />
+                      ) : (
+                        <div className="text-center text-slate-400 p-2">
+                          <span className="text-xl block">🛡️</span>
+                          <span className="text-[10px]">Standard / Tiada Logo</span>
+                        </div>
+                      )}
+                    </div>
+                    {order?.customLogoUrl && (
+                      <a href={order.customLogoUrl} target="_blank" rel="noreferrer" className="text-[10px] font-bold text-blue-600 hover:underline block text-center">Muat Turun Logo HD →</a>
+                    )}
+                  </div>
+
+                  {/* LOGO SPONSOR */}
+                  <div className="p-4 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
+                    <span className="text-[10px] text-slate-400 font-bold uppercase block">LOGO SPONSOR (CHEST):</span>
+                    <div className="flex flex-col items-center justify-center p-2 bg-white rounded-xl border border-slate-200 min-h-36">
+                      {order?.sponsorLogoUrl ? (
+                        <img src={order.sponsorLogoUrl} alt="Logo Sponsor" className="max-h-28 w-auto object-contain p-1" />
+                      ) : (
+                        <div className="text-center text-slate-400 p-2">
+                          <span className="text-xl block">🏷️</span>
+                          <span className="text-[10px]">Tiada Logo Sponsor</span>
+                        </div>
+                      )}
+                    </div>
+                    {order?.sponsorLogoUrl && (
+                      <a href={order.sponsorLogoUrl} target="_blank" rel="noreferrer" className="text-[10px] font-bold text-blue-600 hover:underline block text-center">Muat Turun Sponsor HD →</a>
+                    )}
+                  </div>
+                </div>
+
+                {order?.playerListFileUrl && (
+                  <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl flex items-center justify-between font-mono text-xs text-emerald-900">
+                    <span>📄 FAIL DOKUMEN SENARAI PEMAIN TERUNGGAH PELANGGAN</span>
+                    <a href={order.playerListFileUrl} target="_blank" rel="noreferrer" className="px-3 py-1 bg-emerald-700 text-white rounded font-bold text-[11px] uppercase">
+                      Muat Turun Dokumen →
+                    </a>
+                  </div>
+                )}
               </div>
 
-              {Array.isArray(order?.playerRows) && order.playerRows.length > 0 ? (
-                <div className="border-2 border-slate-900 rounded-xl overflow-hidden">
-                  <table className="w-full text-left text-xs font-sans">
-                    <thead className="bg-slate-900 text-white font-mono text-[10px] uppercase">
-                      <tr>
-                        <th className="py-2.5 px-3">BIL</th>
-                        <th className="py-2.5 px-4">NAMA CETAKAN (BACK NAME)</th>
-                        <th className="py-2.5 px-4 text-center">NOMBOR BAJU</th>
-                        <th className="py-2.5 px-4 text-center">SAIZ BAJU</th>
+              {/* JADUAL AGIHAN SAIZ KILANG (SIZE BREAKDOWN MATRIX TABLE) */}
+              <div className="space-y-3">
+                <span className="text-[11px] font-mono font-extrabold text-slate-900 uppercase tracking-wider block">
+                  2. JADUAL AGIHAN SAIZ BAJU KILANG (SIZE BREAKDOWN MATRIX)
+                </span>
+
+                <div className="border-2 border-slate-900 rounded-2xl overflow-hidden shadow-xs">
+                  <table className="w-full text-center border-collapse text-xs font-mono">
+                    <thead>
+                      <tr className="bg-slate-900 text-white font-bold text-[11px] uppercase tracking-wider">
+                        {sizeKeys.map(k => (
+                          <th key={k} className="py-2.5 px-2 border-r border-slate-700">{k}</th>
+                        ))}
+                        <th className="py-2.5 px-3 bg-blue-900">JUMLAH PCS</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-200 font-mono font-bold text-slate-900">
-                      {order.playerRows.map((p, idx) => (
-                        <tr key={p.id || idx} className="hover:bg-slate-50">
-                          <td className="py-2 px-3 text-slate-500 font-normal">{idx + 1}</td>
-                          <td className="py-2 px-4 uppercase text-sm">{p.name || '-'}</td>
-                          <td className="py-2 px-4 text-center text-sm font-black text-blue-800">{p.number || '-'}</td>
-                          <td className="py-2 px-4 text-center text-xs bg-slate-100 font-extrabold">{p.size || 'L'}</td>
-                        </tr>
-                      ))}
+                    <tbody>
+                      <tr className="bg-slate-50 font-black text-slate-900 text-sm">
+                        {sizeKeys.map(k => (
+                          <td key={k} className={`py-3 px-2 border-r border-slate-200 ${sizeCounts[k] > 0 ? 'bg-blue-50 text-blue-900 font-extrabold' : 'text-slate-400 font-normal'}`}>
+                            {sizeCounts[k]}
+                          </td>
+                        ))}
+                        <td className="py-3 px-3 bg-blue-100 text-blue-900 font-black text-base">{finalTotalPcs} PCS</td>
+                      </tr>
                     </tbody>
                   </table>
                 </div>
-              ) : (
-                <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-slate-600">
-                  Tiada senarai jadual manual. Senarai nama dihantar dalam bentuk fail dokumen terunggah atau cetakan standard tanpa nama.
-                </div>
-              )}
-            </div>
+              </div>
 
-            {/* LOGOS & ATTACHMENTS FOR TAILOR & PRINTER */}
-            <div className="space-y-3 pt-2">
-              <span className="text-[11px] font-mono font-extrabold text-slate-900 uppercase tracking-wider block">
-                2. LOGO PASUKAN & SPONSOR UNTUK PEREKA / PRINTER
-              </span>
-
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 font-mono text-xs">
-                <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
-                  <span className="text-[10px] text-slate-400 font-bold uppercase block">LOGO PASUKAN:</span>
-                  {order?.customLogoUrl ? (
-                    <div className="space-y-2">
-                      <img src={order.customLogoUrl} alt="Logo Pasukan" className="w-16 h-16 object-contain bg-white rounded border border-slate-200 p-1" />
-                      <a href={order.customLogoUrl} target="_blank" rel="noreferrer" className="text-[10px] font-bold text-blue-600 hover:underline block">Buka Fail HD →</a>
-                    </div>
-                  ) : (
-                    <span className="text-slate-500">Tiada / Standard Logo</span>
-                  )}
+              {/* PLAYER NAMES & NUMBERS MATRIX TABLE */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-mono font-extrabold text-slate-900 uppercase tracking-wider block">
+                    3. SENARAI NAMA, NOMBOR & SAIZ PEMAIN (ROSTER PRINTING TABLE)
+                  </span>
+                  <span className="text-xs font-mono font-bold text-slate-600">
+                    {Array.isArray(order?.playerRows) ? order.playerRows.length : 0} Orang Terrekod
+                  </span>
                 </div>
 
-                <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
-                  <span className="text-[10px] text-slate-400 font-bold uppercase block">LOGO SPONSOR:</span>
-                  {order?.sponsorLogoUrl ? (
-                    <div className="space-y-2">
-                      <img src={order.sponsorLogoUrl} alt="Logo Sponsor" className="w-16 h-16 object-contain bg-white rounded border border-slate-200 p-1" />
-                      <a href={order.sponsorLogoUrl} target="_blank" rel="noreferrer" className="text-[10px] font-bold text-blue-600 hover:underline block">Buka Fail HD →</a>
-                    </div>
-                  ) : (
-                    <span className="text-slate-500">Tiada Logo Sponsor</span>
-                  )}
-                </div>
+                {Array.isArray(order?.playerRows) && order.playerRows.length > 0 ? (
+                  <div className="border-2 border-slate-900 rounded-2xl overflow-hidden">
+                    <table className="w-full text-left text-xs font-sans">
+                      <thead className="bg-slate-900 text-white font-mono text-[10px] uppercase">
+                        <tr>
+                          <th className="py-2.5 px-3">BIL</th>
+                          <th className="py-2.5 px-4">NAMA CETAKAN (BACK NAME)</th>
+                          <th className="py-2.5 px-4 text-center">NOMBOR BAJU</th>
+                          <th className="py-2.5 px-4 text-center">SAIZ BAJU</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-slate-200 font-mono font-bold text-slate-900">
+                        {order.playerRows.map((p, idx) => (
+                          <tr key={p.id || idx} className="hover:bg-slate-50">
+                            <td className="py-2 px-3 text-slate-500 font-normal">{idx + 1}</td>
+                            <td className="py-2 px-4 uppercase text-sm">{p.name || '-'}</td>
+                            <td className="py-2 px-4 text-center text-sm font-black text-blue-800">{p.number || '-'}</td>
+                            <td className="py-2 px-4 text-center text-xs bg-slate-100 font-extrabold">{p.size || 'L'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                ) : (
+                  <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl text-xs font-mono text-slate-600">
+                    Tiada senarai jadual manual. Senarai nama dihantar dalam bentuk fail dokumen terunggah atau cetakan standard tanpa nama.
+                  </div>
+                )}
+              </div>
 
-                <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-2">
-                  <span className="text-[10px] text-slate-400 font-bold uppercase block">DOCUMENT SENARAI PEMAIN:</span>
-                  {order?.playerListFileUrl ? (
-                    <div className="space-y-2">
-                      <span className="text-xs font-bold text-emerald-800 block">✓ Fail Terunggah</span>
-                      <a href={order.playerListFileUrl} target="_blank" rel="noreferrer" className="text-[10px] font-bold text-blue-600 hover:underline block">Muat Turun Fail →</a>
-                    </div>
-                  ) : (
-                    <span className="text-slate-500">Ditaip Dalam Jadual Manual</span>
-                  )}
+              {/* FACTORY QC SIGN OFF CHECKBOXES */}
+              <div className="pt-6 border-t-2 border-slate-900 space-y-4">
+                <span className="text-[11px] font-mono font-extrabold text-slate-900 uppercase tracking-wider block">
+                  4. SEMAKAN KUALITI & PENGESAHAN OPERASI KILANG (QC CHECKLIST)
+                </span>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-mono">
+                  <div className="p-3 border border-slate-300 rounded-xl space-y-1">
+                    <span className="font-bold text-slate-900 block">[ ] SUBLIMATION PRINT</span>
+                    <span className="text-[10px] text-slate-500 block">Operator: __________</span>
+                  </div>
+                  <div className="p-3 border border-slate-300 rounded-xl space-y-1">
+                    <span className="font-bold text-slate-900 block">[ ] HEAT PRESSING</span>
+                    <span className="text-[10px] text-slate-500 block">Operator: __________</span>
+                  </div>
+                  <div className="p-3 border border-slate-300 rounded-xl space-y-1">
+                    <span className="font-bold text-slate-900 block">[ ] SEWING & TAILOR</span>
+                    <span className="text-[10px] text-slate-500 block">Operator: __________</span>
+                  </div>
+                  <div className="p-3 border border-slate-300 rounded-xl space-y-1">
+                    <span className="font-bold text-slate-900 block">[ ] QC & PACKAGING</span>
+                    <span className="text-[10px] text-slate-500 block">Inspector: _________</span>
+                  </div>
                 </div>
               </div>
+
             </div>
-
-            {/* FACTORY QC SIGN OFF CHECKBOXES */}
-            <div className="pt-6 border-t-2 border-slate-900 space-y-4">
-              <span className="text-[11px] font-mono font-extrabold text-slate-900 uppercase tracking-wider block">
-                3. SEMAKAN KUALITI & PENGESAHAN OPERASI KILANG (QC CHECKLIST)
-              </span>
-
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs font-mono">
-                <div className="p-3 border border-slate-300 rounded-xl space-y-1">
-                  <span className="font-bold text-slate-900 block">[ ] SUBLIMATION PRINT</span>
-                  <span className="text-[10px] text-slate-500 block">Operator: __________</span>
-                </div>
-                <div className="p-3 border border-slate-300 rounded-xl space-y-1">
-                  <span className="font-bold text-slate-900 block">[ ] HEAT PRESSING</span>
-                  <span className="text-[10px] text-slate-500 block">Operator: __________</span>
-                </div>
-                <div className="p-3 border border-slate-300 rounded-xl space-y-1">
-                  <span className="font-bold text-slate-900 block">[ ] SEWING & TAILOR</span>
-                  <span className="text-[10px] text-slate-500 block">Operator: __________</span>
-                </div>
-                <div className="p-3 border border-slate-300 rounded-xl space-y-1">
-                  <span className="font-bold text-slate-900 block">[ ] QC & PACKAGING</span>
-                  <span className="text-[10px] text-slate-500 block">Inspector: _________</span>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        )}
+          );
+        })()}
 
       </main>
 
