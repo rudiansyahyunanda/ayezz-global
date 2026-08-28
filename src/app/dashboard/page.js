@@ -144,9 +144,12 @@ function DashboardContent() {
     }
   ]);
 
-  // Collar Cut Selection Modal
+  // Collar Cut Selection Modal & Sleeve Selection Modal
   const [isCutModalOpen, setIsCutModalOpen] = useState(false);
   const [activeGroupIdForCut, setActiveGroupIdForCut] = useState(null);
+
+  const [isSleeveModalOpen, setIsSleeveModalOpen] = useState(false);
+  const [activeGroupIdForSleeve, setActiveGroupIdForSleeve] = useState(null);
 
   // Customer & Shipping Info
   const [customerInfo, setCustomerInfo] = useState({
@@ -297,12 +300,6 @@ function DashboardContent() {
       return;
     }
     setCutGroups((prev) => prev.filter((g) => g.id !== groupId));
-  };
-
-  const updateGroupSleeve = (groupId, newSleeve) => {
-    setCutGroups((prev) =>
-      prev.map((g) => (g.id === groupId ? { ...g, sleeve: newSleeve } : g))
-    );
   };
 
   const updateGroupSizeQty = (groupId, sizeKey, delta) => {
@@ -1250,6 +1247,7 @@ function DashboardContent() {
                             const activeCutName = group.cut?.name || 'Pilih Potongan Kolar';
                             const activeSleeveName = group.sleeve?.name || 'Pilih Jenis Lengan';
                             const activeCutImg = group.cut?.thumbnail || PLACEHOLDER_IMAGE;
+                            const activeSleeveImg = group.sleeve?.thumbnail || PLACEHOLDER_IMAGE;
 
                             return (
                               <div
@@ -1285,11 +1283,11 @@ function DashboardContent() {
                                   </div>
                                 </div>
 
-                                {/* COLLAR CUT & INLINE SLEEVE SELECTOR */}
+                                {/* COLLAR CUT & SLEEVE SELECTION MODAL CARD BUTTONS */}
                                 <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
                                   
                                   {/* COLLAR CUT */}
-                                  <div className="md:col-span-5 space-y-2">
+                                  <div className="md:col-span-6 space-y-2">
                                     <label className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block">
                                       1. POTONGAN KOLAR
                                     </label>
@@ -1322,44 +1320,43 @@ function DashboardContent() {
                                     </div>
                                   </div>
 
-                                  {/* SLEEVE TYPE INLINE PILLS */}
-                                  <div className="md:col-span-7 space-y-2">
+                                  {/* SLEEVE TYPE MODAL LIST TRIGGER */}
+                                  <div className="md:col-span-6 space-y-2">
                                     <label className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block">
                                       2. JENIS LENGAN (SLEEVE)
                                     </label>
 
-                                    <div className="flex flex-wrap gap-2">
-                                      {sleeveTypes.map((sleeve) => {
-                                        const isSelected = group.sleeve?.id === sleeve.id;
-                                        const addOn = Number(sleeve.addOnPrice ?? sleeve.add_on_price ?? 0);
-                                        return (
-                                          <button
-                                            key={sleeve.id}
-                                            type="button"
-                                            onClick={() => updateGroupSleeve(group.id, sleeve)}
-                                            className={`px-3 py-2 rounded-xl text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer ${
-                                              isSelected
-                                                ? 'bg-slate-900 text-white shadow-xs ring-2 ring-slate-900/20'
-                                                : 'bg-slate-50 text-slate-700 border border-slate-200 hover:border-slate-400'
-                                            }`}
-                                          >
-                                            <span>{sleeve.name}</span>
-                                            {addOn > 0 && (
-                                              <span className={`text-[9px] font-mono font-semibold px-1.5 py-0.5 rounded ${
-                                                isSelected ? 'bg-slate-800 text-slate-200' : 'bg-slate-200 text-slate-700'
-                                              }`}>
-                                                +RM {addOn}
-                                              </span>
-                                            )}
-                                          </button>
-                                        );
-                                      })}
+                                    <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
+                                      <div className="flex items-center space-x-3 min-w-0">
+                                        <img
+                                          src={activeSleeveImg}
+                                          alt={activeSleeveName}
+                                          className="w-12 h-12 object-contain bg-white rounded-lg p-1 border border-slate-200 shrink-0"
+                                        />
+                                        <div className="min-w-0 flex-1">
+                                          <h4 className="text-xs font-extrabold uppercase text-slate-900 truncate">{activeSleeveName}</h4>
+                                          <span className="text-[10px] font-mono font-bold text-slate-500 block">
+                                            {Number(group.sleeve?.addOnPrice ?? 0) > 0 ? `+RM ${group.sleeve.addOnPrice}` : 'FREE'}
+                                          </span>
+                                        </div>
+                                      </div>
+
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setActiveGroupIdForSleeve(group.id);
+                                          setIsSleeveModalOpen(true);
+                                        }}
+                                        className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-[11px] uppercase rounded-lg transition-colors cursor-pointer shrink-0"
+                                      >
+                                        Pilih Lengan
+                                      </button>
                                     </div>
                                   </div>
 
                                 </div>
 
-                                {/* DIRECT SIZE MATRIX COUNTER GRID (NO MODAL NEEDED FOR FAST ORDERING!) */}
+                                {/* DIRECT SIZE MATRIX COUNTER GRID (NO EXTRA MODAL FOR FAST ORDERING!) */}
                                 <div className="space-y-3 pt-3 border-t border-slate-100">
                                   <div className="flex items-center justify-between">
                                     <label className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block">
@@ -2121,7 +2118,7 @@ function DashboardContent() {
         </div>
       )}
 
-      {/* COLLAR CUT SELECTION MODAL DRAWER */}
+      {/* COLLAR CUT SELECTION MODAL DRAWER (CHAINS TO SLEEVE SELECTION MODAL!) */}
       {isCutModalOpen && activeGroupIdForCut && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-xs font-sans">
           <div className="bg-white rounded-3xl max-w-3xl w-full p-6 sm:p-8 space-y-6 shadow-2xl relative border border-slate-200 max-h-[88vh] flex flex-col">
@@ -2152,6 +2149,9 @@ function DashboardContent() {
                         prev.map((g) => (g.id === activeGroupIdForCut ? { ...g, cut } : g))
                       );
                       setIsCutModalOpen(false);
+                      // CHAINING WORKFLOW: AUTOMATICALLY OPEN SLEEVE SELECTION MODAL NEXT!
+                      setActiveGroupIdForSleeve(activeGroupIdForCut);
+                      setIsSleeveModalOpen(true);
                     }}
                     className={`p-4 bg-white border rounded-2xl cursor-pointer transition-all flex flex-col justify-between space-y-3 relative group ${
                       isSelected
@@ -2189,6 +2189,84 @@ function DashboardContent() {
               <button
                 type="button"
                 onClick={() => setIsCutModalOpen(false)}
+                className="px-5 py-2 bg-slate-900 text-white text-xs font-bold uppercase rounded-xl cursor-pointer"
+              >
+                Tutup Modal
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SLEEVE SELECTION MODAL DRAWER (LIST VIEW FORMAT) */}
+      {isSleeveModalOpen && activeGroupIdForSleeve && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-xs font-sans">
+          <div className="bg-white rounded-3xl max-w-xl w-full p-6 sm:p-8 space-y-6 shadow-2xl relative border border-slate-200 max-h-[85vh] flex flex-col">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4 shrink-0">
+              <div>
+                <h3 className="text-lg font-black uppercase text-slate-900">PILIH JENIS LENGAN (SLEEVE)</h3>
+                <p className="text-xs text-slate-500 font-medium">Sila pilih gaya lengan pilihan anda daripada senarai di bawah</p>
+              </div>
+              <button
+                onClick={() => setIsSleeveModalOpen(false)}
+                className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto space-y-3 pr-1">
+              {sleeveTypes.map((sleeve) => {
+                const addOn = Number(sleeve.addOnPrice ?? sleeve.add_on_price ?? 0);
+                const activeGroupObj = cutGroups.find((g) => g.id === activeGroupIdForSleeve);
+                const isSelected = activeGroupObj?.sleeve?.id === sleeve.id;
+
+                return (
+                  <div
+                    key={sleeve.id}
+                    onClick={() => {
+                      setCutGroups((prev) =>
+                        prev.map((g) => (g.id === activeGroupIdForSleeve ? { ...g, sleeve } : g))
+                      );
+                      setIsSleeveModalOpen(false);
+                    }}
+                    className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-center justify-between space-x-4 group ${
+                      isSelected
+                        ? 'bg-slate-900 text-white border-slate-900 shadow-md ring-2 ring-slate-900/20'
+                        : 'bg-white text-slate-800 border-slate-200 hover:border-slate-400 hover:bg-slate-50'
+                    }`}
+                  >
+                    <div className="flex items-center space-x-4 min-w-0">
+                      <img
+                        src={sleeve.thumbnail || PLACEHOLDER_IMAGE}
+                        alt={sleeve.name}
+                        className="w-14 h-14 object-contain bg-slate-100 rounded-xl p-1.5 border border-slate-200/80 shrink-0"
+                      />
+                      <div className="min-w-0 flex-1 space-y-0.5">
+                        <h4 className="text-xs font-extrabold uppercase line-clamp-1">{sleeve.name}</h4>
+                        <p className={`text-[10px] line-clamp-1 ${isSelected ? 'text-slate-300' : 'text-slate-500'}`}>
+                          {sleeve.desc || sleeve.description || 'Gaya lengan sublimasi standard'}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="text-right shrink-0">
+                      <span className={`text-xs font-mono font-black block ${isSelected ? 'text-emerald-400' : 'text-slate-900'}`}>
+                        {addOn > 0 ? `+RM ${addOn}.00` : 'STANDARD / FREE'}
+                      </span>
+                      <span className={`text-[10px] font-mono block pt-0.5 ${isSelected ? 'text-slate-300' : 'text-slate-400'}`}>
+                        {isSelected ? 'DIPILIH ✓' : 'PILIH →'}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="pt-3 border-t border-slate-100 flex justify-end shrink-0">
+              <button
+                type="button"
+                onClick={() => setIsSleeveModalOpen(false)}
                 className="px-5 py-2 bg-slate-900 text-white text-xs font-bold uppercase rounded-xl cursor-pointer"
               >
                 Tutup Modal
