@@ -242,6 +242,26 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
     setIsModalOpen(true);
   };
 
+  const handleDeleteCategory = async (cat) => {
+    const subs = await getSubCategories(cat.id);
+    const rawSubsCount = cat.rawSubCategories?.length || 0;
+    const totalSubCount = Math.max(subs.length, rawSubsCount);
+
+    if (totalSubCount > 0) {
+      alert(`⚠️ KATEGORI TIDAK BOLEH DIPADAM!\n\nKategori "${cat.title}" masih mempunyai ${totalSubCount} Sub-Kategori turunan.\n\nSila padam semua Sub-Kategori di dalamnya terlebih dahulu sebelum memadam kategori utama ini.`);
+      return;
+    }
+
+    if (window.confirm(`Adakah anda pasti untuk memadam Kategori "${cat.title}"?`)) {
+      const res = await deleteCategoryFromSupabase(cat.id);
+      if (res && res.success === false) {
+        alert(`⚠️ ${res.message || 'Gagal memadam kategori'}`);
+        return;
+      }
+      setCategories(prev => prev.filter(c => c.id !== cat.id));
+    }
+  };
+
   const openAddModal = (type) => {
     setModalMode('add');
     setModalType(type);
@@ -682,7 +702,7 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                                 <button onClick={() => openEditModal('category', cat)} className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors" title="Kemaskini Kategori">
                                   <Edit2 className="w-4 h-4" />
                                 </button>
-                                <button onClick={async () => { setCategories(prev => prev.filter(c => c.id !== cat.id)); await deleteCategoryFromSupabase(cat.id); }} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-md transition-colors" title="Padam Kategori">
+                                <button onClick={() => handleDeleteCategory(cat)} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-md transition-colors" title="Padam Kategori">
                                   <Trash2 className="w-4 h-4" />
                                 </button>
                               </td>

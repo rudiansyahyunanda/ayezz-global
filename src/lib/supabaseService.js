@@ -98,27 +98,40 @@ export async function updateCategoryInSupabase(categoryId, updatedCat) {
 }
 
 export async function deleteCategoryFromSupabase(categoryId) {
-  if (!isSupabaseConnected || !categoryId) return;
+  if (!isSupabaseConnected || !categoryId) return { success: false };
   try {
-    // 1. Fetch category thumbnail and all sub_categories thumbnails before deletion
+    // 1. Check if category still has child sub_categories
+    const { data: subData } = await supabase
+      .from('sub_categories')
+      .select('id, title')
+      .eq('category_id', categoryId);
+
+    if (subData && subData.length > 0) {
+      console.warn(`[DeleteBlocked] Category ${categoryId} has ${subData.length} child sub-categories.`);
+      return {
+        success: false,
+        message: `Kategori tidak boleh dipadam kerana masih mempunyai ${subData.length} Sub-Kategori turunan. Sila padam semua Sub-Kategori turunan terlebih dahulu.`
+      };
+    }
+
+    // 2. Fetch category thumbnail before deletion
     const { data: catData } = await supabase.from('categories').select('thumbnail').eq('id', categoryId).single();
-    const { data: subData } = await supabase.from('sub_categories').select('thumbnail').eq('category_id', categoryId);
 
-    const imagesToDelete = [];
-    if (catData?.thumbnail) imagesToDelete.push(catData.thumbnail);
-    if (Array.isArray(subData)) {
-      subData.forEach(s => {
-        if (s.thumbnail) imagesToDelete.push(s.thumbnail);
-      });
+    if (catData?.thumbnail) {
+      await deleteImageFromSupabaseStorage(catData.thumbnail);
     }
 
-    if (imagesToDelete.length > 0) {
-      await deleteImageFromSupabaseStorage(imagesToDelete);
+    // 3. Delete category row from database
+    const { error: delErr } = await supabase.from('categories').delete().eq('id', categoryId);
+    if (delErr) {
+      console.error('Supabase deleteCategory error:', delErr);
+      return { success: false, message: delErr.message };
     }
 
-    await supabase.from('categories').delete().eq('id', categoryId);
+    return { success: true };
   } catch (err) {
     console.error('deleteCategoryFromSupabase exception:', err);
+    return { success: false, message: err.message };
   }
 }
 
