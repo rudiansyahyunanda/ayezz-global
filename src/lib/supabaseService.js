@@ -726,12 +726,48 @@ export async function getUserOrdersFromSupabase(userEmail) {
 
 
 export async function saveOrderToSupabase(orderData) {
-  const generatedOrderId = orderData.orderId || orderData.id || `AYZ-${Math.floor(100000 + Math.random() * 900000)}`;
+  const generatedOrderId = orderData.orderId || orderData.id || orderData.order_id || `AYZ-${Math.floor(100000 + Math.random() * 900000)}`;
   const userEmail = orderData.userEmail || orderData.user_email || orderData.email || '';
   const clientName = orderData.clientName || orderData.client_name || orderData.client || 'Pelanggan Sistem';
   const customerPhone = orderData.customerPhone || orderData.customer_phone || '';
+  const teamName = orderData.teamName || orderData.team_name || '';
 
-  // Essential payload using EXACT Supabase DB columns (`id`, `client_name`, `template_name`, etc.)
+  // 1. Auto-upload base64 logo images directly to Supabase Cloud Storage
+  let cloudCustomLogo = orderData.customLogoUrl || orderData.custom_logo_url || '';
+  if (cloudCustomLogo && cloudCustomLogo.startsWith('data:image/')) {
+    cloudCustomLogo = await ensureSupabaseCloudImageUrl(cloudCustomLogo, `logo_pasukan_${generatedOrderId}`);
+  }
+
+  let cloudSponsorLogo = orderData.sponsorLogoUrl || orderData.sponsor_logo_url || '';
+  if (cloudSponsorLogo && cloudSponsorLogo.startsWith('data:image/')) {
+    cloudSponsorLogo = await ensureSupabaseCloudImageUrl(cloudSponsorLogo, `logo_sponsor_${generatedOrderId}`);
+  }
+
+  let cloudDesignRef = orderData.customDesignRefUrl || orderData.custom_design_ref_url || '';
+  if (cloudDesignRef && cloudDesignRef.startsWith('data:image/')) {
+    cloudDesignRef = await ensureSupabaseCloudImageUrl(cloudDesignRef, `design_ref_${generatedOrderId}`);
+  }
+
+  let cloudPlayerFile = orderData.playerListFileUrl || orderData.player_list_file_url || '';
+
+  // 2. Build rich size breakdown object that ALWAYS stores all metadata safely inside DB
+  const rawSizeObj = orderData.sizeBreakdown || orderData.size_breakdown || {};
+  let sizePayload = typeof rawSizeObj === 'object' && rawSizeObj !== null ? { ...rawSizeObj } : {};
+  if (typeof rawSizeObj === 'string') {
+    try { sizePayload = JSON.parse(rawSizeObj); } catch (e) {}
+  }
+
+  // Attach metadata keys to size_breakdown payload (prefixed with _)
+  sizePayload._custom_logo_url = cloudCustomLogo;
+  sizePayload._sponsor_logo_url = cloudSponsorLogo;
+  sizePayload._custom_design_ref_url = cloudDesignRef;
+  sizePayload._player_list_file_url = cloudPlayerFile;
+  sizePayload._team_name = teamName;
+  sizePayload._customer_phone = customerPhone;
+  sizePayload._player_rows = orderData.playerRows || orderData.player_rows || [];
+  sizePayload._notes = orderData.notes || '';
+
+  // Essential payload using EXACT Supabase DB columns
   const essentialPayload = {
     id: generatedOrderId,
     user_email: userEmail,
@@ -739,7 +775,7 @@ export async function saveOrderToSupabase(orderData) {
     template_name: orderData.templateName || orderData.template || 'Template Reka Bentuk',
     cut_type: orderData.cutType || orderData.cut_type || 'Standard',
     fabric_material: orderData.fabricMaterial || orderData.fabric_material || 'Dry-Fit',
-    size_breakdown: orderData.sizeBreakdown || orderData.size_breakdown || {},
+    size_breakdown: sizePayload,
     total_qty: Number(orderData.totalQty || orderData.total_qty || orderData.qty || 1),
     unit_price: Number(orderData.unitPrice || orderData.unit_price || 70),
     total_price: Number(orderData.totalPrice || orderData.total_price || 70),
@@ -749,14 +785,14 @@ export async function saveOrderToSupabase(orderData) {
   // Full rich payload (if extra columns exist)
   const fullPayload = {
     ...essentialPayload,
-    team_name: orderData.teamName || orderData.team_name || '',
+    team_name: teamName,
     customer_phone: customerPhone,
     notes: orderData.notes || '',
     cut_groups: orderData.cutGroups || orderData.cut_groups || [],
     player_rows: orderData.playerRows || orderData.player_rows || [],
-    custom_logo_url: orderData.customLogoUrl || orderData.custom_logo_url || '',
-    sponsor_logo_url: orderData.sponsorLogoUrl || orderData.sponsor_logo_url || '',
-    player_list_file_url: orderData.playerListFileUrl || orderData.player_list_file_url || ''
+    custom_logo_url: cloudCustomLogo,
+    sponsor_logo_url: cloudSponsorLogo,
+    player_list_file_url: cloudPlayerFile
   };
 
   // Auto-sync user profile to public.users table
@@ -784,16 +820,17 @@ export async function saveOrderToSupabase(orderData) {
         userEmail: userEmail,
         client: clientName,
         customerPhone: customerPhone,
-        teamName: orderData.teamName || orderData.team_name || '',
+        teamName: teamName,
         template: essentialPayload.template_name,
         cutType: essentialPayload.cut_type,
         fabricMaterial: essentialPayload.fabric_material,
         cutGroups: fullPayload.cut_groups,
         playerRows: fullPayload.player_rows,
-        customLogoUrl: fullPayload.custom_logo_url,
-        sponsorLogoUrl: fullPayload.sponsor_logo_url,
-        playerListFileUrl: fullPayload.player_list_file_url,
+        customLogoUrl: cloudCustomLogo,
+        sponsorLogoUrl: cloudSponsorLogo,
+        playerListFileUrl: cloudPlayerFile,
         notes: fullPayload.notes,
+        sizeBreakdown: sizePayload,
         qty: essentialPayload.total_qty,
         unitPrice: essentialPayload.unit_price,
         totalPrice: essentialPayload.total_price,

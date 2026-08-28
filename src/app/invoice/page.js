@@ -84,24 +84,32 @@ function InvoiceContent() {
               try { parsedCutGrp = JSON.parse(parsedCutGrp); } catch (e) {}
             }
 
+            const customLogo = data.custom_logo_url || parsedBreakdown?._custom_logo_url || '';
+            const sponsorLogo = data.sponsor_logo_url || parsedBreakdown?._sponsor_logo_url || '';
+            const playerListFile = data.player_list_file_url || parsedBreakdown?._player_list_file_url || '';
+            const customDesignRef = data.custom_design_ref_url || parsedBreakdown?._custom_design_ref_url || '';
+            const phoneNum = data.customer_phone || parsedBreakdown?._customer_phone || '-';
+            const team = data.team_name || parsedBreakdown?._team_name || '-';
+            let playerRowsList = (Array.isArray(parsedPlayers) && parsedPlayers.length > 0) ? parsedPlayers : (parsedBreakdown?._player_rows || []);
+
             foundOrder = {
               id: data.id,
               orderId: data.id,
               userEmail: data.user_email || '',
               client: data.client_name || 'Pelanggan System',
-              customerPhone: data.customer_phone || '-',
-              teamName: data.team_name || '-',
+              customerPhone: phoneNum,
+              teamName: team,
               template: data.template_name || 'Custom Design Sublimasi',
-              templateImage: templateImg,
+              templateImage: customDesignRef || templateImg,
               cutType: data.cut_type || 'Standard Roundneck',
               fabricMaterial: data.fabric_material || 'Micro-Dryfit',
               cutGroups: parsedCutGrp,
-              playerRows: parsedPlayers,
-              customLogoUrl: data.custom_logo_url || '',
-              sponsorLogoUrl: data.sponsor_logo_url || '',
-              playerListFileUrl: data.player_list_file_url || '',
-              customDesignRefUrl: data.custom_design_ref_url || '',
-              notes: data.notes || '',
+              playerRows: playerRowsList,
+              customLogoUrl: customLogo,
+              sponsorLogoUrl: sponsorLogo,
+              playerListFileUrl: playerListFile,
+              customDesignRefUrl: customDesignRef,
+              notes: data.notes || parsedBreakdown?._notes || '',
               sizeBreakdown: parsedBreakdown,
               qty: totalQty,
               unitPrice: unitPrice,

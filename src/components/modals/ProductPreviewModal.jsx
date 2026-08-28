@@ -123,6 +123,8 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
     notes: ''
   });
 
+  const [customLogoUrl, setCustomLogoUrl] = useState('');
+  const [sponsorLogoUrl, setSponsorLogoUrl] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Lock body scroll when modal opens
@@ -195,8 +197,9 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
   // In-App System Order Submission Handler (100% Internal System Processing)
   const handleSystemOrder = async (e) => {
     e.preventDefault();
+
     if (totalQuantity <= 0) {
-      alert('Sila masukkan sekurang-kurangnya 1 saiz kuantiti pesanan.');
+      alert('Sila masukkan kuantiti sekurang-kurangnya 1 pcs baju.');
       return;
     }
 
@@ -216,6 +219,10 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
       collar_cut: selectedCut?.name || '',
       fabricMaterial: selectedFabric?.name || '',
       fabric_type: selectedFabric?.name || '',
+      customLogoUrl: customLogoUrl || '',
+      custom_logo_url: customLogoUrl || '',
+      sponsorLogoUrl: sponsorLogoUrl || '',
+      sponsor_logo_url: sponsorLogoUrl || '',
       sizeBreakdown: sizeQuantities,
       totalQty: totalQuantity,
       total_qty: totalQuantity,
@@ -641,10 +648,66 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
                   <input
                     type="text"
                     placeholder="Contoh: FC Harimau"
-                    value={customerInfo.teamName}
-                    onChange={(e) => setCustomerInfo({ ...customerInfo, teamName: e.target.value })}
                     className="w-full px-3.5 py-2 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-medium outline-none focus:bg-[#111111] focus:text-white"
                   />
+                </div>
+              </div>
+
+              {/* 5. MUAT NAIK GAMBAR LOGO (CREST & SPONSOR) */}
+              <div className="space-y-3 pt-2">
+                <label className="text-xs font-bold uppercase tracking-wider text-[#111111] block">
+                  5. MUAT NAIK GAMBAR LOGO PASUKAN & SPONSOR (OPTIONAL):
+                </label>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-2xl space-y-2">
+                    <label className="text-[11px] font-mono font-bold text-neutral-600 block uppercase">
+                      LOGO PASUKAN (CREST LOGO)
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onload = (ev) => setCustomLogoUrl(ev.target.result);
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                      className="w-full text-xs text-neutral-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#111111] file:text-white hover:file:bg-neutral-800 cursor-pointer"
+                    />
+                    {customLogoUrl && (
+                      <div className="flex items-center space-x-2 pt-1">
+                        <img src={customLogoUrl} alt="Preview Logo Pasukan" className="w-12 h-12 object-contain bg-white rounded-lg p-1 border border-neutral-200" />
+                        <span className="text-[10px] font-mono text-emerald-700 font-bold">Logo Pasukan Dipilih</span>
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-2xl space-y-2">
+                    <label className="text-[11px] font-mono font-bold text-neutral-600 block uppercase">
+                      LOGO SPONSOR (CHEST SPONSOR)
+                    </label>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onload = (ev) => setSponsorLogoUrl(ev.target.result);
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                      className="w-full text-xs text-neutral-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#111111] file:text-white hover:file:bg-neutral-800 cursor-pointer"
+                    />
+                    {sponsorLogoUrl && (
+                      <div className="flex items-center space-x-2 pt-1">
+                        <img src={sponsorLogoUrl} alt="Preview Logo Sponsor" className="w-12 h-12 object-contain bg-white rounded-lg p-1 border border-neutral-200" />
+                        <span className="text-[10px] font-mono text-emerald-700 font-bold">Logo Sponsor Dipilih</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
 
