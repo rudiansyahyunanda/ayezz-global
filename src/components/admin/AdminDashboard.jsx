@@ -388,6 +388,11 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
       }
     }
     setIsModalOpen(false);
+    await fetchAllData();
+    if (selectedParentCategory) {
+      const subs = await getSubCategories(selectedParentCategory.id);
+      setSubCategoryItems(subs || []);
+    }
   };
 
   const handleSaveStoreSettings = async (e) => {
@@ -597,7 +602,7 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
         </header>
 
         {/* MAIN SCROLLABLE CONTENT BODY */}
-        <div className="flex-1 overflow-y-auto p-6 sm:p-8 space-y-8 w-full max-w-[1600px] mx-auto">
+        <div className="flex-1 overflow-y-auto p-6 sm:p-8 space-y-8 w-full">
           {/* TAB 1: OVERVIEW */}
           {currentTab === 'overview' && (
             <div className="space-y-6">
