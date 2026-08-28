@@ -89,7 +89,9 @@ export async function POST(request) {
             upsert: true
           });
 
-        if (!uploadErr && uploadData) {
+        if (uploadErr) {
+          console.warn('Supabase storage upload error:', uploadErr.message);
+        } else if (uploadData) {
           const { data: urlData } = supabase.storage
             .from('ayezz-assets')
             .getPublicUrl(filename);
@@ -99,7 +101,7 @@ export async function POST(request) {
           }
         }
       } catch (stErr) {
-        console.warn('Supabase storage bucket upload notice (using fallback):', stErr.message);
+        console.warn('Supabase storage bucket upload exception (using fallback):', stErr.message);
       }
     }
 
