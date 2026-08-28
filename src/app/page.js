@@ -251,12 +251,12 @@ export default function SmoothHeaderHomepage() {
                     onClick={() => handleCategoryClick(cat.title)}
                     className="group shrink-0 w-[280px] sm:w-[325px] snap-start cursor-pointer flex flex-col items-center select-none"
                   >
-                    {/* APPLE SQUIRCLE CARD CONTAINER (rounded-[28px] sm:rounded-[32px]) */}
-                    <div className="w-full aspect-[4/4.4] sm:aspect-square rounded-[28px] sm:rounded-[32px] overflow-hidden bg-white relative flex items-center justify-center p-3 sm:p-4 shadow-xs hover:shadow-md transition-all duration-500 border border-neutral-200/60">
+                    {/* APPLE SQUIRCLE CARD CONTAINER (FRAMELESS / BORDERLESS FULL EDGE-TO-EDGE IMAGE) */}
+                    <div className="w-full aspect-[4/4.5] sm:aspect-square rounded-[28px] sm:rounded-[32px] overflow-hidden bg-[#F5F5F7] relative flex items-center justify-center p-0 shadow-xs hover:shadow-md transition-all duration-500 border-none">
                       <img
                         src={cat.thumbnail || '/images/catalog/jersey-olahraga.jfif'}
                         alt={cat.title}
-                        className="w-full h-full object-cover rounded-[20px] sm:rounded-[24px] transition-transform duration-700 ease-out group-hover:scale-[1.04] img-crisp"
+                        className="w-full h-full object-cover rounded-[28px] sm:rounded-[32px] transition-transform duration-700 ease-out group-hover:scale-[1.05] img-crisp"
                       />
                     </div>
 
