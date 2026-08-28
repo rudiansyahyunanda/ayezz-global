@@ -24,6 +24,7 @@ import {
 import ProductOrderModal from '../components/modals/ProductOrderModal';
 import HeroCarousel from '../components/HeroCarousel';
 import MobileBottomNav from '../components/MobileBottomNav';
+import TransparentImage from '../components/TransparentImage';
 import { getCurrentUser } from '../lib/authService';
 import {
   getCategories,
@@ -251,11 +252,9 @@ export default function SmoothHeaderHomepage() {
                   >
                     {/* APPLE SQUIRCLE CARD CONTAINER (FRAMELESS / BORDERLESS FULL EDGE-TO-EDGE IMAGE) */}
                     <div className="w-full aspect-[4/4.5] sm:aspect-square rounded-[28px] sm:rounded-[32px] overflow-hidden bg-[#F5F5F7] relative flex items-center justify-center p-0 shadow-xs hover:shadow-md transition-all duration-500 border-none">
-                      <img
+                      <TransparentImage
                         src={cat.thumbnail || PLACEHOLDER_IMAGE}
                         alt={cat.title}
-                        loading="eager"
-                        decoding="async"
                         className="w-full h-full object-cover rounded-[28px] sm:rounded-[32px] transition-transform duration-700 ease-out group-hover:scale-[1.05] img-crisp"
                       />
                     </div>
@@ -326,11 +325,9 @@ export default function SmoothHeaderHomepage() {
             {/* APPLE 1:1 BANNER CARD (rounded-[32px]) */}
             <div className="relative w-full aspect-[16/9] sm:aspect-[21/9] min-h-[320px] sm:min-h-[420px] rounded-[28px] sm:rounded-[36px] overflow-hidden bg-[#111111] shadow-md flex items-center justify-center p-6 sm:p-12 border border-neutral-200/50 group">
               {/* Cover Background Image */}
-              <img
+              <TransparentImage
                 src={showcaseFeature.coverImage || PLACEHOLDER_IMAGE}
                 alt={showcaseFeature.headline || 'Showcase'}
-                loading="eager"
-                decoding="async"
                 className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-1000 ease-out group-hover:scale-[1.03] opacity-75"
               />
 
