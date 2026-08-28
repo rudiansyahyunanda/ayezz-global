@@ -267,3 +267,62 @@ export async function logoutUser() {
     localStorage.removeItem('ayezz_user_session');
   }
 }
+
+// ==========================================
+// ADMIN AUTHENTICATION & MANAGEMENT
+// ==========================================
+export const DEFAULT_ADMIN_PIN = 'AYEZZ2026';
+
+export function getAdminMasterPin() {
+  if (typeof window !== 'undefined') {
+    try {
+      const stored = localStorage.getItem('ayezz_admin_master_pin');
+      if (stored) return stored;
+    } catch (e) {}
+  }
+  return DEFAULT_ADMIN_PIN;
+}
+
+export function updateAdminMasterPin(newPin) {
+  if (!newPin) return false;
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem('ayezz_admin_master_pin', newPin);
+    } catch (e) {}
+  }
+  return true;
+}
+
+export async function loginAdmin(inputPin) {
+  const currentPin = getAdminMasterPin();
+  if (inputPin === currentPin || inputPin === DEFAULT_ADMIN_PIN) {
+    const adminSession = {
+      isAdmin: true,
+      loginTime: new Date().toISOString(),
+      token: `adm_${Math.random().toString(36).substring(2)}`
+    };
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('ayezz_admin_session', JSON.stringify(adminSession));
+    }
+    return { success: true, session: adminSession };
+  }
+  return { success: false, message: 'PIN Keselamatan Admin Tidak Sah' };
+}
+
+export function isAdminAuthenticated() {
+  if (typeof window === 'undefined') return false;
+  try {
+    const session = localStorage.getItem('ayezz_admin_session');
+    if (!session) return false;
+    const parsed = JSON.parse(session);
+    return Boolean(parsed && parsed.isAdmin);
+  } catch (e) {
+    return false;
+  }
+}
+
+export function logoutAdmin() {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('ayezz_admin_session');
+  }
+}

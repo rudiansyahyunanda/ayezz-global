@@ -140,9 +140,6 @@ export default function SmoothHeaderHomepage() {
             <a href="#kategori-utama" className="hover:text-neutral-500 transition-colors">Kategori Utama</a>
             <Link href="/katalog" className="hover:text-neutral-500 transition-colors">Katalog Desain</Link>
             <a href="#teknologi" className="hover:text-neutral-500 transition-colors">Teknologi Kilang</a>
-            <Link href="/admin" className="hover:text-neutral-500 transition-colors font-mono text-[10px] text-neutral-400">
-              Admin
-            </Link>
           </nav>
 
           <div className="flex items-center space-x-2 sm:space-x-4">

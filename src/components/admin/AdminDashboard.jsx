@@ -24,7 +24,10 @@ import {
   Shield,
   Search,
   Tv,
-  Film
+  Film,
+  KeyRound,
+  LogOut,
+  Lock
 } from 'lucide-react';
 import ImageUploadCropper from './ImageUploadCropper';
 import MultiImageUploadCropper from './MultiImageUploadCropper';
@@ -68,8 +71,9 @@ import {
   saveShowcaseFeatureToSupabase,
   DEFAULT_SHOWCASE_FEATURE
 } from '../../lib/supabaseService';
+import { logoutAdmin, getAdminMasterPin, updateAdminMasterPin } from '../../lib/authService';
 
-export default function AdminDashboard({ onSwitchToStorefront }) {
+export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) {
   const [currentTab, setCurrentTab] = useState('overview');
   const [viewingTemplate, setViewingTemplate] = useState(null);
 
@@ -84,6 +88,9 @@ export default function AdminDashboard({ onSwitchToStorefront }) {
   const [storeSettings, setStoreSettings] = useState({ storeName: 'AYEZZ GLOBAL', whatsappNumber: '6287818310416', currencySymbol: 'RM' });
   const [showcaseFeature, setShowcaseFeature] = useState(DEFAULT_SHOWCASE_FEATURE);
   const [isSavingShowcase, setIsSavingShowcase] = useState(false);
+
+  const [adminPinInput, setAdminPinInput] = useState('');
+  const [adminPinNotice, setAdminPinNotice] = useState('');
 
   const [selectedParentCategory, setSelectedParentCategory] = useState(null);
   const [subCategoryItems, setSubCategoryItems] = useState([]);
@@ -482,6 +489,16 @@ export default function AdminDashboard({ onSwitchToStorefront }) {
               </button>
 
               <button
+                onClick={() => { setCurrentTab('admin_management'); setSelectedParentCategory(null); }}
+                className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors ${
+                  currentTab === 'admin_management' ? 'bg-slate-800 text-white font-semibold shadow-xs' : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                }`}
+              >
+                <KeyRound className="w-4 h-4 text-slate-400" />
+                <span>Pengurusan Admin</span>
+              </button>
+
+              <button
                 onClick={() => { setCurrentTab('settings'); setSelectedParentCategory(null); }}
                 className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors ${
                   currentTab === 'settings' ? 'bg-slate-800 text-white font-semibold shadow-xs' : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
@@ -493,13 +510,24 @@ export default function AdminDashboard({ onSwitchToStorefront }) {
             </div>
           </div>
 
-          <div className="p-4 border-t border-slate-800 bg-slate-900/40">
+          <div className="p-4 border-t border-slate-800 bg-slate-900/40 space-y-2">
             <button
               onClick={onSwitchToStorefront}
-              className="w-full py-2.5 px-3 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-semibold uppercase tracking-wider transition-all flex items-center justify-center space-x-2 border border-slate-700 active:scale-95"
+              className="w-full py-2 px-3 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-semibold uppercase tracking-wider transition-all flex items-center justify-center space-x-2 border border-slate-700 active:scale-95 cursor-pointer"
             >
               <Globe className="w-3.5 h-3.5 text-slate-300" />
               <span>Lihat Laman Awam</span>
+            </button>
+
+            <button
+              onClick={() => {
+                logoutAdmin();
+                if (onLogoutAdmin) onLogoutAdmin();
+              }}
+              className="w-full py-2 px-3 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all flex items-center justify-center space-x-2 border border-rose-500/30 active:scale-95 cursor-pointer"
+            >
+              <LogOut className="w-3.5 h-3.5 text-rose-400" />
+              <span>Log Keluar Admin</span>
             </button>
           </div>
         </div>
@@ -529,6 +557,7 @@ export default function AdminDashboard({ onSwitchToStorefront }) {
                 {currentTab === 'studio3d' && 'Studio Mockup 3D (Ujicoba Tekstur Automatik)'}
                 {currentTab === 'orders' && 'Senarai Pesanan Pelanggan'}
                 {currentTab === 'showcase' && 'Pengurusan Banner Showcase "Lihat Lebih Dekat"'}
+                {currentTab === 'admin_management' && 'Pengurusan Admin & PIN Keselamatan'}
                 {currentTab === 'settings' && 'Tetapan Kedai'}
               </h1>
             )}
@@ -1280,6 +1309,81 @@ export default function AdminDashboard({ onSwitchToStorefront }) {
                   >
                     <Save className="w-3.5 h-3.5 text-white" />
                     <span>{isSavingShowcase ? 'Menyimpan...' : 'Simpan Tetapan Showcase'}</span>
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+
+          {/* TAB 10: PENGURUSAN ADMIN */}
+          {currentTab === 'admin_management' && (
+            <div className="bg-white border border-slate-200/80 rounded-xl p-6 shadow-2xs max-w-2xl space-y-6">
+              <div className="flex items-center space-x-3 pb-4 border-b border-slate-100">
+                <div className="w-10 h-10 rounded-xl bg-slate-900 text-white flex items-center justify-center shadow-xs">
+                  <KeyRound className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-slate-900">Pengurusan Admin & Kunci Keselamatan</h3>
+                  <p className="text-xs text-slate-500">Urus PIN Master Admin dan kemaskini akses keselamatan panel admin.</p>
+                </div>
+              </div>
+
+              {adminPinNotice && (
+                <div className="p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-emerald-700 text-xs font-semibold flex items-center space-x-2">
+                  <Check className="w-4 h-4 text-emerald-600" />
+                  <span>{adminPinNotice}</span>
+                </div>
+              )}
+
+              <form onSubmit={(e) => {
+                e.preventDefault();
+                if (!adminPinInput.trim()) return;
+                const ok = updateAdminMasterPin(adminPinInput.trim());
+                if (ok) {
+                  setAdminPinNotice('PIN Master Admin Berjaya Dikemaskini!');
+                  setAdminPinInput('');
+                  setTimeout(() => setAdminPinNotice(''), 4000);
+                }
+              }} className="space-y-4">
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1">
+                    PIN Master Admin Semasa / Baru
+                  </label>
+                  <div className="relative">
+                    <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="password"
+                      value={adminPinInput}
+                      onChange={(e) => setAdminPinInput(e.target.value)}
+                      placeholder="Masukkan PIN Baru (Contoh: AYEZZ2026)..."
+                      className="w-full pl-10 pr-4 py-2.5 bg-slate-50 border border-slate-200 focus:bg-white focus:border-slate-900 focus:ring-1 focus:ring-slate-900 rounded-xl text-xs font-mono text-slate-900 outline-none transition-all"
+                      required
+                    />
+                  </div>
+                  <span className="text-[10px] text-slate-400 font-mono mt-1 block">
+                    PIN Semasa Aktif: <span className="font-bold text-slate-700">{getAdminMasterPin()}</span>
+                  </span>
+                </div>
+
+                <div className="pt-2 flex items-center space-x-3">
+                  <button
+                    type="submit"
+                    className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-xl transition-all shadow-xs flex items-center space-x-2 cursor-pointer active:scale-95"
+                  >
+                    <Save className="w-3.5 h-3.5" />
+                    <span>Kemaskini PIN Master</span>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      logoutAdmin();
+                      if (onLogoutAdmin) onLogoutAdmin();
+                    }}
+                    className="px-5 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 font-semibold text-xs rounded-xl transition-all border border-rose-200 flex items-center space-x-2 cursor-pointer active:scale-95"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                    <span>Log Keluar Admin</span>
                   </button>
                 </div>
               </form>
