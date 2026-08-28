@@ -186,6 +186,8 @@ function DashboardContent() {
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
   const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
   const [orderSuccessData, setOrderSuccessData] = useState(null);
+  const [paidSuccessOrderData, setPaidSuccessOrderData] = useState(null);
+  const [isPaymentSuccessModalOpen, setIsPaymentSuccessModalOpen] = useState(false);
 
   // ----------------------------------------------------
   // INITIAL DATA LOADING FROM SUPABASE DATABASE
@@ -295,6 +297,9 @@ function DashboardContent() {
             // Refresh orders after status update
             const refreshedOrders = await getUserOrdersFromSupabase(currentUser.email);
             setOrders(refreshedOrders || []);
+            const paidOrd = (refreshedOrders || []).find(o => o.orderId === orderIdParam || o.id === orderIdParam) || { orderId: orderIdParam };
+            setPaidSuccessOrderData(paidOrd);
+            setIsPaymentSuccessModalOpen(true);
           }
           setActiveTab('orders');
         }
@@ -2244,6 +2249,15 @@ function DashboardContent() {
                             </span>
                           </div>
 
+                          <Link
+                            href={`/invoice?orderId=${ord.orderId || ord.id}`}
+                            target="_blank"
+                            className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center space-x-1.5 cursor-pointer shadow-xs"
+                          >
+                            <FileText className="w-3.5 h-3.5 text-white" />
+                            <span>Invois & Job Sheet</span>
+                          </Link>
+
                           <button
                             onClick={() => setSelectedOrder(ord)}
                             className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center space-x-1 cursor-pointer"
@@ -2869,6 +2883,72 @@ function DashboardContent() {
                 </button>
               </div>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* PAYMENT SUCCESS CELEBRATION MODAL */}
+      {isPaymentSuccessModalOpen && paidSuccessOrderData && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs font-sans select-none">
+          <div className="bg-white w-full max-w-md rounded-3xl border border-slate-200 shadow-2xl p-6 sm:p-8 space-y-6 text-center relative overflow-hidden">
+            
+            {/* AMBIENT GLOW */}
+            <div className="absolute -top-20 -right-20 w-40 h-40 bg-emerald-500/10 rounded-full blur-2xl pointer-events-none" />
+
+            {/* SUCCESS ICON */}
+            <div className="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto shadow-inner ring-8 ring-emerald-50 shrink-0">
+              <CheckCircle2 className="w-12 h-12 text-emerald-600 animate-bounce" />
+            </div>
+
+            <div className="space-y-1.5">
+              <span className="text-[10px] font-mono font-bold text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full uppercase tracking-wider">
+                ✓ PEMBAYARAN DITERIMA & LUNAS
+              </span>
+              <h3 className="text-2xl font-black text-slate-900 tracking-tight pt-1">
+                Pembayaran Berjaya!
+              </h3>
+              <p className="text-xs text-slate-500 font-medium">
+                Tempahan anda #{paidSuccessOrderData.orderId || paidSuccessOrderData.id} telah disahkan dan rekod cetakan dihantar ke kilang AYEZZ Global.
+              </p>
+            </div>
+
+            {/* SUMMARY BOX */}
+            <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-2 text-xs font-mono text-left">
+              <div className="flex justify-between">
+                <span className="text-slate-500">Kod Pesanan:</span>
+                <span className="font-bold text-slate-900">#{paidSuccessOrderData.orderId || paidSuccessOrderData.id}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">Jumlah Dibayar:</span>
+                <span className="font-extrabold text-emerald-700">{paidSuccessOrderData.total || `RM ${paidSuccessOrderData.totalPrice || 0}`}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-slate-500">Gateway:</span>
+                <span className="font-bold text-slate-900">CHIP Collect (MYR)</span>
+              </div>
+            </div>
+
+            {/* ACTION BUTTONS */}
+            <div className="space-y-2.5 pt-2">
+              <button
+                onClick={() => {
+                  setIsPaymentSuccessModalOpen(false);
+                  router.push(`/invoice?orderId=${paidSuccessOrderData.orderId || paidSuccessOrderData.id}`);
+                }}
+                className="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center space-x-2 cursor-pointer"
+              >
+                <FileText className="w-4 h-4 text-white" />
+                <span>Lihat Invois & Job Sheet (PDF) →</span>
+              </button>
+
+              <button
+                onClick={() => setIsPaymentSuccessModalOpen(false)}
+                className="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer"
+              >
+                Tutup & Kembali Ke Dashboard
+              </button>
+            </div>
+
           </div>
         </div>
       )}

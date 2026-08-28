@@ -851,6 +851,14 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                               </select>
                             </td>
                             <td className="py-3.5 px-4 text-right space-x-1">
+                              <a
+                                href={`/invoice?orderId=${ord.orderId || ord.id}`}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[10px] font-bold uppercase transition-colors inline-block"
+                              >
+                                Invois / Job Sheet (PDF)
+                              </a>
                               <button
                                 onClick={() => {
                                   setSelectedOrderForDetail(ord);
