@@ -2204,6 +2204,18 @@ function DashboardContent() {
                     >
                       Siap & Selesai
                     </button>
+                    <button
+                      onClick={() => {
+                        if (typeof window !== 'undefined') {
+                          localStorage.removeItem('ayezz_user_orders');
+                        }
+                        setOrders([]);
+                      }}
+                      className="px-3 py-1.5 rounded-xl font-bold bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 transition-all shrink-0 cursor-pointer text-xs"
+                      title="Kosongkan Rekod Ujian Dalam Pelayar Browser"
+                    >
+                      Kosongkan Rekod Ujian
+                    </button>
                   </div>
                 </div>
 

@@ -678,7 +678,10 @@ export async function getUserOrdersFromSupabase(userEmail) {
         .eq('user_email', userEmail)
         .order('created_at', { ascending: false });
       
-      if (!error && data && data.length > 0) {
+      if (!error && data) {
+        if (data.length === 0 && typeof window !== 'undefined') {
+          localStorage.removeItem('ayezz_user_orders');
+        }
         return data.map(item => ({
           id: item.id,
           orderId: item.order_id || item.id,
@@ -711,8 +714,8 @@ export async function getUserOrdersFromSupabase(userEmail) {
     }
   }
 
-  // Fallback to checking local storage orders
-  if (typeof window !== 'undefined') {
+  // Fallback to checking local storage orders only if offline
+  if (typeof window !== 'undefined' && !isSupabaseConnected) {
     try {
       const localOrders = JSON.parse(localStorage.getItem('ayezz_user_orders') || '[]');
       return localOrders.filter(o => o.userEmail === userEmail);
