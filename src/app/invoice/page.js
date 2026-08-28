@@ -240,10 +240,10 @@ function InvoiceContent() {
                   </div>
                 </div>
                 <div className="text-xs text-slate-600 space-y-0.5 font-normal leading-relaxed">
-                  <p>No. 12, Jalan Industri Sublimasi 3, Kawasan Perindustrian</p>
-                  <p>43000 Kajang, Selangor Darul Ehsan, Malaysia</p>
+                  <p>A-3-17 Pangsapuri Harmoni 1, Persiaran Putra Megah,</p>
+                  <p>Putra Heights, 47650 Subang Jaya, Selangor Darul Ehsan</p>
                   <p>Tel / WhatsApp: +60 11-8781 8310 • Email: admin@ayezz.com</p>
-                  <p className="font-mono text-[11px] text-slate-500">SSM Registration No: 202601009982 (00349281-A)</p>
+                  <p className="font-mono text-[11px] text-slate-500 font-bold">NO. PENDAFTARAN SSM: 202603218718 (PG0592101-P)</p>
                 </div>
               </div>
 
