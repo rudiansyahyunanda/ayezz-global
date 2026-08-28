@@ -712,6 +712,14 @@ function DashboardContent() {
 
   const getStatusBadge = (status) => {
     const s = (status || '').toLowerCase();
+    if (s.includes('ditolak') || s.includes('batal') || s.includes('reject')) {
+      return (
+        <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 bg-rose-50 text-rose-700 border border-rose-200 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider">
+          <X className="w-3 h-3 text-rose-600" />
+          <span>DITOLAK / DIBATALKAN</span>
+        </span>
+      );
+    }
     if (s.includes('selesai') || s.includes('siap')) {
       return (
         <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 bg-emerald-50 text-emerald-700 border border-emerald-200 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider">

@@ -752,6 +752,20 @@ export async function saveOrderToSupabase(orderData) {
     status: orderData.status || 'Menunggu Pembayaran'
   };
 
+  // Auto-sync user to public.users table in Supabase
+  if (payload.user_email) {
+    try {
+      await supabase.from('users').upsert([{
+        email: payload.user_email,
+        full_name: payload.client_name,
+        phone: payload.customer_phone,
+        role: 'customer'
+      }], { onConflict: 'email' });
+    } catch (e) {
+      console.warn('Auto sync user to DB warning:', e);
+    }
+  }
+
   // Save to local storage cache as fallback
   if (typeof window !== 'undefined') {
     try {
@@ -814,10 +828,35 @@ export async function saveOrderToSupabase(orderData) {
   }
 }
 
-export async function updateOrderStatusInSupabase(orderId, newStatus) {
-  if (!isSupabaseConnected) return;
-  await supabase.from('orders').update({ status: newStatus }).eq('id', orderId);
-  await supabase.from('orders').update({ status: newStatus }).eq('order_id', orderId);
+export async function updateOrderStatusInSupabase(orderId, newStatus, rejectReason = '') {
+  const isRejected = newStatus.toLowerCase().includes('ditolak') || newStatus.toLowerCase().includes('batal');
+  const updatePayload = {
+    status: newStatus,
+    ...(isRejected ? { payment_status: 'rejected' } : {})
+  };
+
+  // Also update local storage cache
+  if (typeof window !== 'undefined') {
+    try {
+      const existing = JSON.parse(localStorage.getItem('ayezz_user_orders') || '[]');
+      const updated = existing.map(item => {
+        if (item.id === orderId || item.orderId === orderId) {
+          return { ...item, status: newStatus, ...(isRejected ? { paymentStatus: 'rejected' } : {}) };
+        }
+        return item;
+      });
+      localStorage.setItem('ayezz_user_orders', JSON.stringify(updated));
+    } catch (e) {}
+  }
+
+  if (!isSupabaseConnected || !orderId) return;
+
+  try {
+    await supabase.from('orders').update(updatePayload).eq('id', orderId);
+    await supabase.from('orders').update(updatePayload).eq('order_id', orderId);
+  } catch (err) {
+    console.error('Error updating order status in Supabase:', err);
+  }
 }
 
 export async function deleteOrderFromSupabase(orderId) {

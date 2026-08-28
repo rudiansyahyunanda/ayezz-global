@@ -827,11 +827,15 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                             </td>
                             <td className="py-3.5 px-4">
                               <span className={`px-2 py-1 rounded text-[10px] font-mono font-bold uppercase ${
-                                ord.paymentStatus === 'paid' || ord.status?.includes('Lunas')
-                                  ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
-                                  : 'bg-amber-100 text-amber-800 border border-amber-300'
+                                ord.status?.includes('Ditolak') || ord.paymentStatus === 'rejected'
+                                  ? 'bg-rose-100 text-rose-800 border border-rose-300'
+                                  : (ord.paymentStatus === 'paid' || ord.status?.includes('Lunas')
+                                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
+                                      : 'bg-amber-100 text-amber-800 border border-amber-300')
                               }`}>
-                                {ord.paymentStatus === 'paid' || ord.status?.includes('Lunas') ? '✓ LUNAS (CHIP)' : 'PENDING'}
+                                {ord.status?.includes('Ditolak') || ord.paymentStatus === 'rejected'
+                                  ? '✕ DITOLAK'
+                                  : (ord.paymentStatus === 'paid' || ord.status?.includes('Lunas') ? '✓ LUNAS (CHIP)' : 'PENDING')}
                               </span>
                             </td>
                             <td className="py-3.5 px-4">
@@ -848,6 +852,7 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                                 <option value="Pesanan Diterima & Lunas">Pesanan Diterima & Lunas</option>
                                 <option value="Dalam Cetakan Kilang">Dalam Cetakan Kilang</option>
                                 <option value="Siap & Dihantar">Siap & Dihantar</option>
+                                <option value="Ditolak / Dibatalkan">Ditolak / Dibatalkan</option>
                               </select>
                             </td>
                             <td className="py-3.5 px-4 text-right space-x-1">
@@ -867,6 +872,20 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                                 className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded text-[10px] font-bold uppercase transition-colors"
                               >
                                 Butiran
+                              </button>
+                              <button
+                                onClick={async () => {
+                                  const reason = prompt('Masukkan sebab pembatalan / reject pesanan ini:');
+                                  if (reason !== null) {
+                                    const newSt = 'Ditolak / Dibatalkan';
+                                    setOrders(prev => prev.map(item => item.id === ord.id ? { ...item, status: newSt, paymentStatus: 'rejected' } : item));
+                                    await updateOrderStatusInSupabase(ord.id, newSt, reason);
+                                  }
+                                }}
+                                className="px-2.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded text-[10px] font-bold uppercase transition-colors"
+                                title="Reject / Batal Pesanan Ini"
+                              >
+                                Reject
                               </button>
                               <button
                                 onClick={async () => {
