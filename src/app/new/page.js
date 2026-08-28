@@ -378,9 +378,18 @@ export default function CleanSpecsStyleCatalogPage() {
         {/* RIGHT MAIN CATALOG GRID */}
         <main className="flex-1 w-full">
           {isLoading ? (
-            <div className="py-24 flex flex-col items-center justify-center space-y-3">
-              <RefreshCw className="w-6 h-6 text-[#111111] animate-spin" />
-              <p className="text-xs font-mono text-slate-400 font-bold">Memuatkan katalog...</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {Array.from({ length: 8 }).map((_, i) => (
+                <div key={i} className="space-y-3 animate-pulse select-none">
+                  <div className="w-full aspect-square bg-neutral-200/80 rounded-xl relative overflow-hidden flex items-center justify-center">
+                    <div className="w-6 h-6 rounded-full border-2 border-neutral-300 border-t-neutral-500 animate-spin opacity-30" />
+                  </div>
+                  <div className="space-y-2 pt-1">
+                    <div className="h-3.5 bg-neutral-200/90 rounded-md w-3/4" />
+                    <div className="h-2.5 bg-neutral-200/70 rounded-md w-1/2" />
+                  </div>
+                </div>
+              ))}
             </div>
           ) : sortedTemplates.length === 0 ? (
             <div className="py-20 text-center bg-[#F5F5F7] rounded-xl border border-slate-200 p-8 space-y-3">

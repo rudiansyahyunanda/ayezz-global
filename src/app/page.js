@@ -232,9 +232,18 @@ export default function SmoothHeaderHomepage() {
           </div>
 
           {isLoading ? (
-            <div className="py-16 flex flex-col items-center justify-center space-y-4">
-              <RefreshCw className="w-8 h-8 text-neutral-400 animate-spin" />
-              <span className="text-xs font-mono text-neutral-400 uppercase tracking-widest">Memuatkan Kategori...</span>
+            <div className="flex space-x-4 sm:space-x-6 overflow-hidden py-4">
+              {Array.from({ length: 4 }).map((_, i) => (
+                <div key={i} className="shrink-0 w-[280px] sm:w-[325px] space-y-4 animate-pulse select-none">
+                  <div className="w-full aspect-[4/4.5] sm:aspect-square bg-neutral-200/80 rounded-[28px] sm:rounded-[32px] flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-full border-2 border-neutral-300 border-t-neutral-500 animate-spin opacity-30" />
+                  </div>
+                  <div className="space-y-2 flex flex-col items-center pt-2">
+                    <div className="h-4 bg-neutral-200/90 rounded-md w-1/2" />
+                    <div className="h-3 bg-neutral-200/70 rounded-md w-3/4" />
+                  </div>
+                </div>
+              ))}
             </div>
           ) : (
             <>

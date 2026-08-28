@@ -233,7 +233,6 @@ function SpaciousCatalogContent() {
           <nav className="hidden lg:flex items-center space-x-10 text-[11px] font-bold uppercase tracking-[0.12em] text-[#111111]">
             <Link href="/" className="hover:text-neutral-500 transition-colors">Utama</Link>
             <Link href="/katalog" className="text-[#111111] border-b-2 border-[#111111] pb-1 font-bold">Katalog Desain</Link>
-            <Link href="/admin" className="hover:text-neutral-500 transition-colors font-mono text-[10px] text-neutral-400">Admin</Link>
           </nav>
 
           <div className="flex items-center space-x-5 text-[#111111]">
@@ -473,9 +472,18 @@ function SpaciousCatalogContent() {
         {/* RIGHT MAIN PRODUCT GRID */}
         <main className="flex-1 w-full">
           {isLoading ? (
-            <div className="py-28 flex flex-col items-center justify-center space-y-4">
-              <RefreshCw className="w-8 h-8 text-[#111111] animate-spin" />
-              <p className="text-xs font-mono text-neutral-400 font-bold">Memuatkan katalog...</p>
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-6 lg:gap-8">
+              {Array.from({ length: 10 }).map((_, i) => (
+                <div key={i} className="space-y-3 animate-pulse select-none">
+                  <div className="w-full aspect-square bg-neutral-200/80 rounded-xl sm:rounded-2xl relative overflow-hidden flex items-center justify-center">
+                    <div className="w-6 h-6 rounded-full border-2 border-neutral-300 border-t-neutral-500 animate-spin opacity-30" />
+                  </div>
+                  <div className="space-y-2 pt-1">
+                    <div className="h-3.5 bg-neutral-200/90 rounded-md w-3/4" />
+                    <div className="h-2.5 bg-neutral-200/70 rounded-md w-1/2" />
+                  </div>
+                </div>
+              ))}
             </div>
           ) : sortedTemplates.length === 0 ? (
             <div className="py-24 text-center bg-[#F5F5F7] rounded-3xl border border-neutral-200 p-10 space-y-4">
