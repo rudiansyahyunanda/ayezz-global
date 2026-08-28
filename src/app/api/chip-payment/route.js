@@ -5,30 +5,19 @@ export async function POST(req) {
     const body = await req.json();
     const { orderId, amount, clientName, clientPhone, clientEmail, templateName } = body;
 
-    const CHIP_SECRET_KEY = process.env.CHIP_SECRET_KEY;
-    const CHIP_BRAND_ID = process.env.CHIP_BRAND_ID;
+    const CHIP_SECRET_KEY = process.env.CHIP_SECRET_KEY || 'StrEgBqicBshku5VuefR8C76GuGSCueXm_A_tXx9ZULoCdYIsTtznYVc_sw3kS0-Q_ZD2YATKHJY6mpzOOpO1w==';
+    const CHIP_BRAND_ID = process.env.CHIP_BRAND_ID || '3f4c8590-5a15-4cfc-a1d0-ef79e0bf8eb7';
 
-    const host = req.headers.get('host') || 'localhost:3000';
-    const protocol = req.headers.get('x-forwarded-proto') || 'http';
+    const host = req.headers.get('host') || 'ayezz.com';
+    const protocol = req.headers.get('x-forwarded-proto') || 'https';
     const baseUrl = `${protocol}://${host}`;
-
-    // If CHIP credentials are missing, log guidance and return simulation URL
-    if (!CHIP_SECRET_KEY || !CHIP_BRAND_ID || CHIP_SECRET_KEY.includes('your_chip')) {
-      console.warn('[CHIP Payment] CHIP credentials not found in .env.local! Using simulation fallback...');
-      return NextResponse.json({
-        success: true,
-        isSimulation: true,
-        message: 'Sila masukkan CHIP_SECRET_KEY dan CHIP_BRAND_ID dalam fail .env.local anda dari Merchant Portal CHIP (https://gate.chip-in.asia).',
-        checkoutUrl: `${baseUrl}/dashboard?tab=orders&status=simulated_paid&orderId=${orderId}`
-      });
-    }
 
     const centsAmount = Math.round(Number(amount || 0) * 100);
 
     const payload = {
       brand_id: CHIP_BRAND_ID,
       client: {
-        email: clientEmail || 'customer@ayezzglobal.com',
+        email: clientEmail || 'customer@ayezz.com',
         phone: clientPhone || '0123456789',
         full_name: clientName || 'Pelanggan AYEZZ'
       },
@@ -46,6 +35,8 @@ export async function POST(req) {
       cancel_redirect: `${baseUrl}/dashboard?tab=new-order&status=cancelled&orderId=${orderId}`
     };
 
+    console.log('[CHIP Payment API Payload]', payload);
+
     const response = await fetch('https://gate.chip-in.asia/api/v1/purchases/', {
       method: 'POST',
       headers: {
@@ -61,7 +52,7 @@ export async function POST(req) {
       console.error('[CHIP Payment Error]', resData);
       return NextResponse.json({
         success: false,
-        message: resData.message || resData.errors || 'Ralat semasa membuat pesanan di CHIP Payment Gateway.'
+        message: resData.message || (typeof resData.errors === 'string' ? resData.errors : JSON.stringify(resData.errors)) || 'Ralat semasa membuat pesanan di CHIP Payment Gateway.'
       }, { status: 400 });
     }
 
