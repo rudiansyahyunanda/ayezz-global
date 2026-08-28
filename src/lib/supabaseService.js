@@ -1,4 +1,5 @@
 import { supabase, isSupabaseConnected } from './supabaseClient';
+import { uploadDirectToSupabaseStorage } from './imageService';
 import {
   MAIN_CATALOGS as INITIAL_CATALOGS,
   DESIGN_TEMPLATES as INITIAL_TEMPLATES,
@@ -7,6 +8,24 @@ import {
 } from '../data/sublimationProducts';
 
 export const PLACEHOLDER_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%23F5F5F7'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='16' fill='%2386868B'%3EAYEZZ GLOBAL%3C/text%3E%3C/svg%3E";
+
+/**
+ * Automatically uploads Base64 / raw images to Supabase Storage Bucket ('ayezz-assets')
+ * to ensure that stored DB URLs are ALWAYS real HTTPS Supabase Cloud URLs!
+ */
+export async function ensureSupabaseCloudImageUrl(imgUrl, hint = 'asset') {
+  if (!imgUrl || typeof imgUrl !== 'string') return PLACEHOLDER_IMAGE;
+  if (imgUrl.startsWith('data:image/')) {
+    try {
+      console.log(`[SupabaseService] Auto-uploading base64 image (${hint}) to Supabase Storage...`);
+      const cloudUrl = await uploadDirectToSupabaseStorage(imgUrl, hint);
+      if (cloudUrl) return cloudUrl;
+    } catch (err) {
+      console.warn('[SupabaseService] Auto-upload image to Supabase Storage failed:', err.message);
+    }
+  }
+  return imgUrl;
+}
 
 // ==========================================
 // 1. KATEGORI UTAMA (Full CRUD with Cover Image)
@@ -56,23 +75,25 @@ export async function getCategories() {
 
 export async function insertCategoryToSupabase(category) {
   if (!isSupabaseConnected) return;
+  const cloudCover = await ensureSupabaseCloudImageUrl(category.thumbnail, category.code || 'cat');
   await supabase.from('categories').insert([{
     id: category.id,
     code: category.code,
     title: category.title,
     description: category.description || '',
     item_count: category.itemCount || '0 Jenis',
-    thumbnail: category.thumbnail || PLACEHOLDER_IMAGE
+    thumbnail: cloudCover || PLACEHOLDER_IMAGE
   }]);
 }
 
 export async function updateCategoryInSupabase(categoryId, updatedCat) {
   if (!isSupabaseConnected) return;
+  const cloudCover = await ensureSupabaseCloudImageUrl(updatedCat.thumbnail, updatedCat.code || 'cat');
   await supabase.from('categories').update({
     code: updatedCat.code,
     title: updatedCat.title,
     description: updatedCat.description,
-    thumbnail: updatedCat.thumbnail
+    thumbnail: cloudCover
   }).eq('id', categoryId);
 }
 
@@ -109,23 +130,25 @@ export async function getSubCategories(categoryId) {
 
 export async function insertSubCategoryToSupabase(subCat) {
   if (!isSupabaseConnected) return;
+  const cloudCover = await ensureSupabaseCloudImageUrl(subCat.thumbnail, subCat.code || 'sub');
   await supabase.from('sub_categories').insert([{
     id: subCat.id,
     category_id: subCat.categoryId,
     code: subCat.code,
     title: subCat.title,
     description: subCat.description || '',
-    thumbnail: subCat.thumbnail || PLACEHOLDER_IMAGE
+    thumbnail: cloudCover || PLACEHOLDER_IMAGE
   }]);
 }
 
 export async function updateSubCategoryInSupabase(subCatId, updatedSub) {
   if (!isSupabaseConnected) return;
+  const cloudCover = await ensureSupabaseCloudImageUrl(updatedSub.thumbnail, updatedSub.code || 'sub');
   await supabase.from('sub_categories').update({
     code: updatedSub.code,
     title: updatedSub.title,
     description: updatedSub.description,
-    thumbnail: updatedSub.thumbnail
+    thumbnail: cloudCover
   }).eq('id', subCatId);
 }
 
@@ -158,12 +181,13 @@ export async function getCutTypes() {
 export async function insertCutTypeToSupabase(cut) {
   if (!isSupabaseConnected || !cut) return;
   try {
+    const cloudCover = await ensureSupabaseCloudImageUrl(cut.thumbnail, cut.name || 'cut');
     const payload = {
       id: cut.id || `cut_${Date.now()}`,
       name: cut.name,
       add_on_price: Number(cut.addOnPrice ?? cut.add_on_price ?? 0),
       description: cut.desc || cut.description || 'Potongan kustom',
-      thumbnail: cut.thumbnail || PLACEHOLDER_IMAGE
+      thumbnail: cloudCover || PLACEHOLDER_IMAGE
     };
     const { error } = await supabase.from('cut_types').insert([payload]);
     if (error) {
@@ -198,11 +222,12 @@ export async function updateCutTypeInSupabase(cutId, updatedCut) {
   if (!targetId || !cutData) return;
 
   try {
+    const cloudCover = await ensureSupabaseCloudImageUrl(cutData.thumbnail, cutData.name || 'cut');
     const payload = {
       name: cutData.name,
       add_on_price: Number(cutData.addOnPrice ?? cutData.add_on_price ?? 0),
       description: cutData.desc || cutData.description || '',
-      thumbnail: cutData.thumbnail || PLACEHOLDER_IMAGE
+      thumbnail: cloudCover || PLACEHOLDER_IMAGE
     };
     const { error } = await supabase.from('cut_types').update(payload).eq('id', targetId);
     if (error) {
@@ -252,6 +277,7 @@ export async function getFabricTypes() {
 export async function insertFabricTypeToSupabase(fabric) {
   if (!isSupabaseConnected || !fabric) return;
   try {
+    const cloudCover = await ensureSupabaseCloudImageUrl(fabric.thumbnail, fabric.name || 'fab');
     const payload = {
       id: fabric.id || `fab_${Date.now()}`,
       name: fabric.name,
@@ -260,7 +286,7 @@ export async function insertFabricTypeToSupabase(fabric) {
       gsm: fabric.gsm || '150 GSM',
       features: fabric.features || '',
       description: fabric.desc || fabric.description || 'Bahan kain sublimasi',
-      thumbnail: fabric.thumbnail || PLACEHOLDER_IMAGE
+      thumbnail: cloudCover || PLACEHOLDER_IMAGE
     };
     const { error } = await supabase.from('fabric_types').insert([payload]);
     if (error) {
@@ -295,6 +321,7 @@ export async function updateFabricTypeInSupabase(fabricId, updatedFabric) {
   if (!targetId || !fabData) return;
 
   try {
+    const cloudCover = await ensureSupabaseCloudImageUrl(fabData.thumbnail, fabData.name || 'fab');
     const payload = {
       name: fabData.name,
       base_price: Number(fabData.basePrice ?? fabData.base_price ?? 70),
@@ -302,7 +329,7 @@ export async function updateFabricTypeInSupabase(fabricId, updatedFabric) {
       gsm: fabData.gsm || '150 GSM',
       features: fabData.features || '',
       description: fabData.desc || fabData.description || '',
-      thumbnail: fabData.thumbnail || PLACEHOLDER_IMAGE
+      thumbnail: cloudCover || PLACEHOLDER_IMAGE
     };
     const { error } = await supabase.from('fabric_types').update(payload).eq('id', targetId);
     if (error) {
@@ -356,9 +383,15 @@ export async function getDesignTemplates() {
 
 export async function insertDesignTemplateToSupabase(template) {
   if (!isSupabaseConnected || !template) return;
-  const imgList = Array.isArray(template?.images) && template.images.length > 0
+  const rawList = Array.isArray(template?.images) && template.images.length > 0
     ? template.images
     : (template?.thumbnail ? [template.thumbnail] : [PLACEHOLDER_IMAGE]);
+  
+  const cloudList = [];
+  for (let i = 0; i < rawList.length; i++) {
+    const cloudUrl = await ensureSupabaseCloudImageUrl(rawList[i], `${template.name || 'tpl'}_${i + 1}`);
+    cloudList.push(cloudUrl);
+  }
   
   const payloadWithImages = {
     id: template.id,
@@ -366,15 +399,14 @@ export async function insertDesignTemplateToSupabase(template) {
     category: template.category,
     sub_category: template.subCategory || '',
     description: template.description || '',
-    thumbnail: imgList[0] || PLACEHOLDER_IMAGE,
-    images: imgList
+    thumbnail: cloudList[0] || PLACEHOLDER_IMAGE,
+    images: cloudList
   };
 
   try {
     const { error } = await supabase.from('design_templates').insert([payloadWithImages]);
     if (error) {
       console.warn('Supabase insertDesignTemplate error with images column:', error);
-      // Fallback: If 'images' column is missing in Supabase schema cache (PGRST204), insert without 'images'
       if (error.code === 'PGRST204' || (error.message && error.message.includes('images'))) {
         console.info('Retrying insertDesignTemplate without images column fallback...');
         const { images, ...payloadWithoutImages } = payloadWithImages;
@@ -399,7 +431,6 @@ export async function updateDesignTemplateInSupabase(templateId, updatedTpl) {
   let targetId = templateId;
   let tplData = updatedTpl;
 
-  // Support single argument invocation if template object contains id
   if (typeof templateId === 'object' && templateId !== null && !updatedTpl) {
     tplData = templateId;
     targetId = templateId.id;
@@ -407,17 +438,23 @@ export async function updateDesignTemplateInSupabase(templateId, updatedTpl) {
 
   if (!targetId || !tplData) return;
 
-  const imgList = Array.isArray(tplData?.images) && tplData.images.length > 0
+  const rawList = Array.isArray(tplData?.images) && tplData.images.length > 0
     ? tplData.images
     : (tplData?.thumbnail ? [tplData.thumbnail] : [PLACEHOLDER_IMAGE]);
+
+  const cloudList = [];
+  for (let i = 0; i < rawList.length; i++) {
+    const cloudUrl = await ensureSupabaseCloudImageUrl(rawList[i], `${tplData.name || 'tpl'}_${i + 1}`);
+    cloudList.push(cloudUrl);
+  }
 
   const payloadWithImages = {
     name: tplData.name,
     category: tplData.category,
     sub_category: tplData.subCategory || '',
     description: tplData.description || '',
-    thumbnail: imgList[0] || PLACEHOLDER_IMAGE,
-    images: imgList
+    thumbnail: cloudList[0] || PLACEHOLDER_IMAGE,
+    images: cloudList
   };
 
   try {
