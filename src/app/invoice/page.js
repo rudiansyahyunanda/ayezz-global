@@ -230,14 +230,8 @@ function InvoiceContent() {
             {/* INVOICE HEADER */}
             <div className="flex flex-col sm:flex-row justify-between items-start gap-6 border-b border-slate-200 pb-8">
               <div className="space-y-3">
-                <div className="flex items-center space-x-2">
-                  <div className="w-10 h-10 bg-slate-900 text-white rounded-xl flex items-center justify-center font-black font-mono text-xl">
-                    A
-                  </div>
-                  <div>
-                    <h2 className="text-xl font-black tracking-tight text-slate-900 font-mono">AYEZZ GLOBAL</h2>
-                    <span className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest block">SUBLIMATION APPAREL FACTORY</span>
-                  </div>
+                <div className="flex items-center space-x-3 pb-1">
+                  <img src="/logo/ayezz-logo-01.svg" alt="AYEZZ GLOBAL Logo" className="h-8 sm:h-9 w-auto object-contain" />
                 </div>
                 <div className="text-xs text-slate-600 space-y-0.5 font-normal leading-relaxed">
                   <p>A-3-17 Pangsapuri Harmoni 1, Persiaran Putra Megah,</p>
@@ -391,11 +385,14 @@ function InvoiceContent() {
               
               {/* JOB SHEET HEADER */}
               <div className="flex flex-col sm:flex-row justify-between items-start gap-6 border-b-2 border-slate-900 pb-6">
-                <div className="space-y-1">
+                <div className="space-y-2">
                   <span className="px-2.5 py-0.5 bg-slate-900 text-white font-mono font-bold text-[10px] rounded uppercase tracking-widest inline-block">
                     TIKET ARAHAN KILANG (FACTORY JOB SHEET)
                   </span>
-                  <h2 className="text-2xl font-black tracking-tight text-slate-900 font-mono">AYEZZ PRODUCTION</h2>
+                  <div className="flex items-center space-x-3 pt-1">
+                    <img src="/logo/ayezz-logo-01.svg" alt="AYEZZ GLOBAL Logo" className="h-8 w-auto object-contain" />
+                    <span className="text-xs font-mono font-bold text-slate-500 uppercase tracking-widest border-l border-slate-300 pl-3">PRODUCTION DEPT</span>
+                  </div>
                   <p className="text-xs text-slate-500 font-mono">Borang Cetakan Sublimasi, Potongan & Jahitan Jersi Kustom</p>
                 </div>
 
