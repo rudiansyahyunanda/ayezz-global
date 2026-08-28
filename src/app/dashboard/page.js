@@ -756,9 +756,9 @@ function DashboardContent() {
           <div className="flex items-center space-x-3">
             <button
               onClick={() => setActiveTab('new-order')}
-              className="px-4 py-2 bg-slate-700 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider rounded-lg transition-all flex items-center space-x-1.5 shadow-xs active:scale-95 cursor-pointer"
+              className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-900 font-bold text-xs uppercase tracking-wider rounded-lg transition-all flex items-center space-x-1.5 shadow-2xs border border-slate-300/80 active:scale-95 cursor-pointer"
             >
-              <Plus className="w-4 h-4 text-white" />
+              <Plus className="w-4 h-4 text-slate-900" />
               <span>Tempahan Baru</span>
             </button>
           </div>
@@ -885,7 +885,7 @@ function DashboardContent() {
                     <p className="text-xs text-slate-500 font-semibold">Belum ada pesanan direkodkan.</p>
                     <button
                       onClick={() => setActiveTab('new-order')}
-                      className="px-4 py-2 bg-slate-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider cursor-pointer"
+                      className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 rounded-xl text-xs font-bold uppercase tracking-wider cursor-pointer"
                     >
                       Buat Tempahan Pertama
                     </button>
@@ -931,12 +931,12 @@ function DashboardContent() {
             </div>
           )}
 
-          {/* TAB 2: BUAT PESANAN BARU (REFINED COOL SLATE GREY CONFIGURATOR) */}
+          {/* TAB 2: BUAT PESANAN BARU (LIGHTER SOFT GREY THEME CONFIGURATOR) */}
           {activeTab === 'new-order' && (
             <div className="w-full space-y-8">
               
-              {/* MINIMALIST PROGRESS STEPPER */}
-              <div className="w-full bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs">
+              {/* MINIMALIST PROGRESS STEPPER (FIXED AT TOP OF VIEWPORT) */}
+              <div className="w-full bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs shrink-0">
                 <div className="flex items-center justify-between max-w-4xl mx-auto">
                   
                   {/* STEP 1 BADGE */}
@@ -1079,7 +1079,7 @@ function DashboardContent() {
                   <div className="flex items-center justify-center space-x-3 pt-2">
                     <button
                       onClick={resetOrderForm}
-                      className="px-6 py-3.5 bg-slate-700 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md cursor-pointer"
+                      className="px-6 py-3.5 bg-slate-200 hover:bg-slate-300 text-slate-900 font-bold text-xs uppercase tracking-widest rounded-xl transition-all border border-slate-300 shadow-2xs cursor-pointer"
                     >
                       Lihat Senarai Pesanan Saya →
                     </button>
@@ -1162,7 +1162,7 @@ function DashboardContent() {
                               <button
                                 type="button"
                                 onClick={() => setIsTemplateModalOpen(true)}
-                                className="px-5 py-2.5 bg-slate-700 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-xs shrink-0 cursor-pointer"
+                                className="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-900 font-bold text-xs uppercase tracking-wider rounded-xl transition-all border border-slate-300/80 shrink-0 cursor-pointer"
                               >
                                 Tukar Template
                               </button>
@@ -1189,7 +1189,7 @@ function DashboardContent() {
                                   </div>
                                 </div>
 
-                                <label className="px-4 py-2 bg-slate-700 hover:bg-slate-800 text-white font-bold text-xs rounded-xl cursor-pointer transition-all shrink-0">
+                                <label className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-bold text-xs rounded-xl cursor-pointer transition-all shrink-0">
                                   {isUploadingRefImage ? 'Memuat Naik...' : customDesignRefUrl ? 'Tukar Referensi' : 'Muat Naik Referensi'}
                                   <input type="file" accept="image/*" onChange={handleRefImageUpload} className="hidden" />
                                 </label>
@@ -1205,7 +1205,7 @@ function DashboardContent() {
                                 value={customDesignNotes}
                                 onChange={(e) => setCustomDesignNotes(e.target.value)}
                                 placeholder="Jelaskan secara teliti perubahan warna, corak badan, garisan bahu, atau gabungan gaya yang diinginkan..."
-                                className="w-full bg-white border border-slate-200 rounded-xl p-3.5 text-xs font-medium text-slate-900 outline-none focus:border-slate-700 transition-all resize-none"
+                                className="w-full bg-white border border-slate-200 rounded-xl p-3.5 text-xs font-medium text-slate-900 outline-none focus:border-slate-400 transition-all resize-none"
                               />
                             </div>
                           </div>
@@ -1216,7 +1216,7 @@ function DashboardContent() {
                           <button
                             type="button"
                             onClick={() => setOrderStep(2)}
-                            className="px-6 py-3 bg-slate-700 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-xs flex items-center space-x-2 cursor-pointer"
+                            className="px-6 py-3 bg-slate-200 hover:bg-slate-300 text-slate-900 font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all border border-slate-300 flex items-center space-x-2 cursor-pointer"
                           >
                             <span>Teruskan Ke Step 2: Potongan & Saiz →</span>
                           </button>
@@ -1225,11 +1225,13 @@ function DashboardContent() {
                     )}
 
                     {/* ========================================================== */}
-                    {/* LANGKAH 2: POTONGAN, LENGAN & SAIZ (INTEGRATED GROUP CARD) */}
+                    {/* LANGKAH 2: POTONGAN, LENGAN & SAIZ (FIXED HEADER & FOOTER, SCROLLABLE GROUPS BODY!) */}
                     {/* ========================================================== */}
                     {orderStep === 2 && (
-                      <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-2xs space-y-6">
-                        <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+                      <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-2xs flex flex-col max-h-[calc(100vh-220px)]">
+                        
+                        {/* STEP CARD FIXED HEADER */}
+                        <div className="flex items-center justify-between border-b border-slate-100 pb-4 shrink-0">
                           <div>
                             <span className="text-[10px] font-mono text-slate-400 font-bold uppercase tracking-widest block">LANGKAH 2 DARI 4</span>
                             <h3 className="text-lg font-black uppercase text-slate-900 pt-0.5">SPESIFIKASI POTONGAN, LENGAN & SAIZ</h3>
@@ -1240,8 +1242,8 @@ function DashboardContent() {
                           </span>
                         </div>
 
-                        {/* LIST OF CLEAN INTEGRATED GROUP CARDS */}
-                        <div className="space-y-6">
+                        {/* SCROLLABLE CUT GROUPS CONTENT BODY */}
+                        <div className="flex-1 overflow-y-auto pr-1.5 my-4 space-y-6">
                           {groupCalculations.groupDetails.map((group, idx) => {
                             const activeCutName = group.cut?.name || 'Pilih Potongan Kolar';
                             const activeSleeveName = group.sleeve?.name || 'Pilih Jenis Lengan';
@@ -1256,7 +1258,7 @@ function DashboardContent() {
                                 {/* GROUP CARD HEADER */}
                                 <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                                   <div className="flex items-center space-x-2.5">
-                                    <span className="w-6 h-6 rounded-full bg-slate-700 text-white text-xs font-mono font-bold flex items-center justify-center">
+                                    <span className="w-6 h-6 rounded-full bg-slate-200 text-slate-900 text-xs font-mono font-black border border-slate-300 flex items-center justify-center">
                                       {idx + 1}
                                     </span>
                                     <span className="text-xs font-mono font-extrabold text-slate-800 uppercase">
@@ -1312,7 +1314,7 @@ function DashboardContent() {
                                           setActiveGroupIdForCut(group.id);
                                           setIsCutModalOpen(true);
                                         }}
-                                        className="px-3.5 py-2 bg-slate-700 hover:bg-slate-800 text-white font-bold text-[11px] uppercase rounded-lg transition-colors cursor-pointer shrink-0"
+                                        className="px-3.5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-900 font-bold text-[11px] uppercase rounded-lg border border-slate-300 transition-colors cursor-pointer shrink-0"
                                       >
                                         Pilih Kolar
                                       </button>
@@ -1346,7 +1348,7 @@ function DashboardContent() {
                                           setActiveGroupIdForSleeve(group.id);
                                           setIsSleeveModalOpen(true);
                                         }}
-                                        className="px-3.5 py-2 bg-slate-700 hover:bg-slate-800 text-white font-bold text-[11px] uppercase rounded-lg transition-colors cursor-pointer shrink-0"
+                                        className="px-3.5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-900 font-bold text-[11px] uppercase rounded-lg border border-slate-300 transition-colors cursor-pointer shrink-0"
                                       >
                                         Pilih Lengan
                                       </button>
@@ -1442,20 +1444,20 @@ function DashboardContent() {
                               </div>
                             );
                           })}
+
+                          {/* BUTTON ADD NEW CUT GROUP INSIDE SCROLLABLE AREA */}
+                          <button
+                            type="button"
+                            onClick={addCutGroup}
+                            className="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all border border-dashed border-slate-300 flex items-center justify-center space-x-2 cursor-pointer active:scale-98"
+                          >
+                            <Plus className="w-4 h-4 text-slate-800" />
+                            <span>+ Tambah Kumpulan Potongan Baru</span>
+                          </button>
                         </div>
 
-                        {/* BUTTON ADD NEW CUT GROUP */}
-                        <button
-                          type="button"
-                          onClick={addCutGroup}
-                          className="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all border border-dashed border-slate-300 flex items-center justify-center space-x-2 cursor-pointer active:scale-98"
-                        >
-                          <Plus className="w-4 h-4 text-slate-800" />
-                          <span>+ Tambah Kumpulan Potongan Baru</span>
-                        </button>
-
-                        {/* STEP 2 FOOTER NAV */}
-                        <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+                        {/* STEP CARD FIXED FOOTER NAVIGATION */}
+                        <div className="pt-4 border-t border-slate-100 flex items-center justify-between shrink-0">
                           <button
                             type="button"
                             onClick={() => setOrderStep(1)}
@@ -1467,7 +1469,7 @@ function DashboardContent() {
                           <button
                             type="button"
                             onClick={() => setOrderStep(3)}
-                            className="px-6 py-3 bg-slate-700 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-xs flex items-center space-x-2 cursor-pointer"
+                            className="px-6 py-3 bg-slate-200 hover:bg-slate-300 text-slate-900 font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all border border-slate-300 flex items-center space-x-2 cursor-pointer"
                           >
                             <span>Teruskan Ke Step 3: Fabrik →</span>
                           </button>
@@ -1495,28 +1497,28 @@ function DashboardContent() {
                                 onClick={() => setSelectedFabric(fab)}
                                 className={`p-5 rounded-2xl border cursor-pointer transition-all flex flex-col justify-between space-y-3 relative ${
                                   isSelected
-                                    ? 'bg-slate-800 text-white border-slate-800 shadow-md ring-2 ring-slate-800/20'
+                                    ? 'bg-slate-100 text-slate-900 border-slate-400 shadow-md ring-2 ring-slate-300'
                                     : 'bg-white text-slate-800 border-slate-200 hover:border-slate-400 hover:bg-slate-50'
                                 }`}
                               >
                                 {isSelected && (
-                                  <span className="absolute top-3 right-3 bg-white text-slate-900 p-1 rounded-full shadow-xs">
-                                    <Check className="w-3.5 h-3.5 text-slate-900" />
+                                  <span className="absolute top-3 right-3 bg-slate-900 text-white p-1 rounded-full shadow-xs">
+                                    <Check className="w-3.5 h-3.5 text-white" />
                                   </span>
                                 )}
 
                                 <div className="space-y-1">
-                                  <span className={`text-[10px] font-mono font-bold uppercase tracking-wider block ${isSelected ? 'text-slate-300' : 'text-slate-400'}`}>
+                                  <span className="text-[10px] font-mono font-bold uppercase tracking-wider block text-slate-400">
                                     {fab.gsm || '150 GSM'} • {fab.tier || 'PREMIUM'}
                                   </span>
                                   <h4 className="text-sm font-extrabold uppercase line-clamp-1">{fab.name}</h4>
-                                  <p className={`text-[11px] line-clamp-2 leading-relaxed ${isSelected ? 'text-slate-300' : 'text-slate-500'}`}>
+                                  <p className="text-[11px] line-clamp-2 leading-relaxed text-slate-600">
                                     {fab.desc || fab.description || 'Kain sublimasi berkualiti tinggi'}
                                   </p>
                                 </div>
 
-                                <div className="pt-2 border-t border-slate-200/40 flex items-center justify-between">
-                                  <span className={`text-[10px] font-mono uppercase ${isSelected ? 'text-slate-300' : 'text-slate-500'}`}>HARGA ASAS:</span>
+                                <div className="pt-2 border-t border-slate-200/80 flex items-center justify-between">
+                                  <span className="text-[10px] font-mono uppercase text-slate-500">HARGA ASAS:</span>
                                   <span className="text-sm font-mono font-black">
                                     RM {baseP}.00 / pcs
                                   </span>
@@ -1539,7 +1541,7 @@ function DashboardContent() {
                           <button
                             type="button"
                             onClick={() => setOrderStep(4)}
-                            className="px-6 py-3 bg-slate-700 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-xs flex items-center space-x-2 cursor-pointer"
+                            className="px-6 py-3 bg-slate-200 hover:bg-slate-300 text-slate-900 font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all border border-slate-300 flex items-center space-x-2 cursor-pointer"
                           >
                             <span>Teruskan Ke Step 4: Pengesahan →</span>
                           </button>
@@ -1566,7 +1568,7 @@ function DashboardContent() {
                               placeholder="Nama penuh..."
                               value={customerInfo.name}
                               onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })}
-                              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 outline-none focus:bg-white focus:border-slate-700"
+                              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 outline-none focus:bg-white focus:border-slate-400"
                             />
                           </div>
 
@@ -1578,7 +1580,7 @@ function DashboardContent() {
                               placeholder="011-XXXXXXX"
                               value={customerInfo.phone}
                               onChange={(e) => setCustomerInfo({ ...customerInfo, phone: e.target.value })}
-                              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 outline-none focus:bg-white focus:border-slate-700"
+                              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 outline-none focus:bg-white focus:border-slate-400"
                             />
                           </div>
 
@@ -1589,7 +1591,7 @@ function DashboardContent() {
                               placeholder="Contoh: FC Harimau"
                               value={customerInfo.teamName}
                               onChange={(e) => setCustomerInfo({ ...customerInfo, teamName: e.target.value })}
-                              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 outline-none focus:bg-white focus:border-slate-700"
+                              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 outline-none focus:bg-white focus:border-slate-400"
                             />
                           </div>
 
@@ -1610,7 +1612,7 @@ function DashboardContent() {
                                 </span>
                               </div>
 
-                              <label className="px-4 py-2 bg-white hover:bg-slate-100 text-slate-900 border border-slate-300 font-bold text-xs rounded-xl cursor-pointer transition-all shrink-0">
+                              <label className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-bold text-xs rounded-xl cursor-pointer transition-all shrink-0">
                                 {isUploadingLogo ? 'Muat Naik...' : customLogoUrl ? 'Tukar Logo' : 'Pilih Logo'}
                                 <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" />
                               </label>
@@ -1624,7 +1626,7 @@ function DashboardContent() {
                               placeholder="Contoh: Nama pemain di belakang baju..."
                               value={customerInfo.notes}
                               onChange={(e) => setCustomerInfo({ ...customerInfo, notes: e.target.value })}
-                              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 outline-none focus:bg-white focus:border-slate-700 resize-none"
+                              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 outline-none focus:bg-white focus:border-slate-400 resize-none"
                             />
                           </div>
                         </div>
@@ -1644,21 +1646,21 @@ function DashboardContent() {
 
                   </div>
 
-                  {/* RIGHT 5 COLS: STICKY COOL CHARCOAL LIVE ORDER SUMMARY TICKET */}
+                  {/* RIGHT 5 COLS: STICKY SOFT LIGHT GREY LIVE ORDER SUMMARY TICKET */}
                   <div className="lg:col-span-5 space-y-6">
-                    <div className="bg-slate-800 text-white p-6 sm:p-7 rounded-3xl shadow-lg space-y-5 sticky top-20 border border-slate-700/80">
-                      <div className="flex items-center justify-between border-b border-slate-700 pb-3">
-                        <span className="text-[10px] font-mono text-slate-300 uppercase tracking-widest font-bold">
+                    <div className="bg-[#F3F5F8] text-slate-900 p-6 sm:p-7 rounded-3xl shadow-sm space-y-5 sticky top-20 border border-slate-200/90">
+                      <div className="flex items-center justify-between border-b border-slate-200/80 pb-3">
+                        <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest font-bold">
                           RINGKASAN SEBUT HARGA KILANG
                         </span>
-                        <span className="text-[10px] font-mono font-bold text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded border border-emerald-400/20">
+                        <span className="text-[10px] font-mono font-bold text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded border border-emerald-300">
                           LIVE ESTIMATE
                         </span>
                       </div>
 
                       {/* TEMPLATE SUMMARY */}
-                      <div className="flex items-center space-x-3 pb-3 border-b border-slate-700">
-                        <div className="w-12 h-12 bg-white rounded-lg p-1 shrink-0 flex items-center justify-center">
+                      <div className="flex items-center space-x-3 pb-3 border-b border-slate-200/80">
+                        <div className="w-12 h-12 bg-white rounded-lg p-1 shrink-0 flex items-center justify-center border border-slate-200">
                           <img
                             src={Array.isArray(selectedTemplateObj?.images) && selectedTemplateObj?.images.length > 0 ? selectedTemplateObj.images[0] : (selectedTemplateObj?.thumbnail || PLACEHOLDER_IMAGE)}
                             alt={orderTemplateName}
@@ -1666,35 +1668,35 @@ function DashboardContent() {
                           />
                         </div>
                         <div className="min-w-0 flex-1 text-xs">
-                          <span className="text-[9px] font-mono text-slate-400 block uppercase">REKA BENTUK</span>
-                          <h5 className="font-extrabold uppercase text-white truncate">{isCustomDesign ? 'Custom Design' : orderTemplateName}</h5>
+                          <span className="text-[9px] font-mono text-slate-500 block uppercase font-bold">REKA BENTUK</span>
+                          <h5 className="font-black uppercase text-slate-900 truncate">{isCustomDesign ? 'Custom Design' : orderTemplateName}</h5>
                         </div>
                       </div>
 
                       {/* PRICE BREAKDOWN */}
-                      <div className="space-y-2.5 text-xs font-mono text-slate-300">
+                      <div className="space-y-2.5 text-xs font-mono text-slate-700">
                         <div className="flex justify-between">
                           <span>Kain ({selectedFabric?.name}):</span>
-                          <span>RM {basePricePerPcs.toFixed(2)}</span>
+                          <span className="font-bold text-slate-900">RM {basePricePerPcs.toFixed(2)}</span>
                         </div>
 
                         {groupCalculations.groupDetails.map((gd, i) => (
-                          <div key={gd.id} className="flex justify-between text-[11px] text-slate-300">
+                          <div key={gd.id} className="flex justify-between text-[11px] text-slate-600">
                             <span className="truncate max-w-[170px]">Kumpulan #{i + 1} ({gd.cut?.name}):</span>
-                            <span>{gd.qty} pcs • RM {gd.subtotal.toFixed(2)}</span>
+                            <span className="font-bold text-slate-900">{gd.qty} pcs • RM {gd.subtotal.toFixed(2)}</span>
                           </div>
                         ))}
 
-                        <div className="flex justify-between border-t border-slate-700 pt-2 font-bold text-white">
+                        <div className="flex justify-between border-t border-slate-200/80 pt-2 font-extrabold text-slate-900">
                           <span>Jumlah Kuantiti:</span>
                           <span>{groupCalculations.totalQty} pcs</span>
                         </div>
                       </div>
 
                       {/* TOTAL PRICE */}
-                      <div className="border-t border-slate-700 pt-3">
-                        <span className="text-[10px] font-mono text-slate-300 block uppercase">JUMLAH KESELURUHAN ({groupCalculations.totalQty} pcs):</span>
-                        <span className="text-3xl font-black font-mono text-white block pt-0.5">
+                      <div className="border-t border-slate-200/80 pt-3">
+                        <span className="text-[10px] font-mono text-slate-500 block uppercase font-bold">JUMLAH KESELURUHAN ({groupCalculations.totalQty} pcs):</span>
+                        <span className="text-3xl font-black font-mono text-slate-900 block pt-0.5">
                           RM {groupCalculations.totalPrice.toFixed(2)}
                         </span>
                       </div>
@@ -1704,7 +1706,7 @@ function DashboardContent() {
                         <button
                           type="button"
                           onClick={() => setOrderStep(orderStep + 1)}
-                          className="w-full py-4 bg-white hover:bg-slate-100 text-slate-900 font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center space-x-2 cursor-pointer border border-slate-200"
+                          className="w-full py-4 bg-slate-200 hover:bg-slate-300 text-slate-900 font-extrabold text-xs uppercase tracking-widest rounded-xl transition-all shadow-2xs active:scale-95 flex items-center justify-center space-x-2 cursor-pointer border border-slate-300"
                         >
                           <span>Seterusnya Ke Step {orderStep + 1} →</span>
                         </button>
@@ -1712,7 +1714,7 @@ function DashboardContent() {
                         <button
                           type="submit"
                           disabled={isSubmittingOrder || groupCalculations.totalQty <= 0}
-                          className="w-full py-4 bg-white hover:bg-slate-100 text-slate-900 font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer border border-slate-200"
+                          className="w-full py-4 bg-slate-200 hover:bg-slate-300 text-slate-900 font-extrabold text-xs uppercase tracking-widest rounded-xl transition-all shadow-2xs active:scale-95 flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer border border-slate-300"
                         >
                           {isSubmittingOrder ? (
                             <RefreshCw className="w-4 h-4 animate-spin text-slate-900" />
@@ -1746,7 +1748,7 @@ function DashboardContent() {
                       placeholder="Cari Kod Pesanan / Template..."
                       value={orderSearchQuery}
                       onChange={(e) => setOrderSearchQuery(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs font-semibold text-slate-900 outline-none focus:bg-white focus:border-slate-700"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs font-semibold text-slate-900 outline-none focus:bg-white focus:border-slate-400"
                     />
                   </div>
 
@@ -1754,7 +1756,7 @@ function DashboardContent() {
                     <button
                       onClick={() => setOrderStatusFilter('all')}
                       className={`px-3 py-1.5 rounded-xl font-bold transition-all shrink-0 cursor-pointer ${
-                        orderStatusFilter === 'all' ? 'bg-slate-700 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                        orderStatusFilter === 'all' ? 'bg-slate-200 text-slate-900 border border-slate-300' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                       }`}
                     >
                       Semua ({orders.length})
@@ -1762,7 +1764,7 @@ function DashboardContent() {
                     <button
                       onClick={() => setOrderStatusFilter('process')}
                       className={`px-3 py-1.5 rounded-xl font-bold transition-all shrink-0 cursor-pointer ${
-                        orderStatusFilter === 'process' ? 'bg-slate-700 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                        orderStatusFilter === 'process' ? 'bg-slate-200 text-slate-900 border border-slate-300' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                       }`}
                     >
                       Dalam Proses
@@ -1770,7 +1772,7 @@ function DashboardContent() {
                     <button
                       onClick={() => setOrderStatusFilter('completed')}
                       className={`px-3 py-1.5 rounded-xl font-bold transition-all shrink-0 cursor-pointer ${
-                        orderStatusFilter === 'completed' ? 'bg-slate-700 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                        orderStatusFilter === 'completed' ? 'bg-slate-200 text-slate-900 border border-slate-300' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                       }`}
                     >
                       Siap & Selesai
@@ -1785,7 +1787,7 @@ function DashboardContent() {
                     <p className="text-xs text-slate-500">Anda belum membuat sebarang tempahan jersi kustom.</p>
                     <button
                       onClick={() => setActiveTab('new-order')}
-                      className="px-5 py-2.5 bg-slate-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider cursor-pointer"
+                      className="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 rounded-xl text-xs font-bold uppercase tracking-wider cursor-pointer"
                     >
                       Buat Tempahan Sekarang
                     </button>
@@ -1830,7 +1832,7 @@ function DashboardContent() {
 
                           <button
                             onClick={() => setSelectedOrder(ord)}
-                            className="px-4 py-2 bg-slate-700 hover:bg-slate-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center space-x-1 cursor-pointer"
+                            className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 rounded-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center space-x-1 cursor-pointer"
                           >
                             <span>Spesifikasi</span>
                             <ChevronRight className="w-3.5 h-3.5" />
@@ -1891,9 +1893,9 @@ function DashboardContent() {
                             <td className="py-3.5 px-3 text-right">
                               <button
                                 onClick={() => setSelectedInvoice(ord)}
-                                className="px-3.5 py-1.5 bg-slate-700 hover:bg-slate-800 text-white rounded-lg text-[11px] font-bold transition-colors inline-flex items-center space-x-1 cursor-pointer"
+                                className="px-3.5 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 rounded-lg text-[11px] font-bold transition-colors inline-flex items-center space-x-1 cursor-pointer"
                               >
-                                <Printer className="w-3.5 h-3.5 text-white" />
+                                <Printer className="w-3.5 h-3.5 text-slate-900" />
                                 <span>Lihat Invois</span>
                               </button>
                             </td>
@@ -1937,7 +1939,7 @@ function DashboardContent() {
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
                       placeholder="Contoh: Muhammad Ali"
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-11 pr-4 py-3 text-xs font-bold text-slate-900 focus:outline-none focus:border-slate-700 focus:bg-white transition-all"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-11 pr-4 py-3 text-xs font-bold text-slate-900 focus:outline-none focus:border-slate-400 focus:bg-white transition-all"
                     />
                   </div>
                 </div>
@@ -1968,7 +1970,7 @@ function DashboardContent() {
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="Contoh: +60123456789"
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-11 pr-4 py-3 text-xs font-bold text-slate-900 focus:outline-none focus:border-slate-700 focus:bg-white transition-all"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-11 pr-4 py-3 text-xs font-bold text-slate-900 focus:outline-none focus:border-slate-400 focus:bg-white transition-all"
                     />
                   </div>
                 </div>
@@ -1984,7 +1986,7 @@ function DashboardContent() {
                       value={address}
                       onChange={(e) => setAddress(e.target.value)}
                       placeholder="Masukkan alamat penuh rumah / premis untuk penghantaran..."
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-11 pr-4 py-3 text-xs font-medium text-slate-900 focus:outline-none focus:border-slate-700 focus:bg-white transition-all resize-none"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-11 pr-4 py-3 text-xs font-medium text-slate-900 focus:outline-none focus:border-slate-400 focus:bg-white transition-all resize-none"
                     />
                   </div>
                 </div>
@@ -1992,13 +1994,13 @@ function DashboardContent() {
                 <button
                   type="submit"
                   disabled={isSavingProfile}
-                  className="w-full py-3.5 bg-slate-700 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all flex items-center justify-center space-x-2 cursor-pointer"
+                  className="w-full py-3.5 bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-bold text-xs uppercase tracking-widest rounded-xl transition-all flex items-center justify-center space-x-2 cursor-pointer"
                 >
                   {isSavingProfile ? (
-                    <RefreshCw className="w-4 h-4 animate-spin text-white" />
+                    <RefreshCw className="w-4 h-4 animate-spin text-slate-900" />
                   ) : (
                     <>
-                      <Save className="w-4 h-4 text-white" />
+                      <Save className="w-4 h-4 text-slate-900" />
                       <span>Simpan Kemaskini Profil</span>
                     </>
                   )}
@@ -2036,7 +2038,7 @@ function DashboardContent() {
                   placeholder="Cari nama template / kategori..."
                   value={templateSearchQuery}
                   onChange={(e) => setTemplateSearchQuery(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs font-bold text-slate-900 outline-none focus:bg-white focus:border-slate-700"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs font-bold text-slate-900 outline-none focus:bg-white focus:border-slate-400"
                 />
               </div>
 
@@ -2046,7 +2048,7 @@ function DashboardContent() {
                     type="button"
                     onClick={() => setTemplateCategoryFilter('all')}
                     className={`px-3 py-1.5 rounded-xl font-bold transition-all shrink-0 cursor-pointer ${
-                      templateCategoryFilter === 'all' ? 'bg-slate-700 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      templateCategoryFilter === 'all' ? 'bg-slate-200 text-slate-900 border border-slate-300' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                     }`}
                   >
                     Semua Kategori
@@ -2058,7 +2060,7 @@ function DashboardContent() {
                       onClick={() => setTemplateCategoryFilter(c.title)}
                       className={`px-3 py-1.5 rounded-xl font-bold transition-all shrink-0 cursor-pointer ${
                         templateCategoryFilter.toLowerCase() === (c.title || '').toLowerCase()
-                          ? 'bg-slate-700 text-white'
+                          ? 'bg-slate-200 text-slate-900 border border-slate-300'
                           : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                       }`}
                     >
@@ -2085,12 +2087,12 @@ function DashboardContent() {
                     }}
                     className={`p-3 bg-white border rounded-2xl cursor-pointer transition-all flex flex-col items-center justify-between group space-y-2 relative ${
                       isSelected
-                        ? 'border-slate-700 ring-2 ring-slate-700/30 shadow-md bg-slate-50'
+                        ? 'border-slate-400 ring-2 ring-slate-300 shadow-md bg-slate-50'
                         : 'border-slate-200 hover:border-slate-400 hover:shadow-md'
                     }`}
                   >
                     {isSelected && (
-                      <span className="absolute top-2 right-2 bg-slate-700 text-white p-1 rounded-full z-10 shadow-xs">
+                      <span className="absolute top-2 right-2 bg-slate-900 text-white p-1 rounded-full z-10 shadow-xs">
                         <Check className="w-3 h-3 text-white" />
                       </span>
                     )}
@@ -2114,7 +2116,7 @@ function DashboardContent() {
               <button
                 type="button"
                 onClick={() => setIsTemplateModalOpen(false)}
-                className="px-5 py-2 bg-slate-700 text-white text-xs font-bold uppercase rounded-xl cursor-pointer"
+                className="px-5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 text-xs font-bold uppercase rounded-xl cursor-pointer"
               >
                 Tutup Modal
               </button>
@@ -2160,12 +2162,12 @@ function DashboardContent() {
                     }}
                     className={`p-4 bg-white border rounded-2xl cursor-pointer transition-all flex flex-col justify-between space-y-3 relative group ${
                       isSelected
-                        ? 'border-slate-700 ring-2 ring-slate-700/30 shadow-md bg-slate-50'
+                        ? 'border-slate-400 ring-2 ring-slate-300 shadow-md bg-slate-50'
                         : 'border-slate-200 hover:border-slate-400 hover:shadow-md'
                     }`}
                   >
                     {isSelected && (
-                      <span className="absolute top-2 right-2 bg-slate-700 text-white p-1 rounded-full z-10 shadow-xs">
+                      <span className="absolute top-2 right-2 bg-slate-900 text-white p-1 rounded-full z-10 shadow-xs">
                         <Check className="w-3 h-3 text-white" />
                       </span>
                     )}
@@ -2194,7 +2196,7 @@ function DashboardContent() {
               <button
                 type="button"
                 onClick={() => setIsCutModalOpen(false)}
-                className="px-5 py-2 bg-slate-700 text-white text-xs font-bold uppercase rounded-xl cursor-pointer"
+                className="px-5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 text-xs font-bold uppercase rounded-xl cursor-pointer"
               >
                 Tutup Modal
               </button>
@@ -2237,7 +2239,7 @@ function DashboardContent() {
                     }}
                     className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-center justify-between space-x-4 group ${
                       isSelected
-                        ? 'bg-slate-800 text-white border-slate-800 shadow-md ring-2 ring-slate-800/20'
+                        ? 'bg-slate-100 text-slate-900 border-slate-400 shadow-md ring-2 ring-slate-300'
                         : 'bg-white text-slate-800 border-slate-200 hover:border-slate-400 hover:bg-slate-50'
                     }`}
                   >
@@ -2249,17 +2251,17 @@ function DashboardContent() {
                       />
                       <div className="min-w-0 flex-1 space-y-0.5">
                         <h4 className="text-xs font-extrabold uppercase line-clamp-1">{sleeve.name}</h4>
-                        <p className={`text-[10px] line-clamp-1 ${isSelected ? 'text-slate-300' : 'text-slate-500'}`}>
+                        <p className="text-[10px] line-clamp-1 text-slate-500">
                           {sleeve.desc || sleeve.description || 'Gaya lengan sublimasi standard'}
                         </p>
                       </div>
                     </div>
 
                     <div className="text-right shrink-0">
-                      <span className={`text-xs font-mono font-black block ${isSelected ? 'text-emerald-400' : 'text-slate-900'}`}>
+                      <span className="text-xs font-mono font-black block text-slate-900">
                         {addOn > 0 ? `+RM ${addOn}.00` : 'STANDARD / FREE'}
                       </span>
-                      <span className={`text-[10px] font-mono block pt-0.5 ${isSelected ? 'text-slate-300' : 'text-slate-400'}`}>
+                      <span className="text-[10px] font-mono block pt-0.5 text-slate-500">
                         {isSelected ? 'DIPILIH ✓' : 'PILIH →'}
                       </span>
                     </div>
@@ -2272,7 +2274,7 @@ function DashboardContent() {
               <button
                 type="button"
                 onClick={() => setIsSleeveModalOpen(false)}
-                className="px-5 py-2 bg-slate-700 text-white text-xs font-bold uppercase rounded-xl cursor-pointer"
+                className="px-5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 text-xs font-bold uppercase rounded-xl cursor-pointer"
               >
                 Tutup Modal
               </button>
@@ -2357,7 +2359,7 @@ function DashboardContent() {
 
               <button
                 onClick={() => setSelectedOrder(null)}
-                className="px-5 py-2.5 bg-slate-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider cursor-pointer"
+                className="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 text-xs font-bold uppercase tracking-wider rounded-xl cursor-pointer"
               >
                 Tutup Spesifikasi
               </button>
@@ -2446,9 +2448,9 @@ function DashboardContent() {
               <div className="flex items-center space-x-3 print:hidden">
                 <button
                   onClick={() => window.print()}
-                  className="px-5 py-2.5 bg-slate-700 hover:bg-slate-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider inline-flex items-center space-x-1.5 shadow-xs cursor-pointer"
+                  className="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 rounded-xl text-xs font-bold uppercase tracking-wider inline-flex items-center space-x-1.5 shadow-xs cursor-pointer"
                 >
-                  <Printer className="w-4 h-4 text-white" />
+                  <Printer className="w-4 h-4 text-slate-900" />
                   <span>Cetak / Simpan PDF</span>
                 </button>
               </div>
