@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { ChevronLeft, ChevronRight, RefreshCw } from 'lucide-react';
+import { ChevronLeft, ChevronRight, RefreshCw, Sparkles } from 'lucide-react';
 import { getDesignTemplates, PLACEHOLDER_IMAGE } from '../lib/supabaseService';
 import TransparentImage from './TransparentImage';
 
@@ -68,8 +68,8 @@ export default function AutoBackgroundStrippedHeroCarousel() {
     return (
       <div className="w-full h-[280px] sm:h-[420px] flex items-center justify-center relative select-none">
         <div className="w-[260px] sm:w-[360px] p-6 bg-white/90 backdrop-blur-md rounded-3xl border border-dashed border-neutral-300 text-center space-y-3 shadow-sm">
-          <div className="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center mx-auto text-[#111111] font-bold text-xl">
-            ✨
+          <div className="w-12 h-12 rounded-full bg-neutral-100 flex items-center justify-center mx-auto text-[#111111]">
+            <Sparkles className="w-6 h-6 text-[#111111]" />
           </div>
           <h3 className="text-sm font-extrabold text-[#111111] uppercase tracking-wider">Katalog Sedia Diisi</h3>
           <p className="text-xs text-neutral-500 font-normal leading-relaxed">

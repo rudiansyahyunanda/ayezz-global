@@ -12,7 +12,8 @@ import {
   ShoppingBag,
   SlidersHorizontal,
   User,
-  RotateCcw
+  RotateCcw,
+  Sparkles
 } from 'lucide-react';
 import InteractiveProductCard from '../../components/InteractiveProductCard';
 import ProductPreviewModal from '../../components/modals/ProductPreviewModal';
@@ -490,8 +491,8 @@ function SpaciousCatalogContent() {
             </div>
           ) : sortedTemplates.length === 0 ? (
             <div className="py-24 text-center bg-[#F5F5F7] rounded-3xl border border-dashed border-neutral-300 p-10 space-y-4">
-              <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center mx-auto text-[#111111] font-bold text-xl shadow-xs">
-                ✨
+              <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center mx-auto text-[#111111] shadow-xs">
+                <Sparkles className="w-6 h-6 text-[#111111]" />
               </div>
               <div className="space-y-1">
                 <p className="text-base font-extrabold text-[#111111] uppercase tracking-wide">Katalog Bersih & Baharu</p>

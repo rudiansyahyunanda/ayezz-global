@@ -332,7 +332,7 @@ function DashboardContent() {
     const generatedOrderId = 'AYZ-' + Math.floor(100000 + Math.random() * 900000);
 
     const finalTemplateTitle = isCustomDesign
-      ? `Reka Bentuk Kustom (Khas) ${orderTemplateName ? `- Base: ${orderTemplateName}` : ''}`
+      ? `Reka Bentuk Kustom ${orderTemplateName ? `- Base: ${orderTemplateName}` : ''}`
       : (orderTemplateName || 'Template Reka Bentuk');
 
     const orderPayload = {
@@ -425,8 +425,8 @@ function DashboardContent() {
     }
     if (s.includes('proses') || s.includes('cetakan') || s.includes('hantar')) {
       return (
-        <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 bg-amber-50 text-amber-700 border border-amber-200 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider">
-          <Clock className="w-3 h-3 text-amber-600 animate-spin" />
+        <span className="inline-flex items-center space-x-1 px-2.5 py-0.5 bg-slate-100 text-slate-800 border border-slate-300 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider">
+          <Clock className="w-3 h-3 text-slate-600 animate-spin" />
           <span>DALAM PROSES</span>
         </span>
       );
@@ -442,7 +442,7 @@ function DashboardContent() {
   if (loading) {
     return (
       <div className="h-screen bg-slate-900 flex flex-col items-center justify-center space-y-4 text-white">
-        <RefreshCw className="w-8 h-8 text-amber-400 animate-spin" />
+        <RefreshCw className="w-8 h-8 text-white animate-spin" />
         <p className="text-xs font-mono font-bold text-slate-400 uppercase tracking-widest">
           MEMUATKAN PANEL PENGGUNA AYEZZ...
         </p>
@@ -486,7 +486,7 @@ function DashboardContent() {
 
           {/* USER PROFILE CARD */}
           <div className="p-4 border-b border-slate-800 bg-slate-950/60 flex items-center space-x-3">
-            <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-black font-mono text-amber-400 shrink-0 shadow-inner">
+            <div className="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-black font-mono text-white shrink-0 shadow-inner">
               {avatarInitials}
             </div>
             <div className="min-w-0 flex-1">
@@ -509,7 +509,7 @@ function DashboardContent() {
               onClick={() => { setActiveTab('overview'); setIsMobileSidebarOpen(false); }}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors font-bold ${
                 activeTab === 'overview'
-                  ? 'bg-slate-800 text-white font-extrabold shadow-xs border-l-4 border-amber-400'
+                  ? 'bg-slate-800 text-white font-extrabold shadow-xs border-l-4 border-white'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
               }`}
             >
@@ -521,7 +521,7 @@ function DashboardContent() {
               onClick={() => { setActiveTab('new-order'); setIsMobileSidebarOpen(false); }}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors font-bold ${
                 activeTab === 'new-order'
-                  ? 'bg-slate-800 text-white font-extrabold shadow-xs border-l-4 border-amber-400'
+                  ? 'bg-slate-800 text-white font-extrabold shadow-xs border-l-4 border-white'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
               }`}
             >
@@ -533,7 +533,7 @@ function DashboardContent() {
               onClick={() => { setActiveTab('orders'); setIsMobileSidebarOpen(false); }}
               className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors font-bold ${
                 activeTab === 'orders'
-                  ? 'bg-slate-800 text-white font-extrabold shadow-xs border-l-4 border-amber-400'
+                  ? 'bg-slate-800 text-white font-extrabold shadow-xs border-l-4 border-white'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
               }`}
             >
@@ -542,7 +542,7 @@ function DashboardContent() {
                 <span>Sejarah Pesanan</span>
               </div>
               {orders.length > 0 && (
-                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-amber-400 border border-slate-700">
+                <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-slate-800 text-slate-200 border border-slate-700">
                   {orders.length}
                 </span>
               )}
@@ -552,7 +552,7 @@ function DashboardContent() {
               onClick={() => { setActiveTab('invoices'); setIsMobileSidebarOpen(false); }}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors font-bold ${
                 activeTab === 'invoices'
-                  ? 'bg-slate-800 text-white font-extrabold shadow-xs border-l-4 border-amber-400'
+                  ? 'bg-slate-800 text-white font-extrabold shadow-xs border-l-4 border-white'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
               }`}
             >
@@ -564,7 +564,7 @@ function DashboardContent() {
               onClick={() => { setActiveTab('profile'); setIsMobileSidebarOpen(false); }}
               className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors font-bold ${
                 activeTab === 'profile'
-                  ? 'bg-slate-800 text-white font-extrabold shadow-xs border-l-4 border-amber-400'
+                  ? 'bg-slate-800 text-white font-extrabold shadow-xs border-l-4 border-white'
                   : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
               }`}
             >
@@ -635,7 +635,7 @@ function DashboardContent() {
               onClick={() => setActiveTab('new-order')}
               className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider rounded-lg transition-all flex items-center space-x-1.5 shadow-xs active:scale-95 cursor-pointer"
             >
-              <Plus className="w-4 h-4 text-amber-400" />
+              <Plus className="w-4 h-4 text-white" />
               <span>Tempahan Baru</span>
             </button>
           </div>
@@ -647,11 +647,11 @@ function DashboardContent() {
           {/* TAB 1: OVERVIEW */}
           {activeTab === 'overview' && (
             <div className="space-y-8">
-              {/* WELCOME BANNER */}
-              <div className="bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 text-white p-8 rounded-2xl border border-slate-800 shadow-md relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+              {/* WELCOME BANNER (MONOCHROME BRAND STYLE) */}
+              <div className="bg-slate-900 text-white p-8 rounded-2xl border border-slate-800 shadow-md relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                 <div className="space-y-2 relative z-10 max-w-xl">
-                  <span className="inline-flex items-center space-x-1 px-3 py-1 bg-amber-400/20 text-amber-300 border border-amber-400/30 rounded-full text-[10px] font-mono font-bold uppercase tracking-widest">
-                    <Sparkles className="w-3 h-3 text-amber-400" />
+                  <span className="inline-flex items-center space-x-1 px-3 py-1 bg-slate-800 text-slate-200 border border-slate-700 rounded-full text-[10px] font-mono font-bold uppercase tracking-widest">
+                    <Sparkles className="w-3 h-3 text-slate-300" />
                     <span>PANEL KAWALAN PELANGGAN</span>
                   </span>
                   <h1 className="text-2xl sm:text-3xl font-black uppercase tracking-tight text-white pt-1">
@@ -664,9 +664,9 @@ function DashboardContent() {
 
                 <button
                   onClick={() => setActiveTab('new-order')}
-                  className="px-6 py-3.5 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-md active:scale-95 flex items-center space-x-2 shrink-0 relative z-10 cursor-pointer"
+                  className="px-6 py-3.5 bg-white hover:bg-slate-100 text-slate-950 font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-md active:scale-95 flex items-center space-x-2 shrink-0 relative z-10 cursor-pointer"
                 >
-                  <ShoppingBag className="w-4 h-4" />
+                  <ShoppingBag className="w-4 h-4 text-slate-950" />
                   <span>Buat Tempahan Jersi Baru →</span>
                 </button>
               </div>
@@ -693,12 +693,12 @@ function DashboardContent() {
                     <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest">
                       DALAM PROSES
                     </span>
-                    <div className="w-10 h-10 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center">
-                      <Clock className="w-5 h-5" />
+                    <div className="w-10 h-10 rounded-xl bg-slate-100 text-slate-800 flex items-center justify-center">
+                      <Clock className="w-5 h-5 text-slate-700" />
                     </div>
                   </div>
                   <div className="flex items-baseline space-x-2">
-                    <span className="text-3xl font-black font-mono text-amber-600">
+                    <span className="text-3xl font-black font-mono text-slate-900">
                       {orders.filter((o) => (o.status || '').toLowerCase().includes('proses') || (o.status || '').toLowerCase().includes('diterima')).length}
                     </span>
                     <span className="text-xs text-slate-500 font-semibold">Aktif</span>
@@ -762,7 +762,7 @@ function DashboardContent() {
                     <p className="text-xs text-slate-500 font-semibold">Belum ada pesanan direkodkan.</p>
                     <button
                       onClick={() => setActiveTab('new-order')}
-                      className="px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold uppercase tracking-wider"
+                      className="px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold uppercase tracking-wider cursor-pointer"
                     >
                       Buat Tempahan Pertama
                     </button>
@@ -814,7 +814,7 @@ function DashboardContent() {
               {/* HEADER BAR FOR NEW ORDER (NO CARD WRAPPER!) */}
               <div className="flex flex-col md:flex-row md:items-center justify-between border-b border-slate-200/80 pb-4 gap-4">
                 <div>
-                  <span className="text-[10px] font-mono font-bold text-amber-600 uppercase tracking-widest block">
+                  <span className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest block">
                     KONFIGURASI SUBLIMASI HIGH-PERFORMANCE
                   </span>
                   <h2 className="text-xl sm:text-2xl font-black uppercase text-slate-900 pt-0.5">
@@ -827,7 +827,7 @@ function DashboardContent() {
 
                 {/* QUICK TEMPLATE COUNTER BADGE */}
                 <div className="flex items-center space-x-2 bg-white px-3.5 py-2 rounded-xl border border-slate-200 shadow-2xs shrink-0">
-                  <Layers className="w-4 h-4 text-amber-500" />
+                  <Layers className="w-4 h-4 text-slate-700" />
                   <span className="text-xs font-mono font-bold text-slate-700">
                     {templates.length} Template Pilihan Sedia Ada
                   </span>
@@ -872,7 +872,7 @@ function DashboardContent() {
                     </div>
                     <div className="flex justify-between pt-1 text-sm font-black text-slate-900">
                       <span>JUMLAH ANGGARAN:</span>
-                      <span className="text-emerald-700">RM {Number(orderSuccessData.totalPrice).toFixed(2)}</span>
+                      <span className="text-slate-900">RM {Number(orderSuccessData.totalPrice).toFixed(2)}</span>
                     </div>
                   </div>
 
@@ -927,11 +927,11 @@ function DashboardContent() {
                               onClick={() => setIsCustomDesign(true)}
                               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer ${
                                 isCustomDesign
-                                  ? 'bg-amber-400 text-slate-950 font-black shadow-xs'
+                                  ? 'bg-slate-900 text-white font-extrabold shadow-xs'
                                   : 'text-slate-600 hover:text-slate-900'
                               }`}
                             >
-                              <Sparkles className="w-3.5 h-3.5 text-slate-950" />
+                              <Sparkles className="w-3.5 h-3.5 text-white" />
                               <span>Custom Design</span>
                             </button>
                           </div>
@@ -969,7 +969,7 @@ function DashboardContent() {
                                 onClick={() => setIsTemplateModalOpen(true)}
                                 className="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-xs flex items-center space-x-1.5 shrink-0 cursor-pointer"
                               >
-                                <Layers className="w-3.5 h-3.5 text-amber-400" />
+                                <Layers className="w-3.5 h-3.5 text-white" />
                                 <span>Tukar Template</span>
                               </button>
                             </div>
@@ -978,9 +978,9 @@ function DashboardContent() {
 
                         {/* MODE B: CUSTOM DESIGN CONFIGURATOR */}
                         {isCustomDesign && (
-                          <div className="space-y-4 p-4 bg-amber-50/60 border border-amber-200/80 rounded-xl">
-                            <div className="flex items-center space-x-2 text-amber-900">
-                              <Sparkles className="w-4 h-4 text-amber-600" />
+                          <div className="space-y-4 p-4 bg-slate-50 border border-slate-200/80 rounded-xl">
+                            <div className="flex items-center space-x-2 text-slate-900">
+                              <Sparkles className="w-4 h-4 text-slate-700" />
                               <span className="text-xs font-bold uppercase tracking-wider">MOD REKA BENTUK KUSTOM (CUSTOM DESIGN)</span>
                             </div>
 
@@ -1236,7 +1236,7 @@ function DashboardContent() {
                         </div>
                       </div>
 
-                      {/* STICKY LIVE PRICE SUMMARY BAR & SUBMIT BUTTON */}
+                      {/* STICKY LIVE PRICE SUMMARY BAR & SUBMIT BUTTON (CLEAN MONOCHROME BRAND STYLE) */}
                       <div className="bg-slate-900 text-white p-6 rounded-2xl shadow-xl space-y-4 sticky top-20 border border-slate-800">
                         <span className="text-[10px] font-mono text-slate-400 block uppercase tracking-widest border-b border-slate-800 pb-2">
                           RINGKASAN ANGGARAN HARGA KILANG
@@ -1259,7 +1259,7 @@ function DashboardContent() {
 
                         <div className="border-t border-slate-800 pt-3">
                           <span className="text-[10px] font-mono text-slate-400 block">JUMLAH KESELURUHAN ({totalQuantity} pcs):</span>
-                          <span className="text-3xl font-black font-mono text-amber-400 block pt-0.5">
+                          <span className="text-3xl font-black font-mono text-white block pt-0.5">
                             RM {totalPrice.toFixed(2)}
                           </span>
                         </div>
@@ -1267,7 +1267,7 @@ function DashboardContent() {
                         <button
                           type="submit"
                           disabled={isSubmittingOrder || totalQuantity <= 0}
-                          className="w-full py-4 bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer"
+                          className="w-full py-4 bg-white hover:bg-slate-100 text-slate-950 font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer border border-slate-200"
                         >
                           {isSubmittingOrder ? (
                             <RefreshCw className="w-4 h-4 animate-spin text-slate-950" />
@@ -1449,7 +1449,7 @@ function DashboardContent() {
                                 onClick={() => setSelectedInvoice(ord)}
                                 className="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-[11px] font-bold transition-colors inline-flex items-center space-x-1 cursor-pointer"
                               >
-                                <Printer className="w-3.5 h-3.5 text-amber-400" />
+                                <Printer className="w-3.5 h-3.5 text-white" />
                                 <span>Lihat Invois</span>
                               </button>
                             </td>
@@ -1652,7 +1652,7 @@ function DashboardContent() {
                   >
                     {isSelected && (
                       <span className="absolute top-2 right-2 bg-slate-900 text-white p-1 rounded-full z-10 shadow-xs">
-                        <Check className="w-3 h-3 text-amber-400" />
+                        <Check className="w-3 h-3 text-white" />
                       </span>
                     )}
 
@@ -1676,7 +1676,7 @@ function DashboardContent() {
               <button
                 type="button"
                 onClick={() => setIsTemplateModalOpen(false)}
-                className="px-5 py-2 bg-slate-900 text-white text-xs font-bold uppercase rounded-xl"
+                className="px-5 py-2 bg-slate-900 text-white text-xs font-bold uppercase rounded-xl cursor-pointer"
               >
                 Batal
               </button>
@@ -1790,7 +1790,7 @@ function DashboardContent() {
               </div>
 
               <div className="text-right space-y-1">
-                <span className="text-xs font-mono font-black uppercase text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-200">
+                <span className="text-xs font-mono font-black uppercase text-slate-900 bg-slate-100 px-3 py-1 rounded-full border border-slate-300">
                   INVOIS RASMI KILANG
                 </span>
                 <h2 className="text-xl font-mono font-black text-slate-900 pt-1">INV-{selectedInvoice.id}</h2>
@@ -1852,7 +1852,7 @@ function DashboardContent() {
                   onClick={() => window.print()}
                   className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider inline-flex items-center space-x-1.5 shadow-xs cursor-pointer"
                 >
-                  <Printer className="w-4 h-4 text-amber-400" />
+                  <Printer className="w-4 h-4 text-white" />
                   <span>Cetak / Simpan PDF</span>
                 </button>
               </div>
@@ -1869,7 +1869,7 @@ export default function UserDashboardPage() {
   return (
     <Suspense fallback={
       <div className="h-screen bg-slate-900 flex flex-col items-center justify-center space-y-4 text-white">
-        <RefreshCw className="w-8 h-8 text-amber-400 animate-spin" />
+        <RefreshCw className="w-8 h-8 text-white animate-spin" />
         <p className="text-xs font-mono font-bold text-slate-400 uppercase tracking-widest">
           MEMUATKAN PANEL PENGGUNA AYEZZ...
         </p>
