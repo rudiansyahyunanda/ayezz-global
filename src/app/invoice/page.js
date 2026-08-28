@@ -45,13 +45,17 @@ function InvoiceContent() {
           const { data, error } = await supabase
             .from('orders')
             .select('*')
-            .or(`order_id.eq.${orderId},id.eq.${orderId}`)
-            .single();
+            .eq('id', orderId)
+            .maybeSingle();
 
           if (data) {
+            const totalQty = Number(data.total_qty || 1);
+            const totalPrice = Number(data.total_price || 0);
+            const unitPrice = totalQty > 0 ? (totalPrice / totalQty) : Number(data.unit_price || 0);
+
             foundOrder = {
               id: data.id,
-              orderId: data.order_id || data.id,
+              orderId: data.id,
               userEmail: data.user_email || '',
               client: data.client_name || 'Pelanggan System',
               customerPhone: data.customer_phone || '-',
@@ -67,15 +71,15 @@ function InvoiceContent() {
               customDesignRefUrl: data.custom_design_ref_url || '',
               notes: data.notes || '',
               sizeBreakdown: data.size_breakdown || {},
-              qty: data.total_qty || 1,
-              unitPrice: Number(data.unit_price || 70),
-              totalPrice: Number(data.total_price || 70),
-              paymentStatus: data.payment_status || 'paid',
-              paymentId: data.payment_id || data.chip_purchase_id || 'CHIP-TX-8829',
+              qty: totalQty,
+              unitPrice: unitPrice,
+              totalPrice: totalPrice,
+              paymentStatus: (data.status || '').includes('Lunas') ? 'paid' : (data.payment_status || 'pending'),
+              paymentId: data.payment_id || data.chip_purchase_id || 'CHIP-COLLECT-ONLINE',
               date: new Date(data.created_at || Date.now()).toLocaleDateString('ms-MY', {
                 day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
               }),
-              status: data.status || 'Pesanan Diterima & Lunas'
+              status: data.status || 'Pesanan Diterima'
             };
           }
         } catch (err) {
@@ -87,7 +91,19 @@ function InvoiceContent() {
       if (!foundOrder && typeof window !== 'undefined') {
         try {
           const localOrders = JSON.parse(localStorage.getItem('ayezz_user_orders') || '[]');
-          foundOrder = localOrders.find(o => o.orderId === orderId || o.id === orderId);
+          const match = localOrders.find(o => o.orderId === orderId || o.id === orderId);
+          if (match) {
+            const totalQty = Number(match.qty || match.totalQty || 1);
+            const totalPrice = Number(match.totalPrice || match.total_price || 0);
+            const unitPrice = totalQty > 0 ? (totalPrice / totalQty) : Number(match.unitPrice || 0);
+            foundOrder = {
+              ...match,
+              orderId: match.orderId || match.id || orderId,
+              qty: totalQty,
+              unitPrice: unitPrice,
+              totalPrice: totalPrice
+            };
+          }
         } catch (e) {}
       }
 
@@ -289,8 +305,12 @@ function InvoiceContent() {
                         )}
                       </td>
                       <td className="py-4 px-4 text-center font-mono font-bold text-slate-900">{order?.qty} pcs</td>
-                      <td className="py-4 px-4 text-right font-mono font-bold text-slate-900">RM {Number(order?.unitPrice || 70).toFixed(2)}</td>
-                      <td className="py-4 px-4 text-right font-mono font-black text-slate-900">RM {Number(order?.totalPrice || 70).toFixed(2)}</td>
+                      <td className="py-4 px-4 text-right font-mono font-bold text-slate-900">
+                        RM {Number(order?.unitPrice ?? (order?.qty ? order?.totalPrice / order?.qty : 0)).toFixed(2)}
+                      </td>
+                      <td className="py-4 px-4 text-right font-mono font-black text-slate-900">
+                        RM {Number(order?.totalPrice || 0).toFixed(2)}
+                      </td>
                     </tr>
                   </tbody>
                 </table>
