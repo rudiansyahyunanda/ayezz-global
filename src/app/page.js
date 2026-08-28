@@ -138,28 +138,19 @@ export default function SmoothHeaderHomepage() {
             {currentUser ? (
               <Link
                 href="/dashboard"
-                className="px-4 py-2 bg-neutral-100 hover:bg-neutral-200 text-[#111111] font-bold text-[11px] uppercase tracking-[0.12em] rounded-full transition-all flex items-center space-x-1.5 border border-neutral-200"
+                className="px-4 py-2 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-[11px] uppercase tracking-[0.12em] rounded-full transition-all flex items-center space-x-1.5 shadow-2xs"
               >
-                <User className="w-3.5 h-3.5 text-[#111111]" />
+                <User className="w-3.5 h-3.5 text-white" />
                 <span className="line-clamp-1 max-w-[110px]">{currentUser.fullName || 'Dashboard'}</span>
               </Link>
             ) : (
               <Link
                 href="/login"
-                className="px-4 py-2 text-[#111111] hover:text-neutral-500 font-bold text-[11px] uppercase tracking-[0.12em] transition-colors hidden sm:block"
+                className="px-4 py-2 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-[11px] uppercase tracking-[0.12em] rounded-full transition-all shadow-2xs"
               >
                 Log Masuk
               </Link>
             )}
-
-            <button
-              onClick={handleTempahCustomClick}
-              className={`bg-[#111111] hover:bg-neutral-800 text-white font-bold text-[11px] uppercase tracking-[0.12em] rounded-full transition-all duration-500 active:scale-[0.98] flex items-center space-x-2 shadow-2xs ${isScrolled ? 'px-5 py-2' : 'px-6 py-2.5'
-                }`}
-            >
-              <ShoppingBag className="w-3.5 h-3.5 text-white" />
-              <span>Tempah Custom</span>
-            </button>
           </div>
         </div>
       </header>
