@@ -2,7 +2,7 @@
 
 export const dynamic = 'force-dynamic';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { Suspense, useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import {
@@ -56,7 +56,7 @@ import {
 import { uploadDirectToSupabaseStorage } from '../../lib/imageService';
 import MobileBottomNav from '../../components/MobileBottomNav';
 
-export default function UserDashboardPage() {
+function DashboardContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -383,14 +383,10 @@ export default function UserDashboardPage() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans antialiased flex flex-col select-none">
       
-      {/* ========================================================================= */}
       {/* MAIN CONTAINER WITH SIDEBAR & CONTENT AREA */}
-      {/* ========================================================================= */}
       <div className="flex-1 flex overflow-hidden">
 
-        {/* ----------------------------------------------------------------------- */}
-        {/* LEFT SIDEBAR NAVIGATION PANEL (DESKTOP & MOBILE DRAWER) */}
-        {/* ----------------------------------------------------------------------- */}
+        {/* LEFT SIDEBAR NAVIGATION PANEL */}
         <aside
           className={`fixed inset-y-0 left-0 z-50 w-72 bg-slate-900 text-slate-300 flex flex-col border-r border-slate-800 transition-transform duration-300 ease-in-out md:static md:translate-x-0 ${
             isMobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'
@@ -533,9 +529,7 @@ export default function UserDashboardPage() {
           />
         )}
 
-        {/* ----------------------------------------------------------------------- */}
         {/* RIGHT CONTENT AREA */}
-        {/* ----------------------------------------------------------------------- */}
         <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
 
           {/* TOP RIGHT HEADER BAR */}
@@ -575,9 +569,7 @@ export default function UserDashboardPage() {
           {/* RIGHT CONTENT BODY CANVAS */}
           <main className="p-6 sm:p-10 flex-1 space-y-8 max-w-7xl w-full mx-auto pb-24 md:pb-10">
 
-            {/* =================================================================== */}
-            {/* TAB 1: OVERVIEW (DASHBOARD UTAMA) */}
-            {/* =================================================================== */}
+            {/* TAB 1: OVERVIEW */}
             {activeTab === 'overview' && (
               <div className="space-y-8">
                 {/* WELCOME BANNER */}
@@ -741,13 +733,10 @@ export default function UserDashboardPage() {
               </div>
             )}
 
-            {/* =================================================================== */}
-            {/* TAB 2: BUAT PESANAN BARU (FORM PESANAN & CONFIGURATOR) */}
-            {/* =================================================================== */}
+            {/* TAB 2: BUAT PESANAN BARU */}
             {activeTab === 'new-order' && (
               <div className="space-y-8 max-w-4xl mx-auto">
                 {orderSuccessData ? (
-                  /* ORDER SUCCESS RECEIPT CONFIRMATION BANNER */
                   <div className="bg-white p-8 rounded-3xl border border-slate-200/80 shadow-md text-center space-y-6">
                     <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto">
                       <CheckCircle2 className="w-9 h-9" />
@@ -765,7 +754,6 @@ export default function UserDashboardPage() {
                       </p>
                     </div>
 
-                    {/* Summary Info */}
                     <div className="p-6 bg-slate-50 rounded-2xl border border-slate-200 text-left space-y-3 max-w-md mx-auto text-xs font-mono">
                       <div className="flex justify-between border-b border-slate-200 pb-2">
                         <span className="text-slate-500">Reka Bentuk:</span>
@@ -799,7 +787,6 @@ export default function UserDashboardPage() {
                     </div>
                   </div>
                 ) : (
-                  /* FULL ORDER CONFIGURATOR FORM */
                   <form onSubmit={handleCreateNewOrder} className="bg-white rounded-3xl border border-slate-200/80 shadow-md p-6 sm:p-10 space-y-8">
                     <div className="border-b border-slate-100 pb-5">
                       <span className="text-[10px] font-mono font-bold text-amber-600 uppercase tracking-widest block">
@@ -1042,9 +1029,7 @@ export default function UserDashboardPage() {
               </div>
             )}
 
-            {/* =================================================================== */}
-            {/* TAB 3: SEJARAH PESANAN (ORDERS HISTORY TABLE) */}
-            {/* =================================================================== */}
+            {/* TAB 3: SEJARAH PESANAN */}
             {activeTab === 'orders' && (
               <div className="space-y-6">
                 <div className="bg-white p-6 rounded-3xl border border-slate-200/80 shadow-xs space-y-4">
@@ -1155,9 +1140,7 @@ export default function UserDashboardPage() {
               </div>
             )}
 
-            {/* =================================================================== */}
-            {/* TAB 4: INVOIS & RESIT (INVOICES & RECEIPTS) */}
-            {/* =================================================================== */}
+            {/* TAB 4: INVOIS & RESIT */}
             {activeTab === 'invoices' && (
               <div className="space-y-6">
                 <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-xs space-y-6">
@@ -1220,9 +1203,7 @@ export default function UserDashboardPage() {
               </div>
             )}
 
-            {/* =================================================================== */}
-            {/* TAB 5: TETAPAN PROFIL & AKAUN (PROFILE SETTINGS) */}
-            {/* =================================================================== */}
+            {/* TAB 5: TETAPAN PROFIL */}
             {activeTab === 'profile' && (
               <div className="max-w-2xl mx-auto bg-white border border-slate-200/80 rounded-3xl p-8 shadow-xs space-y-6">
                 <div className="space-y-1 border-b border-slate-100 pb-4">
@@ -1326,9 +1307,7 @@ export default function UserDashboardPage() {
         </div>
       </div>
 
-      {/* ========================================================================= */}
       {/* ORDER SPECIFICATION MODAL DRAWER */}
-      {/* ========================================================================= */}
       {selectedOrder && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs">
           <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 space-y-6 shadow-2xl relative border border-slate-200 font-sans">
@@ -1413,9 +1392,7 @@ export default function UserDashboardPage() {
         </div>
       )}
 
-      {/* ========================================================================= */}
       {/* INVOICE & RECEIPT PRINTABLE MODAL VIEWER */}
-      {/* ========================================================================= */}
       {selectedInvoice && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs">
           <div className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-10 space-y-6 shadow-2xl relative border border-slate-200 font-sans max-h-[92vh] overflow-y-auto">
@@ -1509,5 +1486,20 @@ export default function UserDashboardPage() {
       {/* MOBILE APP BOTTOM NAVIGATION DOCK */}
       <MobileBottomNav currentUser={user} />
     </div>
+  );
+}
+
+export default function UserDashboardPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-slate-900 flex flex-col items-center justify-center space-y-4 text-white">
+        <RefreshCw className="w-8 h-8 text-amber-400 animate-spin" />
+        <p className="text-xs font-mono font-bold text-slate-400 uppercase tracking-widest">
+          MEMUATKAN PANEL PENGGUNA AYEZZ...
+        </p>
+      </div>
+    }>
+      <DashboardContent />
+    </Suspense>
   );
 }
