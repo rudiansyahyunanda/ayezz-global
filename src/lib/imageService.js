@@ -50,71 +50,10 @@ export async function deleteImageFromSupabaseStorage(imageUrlOrUrls) {
 }
 
 /**
- * Automatically removes solid white / light background box from image canvas,
- * making the jersey float seamlessly on transparent background!
- */
-export function stripSolidBackgroundFromCanvas(ctx, width, height) {
-  try {
-    const imgData = ctx.getImageData(0, 0, width, height);
-    const data = imgData.data;
-
-    // Sample the 4 corner pixels
-    const corners = [
-      0,
-      (width - 1) * 4,
-      (height - 1) * width * 4,
-      ((height - 1) * width + (width - 1)) * 4
-    ];
-
-    let rSum = 0, gSum = 0, bSum = 0, count = 0;
-    for (const idx of corners) {
-      if (data[idx + 3] > 0) {
-        rSum += data[idx];
-        gSum += data[idx + 1];
-        bSum += data[idx + 2];
-        count++;
-      }
-    }
-
-    if (count === 0) return; // Already transparent!
-
-    const bgR = rSum / count;
-    const bgG = gSum / count;
-    const bgB = bSum / count;
-
-    // Check if background is solid light/white
-    const isLightBg = bgR > 215 && bgG > 215 && bgB > 215;
-
-    if (isLightBg) {
-      for (let i = 0; i < data.length; i += 4) {
-        const r = data[i];
-        const g = data[i + 1];
-        const b = data[i + 2];
-        const a = data[i + 3];
-
-        if (a > 0) {
-          const dist = Math.sqrt((r - bgR) ** 2 + (g - bgG) ** 2 + (b - bgB) ** 2);
-          if (dist < 32) {
-            if (dist < 15) {
-              data[i + 3] = 0; // Fully transparent
-            } else {
-              data[i + 3] = Math.round(((dist - 15) / 17) * a); // Smooth edge fade
-            }
-          }
-        }
-      }
-      ctx.putImageData(imgData, 0, 0);
-    }
-  } catch (err) {
-    console.warn('[ImageService] Auto background stripping warning:', err);
-  }
-}
-
-/**
  * Client-Side HTML5 Canvas WebP Converter:
  * - Accepts JPG, PNG, GIF, WebP, etc.
  * - Preserves Full HD crisp resolution up to 1920px
- * - Automatically strips solid white/light background box so jersey floats 100% transparently
+ * - Preserves 100% original alpha channel / transparency from source file
  * - Converts to crystal clear image/webp Blob (Quality 0.92)
  */
 export async function convertImageToWebpBlob(fileOrDataUrl, maxDimension = 1920, quality = 0.92) {
@@ -148,9 +87,6 @@ export async function convertImageToWebpBlob(fileOrDataUrl, maxDimension = 1920,
         ctx.imageSmoothingQuality = 'high';
         ctx.drawImage(img, 0, 0, width, height);
 
-        // Strip solid white background box automatically!
-        stripSolidBackgroundFromCanvas(ctx, width, height);
-
         canvas.toBlob(
           (blob) => {
             if (blob) {
@@ -182,7 +118,7 @@ export async function convertImageToWebpBlob(fileOrDataUrl, maxDimension = 1920,
 
 /**
  * Upload image directly to Supabase Storage Bucket ('ayezz-assets')
- * ALWAYS converts input image to crystal clear transparent .webp format before uploading!
+ * ALWAYS converts input image to crystal clear .webp format before uploading!
  */
 export async function uploadDirectToSupabaseStorage(fileOrDataUrl, filenameHint = 'image') {
   if (!isSupabaseConnected) {
@@ -193,7 +129,7 @@ export async function uploadDirectToSupabaseStorage(fileOrDataUrl, filenameHint 
   let mimeType = 'image/webp';
   let fileExt = 'webp';
 
-  // 1. Try converting to Ultra HD Transparent WebP Blob on client browser (1920px max, 0.92 quality)
+  // 1. Try converting to Ultra HD WebP Blob on client browser (1920px max, 0.92 quality)
   try {
     const webpBlob = await convertImageToWebpBlob(fileOrDataUrl, 1920, 0.92);
     if (webpBlob && webpBlob.size > 0) {
@@ -225,7 +161,7 @@ export async function uploadDirectToSupabaseStorage(fileOrDataUrl, filenameHint 
   const safeName = String(filenameHint).replace(/[^a-zA-Z0-9_-]/g, '_').toLowerCase();
   const filename = `${safeName}_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
 
-  console.log(`[SupabaseStorage] Uploading Transparent WebP ${filename} to bucket 'ayezz-assets'...`);
+  console.log(`[SupabaseStorage] Uploading WebP ${filename} to bucket 'ayezz-assets'...`);
 
   const { data: uploadData, error: uploadError } = await supabase.storage
     .from('ayezz-assets')
