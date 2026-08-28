@@ -130,8 +130,8 @@ export default function SmoothHeaderHomepage() {
             <img
               src="/logo/ayezz-logo-01.svg"
               alt="AYEZZ GLOBAL Logo"
-              className={`w-auto transition-all duration-500 group-hover:scale-[1.02] ${isScrolled ? 'h-5 sm:h-6' : 'h-5.5 sm:h-7'
-                }`}
+              style={{ height: isScrolled ? '24px' : '28px', width: 'auto' }}
+              className="h-6 sm:h-7 w-auto transition-all duration-300 group-hover:scale-[1.02] block shrink-0 object-contain"
             />
           </Link>
 
@@ -249,48 +249,43 @@ export default function SmoothHeaderHomepage() {
                   <div
                     key={cat.id || cat.code || idx}
                     onClick={() => handleCategoryClick(cat.title)}
-                    className="group shrink-0 w-[240px] sm:w-[290px] snap-start cursor-pointer flex flex-col items-center select-none"
+                    className="group shrink-0 w-[280px] sm:w-[325px] snap-start cursor-pointer flex flex-col items-center select-none"
                   >
-                    {/* APPLE SQUIRCLE CARD CONTAINER (rounded-[28px]) */}
-                    <div className="w-full aspect-[4/3] sm:aspect-square rounded-[24px] sm:rounded-[28px] overflow-hidden bg-white relative flex items-center justify-center p-3 sm:p-4 shadow-2xs hover:shadow-md transition-all duration-500 border border-neutral-200/50">
+                    {/* APPLE SQUIRCLE CARD CONTAINER (rounded-[28px] sm:rounded-[32px]) */}
+                    <div className="w-full aspect-[4/4.4] sm:aspect-square rounded-[28px] sm:rounded-[32px] overflow-hidden bg-white relative flex items-center justify-center p-3 sm:p-4 shadow-xs hover:shadow-md transition-all duration-500 border border-neutral-200/60">
                       <img
                         src={cat.thumbnail || '/images/catalog/jersey-olahraga.jfif'}
                         alt={cat.title}
-                        className="w-full h-full object-cover rounded-[16px] sm:rounded-[20px] transition-transform duration-700 ease-out group-hover:scale-[1.04] img-crisp"
+                        className="w-full h-full object-cover rounded-[20px] sm:rounded-[24px] transition-transform duration-700 ease-out group-hover:scale-[1.04] img-crisp"
                       />
                     </div>
 
                     {/* APPLE STYLE SWATCH DOTS */}
-                    <div className="flex items-center justify-center space-x-1.5 my-2.5">
-                      <span className={`w-2 h-2 rounded-full transition-all ${idx % 3 === 0 ? 'bg-[#1D1D1F]' : 'bg-neutral-300'}`} />
-                      <span className={`w-2 h-2 rounded-full transition-all ${idx % 3 === 1 ? 'bg-[#1D1D1F]' : 'bg-neutral-300'}`} />
-                      <span className={`w-2 h-2 rounded-full transition-all ${idx % 3 === 2 ? 'bg-[#1D1D1F]' : 'bg-neutral-300'}`} />
+                    <div className="flex items-center justify-center space-x-1.5 my-3">
+                      <span className={`w-2.5 h-2.5 rounded-full transition-all ${idx % 3 === 0 ? 'bg-[#1D1D1F]' : 'bg-neutral-300'}`} />
+                      <span className={`w-2.5 h-2.5 rounded-full transition-all ${idx % 3 === 1 ? 'bg-[#1D1D1F]' : 'bg-neutral-300'}`} />
+                      <span className={`w-2.5 h-2.5 rounded-full transition-all ${idx % 3 === 2 ? 'bg-[#1D1D1F]' : 'bg-neutral-300'}`} />
                     </div>
 
                     {/* APPLE TYPOGRAPHY BELOW CARD */}
-                    <h3 className="text-base sm:text-lg font-semibold text-[#1D1D1F] text-center tracking-tight group-hover:text-[#0066CC] transition-colors">
+                    <h3 className="text-lg sm:text-xl font-semibold text-[#1D1D1F] text-center tracking-tight group-hover:text-[#0066CC] transition-colors">
                       {cat.title}
                     </h3>
-                    <p className="text-[11px] sm:text-xs text-[#86868B] font-normal text-center max-w-[220px] leading-relaxed mt-0.5 mb-3 line-clamp-2">
+                    <p className="text-xs sm:text-sm text-[#86868B] font-normal text-center max-w-[240px] leading-relaxed mt-1 mb-4 line-clamp-2">
                       {cat.description || cat.itemCount || 'Reka bentuk sublimasi berkualiti tinggi dengan kustomisasi bebas.'}
                     </p>
 
-                    {/* APPLE ACTION BUTTON & BLUE LINK ROW */}
-                    <div className="flex items-center space-x-3 mt-auto pt-1">
+                    {/* APPLE ACTION BUTTON (CLEAN SINGLE PRIMARY BLUE CAPSULE) */}
+                    <div className="mt-auto pt-1 pb-2">
                       <button
                         onClick={(e) => {
                           e.stopPropagation();
                           handleCategoryClick(cat.title);
                         }}
-                        className="bg-[#0071E3] hover:bg-[#0077ED] active:scale-95 text-white font-medium text-xs px-3.5 py-1.5 rounded-full transition-all shadow-2xs"
+                        className="bg-[#0071E3] hover:bg-[#0077ED] active:scale-95 text-white font-medium text-xs sm:text-sm px-5 py-2 rounded-full transition-all shadow-2xs"
                       >
                         Selengkapnya
                       </button>
-
-                      <span className="text-[#0066CC] hover:underline text-xs font-normal flex items-center space-x-0.5">
-                        <span>Tempah</span>
-                        <ChevronRight className="w-3 h-3" />
-                      </span>
                     </div>
                   </div>
                 ))}
