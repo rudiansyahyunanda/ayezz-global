@@ -16,7 +16,10 @@ import {
   CheckCircle2,
   ShieldCheck,
   Clock,
-  User
+  User,
+  Play,
+  Film,
+  X
 } from 'lucide-react';
 import ProductOrderModal from '../components/modals/ProductOrderModal';
 import HeroCarousel from '../components/HeroCarousel';
@@ -24,7 +27,9 @@ import MobileBottomNav from '../components/MobileBottomNav';
 import { getCurrentUser } from '../lib/authService';
 import {
   getCategories,
-  getDesignTemplates
+  getDesignTemplates,
+  getShowcaseFeatureFromSupabase,
+  DEFAULT_SHOWCASE_FEATURE
 } from '../lib/supabaseService';
 import { MAIN_CATALOGS, DESIGN_TEMPLATES } from '../data/sublimationProducts';
 
@@ -33,6 +38,8 @@ export default function SmoothHeaderHomepage() {
   const [currentUser, setCurrentUser] = useState(null);
   const [categories, setCategories] = useState([]);
   const [templates, setTemplates] = useState([]);
+  const [showcaseFeature, setShowcaseFeature] = useState(DEFAULT_SHOWCASE_FEATURE);
+  const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [orderedProduct, setOrderedProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -70,18 +77,21 @@ export default function SmoothHeaderHomepage() {
   const loadData = async () => {
     setIsLoading(true);
     try {
-      const [cats, tpls, usr] = await Promise.all([
+      const [cats, tpls, usr, showcase] = await Promise.all([
         getCategories(),
         getDesignTemplates(),
-        getCurrentUser()
+        getCurrentUser(),
+        getShowcaseFeatureFromSupabase()
       ]);
       setCategories(Array.isArray(cats) && cats.length > 0 ? cats : MAIN_CATALOGS);
       setTemplates(Array.isArray(tpls) && tpls.length > 0 ? tpls : DESIGN_TEMPLATES);
       setCurrentUser(usr);
+      setShowcaseFeature(showcase || DEFAULT_SHOWCASE_FEATURE);
     } catch (err) {
       console.warn('Error loading homepage data from Supabase:', err);
       setCategories(MAIN_CATALOGS);
       setTemplates(DESIGN_TEMPLATES);
+      setShowcaseFeature(DEFAULT_SHOWCASE_FEATURE);
     } finally {
       setIsLoading(false);
     }
@@ -309,6 +319,88 @@ export default function SmoothHeaderHomepage() {
           )}
         </div>
       </section>
+
+      {/* 4.5. APPLE "LIHAT LEBIH DEKAT." FEATURE SHOWCASE BANNER (1:1 APPLE STORE SYSTEM) */}
+      {showcaseFeature && showcaseFeature.isActive && (
+        <section className="py-12 sm:py-20 px-4 sm:px-12 bg-[#F5F5F7]/40 border-b border-neutral-200/60 select-none">
+          <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
+            <h2 className="text-2.5xl sm:text-4xl font-semibold tracking-tight text-[#1D1D1F]">
+              {showcaseFeature.sectionTitle || 'Lihat lebih dekat.'}
+            </h2>
+
+            {/* APPLE 1:1 BANNER CARD (rounded-[32px]) */}
+            <div className="relative w-full aspect-[16/9] sm:aspect-[21/9] min-h-[320px] sm:min-h-[420px] rounded-[28px] sm:rounded-[36px] overflow-hidden bg-[#111111] shadow-md flex items-center justify-center p-6 sm:p-12 border border-neutral-200/50 group">
+              {/* Cover Background Image */}
+              <img
+                src={showcaseFeature.coverImage || '/images/catalog/jersey-olahraga.jfif'}
+                alt={showcaseFeature.headline || 'Showcase'}
+                className="absolute inset-0 w-full h-full object-cover object-center transition-transform duration-1000 ease-out group-hover:scale-[1.03] opacity-75"
+              />
+
+              {/* Dark Ambient Gradient Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/45 to-black/20" />
+
+              {/* Content Overlay */}
+              <div className="relative z-10 max-w-xl text-center flex flex-col items-center space-y-3 sm:space-y-5">
+                <h3 className="text-2xl sm:text-4xl font-bold text-white tracking-tight leading-tight">
+                  {showcaseFeature.headline}
+                </h3>
+                
+                {showcaseFeature.subHeadline && (
+                  <p className="text-xs sm:text-sm text-neutral-300 font-normal leading-relaxed max-w-md line-clamp-3">
+                    {showcaseFeature.subHeadline}
+                  </p>
+                )}
+
+                <button
+                  onClick={() => setIsVideoModalOpen(true)}
+                  className="px-6 py-3 sm:px-7 sm:py-3.5 bg-[#1D1D1F]/90 hover:bg-black text-white font-medium text-xs sm:text-sm rounded-full transition-all active:scale-95 shadow-md flex items-center space-x-2.5 border border-white/20 backdrop-blur-md cursor-pointer mt-2"
+                >
+                  <Play className="w-4 h-4 text-white fill-white" />
+                  <span>{showcaseFeature.buttonText || 'Tonton video'}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* VIDEO / SHOWCASE MODAL */}
+      {isVideoModalOpen && showcaseFeature && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md select-none">
+          <div className="bg-[#111111] rounded-3xl max-w-4xl w-full overflow-hidden shadow-2xl relative border border-neutral-800 flex flex-col">
+            <div className="px-6 py-4 bg-neutral-900/90 border-b border-neutral-800 flex items-center justify-between">
+              <span className="text-xs font-mono font-bold text-neutral-400 uppercase tracking-widest truncate pr-2">
+                {showcaseFeature.headline}
+              </span>
+              <button
+                onClick={() => setIsVideoModalOpen(false)}
+                className="p-1.5 bg-neutral-800 hover:bg-neutral-700 text-white rounded-full transition-colors shrink-0"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <div className="w-full aspect-video bg-black relative flex items-center justify-center overflow-hidden">
+              {showcaseFeature.videoUrl && showcaseFeature.videoUrl.includes('embed') ? (
+                <iframe
+                  src={showcaseFeature.videoUrl}
+                  title="Showcase Video"
+                  className="w-full h-full border-0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                />
+              ) : (
+                <div className="p-8 text-center space-y-4 max-w-md">
+                  <Film className="w-12 h-12 text-neutral-400 mx-auto" />
+                  <h4 className="text-base font-bold text-white uppercase">{showcaseFeature.headline}</h4>
+                  <p className="text-xs text-neutral-400 leading-relaxed">{showcaseFeature.subHeadline}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* 5. FACTORY & TECHNICAL FEATURES SECTION (PURE APPLE MONOCHROME MINIMALIST) */}
       <section id="teknologi" className="py-16 sm:py-36 px-4 sm:px-12 bg-[#000000] text-white border-t border-neutral-900 relative">

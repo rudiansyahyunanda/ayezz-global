@@ -712,3 +712,83 @@ export async function updateUserRoleInSupabase(userId, newRole) {
     console.error('Error updating user role in Supabase:', err);
   }
 }
+
+// ==========================================
+// 7. SHOWCASE FEATURE (Apple "Lihat lebih dekat." Banner Manager)
+// ==========================================
+export const DEFAULT_SHOWCASE_FEATURE = {
+  id: 'showcase_default',
+  sectionTitle: 'Lihat lebih dekat.',
+  headline: 'Tur Terpandu Kilang Sublimasi AYEZZ GLOBAL',
+  subHeadline: 'Lihat proses pengeluaran cetakan sublimasi HD, pemotongan fabrik berpresisi tinggi, dan hasil seragam custom berkualiti standard kilang.',
+  coverImage: '/images/catalog/jersey-olahraga.jfif',
+  buttonText: 'Tonton video',
+  videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
+  isActive: true
+};
+
+export async function getShowcaseFeatureFromSupabase() {
+  if (!isSupabaseConnected) {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('ayezz_showcase_feature');
+        if (stored) return JSON.parse(stored);
+      } catch (e) {}
+    }
+    return DEFAULT_SHOWCASE_FEATURE;
+  }
+
+  try {
+    const { data } = await supabase.from('showcase_feature').select('*').limit(1).maybeSingle();
+    if (data) {
+      return {
+        id: data.id || 'showcase_default',
+        sectionTitle: data.section_title || data.sectionTitle || DEFAULT_SHOWCASE_FEATURE.sectionTitle,
+        headline: data.headline || DEFAULT_SHOWCASE_FEATURE.headline,
+        subHeadline: data.sub_headline || data.subHeadline || DEFAULT_SHOWCASE_FEATURE.subHeadline,
+        coverImage: data.cover_image || data.coverImage || DEFAULT_SHOWCASE_FEATURE.coverImage,
+        buttonText: data.button_text || data.buttonText || DEFAULT_SHOWCASE_FEATURE.buttonText,
+        videoUrl: data.video_url || data.videoUrl || DEFAULT_SHOWCASE_FEATURE.videoUrl,
+        isActive: data.is_active !== undefined ? data.is_active : true
+      };
+    }
+  } catch (err) {
+    console.warn('Supabase getShowcaseFeature error:', err);
+  }
+
+  if (typeof window !== 'undefined') {
+    try {
+      const stored = localStorage.getItem('ayezz_showcase_feature');
+      if (stored) return JSON.parse(stored);
+    } catch (e) {}
+  }
+  return DEFAULT_SHOWCASE_FEATURE;
+}
+
+export async function saveShowcaseFeatureToSupabase(payload) {
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem('ayezz_showcase_feature', JSON.stringify(payload));
+    } catch (e) {}
+  }
+
+  if (!isSupabaseConnected) return payload;
+
+  try {
+    const dbPayload = {
+      id: payload.id || 'showcase_default',
+      section_title: payload.sectionTitle,
+      headline: payload.headline,
+      sub_headline: payload.subHeadline,
+      cover_image: payload.coverImage,
+      button_text: payload.buttonText,
+      video_url: payload.videoUrl,
+      is_active: payload.isActive,
+      updated_at: new Date().toISOString()
+    };
+    await supabase.from('showcase_feature').upsert([dbPayload], { onConflict: 'id' });
+  } catch (err) {
+    console.warn('Error saving showcase feature to Supabase:', err);
+  }
+  return payload;
+}

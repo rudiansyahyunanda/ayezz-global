@@ -22,7 +22,9 @@ import {
   Users,
   UserCheck,
   Shield,
-  Search
+  Search,
+  Tv,
+  Film
 } from 'lucide-react';
 import ImageUploadCropper from './ImageUploadCropper';
 import MultiImageUploadCropper from './MultiImageUploadCropper';
@@ -61,7 +63,10 @@ import {
   updateStoreSettingsInSupabase,
   getUsersFromSupabase,
   deleteUserFromSupabase,
-  updateUserRoleInSupabase
+  updateUserRoleInSupabase,
+  getShowcaseFeatureFromSupabase,
+  saveShowcaseFeatureToSupabase,
+  DEFAULT_SHOWCASE_FEATURE
 } from '../../lib/supabaseService';
 
 export default function AdminDashboard({ onSwitchToStorefront }) {
@@ -77,6 +82,8 @@ export default function AdminDashboard({ onSwitchToStorefront }) {
   const [userSearchQuery, setUserSearchQuery] = useState('');
   const [isUsersLoading, setIsUsersLoading] = useState(false);
   const [storeSettings, setStoreSettings] = useState({ storeName: 'AYEZZ GLOBAL', whatsappNumber: '6287818310416', currencySymbol: 'RM' });
+  const [showcaseFeature, setShowcaseFeature] = useState(DEFAULT_SHOWCASE_FEATURE);
+  const [isSavingShowcase, setIsSavingShowcase] = useState(false);
 
   const [selectedParentCategory, setSelectedParentCategory] = useState(null);
   const [subCategoryItems, setSubCategoryItems] = useState([]);
@@ -99,14 +106,15 @@ export default function AdminDashboard({ onSwitchToStorefront }) {
   const fetchAllData = async () => {
     setIsLoading(true);
     try {
-      const [cats, cuts, fabs, tpls, ords, settings, uList] = await Promise.all([
+      const [cats, cuts, fabs, tpls, ords, settings, uList, showcase] = await Promise.all([
         getCategories(),
         getCutTypes(),
         getFabricTypes(),
         getDesignTemplates(),
         getOrdersFromSupabase(),
         getStoreSettingsFromSupabase(),
-        getUsersFromSupabase()
+        getUsersFromSupabase(),
+        getShowcaseFeatureFromSupabase()
       ]);
       setCategories(cats);
       setCutTypes(cuts);
@@ -115,6 +123,7 @@ export default function AdminDashboard({ onSwitchToStorefront }) {
       setOrders(ords);
       if (settings) setStoreSettings(settings);
       setSystemUsers(uList || []);
+      if (showcase) setShowcaseFeature(showcase);
     } catch (err) {
       console.warn('Error loading data:', err);
     } finally {
@@ -463,6 +472,16 @@ export default function AdminDashboard({ onSwitchToStorefront }) {
               </button>
 
               <button
+                onClick={() => { setCurrentTab('showcase'); setSelectedParentCategory(null); }}
+                className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors ${
+                  currentTab === 'showcase' ? 'bg-slate-800 text-white font-semibold shadow-xs' : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+                }`}
+              >
+                <Tv className="w-4 h-4 text-slate-400" />
+                <span>Lihat Lebih Dekat</span>
+              </button>
+
+              <button
                 onClick={() => { setCurrentTab('settings'); setSelectedParentCategory(null); }}
                 className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors ${
                   currentTab === 'settings' ? 'bg-slate-800 text-white font-semibold shadow-xs' : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
@@ -509,6 +528,7 @@ export default function AdminDashboard({ onSwitchToStorefront }) {
                 {currentTab === 'templates' && 'Template Reka Bentuk'}
                 {currentTab === 'studio3d' && 'Studio Mockup 3D (Ujicoba Tekstur Automatik)'}
                 {currentTab === 'orders' && 'Senarai Pesanan Pelanggan'}
+                {currentTab === 'showcase' && 'Pengurusan Banner Showcase "Lihat Lebih Dekat"'}
                 {currentTab === 'settings' && 'Tetapan Kedai'}
               </h1>
             )}
@@ -1127,6 +1147,142 @@ export default function AdminDashboard({ onSwitchToStorefront }) {
                   </table>
                 </div>
               </div>
+            </div>
+          )}
+
+          {/* TAB 8: LIHAT LEBIH DEKAT (FEATURE SHOWCASE BANNER MANAGER) */}
+          {currentTab === 'showcase' && (
+            <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs p-6 space-y-6 max-w-4xl">
+              <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+                <div>
+                  <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">Pengurusan Banner Showcase "Lihat Lebih Dekat"</h2>
+                  <p className="text-xs text-slate-500 mt-0.5">Selaraskan gambar cover, teks tajuk, tombol video, dan pautan video pada seksyen khas Apple Storefront di laman utama.</p>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <span className="text-xs font-semibold text-slate-600">Status Seksyen:</span>
+                  <button
+                    type="button"
+                    onClick={() => setShowcaseFeature({ ...showcaseFeature, isActive: !showcaseFeature.isActive })}
+                    className={`px-3 py-1 rounded-full text-xs font-bold transition-all ${
+                      showcaseFeature.isActive ? 'bg-emerald-100 text-emerald-700' : 'bg-slate-100 text-slate-500'
+                    }`}
+                  >
+                    {showcaseFeature.isActive ? 'Aktif' : 'Nyahaktif'}
+                  </button>
+                </div>
+              </div>
+
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  setIsSavingShowcase(true);
+                  try {
+                    await saveShowcaseFeatureToSupabase(showcaseFeature);
+                    setSaveSuccess(true);
+                    setTimeout(() => setSaveSuccess(false), 3000);
+                  } catch (err) {
+                    console.error('Error saving showcase feature:', err);
+                  } finally {
+                    setIsSavingShowcase(false);
+                  }
+                }}
+                className="space-y-5"
+              >
+                {/* 1. COVER IMAGE UPLOAD */}
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block">Gambar Cover Banner (High Resolution)</label>
+                  <ImageUploadCropper
+                    value={showcaseFeature.coverImage}
+                    onChange={(imgUrl) => setShowcaseFeature({ ...showcaseFeature, coverImage: imgUrl })}
+                    label="Pilih Gambar Cover Banner (Landscape 16:9 / 21:9)"
+                  />
+                </div>
+
+                {/* 2. TAJUK SEKSYEN & HEADLINE */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-1">Tajuk Seksyen Utama</label>
+                    <input
+                      type="text"
+                      required
+                      value={showcaseFeature.sectionTitle}
+                      onChange={(e) => setShowcaseFeature({ ...showcaseFeature, sectionTitle: e.target.value })}
+                      placeholder="Contoh: Lihat lebih dekat."
+                      className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium outline-none focus:bg-white focus:border-slate-900"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-1">Headline Banner</label>
+                    <input
+                      type="text"
+                      required
+                      value={showcaseFeature.headline}
+                      onChange={(e) => setShowcaseFeature({ ...showcaseFeature, headline: e.target.value })}
+                      placeholder="Contoh: Tur Terpandu Kilang Sublimasi AYEZZ GLOBAL"
+                      className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium outline-none focus:bg-white focus:border-slate-900"
+                    />
+                  </div>
+                </div>
+
+                {/* 3. SUB-HEADLINE DESCRIPTION */}
+                <div>
+                  <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-1">Sub-Headline / Penerangan</label>
+                  <textarea
+                    rows={3}
+                    value={showcaseFeature.subHeadline}
+                    onChange={(e) => setShowcaseFeature({ ...showcaseFeature, subHeadline: e.target.value })}
+                    placeholder="Penerangan ringkas mengenai video atau showcase..."
+                    className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium outline-none focus:bg-white focus:border-slate-900"
+                  />
+                </div>
+
+                {/* 4. BUTTON LABEL & VIDEO LINK */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-1">Teks Tombol Aksi</label>
+                    <input
+                      type="text"
+                      required
+                      value={showcaseFeature.buttonText}
+                      onChange={(e) => setShowcaseFeature({ ...showcaseFeature, buttonText: e.target.value })}
+                      placeholder="Contoh: Tonton video"
+                      className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium outline-none focus:bg-white focus:border-slate-900"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="text-xs font-bold text-slate-700 uppercase tracking-wider block mb-1">Pautan Video (YouTube Embed / MP4 URL)</label>
+                    <input
+                      type="text"
+                      value={showcaseFeature.videoUrl}
+                      onChange={(e) => setShowcaseFeature({ ...showcaseFeature, videoUrl: e.target.value })}
+                      placeholder="https://www.youtube.com/embed/..."
+                      className="w-full px-3.5 py-2 bg-slate-50 border border-slate-200 rounded-lg text-xs font-medium outline-none focus:bg-white focus:border-slate-900"
+                    />
+                  </div>
+                </div>
+
+                {/* SAVE BUTTON */}
+                <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
+                  {saveSuccess ? (
+                    <span className="text-xs font-semibold text-emerald-600 flex items-center space-x-1">
+                      <Check className="w-4 h-4 text-emerald-600" />
+                      <span>Tetapan Showcase Berjaya Disimpan!</span>
+                    </span>
+                  ) : <div />}
+
+                  <button
+                    type="submit"
+                    disabled={isSavingShowcase}
+                    className="px-6 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl shadow-xs transition-all active:scale-95 flex items-center space-x-2 disabled:opacity-50"
+                  >
+                    <Save className="w-3.5 h-3.5 text-white" />
+                    <span>{isSavingShowcase ? 'Menyimpan...' : 'Simpan Tetapan Showcase'}</span>
+                  </button>
+                </div>
+              </form>
             </div>
           )}
 
