@@ -46,7 +46,9 @@ import {
   Trash2,
   Shirt,
   Info,
-  CheckSquare
+  CheckSquare,
+  FileSpreadsheet,
+  Edit3
 } from 'lucide-react';
 
 import { getCurrentUser, logoutUser, updateUserProfile } from '../../lib/authService';
@@ -72,6 +74,7 @@ import { uploadDirectToSupabaseStorage } from '../../lib/imageService';
 
 const ADULT_SIZES = ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL'];
 const KIDS_SIZES = ['22', '24', '26', '28', '30', '32'];
+const ALL_SIZES = [...ADULT_SIZES, ...KIDS_SIZES];
 
 function DashboardContent() {
   const router = useRouter();
@@ -127,10 +130,24 @@ function DashboardContent() {
   const [isUploadingRefImage, setIsUploadingRefImage] = useState(false);
   const [customDesignNotes, setCustomDesignNotes] = useState('');
 
-  // Feature Options Checkboxes
-  const [hasPlayerNames, setHasPlayerNames] = useState(true);
-  const [hasTeamLogo, setHasTeamLogo] = useState(true);
+  // Feature Options Checkboxes (Default FALSE per user directive!)
+  const [hasPlayerNames, setHasPlayerNames] = useState(false);
+  const [hasTeamLogo, setHasTeamLogo] = useState(false);
   const [hasSponsorLogo, setHasSponsorLogo] = useState(false);
+
+  // PLAYER NAMES & NUMBERS MODE ('manual' | 'upload')
+  const [playerInputMode, setPlayerInputMode] = useState('manual');
+  const [playerRows, setPlayerRows] = useState([
+    { id: '1', name: '', number: '', size: 'M' },
+    { id: '2', name: '', number: '', size: 'L' },
+    { id: '3', name: '', number: '', size: 'XL' }
+  ]);
+  const [playerListFileUrl, setPlayerListFileUrl] = useState('');
+  const [isUploadingPlayerListFile, setIsUploadingPlayerListFile] = useState(false);
+
+  // SPONSOR LOGO STATE
+  const [sponsorLogoUrl, setSponsorLogoUrl] = useState('');
+  const [isUploadingSponsorLogo, setIsUploadingSponsorLogo] = useState(false);
 
   const [orderTemplateName, setOrderTemplateName] = useState('');
   const [orderCategory, setOrderCategory] = useState('SUBLIMASI');
@@ -282,6 +299,30 @@ function DashboardContent() {
   }, [templates, templateSearchQuery, templateCategoryFilter]);
 
   // ----------------------------------------------------
+  // DYNAMIC PLAYER ROWS HANDLERS
+  // ----------------------------------------------------
+  const addPlayerRow = () => {
+    setPlayerRows((prev) => [
+      ...prev,
+      { id: String(Date.now()), name: '', number: '', size: 'L' }
+    ]);
+  };
+
+  const removePlayerRow = (id) => {
+    if (playerRows.length <= 1) {
+      setPlayerRows([{ id: '1', name: '', number: '', size: 'M' }]);
+      return;
+    }
+    setPlayerRows((prev) => prev.filter((r) => r.id !== id));
+  };
+
+  const updatePlayerRow = (id, field, value) => {
+    setPlayerRows((prev) =>
+      prev.map((r) => (r.id === id ? { ...r, [field]: value } : r))
+    );
+  };
+
+  // ----------------------------------------------------
   // MULTI-CUT GROUPS HANDLERS
   // ----------------------------------------------------
   const addCutGroup = () => {
@@ -390,7 +431,7 @@ function DashboardContent() {
   };
 
   // ----------------------------------------------------
-  // LOGO & REFERENCE IMAGE UPLOAD HANDLERS
+  // LOGO & FILE UPLOAD HANDLERS
   // ----------------------------------------------------
   const handleLogoUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -409,6 +450,46 @@ function DashboardContent() {
       reader.readAsDataURL(file);
     } finally {
       setIsUploadingLogo(false);
+    }
+  };
+
+  const handleSponsorLogoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingSponsorLogo(true);
+    try {
+      const cloudUrl = await uploadDirectToSupabaseStorage(file, 'sponsor_logo');
+      if (cloudUrl) {
+        setSponsorLogoUrl(cloudUrl);
+      }
+    } catch (err) {
+      console.warn('Sponsor logo upload fallback error:', err);
+      const reader = new FileReader();
+      reader.onload = (ev) => setSponsorLogoUrl(ev.target.result);
+      reader.readAsDataURL(file);
+    } finally {
+      setIsUploadingSponsorLogo(false);
+    }
+  };
+
+  const handlePlayerListFileUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingPlayerListFile(true);
+    try {
+      const cloudUrl = await uploadDirectToSupabaseStorage(file, 'player_list');
+      if (cloudUrl) {
+        setPlayerListFileUrl(cloudUrl);
+      }
+    } catch (err) {
+      console.warn('Player list upload fallback error:', err);
+      const reader = new FileReader();
+      reader.onload = (ev) => setPlayerListFileUrl(ev.target.result);
+      reader.readAsDataURL(file);
+    } finally {
+      setIsUploadingPlayerListFile(false);
     }
   };
 
@@ -454,7 +535,14 @@ function DashboardContent() {
       .join(' + ');
 
     const featuresList = [];
-    if (hasPlayerNames) featuresList.push('Nama & Nombor Pemain');
+    if (hasPlayerNames) {
+      if (playerInputMode === 'manual') {
+        const validPlayers = playerRows.filter((r) => r.name.trim() || r.number.trim());
+        featuresList.push(`Nama & Nombor Pemain (${validPlayers.length} orang manual)`);
+      } else {
+        featuresList.push('Nama & Nombor Pemain (Fail Diumuat Naik)');
+      }
+    }
     if (hasTeamLogo) featuresList.push('Logo Pasukan');
     if (hasSponsorLogo) featuresList.push('Logo Sponsor');
 
@@ -481,6 +569,9 @@ function DashboardContent() {
       team_name: customerInfo.teamName || '-',
       notes: `${featuresList.length > 0 ? `[CIRI: ${featuresList.join(', ')}] ` : ''}${isCustomDesign ? `[KUSTOM DESIGN] ${customDesignNotes} ` : ''}${customerInfo.notes || ''}`.trim(),
       custom_logo_url: customLogoUrl || '',
+      sponsor_logo_url: sponsorLogoUrl || '',
+      player_list_file_url: playerListFileUrl || '',
+      player_rows: hasPlayerNames && playerInputMode === 'manual' ? playerRows : [],
       custom_design_ref_url: customDesignRefUrl || '',
       is_custom_design: isCustomDesign,
       status: 'Pesanan Diterima',
@@ -502,8 +593,19 @@ function DashboardContent() {
   const resetOrderForm = () => {
     setOrderSuccessData(null);
     setCustomLogoUrl('');
+    setSponsorLogoUrl('');
+    setPlayerListFileUrl('');
     setCustomDesignRefUrl('');
     setCustomDesignNotes('');
+    setHasPlayerNames(false);
+    setHasTeamLogo(false);
+    setHasSponsorLogo(false);
+    setPlayerInputMode('manual');
+    setPlayerRows([
+      { id: '1', name: '', number: '', size: 'M' },
+      { id: '2', name: '', number: '', size: 'L' },
+      { id: '3', name: '', number: '', size: 'XL' }
+    ]);
     setOrderStep(1);
     setCutGroups([
       {
@@ -1105,7 +1207,7 @@ function DashboardContent() {
                     <div className="w-full space-y-6">
 
                       {/* ========================================================== */}
-                      {/* LANGKAH 1: REKA BENTUK (LARGE IMAGE SHOWCASE + FULL SPECIFICATIONS & CHECKBOXES) */}
+                      {/* LANGKAH 1: REKA BENTUK (LARGE IMAGE SHOWCASE + DYNAMIC CHECKBOXES & LOGO/NAMES UPLOADS) */}
                       {/* ========================================================== */}
                       {orderStep === 1 && (
                         <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-2xs space-y-6 w-full">
@@ -1179,91 +1281,266 @@ function DashboardContent() {
                                 </button>
                               </div>
 
-                              {/* SPECIFICATION OPTIONS & CHECKBOXES */}
+                              {/* SPECIFICATION OPTIONS & DYNAMIC CHECKBOXES */}
                               <div className="md:col-span-7 space-y-6">
                                 <div className="space-y-3">
                                   <label className="text-xs font-bold text-slate-800 uppercase block">
-                                    1. PILIHAN CIRI & CETAKAN JERSI
+                                    1. PILIHAN CIRI TAMBAHAN (SECARA DEFAULT BELUM DICEKLIS)
                                   </label>
 
                                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                                    {/* CHECKBOX 1: NAMA & NOMBOR PEMAIN */}
                                     <label className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-start space-x-3 ${
-                                      hasPlayerNames ? 'bg-slate-50 border-slate-400 shadow-2xs' : 'bg-white border-slate-200'
+                                      hasPlayerNames ? 'bg-slate-100 border-slate-400 shadow-2xs ring-2 ring-slate-300' : 'bg-white border-slate-200 hover:border-slate-300'
                                     }`}>
                                       <input
                                         type="checkbox"
                                         checked={hasPlayerNames}
                                         onChange={(e) => setHasPlayerNames(e.target.checked)}
-                                        className="mt-0.5 accent-slate-700 w-4 h-4 cursor-pointer"
+                                        className="mt-0.5 accent-slate-800 w-4 h-4 cursor-pointer"
                                       />
                                       <div>
-                                        <span className="text-xs font-bold text-slate-900 block">Nama & Nombor</span>
+                                        <span className="text-xs font-extrabold text-slate-900 block">Nama & Nombor</span>
                                         <span className="text-[10px] text-slate-500 block">Cetakan nama pemain kustom</span>
                                       </div>
                                     </label>
 
+                                    {/* CHECKBOX 2: LOGO PASUKAN */}
                                     <label className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-start space-x-3 ${
-                                      hasTeamLogo ? 'bg-slate-50 border-slate-400 shadow-2xs' : 'bg-white border-slate-200'
+                                      hasTeamLogo ? 'bg-slate-100 border-slate-400 shadow-2xs ring-2 ring-slate-300' : 'bg-white border-slate-200 hover:border-slate-300'
                                     }`}>
                                       <input
                                         type="checkbox"
                                         checked={hasTeamLogo}
                                         onChange={(e) => setHasTeamLogo(e.target.checked)}
-                                        className="mt-0.5 accent-slate-700 w-4 h-4 cursor-pointer"
+                                        className="mt-0.5 accent-slate-800 w-4 h-4 cursor-pointer"
                                       />
                                       <div>
-                                        <span className="text-xs font-bold text-slate-900 block">Logo Pasukan</span>
-                                        <span className="text-[10px] text-slate-500 block">Cetak di dada kiri/kanan</span>
+                                        <span className="text-xs font-extrabold text-slate-900 block">Logo Pasukan</span>
+                                        <span className="text-[10px] text-slate-500 block">Cetak di dada jersi</span>
                                       </div>
                                     </label>
 
+                                    {/* CHECKBOX 3: LOGO SPONSOR */}
                                     <label className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-start space-x-3 ${
-                                      hasSponsorLogo ? 'bg-slate-50 border-slate-400 shadow-2xs' : 'bg-white border-slate-200'
+                                      hasSponsorLogo ? 'bg-slate-100 border-slate-400 shadow-2xs ring-2 ring-slate-300' : 'bg-white border-slate-200 hover:border-slate-300'
                                     }`}>
                                       <input
                                         type="checkbox"
                                         checked={hasSponsorLogo}
                                         onChange={(e) => setHasSponsorLogo(e.target.checked)}
-                                        className="mt-0.5 accent-slate-700 w-4 h-4 cursor-pointer"
+                                        className="mt-0.5 accent-slate-800 w-4 h-4 cursor-pointer"
                                       />
                                       <div>
-                                        <span className="text-xs font-bold text-slate-900 block">Logo Sponsor</span>
-                                        <span className="text-[10px] text-slate-500 block">Cetakan di hadapan/belakang</span>
+                                        <span className="text-xs font-extrabold text-slate-900 block">Logo Sponsor</span>
+                                        <span className="text-[10px] text-slate-500 block">Cetakan sponsor tambahan</span>
                                       </div>
                                     </label>
                                   </div>
                                 </div>
 
-                                {/* LOGO UPLOAD DROPZONE */}
-                                <div className="space-y-2">
-                                  <label className="text-xs font-bold text-slate-800 uppercase block">
-                                    2. MUAT NAIK LOGO PASUKAN / SPONSOR (OPSIONAL)
-                                  </label>
-                                  <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between">
-                                    <div className="flex items-center space-x-3">
-                                      {customLogoUrl ? (
-                                        <img src={customLogoUrl} alt="Custom Logo" className="w-12 h-12 object-contain bg-white rounded-lg p-1 border border-slate-200" />
-                                      ) : (
-                                        <div className="w-12 h-12 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-400">
-                                          <Upload className="w-5 h-5" />
+                                {/* CONDITIONAL SECTION 1: LOGO PASUKAN UPLOAD */}
+                                {hasTeamLogo && (
+                                  <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+                                    <span className="text-xs font-extrabold text-slate-900 uppercase block">
+                                      MUAT NAIK LOGO PASUKAN (TEAM LOGO)
+                                    </span>
+                                    <div className="flex items-center justify-between bg-white p-3.5 rounded-xl border border-slate-200">
+                                      <div className="flex items-center space-x-3">
+                                        {customLogoUrl ? (
+                                          <img src={customLogoUrl} alt="Team Logo" className="w-12 h-12 object-contain bg-white rounded-lg p-1 border border-slate-200" />
+                                        ) : (
+                                          <div className="w-12 h-12 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400">
+                                            <Upload className="w-5 h-5" />
+                                          </div>
+                                        )}
+                                        <div>
+                                          <span className="text-xs font-bold text-slate-900 block">Logo Pasukan (PNG / JPG)</span>
+                                          <span className="text-[10px] text-slate-500 block">Muat naik logo beresolusi tinggi</span>
                                         </div>
-                                      )}
+                                      </div>
+
+                                      <label className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-bold text-xs rounded-xl cursor-pointer transition-all shrink-0">
+                                        {isUploadingLogo ? 'Muat Naik...' : customLogoUrl ? 'Tukar Logo' : 'Muat Naik Logo'}
+                                        <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" />
+                                      </label>
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* CONDITIONAL SECTION 2: LOGO SPONSOR UPLOAD */}
+                                {hasSponsorLogo && (
+                                  <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
+                                    <span className="text-xs font-extrabold text-slate-900 uppercase block">
+                                      MUAT NAIK LOGO SPONSOR (SPONSOR LOGO)
+                                    </span>
+                                    <div className="flex items-center justify-between bg-white p-3.5 rounded-xl border border-slate-200">
+                                      <div className="flex items-center space-x-3">
+                                        {sponsorLogoUrl ? (
+                                          <img src={sponsorLogoUrl} alt="Sponsor Logo" className="w-12 h-12 object-contain bg-white rounded-lg p-1 border border-slate-200" />
+                                        ) : (
+                                          <div className="w-12 h-12 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400">
+                                            <Upload className="w-5 h-5" />
+                                          </div>
+                                        )}
+                                        <div>
+                                          <span className="text-xs font-bold text-slate-900 block">Logo Sponsor (PNG / JPG)</span>
+                                          <span className="text-[10px] text-slate-500 block">Muat naik logo penaja jersi</span>
+                                        </div>
+                                      </div>
+
+                                      <label className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-bold text-xs rounded-xl cursor-pointer transition-all shrink-0">
+                                        {isUploadingSponsorLogo ? 'Muat Naik...' : sponsorLogoUrl ? 'Tukar Logo' : 'Muat Naik Logo'}
+                                        <input type="file" accept="image/*" onChange={handleSponsorLogoUpload} className="hidden" />
+                                      </label>
+                                    </div>
+                                  </div>
+                                )}
+
+                                {/* CONDITIONAL SECTION 3: NAMA & NOMBOR PEMAIN (INPUT MANUAL vs UPLOAD FILE) */}
+                                {hasPlayerNames && (
+                                  <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-4">
+                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200/80 pb-3">
                                       <div>
-                                        <span className="text-xs font-bold text-slate-900 block">Fail Vektor / PNG Logo</span>
-                                        <span className="text-[10px] text-slate-500 block">Muat naik logo pasukan untuk sublimasi</span>
+                                        <span className="text-xs font-extrabold text-slate-900 uppercase block">
+                                          SENARAI NAMA & NOMBOR PEMAIN
+                                        </span>
+                                        <span className="text-[10px] text-slate-500 block">Pilih kaedah memasukkan nama dan nombor pemain</span>
+                                      </div>
+
+                                      {/* MODE TOGGLE SWITCH */}
+                                      <div className="flex items-center bg-slate-200 p-1 rounded-xl shrink-0">
+                                        <button
+                                          type="button"
+                                          onClick={() => setPlayerInputMode('manual')}
+                                          className={`px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all flex items-center space-x-1 cursor-pointer ${
+                                            playerInputMode === 'manual'
+                                              ? 'bg-slate-800 text-white shadow-xs'
+                                              : 'text-slate-700 hover:text-slate-900'
+                                          }`}
+                                        >
+                                          <Edit3 className="w-3.5 h-3.5" />
+                                          <span>Input Manual</span>
+                                        </button>
+
+                                        <button
+                                          type="button"
+                                          onClick={() => setPlayerInputMode('upload')}
+                                          className={`px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all flex items-center space-x-1 cursor-pointer ${
+                                            playerInputMode === 'upload'
+                                              ? 'bg-slate-800 text-white shadow-xs'
+                                              : 'text-slate-700 hover:text-slate-900'
+                                          }`}
+                                        >
+                                          <FileSpreadsheet className="w-3.5 h-3.5" />
+                                          <span>Muat Naik Fail</span>
+                                        </button>
                                       </div>
                                     </div>
 
-                                    <label className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-bold text-xs rounded-xl cursor-pointer transition-all shrink-0">
-                                      {isUploadingLogo ? 'Muat Naik...' : customLogoUrl ? 'Tukar Logo' : 'Pilih Logo'}
-                                      <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" />
-                                    </label>
+                                    {/* MODE 1: INPUT MANUAL DYNAMIC TABLE */}
+                                    {playerInputMode === 'manual' ? (
+                                      <div className="space-y-3">
+                                        <div className="overflow-x-auto border border-slate-200 rounded-xl bg-white">
+                                          <table className="w-full text-left text-xs">
+                                            <thead>
+                                              <tr className="bg-slate-100/80 border-b border-slate-200 text-[10px] font-mono font-bold text-slate-600 uppercase">
+                                                <th className="py-2.5 px-3 text-center w-12">BIL</th>
+                                                <th className="py-2.5 px-3">NAMA PEMAIN</th>
+                                                <th className="py-2.5 px-3 w-28">NOMBOR BAJU</th>
+                                                <th className="py-2.5 px-3 w-28">SAIZ</th>
+                                                <th className="py-2.5 px-3 text-center w-12">PADAM</th>
+                                              </tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-slate-100 font-mono text-slate-800">
+                                              {playerRows.map((row, idx) => (
+                                                <tr key={row.id} className="hover:bg-slate-50">
+                                                  <td className="py-2 px-3 text-center font-bold text-slate-500">{idx + 1}</td>
+                                                  <td className="py-2 px-3">
+                                                    <input
+                                                      type="text"
+                                                      placeholder="Contoh: MUHAMMAD ALI"
+                                                      value={row.name}
+                                                      onChange={(e) => updatePlayerRow(row.id, 'name', e.target.value)}
+                                                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-bold text-slate-900 outline-none focus:bg-white focus:border-slate-400 uppercase"
+                                                    />
+                                                  </td>
+                                                  <td className="py-2 px-3">
+                                                    <input
+                                                      type="text"
+                                                      placeholder="10"
+                                                      value={row.number}
+                                                      onChange={(e) => updatePlayerRow(row.id, 'number', e.target.value)}
+                                                      className="w-full text-center bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-black text-slate-900 outline-none focus:bg-white focus:border-slate-400"
+                                                    />
+                                                  </td>
+                                                  <td className="py-2 px-3">
+                                                    <select
+                                                      value={row.size}
+                                                      onChange={(e) => updatePlayerRow(row.id, 'size', e.target.value)}
+                                                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-bold text-slate-900 outline-none focus:bg-white cursor-pointer"
+                                                    >
+                                                      {ALL_SIZES.map((sz) => (
+                                                        <option key={sz} value={sz}>{sz}</option>
+                                                      ))}
+                                                    </select>
+                                                  </td>
+                                                  <td className="py-2 px-3 text-center">
+                                                    <button
+                                                      type="button"
+                                                      onClick={() => removePlayerRow(row.id)}
+                                                      className="p-1 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                                                      title="Padam Baris"
+                                                    >
+                                                      <Trash2 className="w-4 h-4" />
+                                                    </button>
+                                                  </td>
+                                                </tr>
+                                              ))}
+                                            </tbody>
+                                          </table>
+                                        </div>
+
+                                        <button
+                                          type="button"
+                                          onClick={addPlayerRow}
+                                          className="w-full py-2.5 bg-white hover:bg-slate-100 text-slate-900 font-bold text-xs uppercase tracking-wider rounded-xl transition-all border border-slate-300 flex items-center justify-center space-x-2 cursor-pointer shadow-2xs"
+                                        >
+                                          <Plus className="w-3.5 h-3.5 text-slate-900" />
+                                          <span>+ Tambah Baris Pemain Baru</span>
+                                        </button>
+                                      </div>
+                                    ) : (
+                                      /* MODE 2: UPLOAD EXCEL / PDF / IMAGE FILE */
+                                      <div className="p-4 bg-white rounded-xl border border-slate-200 flex items-center justify-between">
+                                        <div className="flex items-center space-x-3">
+                                          {playerListFileUrl ? (
+                                            <div className="w-12 h-12 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center border border-emerald-300">
+                                              <CheckCircle2 className="w-6 h-6" />
+                                            </div>
+                                          ) : (
+                                            <div className="w-12 h-12 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400">
+                                              <FileSpreadsheet className="w-6 h-6" />
+                                            </div>
+                                          )}
+                                          <div>
+                                            <span className="text-xs font-bold text-slate-900 block">Fail Senarai Pemain (Excel / PDF / Gambar)</span>
+                                            <span className="text-[10px] text-slate-500 block">Muat naik dokumentasi senarai nama & saiz</span>
+                                          </div>
+                                        </div>
+
+                                        <label className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-bold text-xs rounded-xl cursor-pointer transition-all shrink-0">
+                                          {isUploadingPlayerListFile ? 'Muat Naik...' : playerListFileUrl ? 'Tukar Fail' : 'Muat Naik Fail'}
+                                          <input type="file" accept=".xlsx,.xls,.pdf,image/*" onChange={handlePlayerListFileUpload} className="hidden" />
+                                        </label>
+                                      </div>
+                                    )}
                                   </div>
-                                </div>
+                                )}
 
                                 <div className="space-y-1.5">
                                   <label className="text-xs font-bold text-slate-800 uppercase block">
-                                    3. CATATAN TAMBAHAN REKA BENTUK
+                                    4. CATATAN TAMBAHAN REKA BENTUK
                                   </label>
                                   <textarea
                                     rows={3}
@@ -1660,6 +1937,9 @@ function DashboardContent() {
 
                     </div>
                   ) : (
+                    /* ========================================================== */
+                    /* LANGKAH 4: PENGESAHAN & SEBUT HARGA FINAL (2-COLUMN SPLIT WITH LIVE SUMMARY TICKET!) */
+                    /* ========================================================== */
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full items-start">
                       
                       {/* LEFT 7 COLS: CLIENT INFO & FINAL CHECKLIST */}
@@ -1706,32 +1986,23 @@ function DashboardContent() {
                               />
                             </div>
 
-                            {/* LOGO PREVIEW */}
+                            {/* LOGO PREVIEW SUMMARY */}
                             <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                              <span className="text-[10px] font-mono font-bold text-slate-600 block">LOGO PASUKAN / SPONSOR</span>
-                              <div className="flex items-center justify-between">
-                                <div className="flex items-center space-x-3">
-                                  {customLogoUrl ? (
-                                    <img src={customLogoUrl} alt="Custom Logo" className="w-12 h-12 object-contain bg-white rounded-lg p-1 border border-slate-200" />
-                                  ) : (
-                                    <div className="w-12 h-12 rounded-lg bg-slate-200 flex items-center justify-center text-slate-500">
-                                      <Upload className="w-5 h-5" />
-                                    </div>
-                                  )}
-                                  <span className="text-xs text-slate-600 font-semibold truncate max-w-[160px]">
-                                    {customLogoUrl ? 'Logo Terunggah' : 'Tiada Logo (Standard)'}
-                                  </span>
+                              <span className="text-[10px] font-mono font-bold text-slate-600 block">STATUS LOGO & SENARAI PEMAIN</span>
+                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
+                                <div className="p-2.5 bg-white rounded-lg border border-slate-200">
+                                  <span className="text-slate-500 block text-[10px]">Logo Pasukan:</span>
+                                  <strong className="text-slate-900">{customLogoUrl ? '✓ Terunggah' : 'Tiada / Standard'}</strong>
                                 </div>
-
-                                <label className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-bold text-xs rounded-xl cursor-pointer transition-all shrink-0">
-                                  {isUploadingLogo ? 'Muat Naik...' : customLogoUrl ? 'Tukar Logo' : 'Muat Naik Logo'}
-                                  <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" />
-                                </label>
+                                <div className="p-2.5 bg-white rounded-lg border border-slate-200">
+                                  <span className="text-slate-500 block text-[10px]">Logo Sponsor:</span>
+                                  <strong className="text-slate-900">{sponsorLogoUrl ? '✓ Terunggah' : 'Tiada'}</strong>
+                                </div>
                               </div>
                             </div>
 
                             <div>
-                              <label className="text-[10px] font-mono font-bold text-slate-500 block mb-1">NOTA TAMBAHAN & PILIHAN CETAKAN</label>
+                              <label className="text-[10px] font-mono font-bold text-slate-500 block mb-1">NOTA TAMBAHAN & ARAHAN CETAKAN</label>
                               <textarea
                                 rows={3}
                                 placeholder="Contoh: Senarai nama & nombor pemain atau cetakan khas..."
