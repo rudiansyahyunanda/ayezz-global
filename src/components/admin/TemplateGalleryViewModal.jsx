@@ -154,35 +154,26 @@ export default function TemplateGalleryViewModal({ template: initialTemplate, on
         </div>
 
         {/* IMAGE STAGE AREA WITH STATIC SOLID WHITE BACKGROUND (#FFFFFF) */}
-        <div className="relative w-full aspect-square bg-white overflow-hidden group [perspective:1400px] flex items-center justify-center p-0">
+        <div className="relative w-full aspect-square bg-white overflow-hidden group flex items-center justify-center p-0">
           {/* STATIC SOLID WHITE BACKGROUND LAYER - 100% FIXED */}
           <div className="absolute inset-0 bg-white z-0 pointer-events-none" />
 
           {galleryImages.map((src, index) => {
             const isActive = index === activeIndex;
+            if (!isActive) return null;
 
             return (
               <div
-                key={src + index}
-                style={{
-                  transition: 'transform 1100ms cubic-bezier(0.16, 1, 0.3, 1)',
-                  willChange: 'transform'
-                }}
-                className={`absolute inset-0 w-full h-full [transform-style:preserve-3d] select-none flex items-center justify-center pointer-events-none ${
-                  isActive
-                    ? 'z-10 [transform:rotateY(0deg)]'
-                    : 'z-0 [transform:rotateY(180deg)]'
-                }`}
+                key={`${src}-${index}`}
+                className="absolute inset-0 w-full h-full select-none flex items-center justify-center z-10 p-4 animate-fade-in"
               >
-                {/* SMOOTH GENTLE ZOOM IN -> ZOOM OUT BREATHING ANIMATION */}
-                <div className={`w-full h-full flex items-center justify-center ${isActive ? 'animate-gentle-zoom' : ''}`}>
+                <div className="w-full h-full flex items-center justify-center animate-gentle-zoom">
                   <img
                     src={src}
                     alt={`${activeTemplate.name} ${index + 1}`}
                     decoding="async"
                     fetchPriority="high"
-                    className="w-full h-full object-contain [backface-visibility:hidden] pointer-events-auto p-4 img-crisp"
-                    style={{ imageRendering: '-webkit-optimize-contrast' }}
+                    className="w-full h-full object-contain pointer-events-auto img-crisp"
                   />
                 </div>
               </div>
