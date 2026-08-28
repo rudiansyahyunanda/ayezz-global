@@ -77,10 +77,10 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
   const [currentTab, setCurrentTab] = useState('overview');
   const [viewingTemplate, setViewingTemplate] = useState(null);
 
-  const [categories, setCategories] = useState(INITIAL_CATALOGS);
-  const [templates, setTemplates] = useState(INITIAL_TEMPLATES);
-  const [cutTypes, setCutTypes] = useState(INITIAL_CUTS);
-  const [fabricTypes, setFabricTypes] = useState(INITIAL_FABRICS);
+  const [categories, setCategories] = useState([]);
+  const [templates, setTemplates] = useState([]);
+  const [cutTypes, setCutTypes] = useState([]);
+  const [fabricTypes, setFabricTypes] = useState([]);
   const [orders, setOrders] = useState([]);
   const [systemUsers, setSystemUsers] = useState([]);
   const [userSearchQuery, setUserSearchQuery] = useState('');
@@ -632,55 +632,63 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                         </tr>
                       </thead>
                       <tbody className="divide-y divide-slate-100 font-medium text-slate-800">
-                        {categories.map(cat => (
-                          <tr key={cat.id} className="hover:bg-slate-50/60 transition-colors">
-                            <td className="py-3 px-4">
-                              <img
-                                src={cat.thumbnail || PLACEHOLDER_IMAGE}
-                                alt={cat.title}
-                                className="w-12 h-12 object-cover rounded-lg border border-slate-200/80 shadow-2xs"
-                                onError={(e) => {
-                                  e.target.onerror = null;
-                                  e.target.src = PLACEHOLDER_IMAGE;
-                                }}
-                              />
-                            </td>
-                            <td className="py-3.5 px-4 font-mono font-bold text-slate-900">{cat.code}</td>
-                            <td className="py-3.5 px-4 font-bold text-slate-900 uppercase">
-                              <button
-                                onClick={() => setSelectedParentCategory(cat)}
-                                className="hover:underline hover:text-slate-600 transition-all text-left"
-                              >
-                                {cat.title}
-                              </button>
-                            </td>
-                            <td className="py-3.5 px-4 text-slate-600">
-                              <button
-                                onClick={() => setSelectedParentCategory(cat)}
-                                className="px-2.5 py-1 bg-slate-100 border border-slate-200 hover:bg-slate-200 rounded-md text-xs font-semibold text-slate-800 inline-flex items-center space-x-1.5 transition-colors"
-                              >
-                                <ListTree className="w-3.5 h-3.5 text-slate-600" />
-                                <span>{cat.itemCount || '0 Jenis'}</span>
-                              </button>
-                            </td>
-                            <td className="py-3.5 px-4 text-right space-x-1">
-                              <button
-                                onClick={() => setSelectedParentCategory(cat)}
-                                className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-md text-xs font-semibold inline-flex items-center space-x-1 transition-colors mr-1"
-                                title="Urus Sub-Kategori"
-                              >
-                                <ListTree className="w-3.5 h-3.5" />
-                                <span>Sub-Kategori</span>
-                              </button>
-                              <button onClick={() => openEditModal('category', cat)} className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors" title="Kemaskini Kategori">
-                                <Edit2 className="w-4 h-4" />
-                              </button>
-                              <button onClick={async () => { setCategories(prev => prev.filter(c => c.id !== cat.id)); await deleteCategoryFromSupabase(cat.id); }} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-md transition-colors" title="Padam Kategori">
-                                <Trash2 className="w-4 h-4" />
-                              </button>
+                        {categories.length === 0 ? (
+                          <tr>
+                            <td colSpan={5} className="py-12 text-center text-slate-400 font-mono text-xs">
+                              Belum ada kategori utama terrekod. Tekan "+ Tambah Kategori" untuk cipta rekod baharu.
                             </td>
                           </tr>
-                        ))}
+                        ) : (
+                          categories.map(cat => (
+                            <tr key={cat.id} className="hover:bg-slate-50/60 transition-colors">
+                              <td className="py-3 px-4">
+                                <img
+                                  src={cat.thumbnail || PLACEHOLDER_IMAGE}
+                                  alt={cat.title}
+                                  className="w-12 h-12 object-cover rounded-lg border border-slate-200/80 shadow-2xs"
+                                  onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = PLACEHOLDER_IMAGE;
+                                  }}
+                                />
+                              </td>
+                              <td className="py-3.5 px-4 font-mono font-bold text-slate-900">{cat.code}</td>
+                              <td className="py-3.5 px-4 font-bold text-slate-900 uppercase">
+                                <button
+                                  onClick={() => setSelectedParentCategory(cat)}
+                                  className="hover:underline hover:text-slate-600 transition-all text-left"
+                                >
+                                  {cat.title}
+                                </button>
+                              </td>
+                              <td className="py-3.5 px-4 text-slate-600">
+                                <button
+                                  onClick={() => setSelectedParentCategory(cat)}
+                                  className="px-2.5 py-1 bg-slate-100 border border-slate-200 hover:bg-slate-200 rounded-md text-xs font-semibold text-slate-800 inline-flex items-center space-x-1.5 transition-colors"
+                                >
+                                  <ListTree className="w-3.5 h-3.5 text-slate-600" />
+                                  <span>{cat.itemCount || '0 Jenis'}</span>
+                                </button>
+                              </td>
+                              <td className="py-3.5 px-4 text-right space-x-1">
+                                <button
+                                  onClick={() => setSelectedParentCategory(cat)}
+                                  className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-md text-xs font-semibold inline-flex items-center space-x-1 transition-colors mr-1"
+                                  title="Urus Sub-Kategori"
+                                >
+                                  <ListTree className="w-3.5 h-3.5" />
+                                  <span>Sub-Kategori</span>
+                                </button>
+                                <button onClick={() => openEditModal('category', cat)} className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors" title="Kemaskini Kategori">
+                                  <Edit2 className="w-4 h-4" />
+                                </button>
+                                <button onClick={async () => { setCategories(prev => prev.filter(c => c.id !== cat.id)); await deleteCategoryFromSupabase(cat.id); }} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-md transition-colors" title="Padam Kategori">
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </td>
+                            </tr>
+                          ))
+                        )}
                       </tbody>
                     </table>
                   </div>
@@ -794,32 +802,40 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 font-medium text-slate-800">
-                    {cutTypes.map(cut => (
-                      <tr key={cut.id} className="hover:bg-slate-50/60 transition-colors">
-                        <td className="py-3 px-4">
-                          <img
-                            src={cut.thumbnail || PLACEHOLDER_IMAGE}
-                            alt={cut.name}
-                            className="w-12 h-12 object-cover rounded-lg border border-slate-200/80 shadow-2xs"
-                            onError={(e) => {
-                              e.target.onerror = null;
-                              e.target.src = PLACEHOLDER_IMAGE;
-                            }}
-                          />
-                        </td>
-                        <td className="py-3.5 px-4 font-bold text-slate-900 uppercase">{cut.name}</td>
-                        <td className="py-3.5 px-4 text-slate-600 max-w-xs">{cut.desc}</td>
-                        <td className="py-3.5 px-4 font-mono font-bold text-slate-900">+RM {Number(cut.addOnPrice ?? cut.add_on_price ?? 0).toFixed(2)}</td>
-                        <td className="py-3.5 px-4 text-right space-x-1">
-                          <button onClick={() => openEditModal('cut', cut)} className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors" title="Kemaskini">
-                            <Edit2 className="w-4 h-4" />
-                          </button>
-                          <button onClick={async () => { setCutTypes(prev => prev.filter(c => c.id !== cut.id)); await deleteCutTypeFromSupabase(cut.id); }} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-md transition-colors" title="Padam">
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                    {cutTypes.length === 0 ? (
+                      <tr>
+                        <td colSpan={4} className="py-12 text-center text-slate-400 font-mono text-xs">
+                          Belum ada jenis potongan terrekod. Tekan "+ Tambah Potongan" untuk cipta rekod baharu.
                         </td>
                       </tr>
-                    ))}
+                    ) : (
+                      cutTypes.map(cut => (
+                        <tr key={cut.id} className="hover:bg-slate-50/60 transition-colors">
+                          <td className="py-3 px-4">
+                            <img
+                              src={cut.thumbnail || PLACEHOLDER_IMAGE}
+                              alt={cut.name}
+                              className="w-12 h-12 object-cover rounded-lg border border-slate-200/80 shadow-2xs"
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = PLACEHOLDER_IMAGE;
+                              }}
+                            />
+                          </td>
+                          <td className="py-3.5 px-4 font-bold text-slate-900 uppercase">{cut.name}</td>
+                          <td className="py-3.5 px-4 text-slate-600 max-w-xs">{cut.desc}</td>
+                          <td className="py-3.5 px-4 font-mono font-bold text-slate-900">+RM {Number(cut.addOnPrice ?? cut.add_on_price ?? 0).toFixed(2)}</td>
+                          <td className="py-3.5 px-4 text-right space-x-1">
+                            <button onClick={() => openEditModal('cut', cut)} className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors" title="Kemaskini">
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button onClick={async () => { setCutTypes(prev => prev.filter(c => c.id !== cut.id)); await deleteCutTypeFromSupabase(cut.id); }} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-md transition-colors" title="Padam">
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -849,41 +865,49 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 font-medium text-slate-800">
-                    {fabricTypes.map(fab => (
-                      <tr key={fab.id} className="hover:bg-slate-50/60 transition-colors">
-                        <td className="py-3 px-4">
-                          <img
-                            src={fab.thumbnail || PLACEHOLDER_IMAGE}
-                            alt={fab.name}
-                            className="w-12 h-12 object-cover rounded-lg border border-slate-200/80 shadow-2xs"
-                            onError={(e) => {
-                              e.target.onerror = null;
-                              e.target.src = PLACEHOLDER_IMAGE;
-                            }}
-                          />
-                        </td>
-                        <td className="py-3.5 px-4 font-bold text-slate-900 uppercase">
-                          <div>{fab.name}</div>
-                          <span className="px-2 py-0.5 bg-slate-100 border border-slate-200 rounded-full text-[10px] font-semibold text-slate-700 mt-1 inline-block">{fab.tier}</span>
-                        </td>
-                        <td className="py-3.5 px-4 font-mono font-bold text-slate-900">
-                          <span className="px-2.5 py-1 bg-slate-900 text-white rounded-md text-[11px]">{fab.gsm || '150 GSM'}</span>
-                        </td>
-                        <td className="py-3.5 px-4 font-mono font-bold text-slate-900">RM {Number(fab.basePrice ?? fab.base_price ?? 70).toFixed(2)}</td>
-                        <td className="py-3.5 px-4 text-slate-600 max-w-xs">
-                          {fab.features && <div className="text-[10px] font-semibold text-slate-900 mb-0.5">{fab.features}</div>}
-                          <div className="text-slate-500 text-[11px]">{fab.desc}</div>
-                        </td>
-                        <td className="py-3.5 px-4 text-right space-x-1">
-                          <button onClick={() => openEditModal('fabric', fab)} className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors" title="Kemaskini">
-                            <Edit2 className="w-4 h-4" />
-                          </button>
-                          <button onClick={async () => { setFabricTypes(prev => prev.filter(f => f.id !== fab.id)); await deleteFabricTypeFromSupabase(fab.id); }} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-md transition-colors" title="Padam">
-                            <Trash2 className="w-4 h-4" />
-                          </button>
+                    {fabricTypes.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="py-12 text-center text-slate-400 font-mono text-xs">
+                          Belum ada bahan kain terrekod. Tekan "+ Tambah Kain" untuk cipta rekod baharu.
                         </td>
                       </tr>
-                    ))}
+                    ) : (
+                      fabricTypes.map(fab => (
+                        <tr key={fab.id} className="hover:bg-slate-50/60 transition-colors">
+                          <td className="py-3 px-4">
+                            <img
+                              src={fab.thumbnail || PLACEHOLDER_IMAGE}
+                              alt={fab.name}
+                              className="w-12 h-12 object-cover rounded-lg border border-slate-200/80 shadow-2xs"
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = PLACEHOLDER_IMAGE;
+                              }}
+                            />
+                          </td>
+                          <td className="py-3.5 px-4 font-bold text-slate-900 uppercase">
+                            <div>{fab.name}</div>
+                            <span className="px-2 py-0.5 bg-slate-100 border border-slate-200 rounded-full text-[10px] font-semibold text-slate-700 mt-1 inline-block">{fab.tier}</span>
+                          </td>
+                          <td className="py-3.5 px-4 font-mono font-bold text-slate-900">
+                            <span className="px-2.5 py-1 bg-slate-900 text-white rounded-md text-[11px]">{fab.gsm || '150 GSM'}</span>
+                          </td>
+                          <td className="py-3.5 px-4 font-mono font-bold text-slate-900">RM {Number(fab.basePrice ?? fab.base_price ?? 70).toFixed(2)}</td>
+                          <td className="py-3.5 px-4 text-slate-600 max-w-xs">
+                            {fab.features && <div className="text-[10px] font-semibold text-slate-900 mb-0.5">{fab.features}</div>}
+                            <div className="text-slate-500 text-[11px]">{fab.desc}</div>
+                          </td>
+                          <td className="py-3.5 px-4 text-right space-x-1">
+                            <button onClick={() => openEditModal('fabric', fab)} className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors" title="Kemaskini">
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button onClick={async () => { setFabricTypes(prev => prev.filter(f => f.id !== fab.id)); await deleteFabricTypeFromSupabase(fab.id); }} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-md transition-colors" title="Padam">
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
                   </tbody>
                 </table>
               </div>
@@ -916,50 +940,58 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 font-medium text-slate-800">
-                    {templates.map(tpl => {
-                      const tplGallery = Array.isArray(tpl.images) && tpl.images.length > 0 ? tpl.images : [tpl.thumbnail];
-                      return (
-                        <tr key={tpl.id} className="hover:bg-slate-50/60 transition-colors">
-                          <td className="py-3 px-4">
-                            <div className="flex items-center space-x-1.5">
-                              <img
-                                src={tplGallery[0] || PLACEHOLDER_IMAGE}
-                                alt={tpl.name}
-                                className="w-12 h-12 object-cover rounded-lg border border-slate-200 shadow-2xs aspect-square"
-                                onError={(e) => {
-                                  e.target.onerror = null;
-                                  e.target.src = PLACEHOLDER_IMAGE;
-                                }}
-                              />
-                              {tplGallery.length > 1 && (
-                                <span className="px-2 py-1 bg-slate-100 border border-slate-200 rounded-md text-[10px] font-bold text-slate-700">
-                                  +{tplGallery.length - 1} foto
-                                </span>
-                              )}
-                            </div>
-                          </td>
-                          <td className="py-3.5 px-4 font-bold text-slate-900 uppercase">{tpl.name}</td>
-                          <td className="py-3.5 px-4 text-slate-900 font-bold">{tpl.category}</td>
-                          <td className="py-3.5 px-4 text-slate-600">
-                            <span className="px-2 py-0.5 bg-slate-100 border border-slate-200 rounded-md text-[10px] font-semibold text-slate-800">
-                              {tpl.subCategory || 'Umum'}
-                            </span>
-                          </td>
-                          <td className="py-3.5 px-4 text-slate-500 max-w-xs">{tpl.description || '-'}</td>
-                          <td className="py-3.5 px-4 text-right space-x-1">
-                            <button onClick={() => setViewingTemplate(tpl)} className="p-1.5 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-md transition-colors" title="Lihat Galeri (Zoom In/Out)">
-                              <Eye className="w-4 h-4" />
-                            </button>
-                            <button onClick={() => openEditModal('template', tpl)} className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors" title="Kemaskini">
-                              <Edit2 className="w-4 h-4" />
-                            </button>
-                            <button onClick={async () => { setTemplates(prev => prev.filter(t => t.id !== tpl.id)); await deleteDesignTemplateFromSupabase(tpl.id); }} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-md transition-colors" title="Padam">
-                              <Trash2 className="w-4 h-4" />
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
+                    {templates.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="py-12 text-center text-slate-400 font-mono text-xs">
+                          Belum ada template reka bentuk terrekod. Tekan "+ Tambah Template" untuk cipta rekod baharu.
+                        </td>
+                      </tr>
+                    ) : (
+                      templates.map(tpl => {
+                        const tplGallery = Array.isArray(tpl.images) && tpl.images.length > 0 ? tpl.images : [tpl.thumbnail];
+                        return (
+                          <tr key={tpl.id} className="hover:bg-slate-50/60 transition-colors">
+                            <td className="py-3 px-4">
+                              <div className="flex items-center space-x-1.5">
+                                <img
+                                  src={tplGallery[0] || PLACEHOLDER_IMAGE}
+                                  alt={tpl.name}
+                                  className="w-12 h-12 object-cover rounded-lg border border-slate-200 shadow-2xs aspect-square"
+                                  onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = PLACEHOLDER_IMAGE;
+                                  }}
+                                />
+                                {tplGallery.length > 1 && (
+                                  <span className="px-2 py-1 bg-slate-100 border border-slate-200 rounded-md text-[10px] font-bold text-slate-700">
+                                    +{tplGallery.length - 1} foto
+                                  </span>
+                                )}
+                              </div>
+                            </td>
+                            <td className="py-3.5 px-4 font-bold text-slate-900 uppercase">{tpl.name}</td>
+                            <td className="py-3.5 px-4 text-slate-900 font-bold">{tpl.category}</td>
+                            <td className="py-3.5 px-4 text-slate-600">
+                              <span className="px-2 py-0.5 bg-slate-100 border border-slate-200 rounded-md text-[10px] font-semibold text-slate-800">
+                                {tpl.subCategory || 'Umum'}
+                              </span>
+                            </td>
+                            <td className="py-3.5 px-4 text-slate-500 max-w-xs">{tpl.description || '-'}</td>
+                            <td className="py-3.5 px-4 text-right space-x-1">
+                              <button onClick={() => setViewingTemplate(tpl)} className="p-1.5 text-blue-600 hover:text-blue-800 hover:bg-blue-50 rounded-md transition-colors" title="Lihat Galeri (Zoom In/Out)">
+                                <Eye className="w-4 h-4" />
+                              </button>
+                              <button onClick={() => openEditModal('template', tpl)} className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors" title="Kemaskini">
+                                <Edit2 className="w-4 h-4" />
+                              </button>
+                              <button onClick={async () => { setTemplates(prev => prev.filter(t => t.id !== tpl.id)); await deleteDesignTemplateFromSupabase(tpl.id); }} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-md transition-colors" title="Padam">
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
                   </tbody>
                 </table>
               </div>

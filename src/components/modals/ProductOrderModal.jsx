@@ -8,12 +8,12 @@ export default function ProductOrderModal({ product: initialProduct, onClose, al
   if (!initialProduct) return null;
 
   const [currentProduct, setCurrentProduct] = useState(initialProduct);
-  const [productList, setProductList] = useState(Array.isArray(allProducts) && allProducts.length > 0 ? allProducts : DESIGN_TEMPLATES);
+  const [productList, setProductList] = useState(Array.isArray(allProducts) && allProducts.length > 0 ? allProducts : []);
 
-  const [cutTypes, setCutTypes] = useState(FALLBACK_CUTS);
-  const [fabricTypes, setFabricTypes] = useState(FALLBACK_FABRICS);
-  const [selectedFabric, setSelectedFabric] = useState(FALLBACK_FABRICS[0]);
-  const [selectedCut, setSelectedCut] = useState(FALLBACK_CUTS[0]);
+  const [cutTypes, setCutTypes] = useState([]);
+  const [fabricTypes, setFabricTypes] = useState([]);
+  const [selectedFabric, setSelectedFabric] = useState(null);
+  const [selectedCut, setSelectedCut] = useState(null);
   const [selectedColor, setSelectedColor] = useState('Kustom (Mengikut Reka Bentuk Template)');
   const [playerName, setPlayerName] = useState('');
   const [playerNumber, setPlayerNumber] = useState('');

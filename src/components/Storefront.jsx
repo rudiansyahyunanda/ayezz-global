@@ -11,6 +11,23 @@ export default function Storefront({ onOpenAdmin }) {
   const [selectedCatalog, setSelectedCatalog] = useState(null);
   const [orderedProduct, setOrderedProduct] = useState(null);
   const [orderedProductList, setOrderedProductList] = useState([]);
+  const [catalogs, setCatalogs] = useState([]);
+  const [isCatalogsLoading, setIsCatalogsLoading] = useState(true);
+
+  React.useEffect(() => {
+    async function fetchStoreCategories() {
+      setIsCatalogsLoading(true);
+      try {
+        const fetched = await getCategories();
+        setCatalogs(fetched || []);
+      } catch (err) {
+        setCatalogs([]);
+      } finally {
+        setIsCatalogsLoading(false);
+      }
+    }
+    fetchStoreCategories();
+  }, []);
 
   // Default featured product for direct order
   const featuredProduct = APPAREL_MODELS[0];
@@ -20,7 +37,7 @@ export default function Storefront({ onOpenAdmin }) {
     id: 'semua_kategori',
     title: 'Semua Katalog Sublimasi',
     subCategories: ['Semua', 'Jersi', 'Polo', 'Hoodie'],
-    items: MAIN_CATALOGS.flatMap(cat => cat.items)
+    items: catalogs.flatMap(cat => cat.items || [])
   };
 
   return (
@@ -211,58 +228,81 @@ export default function Storefront({ onOpenAdmin }) {
 
           {/* NIKE/KITH CLEAN APPAREL CARDS GRID */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
-            {MAIN_CATALOGS.map((cat, idx) => (
-              <div
-                key={cat.id}
-                onClick={() => setSelectedCatalog(cat)}
-                className="group cursor-pointer space-y-3.5"
-              >
-                {/* Clean Uncut Photo Container */}
-                <div className="w-full aspect-[4/3] bg-neutral-200 overflow-hidden rounded-2xl relative border border-[#E5E5E5]">
-                  <img
-                    src={cat.thumbnail}
-                    alt={cat.title}
-                    decoding="async"
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 img-crisp"
-                    style={{ imageRendering: '-webkit-optimize-contrast' }}
-                    onError={(e) => {
-                      e.target.onerror = null;
-                      e.target.src = PLACEHOLDER_IMAGE;
-                    }}
-                  />
-                  {/* Clean Top-Left Index Tag */}
-                  <div className="absolute top-3.5 left-3.5 z-10">
-                    <span className="text-[10px] font-mono font-bold uppercase bg-[#111111] text-white px-3 py-1 rounded-full shadow-md">
-                      0{idx + 1} // {cat.code}
-                    </span>
-                  </div>
+            {catalogs.length === 0 ? (
+              <div className="col-span-full py-12 px-8 bg-white border border-dashed border-[#E5E5E5] rounded-3xl text-center space-y-4">
+                <div className="w-14 h-14 bg-[#F6F5F3] rounded-full flex items-center justify-center mx-auto text-[#111111] font-mono text-xl font-bold">
+                  00
                 </div>
-
-                {/* Refined Text & Action Row Underneath */}
-                <div className="space-y-1 px-1">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-base font-extrabold text-[#111111] uppercase tracking-tight group-hover:text-neutral-600 transition-colors">
-                      {cat.title}
-                    </h3>
-                    <span className="text-xs font-black text-[#111111]">RM 70.00</span>
-                  </div>
-
-                  <div className="flex items-center justify-between text-xs pt-0.5">
-                    <span className="text-neutral-500 font-mono font-bold">{cat.itemCount}</span>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelectedCatalog(cat);
-                      }}
-                      className="font-extrabold uppercase text-[#111111] group-hover:underline flex items-center space-x-1 text-xs"
-                    >
-                      <span>Lihat Katalog</span>
-                      <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
-                    </button>
-                  </div>
+                <div className="space-y-1">
+                  <h3 className="text-lg font-extrabold text-[#111111] uppercase tracking-wide">Pangkalan Data Bersih & Baharu</h3>
+                  <p className="text-xs text-neutral-500 max-w-md mx-auto leading-relaxed">
+                    Belum ada kategori produk. Anda boleh mula memasukkan kategori, jenis potongan, dan template reka bentuk yang sebenar melalui Panel Admin.
+                  </p>
                 </div>
+                {onOpenAdmin && (
+                  <button
+                    onClick={onOpenAdmin}
+                    className="mt-2 inline-flex items-center space-x-2 px-6 py-3 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-xs uppercase tracking-widest rounded-full transition-all active:scale-95"
+                  >
+                    <Settings className="w-3.5 h-3.5" />
+                    <span>Buka Panel Admin</span>
+                  </button>
+                )}
               </div>
-            ))}
+            ) : (
+              catalogs.map((cat, idx) => (
+                <div
+                  key={cat.id}
+                  onClick={() => setSelectedCatalog(cat)}
+                  className="group cursor-pointer space-y-3.5"
+                >
+                  {/* Clean Uncut Photo Container */}
+                  <div className="w-full aspect-[4/3] bg-neutral-200 overflow-hidden rounded-2xl relative border border-[#E5E5E5]">
+                    <img
+                      src={cat.thumbnail}
+                      alt={cat.title}
+                      decoding="async"
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 img-crisp"
+                      style={{ imageRendering: '-webkit-optimize-contrast' }}
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = PLACEHOLDER_IMAGE;
+                      }}
+                    />
+                    {/* Clean Top-Left Index Tag */}
+                    <div className="absolute top-3.5 left-3.5 z-10">
+                      <span className="text-[10px] font-mono font-bold uppercase bg-[#111111] text-white px-3 py-1 rounded-full shadow-md">
+                        0{idx + 1} // {cat.code}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Refined Text & Action Row Underneath */}
+                  <div className="space-y-1 px-1">
+                    <div className="flex items-center justify-between">
+                      <h3 className="text-base font-extrabold text-[#111111] uppercase tracking-tight group-hover:text-neutral-600 transition-colors">
+                        {cat.title}
+                      </h3>
+                      <span className="text-xs font-black text-[#111111]">RM 70.00</span>
+                    </div>
+
+                    <div className="flex items-center justify-between text-xs pt-0.5">
+                      <span className="text-neutral-500 font-mono font-bold">{cat.itemCount}</span>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setSelectedCatalog(cat);
+                        }}
+                        className="font-extrabold uppercase text-[#111111] group-hover:underline flex items-center space-x-1 text-xs"
+                      >
+                        <span>Lihat Katalog</span>
+                        <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
 
             {/* End Card: "Lihat Semua" */}
             <div

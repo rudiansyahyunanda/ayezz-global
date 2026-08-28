@@ -60,16 +60,16 @@ export default function CleanSpecsStyleCatalogPage() {
           getFabricTypes()
         ]);
 
-        const finalTemplates = Array.isArray(fetchedTemplates) && fetchedTemplates.length > 0 ? fetchedTemplates : DESIGN_TEMPLATES;
+        const finalTemplates = Array.isArray(fetchedTemplates) ? fetchedTemplates : [];
         setTemplates(finalTemplates);
-        setCategories(fetchedCategories || []);
-        setCutTypes(fetchedCuts || FALLBACK_CUTS);
-        setFabricTypes(fetchedFabrics || FALLBACK_FABRICS);
+        setCategories(Array.isArray(fetchedCategories) ? fetchedCategories : []);
+        setCutTypes(Array.isArray(fetchedCuts) ? fetchedCuts : []);
+        setFabricTypes(Array.isArray(fetchedFabrics) ? fetchedFabrics : []);
       } catch (err) {
         console.error('Error loading catalog data:', err);
-        setTemplates(DESIGN_TEMPLATES);
-        setCutTypes(FALLBACK_CUTS);
-        setFabricTypes(FALLBACK_FABRICS);
+        setTemplates([]);
+        setCutTypes([]);
+        setFabricTypes([]);
       } finally {
         setIsLoading(false);
       }

@@ -87,17 +87,17 @@ function SpaciousCatalogContent() {
           getCurrentUser()
         ]);
 
-        const finalTemplates = Array.isArray(fetchedTemplates) && fetchedTemplates.length > 0 ? fetchedTemplates : DESIGN_TEMPLATES;
+        const finalTemplates = Array.isArray(fetchedTemplates) ? fetchedTemplates : [];
         setTemplates(finalTemplates);
         setCategories(Array.isArray(fetchedCategories) ? fetchedCategories : []);
-        setCutTypes(fetchedCuts || FALLBACK_CUTS);
-        setFabricTypes(fetchedFabrics || FALLBACK_FABRICS);
+        setCutTypes(Array.isArray(fetchedCuts) ? fetchedCuts : []);
+        setFabricTypes(Array.isArray(fetchedFabrics) ? fetchedFabrics : []);
         setCurrentUser(usr);
       } catch (err) {
         console.error('Error loading catalog data from Supabase:', err);
-        setTemplates(DESIGN_TEMPLATES);
-        setCutTypes(FALLBACK_CUTS);
-        setFabricTypes(FALLBACK_FABRICS);
+        setTemplates([]);
+        setCutTypes([]);
+        setFabricTypes([]);
       } finally {
         setIsLoading(false);
       }
@@ -203,7 +203,7 @@ function SpaciousCatalogContent() {
     ? categories.map((c) => (typeof c === 'string' ? c : c?.title || c?.id || '')).filter(Boolean)
     : Object.keys(categoryCounts).length > 0
     ? Object.keys(categoryCounts).filter(Boolean)
-    : ['Olahraga', 'E-Sport & Gaming', 'Sekolah & Kampus', 'Corporate & Instansi', 'Komunitas & Hobi', 'Fashion & Kasual'];
+    : [];
 
   const sizesList = ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL'];
 
@@ -489,20 +489,28 @@ function SpaciousCatalogContent() {
               ))}
             </div>
           ) : sortedTemplates.length === 0 ? (
-            <div className="py-24 text-center bg-[#F5F5F7] rounded-3xl border border-neutral-200 p-10 space-y-4">
-              <p className="text-sm font-bold text-[#111111]">Tiada Produk Ditemui</p>
-              <button
-                onClick={() => {
-                  setSelectedCategories([]);
-                  setSelectedCuts([]);
-                  setSelectedFabrics([]);
-                  setSelectedSizes([]);
-                  setSearchQuery('');
-                }}
-                className="px-5 py-2 bg-[#111111] text-white rounded-full text-xs font-bold transition-all"
-              >
-                Reset Penapis
-              </button>
+            <div className="py-24 text-center bg-[#F5F5F7] rounded-3xl border border-dashed border-neutral-300 p-10 space-y-4">
+              <div className="w-12 h-12 rounded-full bg-white flex items-center justify-center mx-auto text-[#111111] font-bold text-xl shadow-xs">
+                ✨
+              </div>
+              <div className="space-y-1">
+                <p className="text-base font-extrabold text-[#111111] uppercase tracking-wide">Katalog Bersih & Baharu</p>
+                <p className="text-xs text-neutral-500 max-w-md mx-auto leading-relaxed">
+                  Belum ada template reka bentuk dalam pangkalan data. Sila muat naik template baharu melalui Panel Admin untuk memulakan katalog real.
+                </p>
+              </div>
+              {(selectedCategory !== 'Semua' || selectedSubCategory !== 'Semua' || searchQuery) && (
+                <button
+                  onClick={() => {
+                    setSelectedCategory('Semua');
+                    setSelectedSubCategory('Semua');
+                    setSearchQuery('');
+                  }}
+                  className="px-5 py-2.5 bg-[#111111] text-white rounded-full text-xs font-bold transition-all shadow-xs"
+                >
+                  Reset Penapis
+                </button>
+              )}
             </div>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-6 lg:gap-8">

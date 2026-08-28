@@ -85,14 +85,14 @@ export default function SmoothHeaderHomepage() {
         getCurrentUser(),
         getShowcaseFeatureFromSupabase()
       ]);
-      setCategories(Array.isArray(cats) && cats.length > 0 ? cats : MAIN_CATALOGS);
-      setTemplates(Array.isArray(tpls) && tpls.length > 0 ? tpls : DESIGN_TEMPLATES);
+      setCategories(Array.isArray(cats) ? cats : []);
+      setTemplates(Array.isArray(tpls) ? tpls : []);
       setCurrentUser(usr);
       setShowcaseFeature(showcase || DEFAULT_SHOWCASE_FEATURE);
     } catch (err) {
       console.warn('Error loading homepage data from Supabase:', err);
-      setCategories(MAIN_CATALOGS);
-      setTemplates(DESIGN_TEMPLATES);
+      setCategories([]);
+      setTemplates([]);
       setShowcaseFeature(DEFAULT_SHOWCASE_FEATURE);
     } finally {
       setIsLoading(false);
@@ -103,11 +103,7 @@ export default function SmoothHeaderHomepage() {
     loadData();
   }, []);
 
-  const featuredProduct = templates[0] || {
-    id: 'tpl_futsal_pro',
-    name: 'Template Jersi Pro Match',
-    thumbnail: PLACEHOLDER_IMAGE
-  };
+  const featuredProduct = templates[0] || null;
 
   const handleCategoryClick = (catTitle) => {
     router.push(`/katalog?category=${encodeURIComponent(catTitle)}`);

@@ -12,12 +12,12 @@ export const PLACEHOLDER_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3
 // 1. KATEGORI UTAMA (Full CRUD with Cover Image)
 // ==========================================
 export async function getCategories() {
-  if (!isSupabaseConnected) return INITIAL_CATALOGS;
+  if (!isSupabaseConnected) return [];
   try {
     const { data: catData, error: catErr } = await supabase.from('categories').select('*').order('code', { ascending: true });
     
-    // Priority 1: Use Supabase categories directly
-    const categoriesSource = (catData && catData.length > 0) ? catData : INITIAL_CATALOGS;
+    if (catErr || !catData || catData.length === 0) return [];
+    const categoriesSource = catData;
 
     const { data: subData } = await supabase.from('sub_categories').select('*');
     const { data: templateData } = await supabase.from('design_templates').select('category');
@@ -50,7 +50,7 @@ export async function getCategories() {
     });
   } catch (err) {
     console.warn('Supabase getCategories error:', err);
-    return INITIAL_CATALOGS;
+    return [];
   }
 }
 
@@ -138,10 +138,10 @@ export async function deleteSubCategoryFromSupabase(subCatId) {
 // 2. JENIS POTONGAN / KOLAR (WITH 1:1 COVER THUMBNAIL)
 // ==========================================
 export async function getCutTypes() {
-  if (!isSupabaseConnected) return INITIAL_CUTS;
+  if (!isSupabaseConnected) return [];
   try {
     const { data, error } = await supabase.from('cut_types').select('*').order('created_at', { ascending: true });
-    if (error || !data || data.length === 0) return INITIAL_CUTS;
+    if (error || !data || data.length === 0) return [];
     return data.map(item => ({
       id: item.id,
       name: item.name,
@@ -151,7 +151,7 @@ export async function getCutTypes() {
     }));
   } catch (err) {
     console.warn('Supabase getCutTypes error:', err);
-    return INITIAL_CUTS;
+    return [];
   }
 }
 
@@ -229,10 +229,10 @@ export async function deleteCutTypeFromSupabase(cutId) {
 // 3. BAHAN KAIN SUBLIMASI
 // ==========================================
 export async function getFabricTypes() {
-  if (!isSupabaseConnected) return INITIAL_FABRICS;
+  if (!isSupabaseConnected) return [];
   try {
     const { data, error } = await supabase.from('fabric_types').select('*').order('created_at', { ascending: true });
-    if (error || !data || data.length === 0) return INITIAL_FABRICS;
+    if (error || !data || data.length === 0) return [];
     return data.map(item => ({
       id: item.id,
       name: item.name,
@@ -245,7 +245,7 @@ export async function getFabricTypes() {
     }));
   } catch (err) {
     console.warn('Supabase getFabricTypes error:', err);
-    return INITIAL_FABRICS;
+    return [];
   }
 }
 
@@ -719,13 +719,13 @@ export async function updateUserRoleInSupabase(userId, newRole) {
 // ==========================================
 export const DEFAULT_SHOWCASE_FEATURE = {
   id: 'showcase_default',
-  sectionTitle: 'Lihat lebih dekat.',
-  headline: 'Tur Terpandu Kilang Sublimasi AYEZZ GLOBAL',
-  subHeadline: 'Lihat proses pengeluaran cetakan sublimasi HD, pemotongan fabrik berpresisi tinggi, dan hasil seragam custom berkualiti standard kilang.',
+  sectionTitle: 'Koleksi Produk Utama',
+  headline: 'Pengeluaran Cetakan Sublimasi AYEZZ GLOBAL',
+  subHeadline: 'Pilihan seragam custom berkualiti standard kilang.',
   coverImage: PLACEHOLDER_IMAGE,
-  buttonText: 'Tonton video',
-  videoUrl: 'https://www.youtube.com/embed/dQw4w9WgXcQ',
-  isActive: true
+  buttonText: 'Tonton Video',
+  videoUrl: '',
+  isActive: false
 };
 
 export async function getShowcaseFeatureFromSupabase() {
