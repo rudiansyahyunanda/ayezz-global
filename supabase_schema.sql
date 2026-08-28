@@ -151,3 +151,19 @@ GRANT ALL ON TABLE public.design_templates TO anon, authenticated, postgres, ser
 GRANT ALL ON TABLE public.orders TO anon, authenticated, postgres, service_role;
 GRANT ALL ON TABLE public.store_settings TO anon, authenticated, postgres, service_role;
 GRANT ALL ON TABLE public.users TO anon, authenticated, postgres, service_role;
+
+-- 12. STORAGE BUCKET POLICIES FOR 'ayezz-assets' (FULL PUBLIC UPLOAD/READ/DELETE ACCESS)
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('ayezz-assets', 'ayezz-assets', true)
+ON CONFLICT (id) DO UPDATE SET public = true;
+
+DROP POLICY IF EXISTS "Public Storage Select Policy" ON storage.objects;
+DROP POLICY IF EXISTS "Public Storage Insert Policy" ON storage.objects;
+DROP POLICY IF EXISTS "Public Storage Update Policy" ON storage.objects;
+DROP POLICY IF EXISTS "Public Storage Delete Policy" ON storage.objects;
+
+CREATE POLICY "Public Storage Select Policy" ON storage.objects FOR SELECT USING (bucket_id = 'ayezz-assets');
+CREATE POLICY "Public Storage Insert Policy" ON storage.objects FOR INSERT WITH CHECK (bucket_id = 'ayezz-assets');
+CREATE POLICY "Public Storage Update Policy" ON storage.objects FOR UPDATE USING (bucket_id = 'ayezz-assets');
+CREATE POLICY "Public Storage Delete Policy" ON storage.objects FOR DELETE USING (bucket_id = 'ayezz-assets');
+
