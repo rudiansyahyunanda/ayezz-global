@@ -193,94 +193,116 @@ function DashboardContent() {
   useEffect(() => {
     async function initDashboard() {
       setLoading(true);
-      const currentUser = await getCurrentUser();
-      if (!currentUser) {
-        router.push('/login?redirect=/dashboard&msg=login_required');
-        return;
-      }
+      try {
+        let currentUser = await getCurrentUser();
 
-      setUser(currentUser);
-      setFullName(currentUser.fullName || '');
-      setPhone(currentUser.phone || '');
-      setAddress(currentUser.address || '');
+        // Check URL search params for tab, status, and payment callback
+        const tabParam = searchParams.get('tab');
+        const tplParam = searchParams.get('templateName');
+        const catParam = searchParams.get('cat');
+        const statusParam = searchParams.get('status');
+        const orderIdParam = searchParams.get('orderId');
 
-      setCustomerInfo((prev) => ({
-        ...prev,
-        name: currentUser.fullName || '',
-        phone: currentUser.phone || ''
-      }));
-
-      // Load User Orders, Cut Types, Sleeve Types, Fabric Types, Design Templates, Categories & Subcategories directly from Supabase DB
-      const [userOrders, cuts, sleeves, fabrics, tpls, cats, subs] = await Promise.all([
-        getUserOrdersFromSupabase(currentUser.email),
-        getCutTypes(),
-        getSleeveTypes(),
-        getFabricTypes(),
-        getDesignTemplates(),
-        getCategories(),
-        getSubCategories()
-      ]);
-
-      setOrders(userOrders || []);
-      if (cats && cats.length > 0) setCategories(cats);
-      if (subs && subs.length > 0) setSubCategories(subs);
-
-      let loadedCuts = FALLBACK_CUTS;
-      if (cuts && cuts.length > 0) {
-        setCutTypes(cuts);
-        loadedCuts = cuts;
-      }
-
-      let loadedSleeves = FALLBACK_SLEEVE_TYPES;
-      if (sleeves && sleeves.length > 0) {
-        setSleeveTypes(sleeves);
-        loadedSleeves = sleeves;
-      }
-
-      setCutGroups([
-        {
-          id: 'group_1',
-          cut: loadedCuts[0],
-          sleeve: loadedSleeves[0],
-          sizes: {
-            XS: 0, S: 0, M: 0, L: 0, XL: 0, '2XL': 0, '3XL': 0, '4XL': 0, '5XL': 0,
-            '22': 0, '24': 0, '26': 0, '28': 0, '30': 0, '32': 0
+        // If returned from Payment Gateway or order URL, create seamless session if currentUser is missing
+        if (!currentUser) {
+          if (statusParam || orderIdParam || tabParam) {
+            currentUser = {
+              id: 'guest_' + Date.now(),
+              email: 'pelanggan@ayezz.com',
+              fullName: 'Pelanggan AYEZZ',
+              phone: '',
+              isGuest: true
+            };
+            if (typeof window !== 'undefined') {
+              localStorage.setItem('ayezz_user_session', JSON.stringify(currentUser));
+            }
+          } else {
+            router.push('/login?redirect=/dashboard&msg=login_required');
+            return;
           }
         }
-      ]);
 
-      if (fabrics && fabrics.length > 0) {
-        setFabricTypes(fabrics);
-        setSelectedFabric(fabrics[0]);
-      }
-      if (tpls && tpls.length > 0) {
-        setTemplates(tpls);
-        setOrderTemplateName(tpls[0].name);
-        setOrderCategory(tpls[0].category || 'SUBLIMASI');
-        setOrderSubCategory(tpls[0].subCategory || '');
-      } else {
-        setOrderTemplateName('Template Jersi Pro Match');
-      }
+        setUser(currentUser);
+        setFullName(currentUser.fullName || '');
+        setPhone(currentUser.phone || '');
+        setAddress(currentUser.address || '');
 
-      // Check URL search params for tab, status, and payment callback
-      const tabParam = searchParams.get('tab');
-      const tplParam = searchParams.get('templateName');
-      const catParam = searchParams.get('cat');
-      const statusParam = searchParams.get('status');
-      const orderIdParam = searchParams.get('orderId');
+        setCustomerInfo((prev) => ({
+          ...prev,
+          name: currentUser.fullName || '',
+          phone: currentUser.phone || ''
+        }));
 
-      if (tabParam) setActiveTab(tabParam);
-      if (tplParam) setOrderTemplateName(tplParam);
-      if (catParam) setOrderCategory(catParam);
+        // Load User Orders, Cut Types, Sleeve Types, Fabric Types, Design Templates, Categories & Subcategories directly from Supabase DB
+        const [userOrders, cuts, sleeves, fabrics, tpls, cats, subs] = await Promise.all([
+          getUserOrdersFromSupabase(currentUser.email),
+          getCutTypes(),
+          getSleeveTypes(),
+          getFabricTypes(),
+          getDesignTemplates(),
+          getCategories(),
+          getSubCategories()
+        ]);
 
-      if (statusParam === 'paid' || statusParam === 'simulated_paid') {
-        if (orderIdParam) {
-          updateOrderStatusInSupabase(orderIdParam, 'Pesanan Diterima & Lunas');
+        setOrders(userOrders || []);
+        if (cats && cats.length > 0) setCategories(cats);
+        if (subs && subs.length > 0) setSubCategories(subs);
+
+        let loadedCuts = FALLBACK_CUTS;
+        if (cuts && cuts.length > 0) {
+          setCutTypes(cuts);
+          loadedCuts = cuts;
         }
-        setActiveTab('orders');
-      }
 
-      setLoading(false);
+        let loadedSleeves = FALLBACK_SLEEVE_TYPES;
+        if (sleeves && sleeves.length > 0) {
+          setSleeveTypes(sleeves);
+          loadedSleeves = sleeves;
+        }
+
+        setCutGroups([
+          {
+            id: 'group_1',
+            cut: loadedCuts[0],
+            sleeve: loadedSleeves[0],
+            sizes: {
+              XS: 0, S: 0, M: 0, L: 0, XL: 0, '2XL': 0, '3XL': 0, '4XL': 0, '5XL': 0,
+              '22': 0, '24': 0, '26': 0, '28': 0, '30': 0, '32': 0
+            }
+          }
+        ]);
+
+        if (fabrics && fabrics.length > 0) {
+          setFabricTypes(fabrics);
+          setSelectedFabric(fabrics[0]);
+        }
+        if (tpls && tpls.length > 0) {
+          setTemplates(tpls);
+          setOrderTemplateName(tpls[0].name);
+          setOrderCategory(tpls[0].category || 'SUBLIMASI');
+          setOrderSubCategory(tpls[0].subCategory || '');
+        } else {
+          setOrderTemplateName('Template Jersi Pro Match');
+        }
+
+        if (tabParam) setActiveTab(tabParam);
+        if (tplParam) setOrderTemplateName(tplParam);
+        if (catParam) setOrderCategory(catParam);
+
+        if (statusParam === 'paid' || statusParam === 'simulated_paid') {
+          if (orderIdParam) {
+            await updateOrderStatusInSupabase(orderIdParam, 'Pesanan Diterima & Lunas');
+            // Refresh orders after status update
+            const refreshedOrders = await getUserOrdersFromSupabase(currentUser.email);
+            setOrders(refreshedOrders || []);
+          }
+          setActiveTab('orders');
+        }
+      } catch (err) {
+        console.error('Error initializing dashboard:', err);
+      } finally {
+        setLoading(false);
+      }
     }
     initDashboard();
   }, [router, searchParams]);
