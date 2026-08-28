@@ -2,61 +2,32 @@
 
 import React, { useRef } from 'react';
 import { Upload, Trash2, Plus, Star } from 'lucide-react';
+import { uploadAndProcessImageServerSide } from '../../lib/imageService';
 
 export default function MultiImageUploadCropper({ images = [], onChange, maxImages = 5 }) {
   const fileInputRef = useRef(null);
 
-  // Process selected file to 1:1 data URL (with GIF & SVG animation/vector preservation)
-  const processImageFile = (file) => {
+  // Server-side Sharp processing for multi-image gallery uploads
+  const processImageFile = async (file) => {
     if (!file) return;
-    const isSvg = file.type === 'image/svg+xml' || file.name.toLowerCase().endsWith('.svg');
-    const isGif = file.type === 'image/gif' || file.name.toLowerCase().endsWith('.gif');
-    const reader = new FileReader();
 
-    if (isSvg || isGif) {
+    try {
+      const res = await uploadAndProcessImageServerSide(file, { width: 1200, height: 1200 });
+      if (res && res.url) {
+        onChange((prevImages) => {
+          const current = Array.isArray(prevImages) ? prevImages : images;
+          return [...current, res.url].slice(0, maxImages);
+        });
+      }
+    } catch (err) {
+      console.warn('Server-side Sharp multi-image upload fallback:', err);
+      const reader = new FileReader();
       reader.onload = (e) => {
-        const mediaUrl = e.target.result;
-        const newImages = [...images, mediaUrl].slice(0, maxImages);
-        onChange(newImages);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      reader.onload = (e) => {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const targetSize = 1000;
-          canvas.width = targetSize;
-          canvas.height = targetSize;
-          const ctx = canvas.getContext('2d');
-          ctx.imageSmoothingEnabled = true;
-          ctx.imageSmoothingQuality = 'high';
-
-          const naturalWidth = img.naturalWidth || img.width || 1000;
-          const naturalHeight = img.naturalHeight || img.height || 1000;
-
-          let drawWidth = naturalWidth;
-          let drawHeight = naturalHeight;
-          let offsetX = 0;
-          let offsetY = 0;
-
-          if (naturalWidth > naturalHeight) {
-            drawWidth = naturalHeight;
-            offsetX = (naturalWidth - naturalHeight) / 2;
-          } else {
-            drawHeight = naturalWidth;
-            offsetY = (naturalHeight - naturalWidth) / 2;
-          }
-
-          ctx.clearRect(0, 0, targetSize, targetSize);
-          ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight, 0, 0, targetSize, targetSize);
-
-          const croppedDataUrl = canvas.toDataURL('image/png', 1.0);
-          const newImages = [...images, croppedDataUrl].slice(0, maxImages);
-          onChange(newImages);
-        };
-        img.src = e.target.result;
+        const localUrl = e.target.result;
+        onChange((prevImages) => {
+          const current = Array.isArray(prevImages) ? prevImages : images;
+          return [...current, localUrl].slice(0, maxImages);
+        });
       };
       reader.readAsDataURL(file);
     }

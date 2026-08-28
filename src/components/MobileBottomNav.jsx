@@ -19,13 +19,13 @@ export default function MobileBottomNav({ currentUser, onCategoryClick }) {
       label: 'Katalog',
       href: '/katalog',
       icon: Grid,
-      isActive: pathname.startsWith('/katalog')
+      isActive: Boolean(pathname && pathname.startsWith('/katalog'))
     },
     {
       label: 'Dashboard',
       href: currentUser ? '/dashboard' : '/login',
       icon: User,
-      isActive: pathname === '/dashboard' || pathname === '/login'
+      isActive: Boolean(pathname && (pathname === '/dashboard' || pathname === '/login'))
     }
   ];
 

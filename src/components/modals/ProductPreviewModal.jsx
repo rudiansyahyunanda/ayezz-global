@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
 import { getCurrentUser } from '../../lib/authService';
 import {
@@ -52,7 +52,7 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
         const parsed = JSON.parse(product.images);
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
       } catch (e) {
-        if (product.images.startsWith('http') || product.images.startsWith('/') || product.images.startsWith('data:')) return [product.images];
+        if (typeof product.images === 'string' && (product.images.startsWith('http') || product.images.startsWith('/') || product.images.startsWith('data:'))) return [product.images];
       }
     }
     if (product.thumbnail) return [product.thumbnail];

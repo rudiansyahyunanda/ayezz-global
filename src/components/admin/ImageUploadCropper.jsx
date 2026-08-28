@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from 'react';
 import { Upload as UploadIcon, Crop as CropIcon, Trash2, RefreshCw } from 'lucide-react';
+import { uploadAndProcessImageServerSide } from '../../lib/imageService';
 
 export default function ImageUploadCropper({ value, onChange, label = "Gambar Cover (1:1 Square)", compact = false }) {
   const [preview, setPreview] = useState(value || '');
@@ -9,66 +10,29 @@ export default function ImageUploadCropper({ value, onChange, label = "Gambar Co
   const [dragActive, setDragActive] = useState(false);
   const fileInputRef = useRef(null);
 
-  // Canvas Auto-Crop to 1:1 Square with Full SVG, GIF & Raster Image Support
-  const processImageFile = (file) => {
+  // Server-side Sharp processing (Resize proportional, WebP conversion, Alpha channel PNG transparency preservation)
+  const processImageFile = async (file) => {
     if (!file) return;
-
-    const isSvg = file.type === 'image/svg+xml' || file.name.toLowerCase().endsWith('.svg');
-    const isGif = file.type === 'image/gif' || file.name.toLowerCase().endsWith('.gif');
     setIsProcessing(true);
 
-    const reader = new FileReader();
-
-    if (isSvg || isGif) {
-      // Direct DataURL preserving crisp SVG vectors or animated GIF playback
+    try {
+      // Send file to server API for Sharp processing
+      const res = await uploadAndProcessImageServerSide(file, { width: 1200, height: 1200 });
+      if (res && res.url) {
+        setPreview(res.url);
+        onChange(res.url);
+      }
+    } catch (err) {
+      console.warn('Server-side Sharp upload warning, falling back to local dataURL preview:', err);
+      const reader = new FileReader();
       reader.onload = (e) => {
-        const mediaDataUrl = e.target.result;
-        setPreview(mediaDataUrl);
-        onChange(mediaDataUrl);
-        setIsProcessing(false);
+        const localDataUrl = e.target.result;
+        setPreview(localDataUrl);
+        onChange(localDataUrl);
       };
       reader.readAsDataURL(file);
-    } else {
-      // Raster Images (PNG, JPG, WEBP) Center 1:1 Square Canvas Crop (600x600 px)
-      reader.onload = (e) => {
-        const img = new Image();
-        img.crossOrigin = 'anonymous';
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          const targetSize = 1000;
-          canvas.width = targetSize;
-          canvas.height = targetSize;
-          const ctx = canvas.getContext('2d');
-          ctx.imageSmoothingEnabled = true;
-          ctx.imageSmoothingQuality = 'high';
-
-          const naturalWidth = img.naturalWidth || img.width || 1000;
-          const naturalHeight = img.naturalHeight || img.height || 1000;
-
-          let drawWidth = naturalWidth;
-          let drawHeight = naturalHeight;
-          let offsetX = 0;
-          let offsetY = 0;
-
-          if (naturalWidth > naturalHeight) {
-            drawWidth = naturalHeight;
-            offsetX = (naturalWidth - naturalHeight) / 2;
-          } else {
-            drawHeight = naturalWidth;
-            offsetY = (naturalHeight - naturalWidth) / 2;
-          }
-
-          ctx.clearRect(0, 0, targetSize, targetSize);
-          ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight, 0, 0, targetSize, targetSize);
-
-          const croppedDataUrl = canvas.toDataURL('image/png', 1.0);
-          setPreview(croppedDataUrl);
-          onChange(croppedDataUrl);
-          setIsProcessing(false);
-        };
-        img.src = e.target.result;
-      };
-      reader.readAsDataURL(file);
+    } finally {
+      setIsProcessing(false);
     }
   };
 

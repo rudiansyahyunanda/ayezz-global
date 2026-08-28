@@ -15,10 +15,10 @@ export default function ErrorBoundary({ error, reset }) {
           AYEZZ GLOBAL SISTEM
         </span>
         <h2 className="text-2xl font-black uppercase text-[#111111]">
-          Katalog Memuatkan Sesi
+          Penyegaran Halaman Diperlukan
         </h2>
         <p className="text-xs text-neutral-500 font-normal">
-          Terdapat sedikit kelewatan dalam penyegaran sesi. Sila tekan butang muat semula di bawah.
+          Sistem mengalami masalah sementara saat memuatkan halaman. Sila tekan butang muat semula di bawah.
         </p>
       </div>
 

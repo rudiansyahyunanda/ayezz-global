@@ -1,7 +1,5 @@
 'use client';
 
-export const dynamic = 'force-dynamic';
-
 import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
@@ -91,7 +89,7 @@ function SpaciousCatalogContent() {
 
         const finalTemplates = Array.isArray(fetchedTemplates) && fetchedTemplates.length > 0 ? fetchedTemplates : DESIGN_TEMPLATES;
         setTemplates(finalTemplates);
-        setCategories(fetchedCategories || []);
+        setCategories(Array.isArray(fetchedCategories) ? fetchedCategories : []);
         setCutTypes(fetchedCuts || FALLBACK_CUTS);
         setFabricTypes(fetchedFabrics || FALLBACK_FABRICS);
         setCurrentUser(usr);
@@ -119,11 +117,10 @@ function SpaciousCatalogContent() {
     if (!catTitle || catTitle === 'Semua') return [];
     
     // Find category in loaded categories state (from Supabase)
-    const catObj = categories.find(
-      (c) => (c.title || '').toLowerCase() === catTitle.toLowerCase() ||
-             (c.id || '').toLowerCase() === catTitle.toLowerCase() ||
-             (c.code || '').toLowerCase() === catTitle.toLowerCase()
-    );
+    const catObj = Array.isArray(categories) ? categories.find(
+      (c) => (c?.title || c?.id || '').toLowerCase() === catTitle.toLowerCase() ||
+             (c?.code || '').toLowerCase() === catTitle.toLowerCase()
+    ) : null;
 
     let list = [];
     if (catObj && Array.isArray(catObj.subCategories)) {
@@ -131,16 +128,18 @@ function SpaciousCatalogContent() {
     }
 
     // Also collect any subCategory values from loaded templates for this category
-    templates.forEach((t) => {
-      const tplCat = (t.category || '').toLowerCase();
-      const selCat = catTitle.toLowerCase();
-      const isMatch = tplCat === selCat || tplCat.includes(selCat) || selCat.includes(tplCat) ||
-                      (selCat === 'olahraga' && tplCat === 'sukan') ||
-                      (selCat === 'sukan' && tplCat === 'olahraga');
-      if (isMatch && t.subCategory && !list.includes(t.subCategory)) {
-        list.push(t.subCategory);
-      }
-    });
+    if (Array.isArray(templates)) {
+      templates.forEach((t) => {
+        const tplCat = (t?.category || '').toLowerCase();
+        const selCat = catTitle.toLowerCase();
+        const isMatch = tplCat === selCat || tplCat.includes(selCat) || selCat.includes(tplCat) ||
+                        (selCat === 'olahraga' && tplCat === 'sukan') ||
+                        (selCat === 'sukan' && tplCat === 'olahraga');
+        if (isMatch && t?.subCategory && !list.includes(t.subCategory)) {
+          list.push(t.subCategory);
+        }
+      });
+    }
 
     const uniqueSubs = Array.from(new Set(list)).filter(Boolean);
     uniqueSubs.unshift('Semua');
@@ -148,7 +147,9 @@ function SpaciousCatalogContent() {
   };
 
   // Filter Templates
-  const filteredTemplates = templates.filter((tpl) => {
+  const filteredTemplates = (Array.isArray(templates) ? templates : []).filter((tpl) => {
+    if (!tpl) return false;
+
     // 1. Main Category filter
     if (selectedCategory && selectedCategory !== 'Semua') {
       const tplCat = (tpl.category || '').toLowerCase();
@@ -190,16 +191,18 @@ function SpaciousCatalogContent() {
   });
 
   const categoryCounts = {};
-  templates.forEach((t) => {
-    if (t.category) {
-      categoryCounts[t.category] = (categoryCounts[t.category] || 0) + 1;
-    }
-  });
+  if (Array.isArray(templates)) {
+    templates.forEach((t) => {
+      if (t && t.category) {
+        categoryCounts[t.category] = (categoryCounts[t.category] || 0) + 1;
+      }
+    });
+  }
 
-  const availableCategories = categories.length > 0
-    ? categories.map((c) => c.title)
+  const availableCategories = Array.isArray(categories) && categories.length > 0
+    ? categories.map((c) => (typeof c === 'string' ? c : c?.title || c?.id || '')).filter(Boolean)
     : Object.keys(categoryCounts).length > 0
-    ? Object.keys(categoryCounts)
+    ? Object.keys(categoryCounts).filter(Boolean)
     : ['Olahraga', 'E-Sport & Gaming', 'Sekolah & Kampus', 'Corporate & Instansi', 'Komunitas & Hobi', 'Fashion & Kasual'];
 
   const sizesList = ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL'];
@@ -279,7 +282,7 @@ function SpaciousCatalogContent() {
           <Link href="/" className="hover:text-[#111111]">UTAMA</Link>
           <span>/</span>
           <span className="font-bold text-[#111111] truncate">
-            {selectedCategory === 'Semua' ? 'KATALOG REKA BENTUK' : `KATALOG / ${selectedCategory.toUpperCase()}`}
+            {selectedCategory === 'Semua' ? 'KATALOG REKA BENTUK' : `KATALOG / ${(selectedCategory || '').toUpperCase()}`}
           </span>
         </div>
 
@@ -330,7 +333,7 @@ function SpaciousCatalogContent() {
             </button>
 
             {availableCategories.map((cat) => {
-              const isSelected = selectedCategory.toLowerCase() === cat.toLowerCase();
+              const isSelected = (selectedCategory || '').toLowerCase() === (cat || '').toLowerCase();
               const count = categoryCounts[cat] || 0;
               return (
                 <button
@@ -356,7 +359,7 @@ function SpaciousCatalogContent() {
             <div className="flex items-center space-x-2 overflow-x-auto scrollbar-none pb-1 animate-fadeIn" style={{ scrollbarWidth: 'none' }}>
               <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase shrink-0 pr-1">SUB:</span>
               {getSubCategoriesForCategory(selectedCategory).map((sub) => {
-                const isSubSelected = selectedSubCategory.toLowerCase() === sub.toLowerCase();
+                const isSubSelected = (selectedSubCategory || '').toLowerCase() === (sub || '').toLowerCase();
                 return (
                   <button
                     key={sub}
@@ -402,7 +405,7 @@ function SpaciousCatalogContent() {
 
               {availableCategories.map((cat) => {
                 const count = categoryCounts[cat] || 0;
-                const isSelected = selectedCategory.toLowerCase() === cat.toLowerCase();
+                const isSelected = (selectedCategory || '').toLowerCase() === (cat || '').toLowerCase();
                 return (
                   <button
                     key={cat}
@@ -433,7 +436,7 @@ function SpaciousCatalogContent() {
 
               <div className="mt-3 space-y-1 text-xs font-medium">
                 {getSubCategoriesForCategory(selectedCategory).map((sub) => {
-                  const isSubSelected = selectedSubCategory.toLowerCase() === sub.toLowerCase();
+                  const isSubSelected = (selectedSubCategory || '').toLowerCase() === (sub || '').toLowerCase();
                   return (
                     <button
                       key={sub}
