@@ -36,7 +36,11 @@ import {
   Sliders,
   Layers,
   CreditCard,
-  Globe
+  Globe,
+  Palette,
+  Image as ImageIcon,
+  HelpCircle,
+  Check
 } from 'lucide-react';
 
 import { getCurrentUser, logoutUser, updateUserProfile } from '../../lib/authService';
@@ -97,6 +101,17 @@ function DashboardContent() {
   // ----------------------------------------------------
   // NEW ORDER CONFIGURATOR STATE (FORM PESANAN)
   // ----------------------------------------------------
+  // SECTION 1: TEMPLATE & CUSTOM DESIGN MODE STATES
+  const [isCustomDesign, setIsCustomDesign] = useState(false);
+  const [isTemplateModalOpen, setIsTemplateModalOpen] = useState(false);
+  const [templateSearchQuery, setTemplateSearchQuery] = useState('');
+  const [templateCategoryFilter, setTemplateCategoryFilter] = useState('all');
+
+  // Custom Design Reference Upload & Notes
+  const [customDesignRefUrl, setCustomDesignRefUrl] = useState('');
+  const [isUploadingRefImage, setIsUploadingRefImage] = useState(false);
+  const [customDesignNotes, setCustomDesignNotes] = useState('');
+
   const [orderTemplateName, setOrderTemplateName] = useState('');
   const [orderCategory, setOrderCategory] = useState('SUBLIMASI');
   const [orderSubCategory, setOrderSubCategory] = useState('');
@@ -197,6 +212,23 @@ function DashboardContent() {
     return templates.find((t) => t.name === orderTemplateName) || templates[0];
   }, [templates, orderTemplateName]);
 
+  // Filtered Templates for Selection Modal
+  const filteredModalTemplates = useMemo(() => {
+    return templates.filter((tpl) => {
+      const q = templateSearchQuery.toLowerCase();
+      const matchesQuery =
+        !q ||
+        tpl.name.toLowerCase().includes(q) ||
+        (tpl.category || '').toLowerCase().includes(q) ||
+        (tpl.subCategory || '').toLowerCase().includes(q);
+
+      if (!matchesQuery) return false;
+
+      if (templateCategoryFilter === 'all') return true;
+      return (tpl.category || '').toLowerCase() === templateCategoryFilter.toLowerCase();
+    });
+  }, [templates, templateSearchQuery, templateCategoryFilter]);
+
   // ----------------------------------------------------
   // LOGOUT HANDLER
   // ----------------------------------------------------
@@ -231,7 +263,7 @@ function DashboardContent() {
   };
 
   // ----------------------------------------------------
-  // LOGO UPLOAD HANDLER FOR NEW ORDER FORM
+  // LOGO & REFERENCE IMAGE UPLOAD HANDLERS
   // ----------------------------------------------------
   const handleLogoUpload = async (e) => {
     const file = e.target.files?.[0];
@@ -250,6 +282,26 @@ function DashboardContent() {
       reader.readAsDataURL(file);
     } finally {
       setIsUploadingLogo(false);
+    }
+  };
+
+  const handleRefImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingRefImage(true);
+    try {
+      const cloudUrl = await uploadDirectToSupabaseStorage(file, 'ref_design');
+      if (cloudUrl) {
+        setCustomDesignRefUrl(cloudUrl);
+      }
+    } catch (err) {
+      console.warn('Ref image upload fallback error:', err);
+      const reader = new FileReader();
+      reader.onload = (ev) => setCustomDesignRefUrl(ev.target.result);
+      reader.readAsDataURL(file);
+    } finally {
+      setIsUploadingRefImage(false);
     }
   };
 
@@ -279,12 +331,16 @@ function DashboardContent() {
     setIsSubmittingOrder(true);
     const generatedOrderId = 'AYZ-' + Math.floor(100000 + Math.random() * 900000);
 
+    const finalTemplateTitle = isCustomDesign
+      ? `Reka Bentuk Kustom (Khas) ${orderTemplateName ? `- Base: ${orderTemplateName}` : ''}`
+      : (orderTemplateName || 'Template Reka Bentuk');
+
     const orderPayload = {
       order_id: generatedOrderId,
       userEmail: user?.email || '',
       userId: user?.id || '',
-      templateName: orderTemplateName || 'Template Reka Bentuk',
-      product_name: orderTemplateName || 'Template Reka Bentuk',
+      templateName: finalTemplateTitle,
+      product_name: finalTemplateTitle,
       category: orderCategory || 'SUBLIMASI',
       sub_category: orderSubCategory || '',
       cutType: selectedCut?.name || '',
@@ -300,8 +356,10 @@ function DashboardContent() {
       clientName: customerInfo.name || user?.fullName || 'Pelanggan Sistem',
       customer_phone: customerInfo.phone || user?.phone || '',
       team_name: customerInfo.teamName || '-',
-      notes: customerInfo.notes || '',
+      notes: `${isCustomDesign ? `[KUSTOM DESIGN] ${customDesignNotes} ` : ''}${customerInfo.notes || ''}`.trim(),
       custom_logo_url: customLogoUrl || '',
+      custom_design_ref_url: customDesignRefUrl || '',
+      is_custom_design: isCustomDesign,
       status: 'Pesanan Diterima',
       date: new Date().toLocaleDateString('ms-MY', { day: '2-digit', month: 'short', year: 'numeric' })
     };
@@ -322,6 +380,8 @@ function DashboardContent() {
     setOrderSuccessData(null);
     setSizeQuantities({ S: 0, M: 0, L: 0, XL: 0, '2XL': 0, '3XL': 0 });
     setCustomLogoUrl('');
+    setCustomDesignRefUrl('');
+    setCustomDesignNotes('');
     setCustomerInfo({
       name: user?.fullName || '',
       phone: user?.phone || '',
@@ -835,57 +895,156 @@ function DashboardContent() {
                     {/* LEFT 7 COLS: VISUAL CONFIGURATOR (TEMPLATE, CUT, FABRIC, SIZE MATRIX) */}
                     <div className="lg:col-span-7 space-y-6">
                       
-                      {/* 1. SELEKSI TEMPLATE REKA BENTUK (FETCHED DIRECTLY FROM DATABASE) */}
-                      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs space-y-4">
-                        <div className="flex items-center justify-between">
+                      {/* ========================================================== */}
+                      {/* 1. SELEKSI TEMPLATE REKA BENTUK / CUSTOM DESIGN TOGGLE */}
+                      {/* ========================================================== */}
+                      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs space-y-5">
+                        
+                        {/* HEADER & TOGGLE SWITCH */}
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
                           <label className="text-xs font-extrabold uppercase tracking-wider text-slate-900 flex items-center space-x-2">
                             <span className="w-5 h-5 rounded-full bg-slate-900 text-white text-[10px] flex items-center justify-center font-mono">1</span>
-                            <span>PILIH TEMPLATE REKA BENTUK</span>
+                            <span>PILIK REKA BENTUK JERSI</span>
                           </label>
-                          <span className="text-[10px] font-mono text-slate-400">Database Direct</span>
+
+                          {/* TOGGLE SWITCH CUSTOM DESIGN */}
+                          <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 shrink-0 self-start sm:self-auto">
+                            <button
+                              type="button"
+                              onClick={() => setIsCustomDesign(false)}
+                              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer ${
+                                !isCustomDesign
+                                  ? 'bg-slate-900 text-white shadow-xs'
+                                  : 'text-slate-600 hover:text-slate-900'
+                              }`}
+                            >
+                              <Palette className="w-3.5 h-3.5" />
+                              <span>Template Sedia Ada</span>
+                            </button>
+
+                            <button
+                              type="button"
+                              onClick={() => setIsCustomDesign(true)}
+                              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer ${
+                                isCustomDesign
+                                  ? 'bg-amber-400 text-slate-950 font-black shadow-xs'
+                                  : 'text-slate-600 hover:text-slate-900'
+                              }`}
+                            >
+                              <Sparkles className="w-3.5 h-3.5 text-slate-950" />
+                              <span>Custom Design</span>
+                            </button>
+                          </div>
                         </div>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
-                          {/* TEMPLATE DROPDOWN SELECTOR */}
-                          <div className="sm:col-span-8 space-y-2">
-                            <select
-                              value={orderTemplateName}
-                              onChange={(e) => {
-                                setOrderTemplateName(e.target.value);
-                                const t = templates.find((tpl) => tpl.name === e.target.value);
-                                if (t) {
-                                  setOrderCategory(t.category || 'SUBLIMASI');
-                                  setOrderSubCategory(t.subCategory || '');
-                                }
-                              }}
-                              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-xs font-extrabold text-slate-900 outline-none focus:border-slate-900 focus:bg-white transition-all cursor-pointer shadow-2xs"
-                            >
-                              {templates.map((tpl) => (
-                                <option key={tpl.id} value={tpl.name}>
-                                  {tpl.name} ({tpl.category} {tpl.subCategory ? `• ${tpl.subCategory}` : ''})
-                                </option>
-                              ))}
-                            </select>
+                        {/* MODE A: STANDARD TEMPLATE SELECTOR */}
+                        {!isCustomDesign && (
+                          <div className="space-y-4">
+                            <div className="p-4 bg-slate-50 border border-slate-200 rounded-xl flex flex-col sm:flex-row items-center justify-between gap-4">
+                              <div className="flex items-center space-x-4">
+                                <div className="w-16 h-16 rounded-lg bg-white border border-slate-200 p-1 shrink-0 flex items-center justify-center overflow-hidden">
+                                  {selectedTemplateObj ? (
+                                    <img
+                                      src={Array.isArray(selectedTemplateObj.images) && selectedTemplateObj.images.length > 0 ? selectedTemplateObj.images[0] : (selectedTemplateObj.thumbnail || PLACEHOLDER_IMAGE)}
+                                      alt={selectedTemplateObj.name}
+                                      className="w-full h-full object-contain img-crisp"
+                                    />
+                                  ) : (
+                                    <span className="text-[10px] text-slate-400 font-mono">Tiada</span>
+                                  )}
+                                </div>
 
-                            <div className="flex items-center space-x-2 text-[10px] font-mono text-slate-500 pt-0.5">
-                              <span className="px-2 py-0.5 bg-slate-100 rounded font-bold text-slate-700">{orderCategory}</span>
-                              {orderSubCategory && <span className="px-2 py-0.5 bg-slate-100 rounded text-slate-600">• {orderSubCategory}</span>}
+                                <div className="space-y-1">
+                                  <h4 className="text-sm font-extrabold uppercase text-slate-900">{orderTemplateName}</h4>
+                                  <div className="flex items-center space-x-2 text-[10px] font-mono text-slate-500">
+                                    <span className="px-2 py-0.5 bg-slate-200 rounded font-bold text-slate-700">{orderCategory}</span>
+                                    {orderSubCategory && <span className="px-2 py-0.5 bg-slate-200 rounded text-slate-600">• {orderSubCategory}</span>}
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* BUTTON OPEN TEMPLATE SELECTION MODAL */}
+                              <button
+                                type="button"
+                                onClick={() => setIsTemplateModalOpen(true)}
+                                className="px-4 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-xs flex items-center space-x-1.5 shrink-0 cursor-pointer"
+                              >
+                                <Layers className="w-3.5 h-3.5 text-amber-400" />
+                                <span>Tukar Template</span>
+                              </button>
                             </div>
                           </div>
+                        )}
 
-                          {/* VISUAL THUMBNAIL PREVIEW */}
-                          <div className="sm:col-span-4 flex items-center justify-center bg-slate-100 rounded-xl p-2 h-24 border border-slate-200/80 relative overflow-hidden">
-                            {selectedTemplateObj ? (
-                              <img
-                                src={Array.isArray(selectedTemplateObj.images) && selectedTemplateObj.images.length > 0 ? selectedTemplateObj.images[0] : (selectedTemplateObj.thumbnail || PLACEHOLDER_IMAGE)}
-                                alt={selectedTemplateObj.name}
-                                className="w-full h-full object-contain img-crisp"
+                        {/* MODE B: CUSTOM DESIGN CONFIGURATOR */}
+                        {isCustomDesign && (
+                          <div className="space-y-4 p-4 bg-amber-50/60 border border-amber-200/80 rounded-xl">
+                            <div className="flex items-center space-x-2 text-amber-900">
+                              <Sparkles className="w-4 h-4 text-amber-600" />
+                              <span className="text-xs font-bold uppercase tracking-wider">MOD REKA BENTUK KUSTOM (CUSTOM DESIGN)</span>
+                            </div>
+
+                            {/* UPLOAD REFERENSI DESAIN */}
+                            <div className="space-y-2">
+                              <label className="text-[10px] font-mono font-bold text-slate-600 uppercase block">
+                                1. UPLOAD REFERENSI DESAIN (SKETSA / FOTO / SKETCH)
+                              </label>
+                              <div className="p-4 bg-white rounded-xl border border-slate-200 flex items-center justify-between">
+                                <div className="flex items-center space-x-3">
+                                  {customDesignRefUrl ? (
+                                    <img src={customDesignRefUrl} alt="Ref Design" className="w-12 h-12 object-contain bg-slate-50 rounded-lg p-1 border border-slate-200" />
+                                  ) : (
+                                    <div className="w-12 h-12 rounded-lg bg-slate-100 flex items-center justify-center text-slate-400">
+                                      <ImageIcon className="w-5 h-5" />
+                                    </div>
+                                  )}
+                                  <div>
+                                    <span className="text-xs font-bold text-slate-900 block">Fail Referensi Reka Bentuk</span>
+                                    <span className="text-[10px] text-slate-500 block">Muat naik gambar lakaran / rujukan warna</span>
+                                  </div>
+                                </div>
+
+                                <label className="px-3.5 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl cursor-pointer transition-all shrink-0">
+                                  {isUploadingRefImage ? 'Memuat Naik...' : customDesignRefUrl ? 'Tukar Referensi' : 'Muat Naik Referensi'}
+                                  <input type="file" accept="image/*" onChange={handleRefImageUpload} className="hidden" />
+                                </label>
+                              </div>
+                            </div>
+
+                            {/* PILIHAN REFERENSI DARI TEMPLATE YANG ADA */}
+                            <div className="space-y-2">
+                              <label className="text-[10px] font-mono font-bold text-slate-600 uppercase block">
+                                2. PILIHAN REFERENSI DARI TEMPLATE SEDIA ADA (OPSIONAL)
+                              </label>
+                              <div className="flex items-center justify-between p-3 bg-white rounded-xl border border-slate-200">
+                                <span className="text-xs font-bold text-slate-800">
+                                  {orderTemplateName ? `Inspirasi: ${orderTemplateName}` : 'Pilih Template Sebagai Asas Inspirasi'}
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => setIsTemplateModalOpen(true)}
+                                  className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold text-[11px] rounded-lg transition-colors cursor-pointer"
+                                >
+                                  Pilih Template Referensi
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* CATATAN / NOTE CUSTOM DESIGN */}
+                            <div className="space-y-1.5">
+                              <label className="text-[10px] font-mono font-bold text-slate-600 uppercase block">
+                                3. CATATAN / NOTE REKA BENTUK KUSTOM
+                              </label>
+                              <textarea
+                                rows={3}
+                                value={customDesignNotes}
+                                onChange={(e) => setCustomDesignNotes(e.target.value)}
+                                placeholder="Jelaskan secara teliti perubahan warna, corak badan, garisan bahu, atau gabungan gaya yang diinginkan..."
+                                className="w-full bg-white border border-slate-200 rounded-xl p-3 text-xs font-medium text-slate-900 outline-none focus:border-slate-900 transition-all resize-none"
                               />
-                            ) : (
-                              <span className="text-[10px] text-slate-400 font-mono">Tiada Gambar</span>
-                            )}
+                            </div>
                           </div>
-                        </div>
+                        )}
                       </div>
 
                       {/* 2. SELEKSI JENIS POTONGAN / KOLAR (FETCHED DIRECTLY FROM DATABASE) */}
@@ -1065,7 +1224,7 @@ function DashboardContent() {
                           </div>
 
                           <div>
-                            <label className="text-[10px] font-mono font-bold text-slate-500 block mb-1">NOTA REKA BENTUK</label>
+                            <label className="text-[10px] font-mono font-bold text-slate-500 block mb-1">NOTA TAMBAHAN REKA BENTUK</label>
                             <textarea
                               rows={2}
                               placeholder="Contoh: Nama pemain di belakang baju..."
@@ -1406,6 +1565,125 @@ function DashboardContent() {
 
         </div>
       </main>
+
+      {/* ========================================================================= */}
+      {/* INTERACTIVE TEMPLATE SELECTION MODAL DRAWER */}
+      {/* ========================================================================= */}
+      {isTemplateModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-xs font-sans">
+          <div className="bg-white rounded-3xl max-w-4xl w-full p-6 sm:p-8 space-y-6 shadow-2xl relative border border-slate-200 max-h-[90vh] flex flex-col">
+            
+            {/* MODAL HEADER */}
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4 shrink-0">
+              <div>
+                <h3 className="text-lg font-black uppercase text-slate-900">PILIH TEMPLATE REKA BENTUK</h3>
+                <p className="text-xs text-slate-500 font-medium">Pilih template dari galeri pangkalan data untuk pesanan anda</p>
+              </div>
+              <button
+                onClick={() => setIsTemplateModalOpen(false)}
+                className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* MODAL SEARCH & CATEGORY FILTERS */}
+            <div className="space-y-3 shrink-0">
+              <div className="relative w-full">
+                <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
+                <input
+                  type="text"
+                  placeholder="Cari nama template / kategori..."
+                  value={templateSearchQuery}
+                  onChange={(e) => setTemplateSearchQuery(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs font-bold text-slate-900 outline-none focus:bg-white focus:border-slate-900"
+                />
+              </div>
+
+              {categories.length > 0 && (
+                <div className="flex items-center space-x-2 text-xs font-mono overflow-x-auto pb-1">
+                  <button
+                    type="button"
+                    onClick={() => setTemplateCategoryFilter('all')}
+                    className={`px-3 py-1.5 rounded-xl font-bold transition-all shrink-0 cursor-pointer ${
+                      templateCategoryFilter === 'all' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                    }`}
+                  >
+                    Semua Kategori
+                  </button>
+                  {categories.map((c) => (
+                    <button
+                      key={c.id}
+                      type="button"
+                      onClick={() => setTemplateCategoryFilter(c.title)}
+                      className={`px-3 py-1.5 rounded-xl font-bold transition-all shrink-0 cursor-pointer ${
+                        templateCategoryFilter.toLowerCase() === (c.title || '').toLowerCase()
+                          ? 'bg-slate-900 text-white'
+                          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      }`}
+                    >
+                      {c.title}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* MODAL TEMPLATE GRID CANVAS */}
+            <div className="flex-1 overflow-y-auto pr-1 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+              {filteredModalTemplates.map((tpl) => {
+                const img = Array.isArray(tpl.images) && tpl.images.length > 0 ? tpl.images[0] : (tpl.thumbnail || PLACEHOLDER_IMAGE);
+                const isSelected = orderTemplateName === tpl.name;
+
+                return (
+                  <div
+                    key={tpl.id}
+                    onClick={() => {
+                      setOrderTemplateName(tpl.name);
+                      setOrderCategory(tpl.category || 'SUBLIMASI');
+                      setOrderSubCategory(tpl.subCategory || '');
+                      setIsTemplateModalOpen(false);
+                    }}
+                    className={`p-3 bg-white border rounded-2xl cursor-pointer transition-all flex flex-col items-center justify-between group space-y-2 relative ${
+                      isSelected
+                        ? 'border-slate-900 ring-2 ring-slate-900/30 shadow-md bg-slate-50'
+                        : 'border-slate-200 hover:border-slate-400 hover:shadow-md'
+                    }`}
+                  >
+                    {isSelected && (
+                      <span className="absolute top-2 right-2 bg-slate-900 text-white p-1 rounded-full z-10 shadow-xs">
+                        <Check className="w-3 h-3 text-amber-400" />
+                      </span>
+                    )}
+
+                    <div className="w-full aspect-square bg-[#F5F5F7] rounded-xl overflow-hidden p-2 flex items-center justify-center">
+                      <img src={img} alt={tpl.name} className="w-full h-full object-contain img-crisp group-hover:scale-105 transition-transform" />
+                    </div>
+
+                    <div className="text-center space-y-0.5 w-full">
+                      <h4 className="text-xs font-extrabold uppercase text-slate-900 truncate">{tpl.name}</h4>
+                      <span className="text-[9px] font-mono text-slate-500 font-semibold block truncate">
+                        {tpl.category} {tpl.subCategory ? `• ${tpl.subCategory}` : ''}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* MODAL FOOTER */}
+            <div className="pt-3 border-t border-slate-100 flex justify-end shrink-0">
+              <button
+                type="button"
+                onClick={() => setIsTemplateModalOpen(false)}
+                className="px-5 py-2 bg-slate-900 text-white text-xs font-bold uppercase rounded-xl"
+              >
+                Batal
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ORDER SPECIFICATION MODAL DRAWER */}
       {selectedOrder && (
