@@ -104,15 +104,15 @@ export default function SmoothHeaderHomepage() {
   return (
     <div className="min-h-screen bg-white text-[#111111] font-sans antialiased selection:bg-[#111111] selection:text-white flex flex-col">
       {/* 1. TOP ANNOUNCEMENT BAR */}
-      <div className="bg-[#161617] text-[#E8E8ED] text-[9px] sm:text-[11px] font-mono tracking-[0.06em] sm:tracking-[0.18em] uppercase py-1.5 sm:py-2.5 px-3 sm:px-6 text-center border-b border-neutral-800 font-medium truncate">
-        AYEZZ GLOBAL — KILANG PENGLUARAN JERSI SUKAN & SERAGAM CUSTOM • BEBAS REKA BENTUK 100%
+      <div className="bg-[#161617] text-[#E8E8ED] text-[9px] sm:text-[11px] font-mono tracking-[0.1em] sm:tracking-[0.18em] uppercase py-1.5 sm:py-2.5 px-3 sm:px-6 text-center border-b border-neutral-800 font-medium whitespace-nowrap overflow-hidden text-ellipsis">
+        AYEZZ GLOBAL • KILANG PENGLUARAN JERSI SUKAN & SERAGAM CUSTOM
       </div>
 
       {/* 2. SILKY SMOOTH GLASS NAVBAR */}
       <header
         className={`sticky top-0 z-40 w-full transition-all duration-500 ease-in-out ${isScrolled
-            ? 'h-14 sm:h-16 bg-white/85 backdrop-blur-md border-b border-neutral-200/80 shadow-xs'
-            : 'h-18 sm:h-24 bg-white border-b border-neutral-100'
+            ? 'h-14 sm:h-16 bg-white/90 backdrop-blur-md border-b border-neutral-200/80 shadow-xs'
+            : 'h-16 sm:h-24 bg-white border-b border-neutral-100'
           }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 h-full flex items-center justify-between transition-all duration-500">
@@ -120,7 +120,7 @@ export default function SmoothHeaderHomepage() {
             <img
               src="/logo/ayezz-logo-01.svg"
               alt="AYEZZ GLOBAL Logo"
-              className={`w-auto transition-all duration-500 group-hover:scale-[1.02] ${isScrolled ? 'h-5 sm:h-6' : 'h-6 sm:h-7'
+              className={`w-auto transition-all duration-500 group-hover:scale-[1.02] ${isScrolled ? 'h-5 sm:h-6' : 'h-5.5 sm:h-7'
                 }`}
             />
           </Link>
@@ -134,19 +134,19 @@ export default function SmoothHeaderHomepage() {
             </Link>
           </nav>
 
-          <div className="flex items-center space-x-3 sm:space-x-4">
+          <div className="flex items-center space-x-2 sm:space-x-4">
             {currentUser ? (
               <Link
                 href="/dashboard"
-                className="px-4 py-2 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-[11px] uppercase tracking-[0.12em] rounded-full transition-all flex items-center space-x-1.5 shadow-2xs"
+                className="px-3.5 py-1.5 sm:px-4 sm:py-2 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-[10px] sm:text-[11px] uppercase tracking-[0.12em] rounded-full transition-all flex items-center space-x-1.5 shadow-2xs"
               >
-                <User className="w-3.5 h-3.5 text-white" />
-                <span className="line-clamp-1 max-w-[110px]">{currentUser.fullName || 'Dashboard'}</span>
+                <User className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" />
+                <span className="line-clamp-1 max-w-[90px] sm:max-w-[110px]">{currentUser.fullName || 'Dashboard'}</span>
               </Link>
             ) : (
               <Link
                 href="/login"
-                className="px-4 py-2 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-[11px] uppercase tracking-[0.12em] rounded-full transition-all shadow-2xs"
+                className="px-3.5 py-1.5 sm:px-5 sm:py-2 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-[10px] sm:text-[11px] uppercase tracking-[0.12em] rounded-full transition-all shadow-2xs"
               >
                 Log Masuk
               </Link>
@@ -155,36 +155,40 @@ export default function SmoothHeaderHomepage() {
         </div>
       </header>
 
-      {/* 3. HERO SHOWCASE SECTION */}
-      <section className="py-10 sm:py-32 px-4 sm:px-12 bg-[#EFEFF4] border-b border-neutral-200/80">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-16 lg:gap-20 items-center">
-          <div className="lg:col-span-6 space-y-4 sm:space-y-8 text-left">
-            <div className="inline-flex items-center space-x-2 px-3 py-1 sm:px-3.5 sm:py-1.5 rounded-full bg-white border border-neutral-300 shadow-2xs text-[9px] sm:text-[10px] font-mono font-bold tracking-widest text-neutral-600 uppercase">
-              <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#111111] animate-pulse" />
-              <span>STUDIO SUBLIMASI HIGH-PERFORMANCE</span>
+      {/* 3. HERO SHOWCASE SECTION (EDITORIAL SPORTSWEAR AESTHETIC) */}
+      <section className="py-8 sm:py-32 px-4 sm:px-12 bg-[#F6F6F9] sm:bg-[#EFEFF4] border-b border-neutral-200/80">
+        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-16 lg:gap-20 items-center">
+          <div className="lg:col-span-6 space-y-3.5 sm:space-y-8 text-left">
+            
+            {/* MINIMALIST TELEMETRY BADGE */}
+            <div className="inline-flex items-center space-x-2 text-[9px] sm:text-[10px] font-mono font-bold tracking-[0.2em] text-neutral-500 uppercase">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#111111] animate-ping" />
+              <span>[ KILANG SUBLIMASI HIGH-PERFORMANCE ]</span>
             </div>
 
-            <h1 className="text-2.5xl sm:text-5xl lg:text-7xl font-black text-[#111111] tracking-tight leading-[1.06] uppercase">
-              Reka Bentuk Jersi <br />
-              <span className="text-neutral-500 font-bold">Pakaian Custom</span>
+            {/* EDITORIAL HEADLINE TYPOGRAPHY */}
+            <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black text-[#111111] tracking-tight leading-[1.05] uppercase">
+              REKA BENTUK JERSI <br />
+              <span className="text-neutral-400 font-extrabold tracking-normal">PAKAIAN CUSTOM</span>
             </h1>
 
             <p className="text-neutral-600 text-xs sm:text-base leading-relaxed max-w-lg font-normal">
-              Pilih daripada koleksi visual kategori di bawah. Pilih desain jersi, kustomisasikan jenis kolar dan kain sublimasi, dan proses tempahan terus secara dalam talian menerusi sistem aplikasi ini.
+              Pilih daripada koleksi visual kategori di bawah. Pilih desain jersi, kustomisasikan jenis kolar dan kain sublimasi, dan proses tempahan terus secara dalam talian.
             </p>
 
-            <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 sm:gap-4">
+            {/* SIDE-BY-SIDE COMPACT CTA BUTTONS */}
+            <div className="pt-2 flex items-center space-x-2.5 sm:space-x-4">
               <a
                 href="#kategori-utama"
-                className="px-5 py-3 sm:px-8 sm:py-4 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-[11px] sm:text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center justify-center space-x-2 active:scale-[0.98] shadow-2xs whitespace-nowrap"
+                className="px-5 py-3 sm:px-8 sm:py-4 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-[10px] sm:text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center space-x-2 active:scale-[0.98] shadow-sm whitespace-nowrap"
               >
-                <span>Lihat Kategori Utama</span>
+                <span>Kategori Utama</span>
                 <ArrowRight className="w-3.5 h-3.5 text-white" />
               </a>
 
               <Link
                 href="/katalog"
-                className="px-5 py-3 sm:px-7 sm:py-4 bg-white border border-neutral-300 hover:border-[#111111] text-[#111111] font-bold text-[11px] sm:text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center justify-center space-x-2 active:scale-[0.98] whitespace-nowrap"
+                className="px-4 py-3 sm:px-7 sm:py-4 bg-white border border-neutral-300 hover:border-[#111111] text-[#111111] font-bold text-[10px] sm:text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center justify-center active:scale-[0.98] whitespace-nowrap"
               >
                 <span>Semua Katalog</span>
               </Link>
