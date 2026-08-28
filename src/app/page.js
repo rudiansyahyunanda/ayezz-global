@@ -201,36 +201,25 @@ export default function SmoothHeaderHomepage() {
         </div>
       </section>
 
-      {/* 4. MASTER CATEGORIES SHOWCASE CAROUSEL (NIKE / APPLE MINIMALIST CLEAN SWIPE) */}
-      <section id="kategori-utama" className="py-12 sm:py-28 px-4 sm:px-12 bg-white border-b border-neutral-200/60 select-none">
+      {/* 4. MASTER CATEGORIES SHOWCASE CAROUSEL (1:1 APPLE STORE STOREFRONT DESIGN SYSTEM) */}
+      <section id="kategori-utama" className="py-14 sm:py-24 px-4 sm:px-12 bg-[#F5F5F7]/70 border-b border-neutral-200/60 select-none">
         <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
           
-          {/* TITLE HEADER & CIRCULAR SWIPE NAVIGATION BUTTONS */}
-          <div className="flex items-center justify-between">
+          {/* APPLE STORE HEADER BAR */}
+          <div className="flex items-end justify-between border-b border-neutral-200/40 pb-4">
             <div className="space-y-1">
-              <h2 className="text-xl sm:text-4xl font-bold tracking-tight text-[#111111]">
-                Kategori Pilihan
+              <h2 className="text-2xl sm:text-4xl font-semibold tracking-tight text-[#1D1D1F]">
+                Jelajahi Kategori.
               </h2>
             </div>
 
-            <div className="flex items-center space-x-2">
-              <button
-                onClick={() => scrollCategories('left')}
-                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#F5F5F7] hover:bg-neutral-200 text-[#111111] flex items-center justify-center transition-all active:scale-95 border border-neutral-200/60 shadow-2xs"
-                aria-label="Scroll ke kiri"
-                title="Scroll ke kiri"
-              >
-                <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 text-[#111111]" />
-              </button>
-              <button
-                onClick={() => scrollCategories('right')}
-                className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#F5F5F7] hover:bg-neutral-200 text-[#111111] flex items-center justify-center transition-all active:scale-95 border border-neutral-200/60 shadow-2xs"
-                aria-label="Scroll ke kanan"
-                title="Scroll ke kanan"
-              >
-                <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 text-[#111111]" />
-              </button>
-            </div>
+            <Link
+              href="/katalog"
+              className="text-[#0066CC] hover:underline text-xs sm:text-sm font-normal flex items-center space-x-1 transition-colors"
+            >
+              <span>Bandingkan semua katalog</span>
+              <ChevronRight className="w-3.5 h-3.5 text-[#0066CC]" />
+            </Link>
           </div>
 
           {isLoading ? (
@@ -239,39 +228,84 @@ export default function SmoothHeaderHomepage() {
               <span className="text-xs font-mono text-neutral-400 uppercase tracking-widest">Memuatkan Kategori...</span>
             </div>
           ) : (
-            /* HORIZONTAL SWIPE CAROUSEL */
-            <div
-              ref={categoryScrollRef}
-              className="flex space-x-4 sm:space-x-6 overflow-x-auto scrollbar-none snap-x snap-mandatory scroll-smooth pb-3 pt-1"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-            >
-              {categories.map((cat) => (
-                <div
-                  key={cat.id || cat.code}
-                  onClick={() => handleCategoryClick(cat.title)}
-                  className="group shrink-0 w-[210px] sm:w-[350px] lg:w-[380px] snap-start cursor-pointer space-y-2 sm:space-y-3"
-                >
-                  {/* CLEAN TALL RECTANGULAR IMAGE CONTAINER */}
-                  <div className="relative aspect-[3/4] w-full rounded-2xl overflow-hidden bg-[#F5F5F7] border border-neutral-200/60 shadow-xs">
-                    <img
-                      src={cat.thumbnail || '/images/catalog/jersey-olahraga.jfif'}
-                      alt={cat.title}
-                      className="w-full h-full object-cover object-center transition-transform duration-700 group-hover:scale-105 img-crisp"
-                    />
-                  </div>
+            <>
+              {/* APPLE HORIZONTAL STOREFRONT CAROUSEL */}
+              <div
+                ref={categoryScrollRef}
+                className="flex space-x-4 sm:space-x-6 overflow-x-auto scrollbar-none snap-x snap-mandatory scroll-smooth pb-4 pt-2"
+                style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+              >
+                {categories.map((cat, idx) => (
+                  <div
+                    key={cat.id || cat.code || idx}
+                    onClick={() => handleCategoryClick(cat.title)}
+                    className="group shrink-0 w-[240px] sm:w-[290px] snap-start cursor-pointer flex flex-col items-center select-none"
+                  >
+                    {/* APPLE SQUIRCLE CARD CONTAINER (rounded-[28px]) */}
+                    <div className="w-full aspect-[4/3] sm:aspect-square rounded-[24px] sm:rounded-[28px] overflow-hidden bg-white relative flex items-center justify-center p-3 sm:p-4 shadow-2xs hover:shadow-md transition-all duration-500 border border-neutral-200/50">
+                      <img
+                        src={cat.thumbnail || '/images/catalog/jersey-olahraga.jfif'}
+                        alt={cat.title}
+                        className="w-full h-full object-cover rounded-[16px] sm:rounded-[20px] transition-transform duration-700 ease-out group-hover:scale-[1.04] img-crisp"
+                      />
+                    </div>
 
-                  {/* MINIMALIST TEXT BELOW IMAGE */}
-                  <div className="pt-1">
-                    <h3 className="text-sm sm:text-lg font-bold text-[#111111] tracking-tight group-hover:underline">
+                    {/* APPLE STYLE SWATCH DOTS */}
+                    <div className="flex items-center justify-center space-x-1.5 my-2.5">
+                      <span className={`w-2 h-2 rounded-full transition-all ${idx % 3 === 0 ? 'bg-[#1D1D1F]' : 'bg-neutral-300'}`} />
+                      <span className={`w-2 h-2 rounded-full transition-all ${idx % 3 === 1 ? 'bg-[#1D1D1F]' : 'bg-neutral-300'}`} />
+                      <span className={`w-2 h-2 rounded-full transition-all ${idx % 3 === 2 ? 'bg-[#1D1D1F]' : 'bg-neutral-300'}`} />
+                    </div>
+
+                    {/* APPLE TYPOGRAPHY BELOW CARD */}
+                    <h3 className="text-base sm:text-lg font-semibold text-[#1D1D1F] text-center tracking-tight group-hover:text-[#0066CC] transition-colors">
                       {cat.title}
                     </h3>
-                    <p className="text-[11px] sm:text-xs text-neutral-500 font-medium">
-                      {cat.itemCount || 'Desain Sublimasi Custom'}
+                    <p className="text-[11px] sm:text-xs text-[#86868B] font-normal text-center max-w-[220px] leading-relaxed mt-0.5 mb-3 line-clamp-2">
+                      {cat.description || cat.itemCount || 'Reka bentuk sublimasi berkualiti tinggi dengan kustomisasi bebas.'}
                     </p>
+
+                    {/* APPLE ACTION BUTTON & BLUE LINK ROW */}
+                    <div className="flex items-center space-x-3 mt-auto pt-1">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCategoryClick(cat.title);
+                        }}
+                        className="bg-[#0071E3] hover:bg-[#0077ED] active:scale-95 text-white font-medium text-xs px-3.5 py-1.5 rounded-full transition-all shadow-2xs"
+                      >
+                        Selengkapnya
+                      </button>
+
+                      <span className="text-[#0066CC] hover:underline text-xs font-normal flex items-center space-x-0.5">
+                        <span>Tempah</span>
+                        <ChevronRight className="w-3 h-3" />
+                      </span>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+
+              {/* APPLE BOTTOM RIGHT CIRCULAR SWIPE ARROWS */}
+              <div className="flex items-center justify-end space-x-2 pt-2">
+                <button
+                  onClick={() => scrollCategories('left')}
+                  className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#E8E8ED]/80 hover:bg-[#E8E8ED] text-[#1D1D1F] flex items-center justify-center transition-all active:scale-95 shadow-2xs border border-neutral-300/40"
+                  aria-label="Sebelumnya"
+                  title="Sebelumnya"
+                >
+                  <ChevronLeft className="w-4 h-4 text-[#1D1D1F]" />
+                </button>
+                <button
+                  onClick={() => scrollCategories('right')}
+                  className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#E8E8ED]/80 hover:bg-[#E8E8ED] text-[#1D1D1F] flex items-center justify-center transition-all active:scale-95 shadow-2xs border border-neutral-300/40"
+                  aria-label="Seterusnya"
+                  title="Seterusnya"
+                >
+                  <ChevronRight className="w-4 h-4 text-[#1D1D1F]" />
+                </button>
+              </div>
+            </>
           )}
         </div>
       </section>
