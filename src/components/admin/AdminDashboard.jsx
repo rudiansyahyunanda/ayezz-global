@@ -597,7 +597,7 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
         </header>
 
         {/* MAIN SCROLLABLE CONTENT BODY */}
-        <div className="flex-1 overflow-y-auto p-6 sm:p-8 space-y-8 max-w-7xl w-full mx-auto">
+        <div className="flex-1 overflow-y-auto p-6 sm:p-8 space-y-8 w-full max-w-[1600px] mx-auto">
           {/* TAB 1: OVERVIEW */}
           {currentTab === 'overview' && (
             <div className="space-y-6">
@@ -1574,6 +1574,55 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
             </div>
 
             <form onSubmit={handleFormSubmit} className="space-y-5">
+              {/* MODAL 1: KATEGORI UTAMA */}
+              {modalType === 'category' && (
+                <div className="grid grid-cols-12 gap-5 items-start">
+                  <div className="col-span-5 h-full">
+                    <ImageUploadCropper
+                      value={catCover}
+                      onChange={(croppedDataUrl) => setCatCover(croppedDataUrl)}
+                      label="Gambar Cover Kategori (1:1)"
+                      compact={true}
+                    />
+                  </div>
+                  <div className="col-span-7 space-y-3.5">
+                    <div>
+                      <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1">Nama Kategori Utama</label>
+                      <input type="text" value={catName} onChange={(e) => setCatName(e.target.value)} placeholder="Contoh: Sublimasi Sukan" className="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-slate-900 rounded-lg px-3.5 py-2 text-xs font-semibold text-slate-900 outline-none transition-all" required />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1">Kod Kategori</label>
+                      <input type="text" value={catCode} onChange={(e) => setCatCode(e.target.value)} placeholder="Contoh: SUB-01" className="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-slate-900 rounded-lg px-3.5 py-2 text-xs font-mono font-semibold text-slate-900 outline-none transition-all" required />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* MODAL 2: SUB-KATEGORI */}
+              {modalType === 'subcategory' && (
+                <div className="grid grid-cols-12 gap-5 items-start">
+                  <div className="col-span-5 h-full">
+                    <ImageUploadCropper
+                      value={subCover}
+                      onChange={(croppedDataUrl) => setSubCover(croppedDataUrl)}
+                      label="Gambar Cover Sub-Kategori (1:1)"
+                      compact={true}
+                    />
+                  </div>
+                  <div className="col-span-7 space-y-3.5">
+                    <div>
+                      <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1">Nama Sub-Kategori</label>
+                      <input type="text" value={subName} onChange={(e) => setSubName(e.target.value)} placeholder="Contoh: Jersi Bola Sepak" className="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-slate-900 rounded-lg px-3.5 py-2 text-xs font-semibold text-slate-900 outline-none transition-all" required />
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1">Kod Sub-Kategori</label>
+                      <input type="text" value={subCode} onChange={(e) => setSubCode(e.target.value)} placeholder="Contoh: FOOT-01" className="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-slate-900 rounded-lg px-3.5 py-2 text-xs font-mono font-semibold text-slate-900 outline-none transition-all" />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* MODAL 3: CUT / POTONGAN */}
               {modalType === 'cut' && (
                 <div className="grid grid-cols-12 gap-5 items-start">
                   <div className="col-span-5 h-full">
@@ -1608,6 +1657,7 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                 </div>
               )}
 
+              {/* MODAL 4: SLEEVE / LENGAN */}
               {modalType === 'sleeve' && (
                 <div className="grid grid-cols-12 gap-5 items-start">
                   <div className="col-span-5 h-full">
@@ -1638,6 +1688,92 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                         className="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-slate-900 rounded-lg px-3.5 py-2 text-xs font-medium text-slate-900 outline-none transition-all resize-none"
                       />
                     </div>
+                  </div>
+                </div>
+              )}
+
+              {/* MODAL 5: FABRIC / BAHAN KAIN */}
+              {modalType === 'fabric' && (
+                <div className="grid grid-cols-12 gap-5 items-start">
+                  <div className="col-span-5 h-full">
+                    <ImageUploadCropper
+                      value={fabCover}
+                      onChange={(croppedDataUrl) => setFabCover(croppedDataUrl)}
+                      label="Gambar Sampel Kain (1:1)"
+                      compact={true}
+                    />
+                  </div>
+                  <div className="col-span-7 space-y-3.5">
+                    <div>
+                      <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1">Nama Bahan Kain</label>
+                      <input type="text" value={fabName} onChange={(e) => setFabName(e.target.value)} placeholder="Contoh: Micro-Dryfit Pro 160 GSM" className="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-slate-900 rounded-lg px-3.5 py-2 text-xs font-semibold text-slate-900 outline-none transition-all" required />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1">Harga Asas (RM)</label>
+                        <input type="number" value={fabPrice} onChange={(e) => setFabPrice(e.target.value)} placeholder="70" className="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-slate-900 rounded-lg px-3.5 py-2 text-xs font-semibold text-slate-900 outline-none transition-all font-mono" />
+                      </div>
+                      <div>
+                        <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1">Berat GSM Kain</label>
+                        <input type="text" value={fabGsm} onChange={(e) => setFabGsm(e.target.value)} placeholder="150 GSM" className="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-slate-900 rounded-lg px-3.5 py-2 text-xs font-mono font-semibold text-slate-900 outline-none transition-all" />
+                      </div>
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1">Gred / Tier Kain</label>
+                      <select value={fabTier} onChange={(e) => setFabTier(e.target.value)} className="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-slate-900 rounded-lg px-3 py-2 text-xs font-semibold text-slate-900 outline-none">
+                        <option value="Standard">Standard</option>
+                        <option value="Premium">Premium</option>
+                        <option value="Pro Match">Pro Match / Ultra</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1">Deskripsi & Kelebihan Kain</label>
+                      <textarea
+                        rows={3}
+                        value={fabDesc}
+                        onChange={(e) => setFabDesc(e.target.value)}
+                        placeholder="Contoh: Kain sangat menyerap peluh, rasa lembut pada kulit, dan sesuai untuk perlawanan profesional."
+                        className="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-slate-900 rounded-lg px-3.5 py-2 text-xs font-medium text-slate-900 outline-none transition-all resize-none"
+                      />
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* MODAL 6: TEMPLATE REKA BENTUK */}
+              {modalType === 'template' && (
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1">Nama Template Reka Bentuk</label>
+                    <input type="text" value={tplName} onChange={(e) => setTplName(e.target.value)} placeholder="Contoh: AG260003 - PRO MATCH JACKET" className="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-slate-900 rounded-lg px-3.5 py-2 text-xs font-semibold text-slate-900 outline-none transition-all" required />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1">Kategori Utama</label>
+                      <select value={tplCat} onChange={(e) => setTplCat(e.target.value)} className="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-slate-900 rounded-lg px-3 py-2 text-xs font-semibold text-slate-900 outline-none">
+                        {categories.map(c => (
+                          <option key={c.id} value={c.title}>{c.title}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div>
+                      <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1">Sub-Kategori</label>
+                      <select value={tplSubCat} onChange={(e) => setTplSubCat(e.target.value)} className="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-slate-900 rounded-lg px-3 py-2 text-xs font-semibold text-slate-900 outline-none">
+                        {dynamicSubCategories.map(s => (
+                          <option key={s} value={s}>{s}</option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1">Deskripsi Template</label>
+                    <textarea
+                      rows={3}
+                      value={tplDesc}
+                      onChange={(e) => setTplDesc(e.target.value)}
+                      placeholder="Contoh: Design jersi sukan berona gelap dengan corak geometrik kontemporari."
+                      className="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-slate-900 rounded-lg px-3.5 py-2 text-xs font-medium text-slate-900 outline-none transition-all resize-none"
+                    />
                   </div>
                 </div>
               )}
