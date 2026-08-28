@@ -34,26 +34,26 @@ export async function POST(request) {
       );
     }
 
-    // Target dimensions optimized for small file size and HD display
-    const maxWidth = customWidth ? parseInt(customWidth, 10) : 800;
-    const maxHeight = customHeight ? parseInt(customHeight, 10) : 800;
+    // Target dimensions optimized for Ultra HD display without blurriness
+    const maxWidth = customWidth ? parseInt(customWidth, 10) : 1920;
+    const maxHeight = customHeight ? parseInt(customHeight, 10) : 1920;
 
-    // Ultra-optimized Sharp processing:
-    // 1. Resize proportionally to max 800px
-    // 2. Convert to WebP format with quality 78 & max compression effort 6
-    // 3. Enable smartSubsample for crisp borders at tiny file size (~15KB - 35KB)
+    // Ultra-crisp Sharp HD WebP processing:
+    // 1. Resize proportionally to max 1920px (Full HD) using Lanczos3 high-definition interpolation
+    // 2. Convert to WebP format with high quality (90) to preserve text & image crispness
     const processedWebpBuffer = await sharp(inputBuffer)
       .resize({
         width: maxWidth,
         height: maxHeight,
         fit: 'inside',
-        withoutEnlargement: true
+        withoutEnlargement: true,
+        kernel: sharp.kernel.lanczos3
       })
       .webp({
-        quality: 78,
-        alphaQuality: 90,
+        quality: 90,
+        alphaQuality: 95,
         effort: 6,
-        smartSubsample: true,
+        smartSubsample: false,
         lossless: false
       })
       .toBuffer();

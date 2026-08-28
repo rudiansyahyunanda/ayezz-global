@@ -52,10 +52,11 @@ export async function deleteImageFromSupabaseStorage(imageUrlOrUrls) {
 /**
  * Client-Side HTML5 Canvas WebP Converter:
  * - Accepts JPG, PNG, GIF, WebP, etc.
- * - Resizes proportionally to maxDimension (default 800px)
- * - Converts to optimized image/webp Blob (~15KB - 35KB)
+ * - Preserves Full HD crisp resolution up to 1920px
+ * - High-definition image smoothing to prevent blurriness or pixelation
+ * - Converts to crystal clear image/webp Blob (Quality 0.92)
  */
-export async function convertImageToWebpBlob(fileOrDataUrl, maxDimension = 800, quality = 0.8) {
+export async function convertImageToWebpBlob(fileOrDataUrl, maxDimension = 1920, quality = 0.92) {
   if (typeof window === 'undefined') return null; // Server environment fallback
 
   return new Promise((resolve) => {
@@ -82,6 +83,8 @@ export async function convertImageToWebpBlob(fileOrDataUrl, maxDimension = 800, 
         canvas.height = height;
 
         const ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
         ctx.drawImage(img, 0, 0, width, height);
 
         canvas.toBlob(
@@ -115,7 +118,7 @@ export async function convertImageToWebpBlob(fileOrDataUrl, maxDimension = 800, 
 
 /**
  * Upload image directly to Supabase Storage Bucket ('ayezz-assets')
- * ALWAYS converts input image to .webp format before uploading!
+ * ALWAYS converts input image to crystal clear .webp format before uploading!
  */
 export async function uploadDirectToSupabaseStorage(fileOrDataUrl, filenameHint = 'image') {
   if (!isSupabaseConnected) {
@@ -126,9 +129,9 @@ export async function uploadDirectToSupabaseStorage(fileOrDataUrl, filenameHint 
   let mimeType = 'image/webp';
   let fileExt = 'webp';
 
-  // 1. Try converting to WebP Blob on client browser
+  // 1. Try converting to Ultra HD WebP Blob on client browser (1920px max, 0.92 quality)
   try {
-    const webpBlob = await convertImageToWebpBlob(fileOrDataUrl, 800, 0.8);
+    const webpBlob = await convertImageToWebpBlob(fileOrDataUrl, 1920, 0.92);
     if (webpBlob && webpBlob.size > 0) {
       finalFileBody = webpBlob;
       mimeType = 'image/webp';

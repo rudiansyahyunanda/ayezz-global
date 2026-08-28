@@ -16,8 +16,8 @@ export default function ImageUploadCropper({ value, onChange, label = "Gambar Co
     setIsProcessing(true);
 
     try {
-      // Send file to server API for Sharp WebP compression (max 800px ~20KB file size)
-      const res = await uploadAndProcessImageServerSide(file, { width: 800, height: 800 });
+      // Send file to server API for Sharp WebP HD compression (max 1920px Full HD)
+      const res = await uploadAndProcessImageServerSide(file, { width: 1920, height: 1920 });
       if (res && res.url) {
         setPreview(res.url);
         onChange(res.url);
