@@ -908,6 +908,401 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
               </div>
             </div>
           )}
+
+          {/* TAB 5: KATEGORI UTAMA */}
+          {currentTab === 'categories' && (
+            <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs p-6 space-y-6">
+              <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+                <div>
+                  <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">Kategori Utama (Main Categories)</h2>
+                  <p className="text-xs text-slate-500 mt-0.5">Uruskan kategori utama seperti Sublimasi, Custom Design, dan Aksesori Sukan.</p>
+                </div>
+                <button onClick={() => openAddModal('category')} className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-lg flex items-center space-x-1.5 transition-colors shadow-xs active:scale-95">
+                  <Plus className="w-3.5 h-3.5" /> <span>Tambah Kategori</span>
+                </button>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs font-sans">
+                  <thead>
+                    <tr className="bg-slate-50/80 border-b border-slate-200 text-[11px] font-mono font-semibold text-slate-500 uppercase tracking-wider">
+                      <th className="py-3 px-4">GAMBAR COVER</th>
+                      <th className="py-3 px-4">KOD</th>
+                      <th className="py-3 px-4">NAMA KATEGORI</th>
+                      <th className="py-3 px-4">DESKRIPSI</th>
+                      <th className="py-3 px-4 text-right">TINDAKAN</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 font-medium text-slate-800">
+                    {categories.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="py-12 text-center text-slate-400 font-mono text-xs">
+                          Belum ada kategori terrekod. Tekan "+ Tambah Kategori" untuk cipta rekod baharu.
+                        </td>
+                      </tr>
+                    ) : (
+                      categories.map(cat => (
+                        <tr key={cat.id} className="hover:bg-slate-50/60 transition-colors">
+                          <td className="py-3 px-4">
+                            <img src={cat.thumbnail || PLACEHOLDER_IMAGE} alt={cat.title} className="w-10 h-10 object-cover rounded-lg border border-slate-200" />
+                          </td>
+                          <td className="py-3.5 px-4 font-mono font-bold text-slate-900">{cat.category_code || cat.code || 'CAT'}</td>
+                          <td className="py-3.5 px-4 font-bold text-slate-900 uppercase">{cat.title}</td>
+                          <td className="py-3.5 px-4 text-slate-600 max-w-xs">{cat.desc || cat.description}</td>
+                          <td className="py-3.5 px-4 text-right space-x-1">
+                            <button onClick={() => openEditModal('category', cat)} className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-md">
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button onClick={async () => { setCategories(prev => prev.filter(c => c.id !== cat.id)); await deleteCategoryFromSupabase(cat.id); }} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-md">
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 6: BAHAN KAIN */}
+          {currentTab === 'fabrics' && (
+            <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs p-6 space-y-6">
+              <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+                <div>
+                  <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">Bahan Kain Sublimasi (Fabric Types)</h2>
+                  <p className="text-xs text-slate-500 mt-0.5">Urus jenis fabric/kain seperti Mini Eyelet 150 GSM, Micro-Dryfit Pro, Pin Dot Fabric, dll.</p>
+                </div>
+                <button onClick={() => openAddModal('fabric')} className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-lg flex items-center space-x-1.5 transition-colors shadow-xs active:scale-95">
+                  <Plus className="w-3.5 h-3.5" /> <span>Tambah Bahan Kain</span>
+                </button>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs font-sans">
+                  <thead>
+                    <tr className="bg-slate-50/80 border-b border-slate-200 text-[11px] font-mono font-semibold text-slate-500 uppercase tracking-wider">
+                      <th className="py-3 px-4">NAMA BAHAN KAIN</th>
+                      <th className="py-3 px-4">DESKRIPSI & SPESIFIKASI</th>
+                      <th className="py-3 px-4">CAS TAMBAHAN</th>
+                      <th className="py-3 px-4 text-right">TINDAKAN</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 font-medium text-slate-800">
+                    {fabricTypes.length === 0 ? (
+                      <tr>
+                        <td colSpan={4} className="py-12 text-center text-slate-400 font-mono text-xs">
+                          Belum ada jenis kain terrekod. Tekan "+ Tambah Bahan Kain" untuk cipta rekod baharu.
+                        </td>
+                      </tr>
+                    ) : (
+                      fabricTypes.map(fab => (
+                        <tr key={fab.id} className="hover:bg-slate-50/60 transition-colors">
+                          <td className="py-3.5 px-4 font-bold text-slate-900 uppercase">{fab.name}</td>
+                          <td className="py-3.5 px-4 text-slate-600 max-w-xs">{fab.desc || fab.description}</td>
+                          <td className="py-3.5 px-4 font-mono font-bold text-slate-900">+RM {Number(fab.addOnPrice ?? fab.add_on_price ?? 0).toFixed(2)}</td>
+                          <td className="py-3.5 px-4 text-right space-x-1">
+                            <button onClick={() => openEditModal('fabric', fab)} className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-md">
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button onClick={async () => { setFabricTypes(prev => prev.filter(f => f.id !== fab.id)); await deleteFabricTypeFromSupabase(fab.id); }} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-md">
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 7: TEMPLATE REKA BENTUK */}
+          {currentTab === 'templates' && (
+            <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs p-6 space-y-6">
+              <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+                <div>
+                  <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">Template Reka Bentuk (Design Templates)</h2>
+                  <p className="text-xs text-slate-500 mt-0.5">Uruskan himpunan reka bentuk jersi sedia ada mengikut kod (cth: AG260001) dan kategori.</p>
+                </div>
+                <button onClick={() => openAddModal('template')} className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-lg flex items-center space-x-1.5 transition-colors shadow-xs active:scale-95">
+                  <Plus className="w-3.5 h-3.5" /> <span>Tambah Template</span>
+                </button>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs font-sans">
+                  <thead>
+                    <tr className="bg-slate-50/80 border-b border-slate-200 text-[11px] font-mono font-semibold text-slate-500 uppercase tracking-wider">
+                      <th className="py-3 px-4">GAMBAR COVER (1:1)</th>
+                      <th className="py-3 px-4">NAMA TEMPLATE / KOD</th>
+                      <th className="py-3 px-4">KATEGORI</th>
+                      <th className="py-3 px-4">HARGA ASAS (RM)</th>
+                      <th className="py-3 px-4 text-right">TINDAKAN</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 font-medium text-slate-800">
+                    {templates.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="py-12 text-center text-slate-400 font-mono text-xs">
+                          Belum ada template terrekod. Tekan "+ Tambah Template" untuk cipta rekod baharu.
+                        </td>
+                      </tr>
+                    ) : (
+                      templates.map(tpl => (
+                        <tr key={tpl.id} className="hover:bg-slate-50/60 transition-colors">
+                          <td className="py-3 px-4">
+                            <img src={tpl.thumbnail || PLACEHOLDER_IMAGE} alt={tpl.name} className="w-12 h-12 object-cover rounded-lg border border-slate-200" />
+                          </td>
+                          <td className="py-3.5 px-4 font-bold text-slate-900 uppercase">{tpl.name}</td>
+                          <td className="py-3.5 px-4 font-mono text-slate-600">{tpl.category || 'SUBLIMASI'}</td>
+                          <td className="py-3.5 px-4 font-mono font-bold text-slate-900">RM {Number(tpl.price || tpl.basePrice || 70).toFixed(2)}</td>
+                          <td className="py-3.5 px-4 text-right space-x-1">
+                            <button onClick={() => openEditModal('template', tpl)} className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-md">
+                              <Edit2 className="w-4 h-4" />
+                            </button>
+                            <button onClick={async () => { setTemplates(prev => prev.filter(t => t.id !== tpl.id)); await deleteDesignTemplateFromSupabase(tpl.id); }} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-md">
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 8: PENGURUSAN AKAUN PENGGUNA */}
+          {currentTab === 'users' && (
+            <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs p-6 space-y-6">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b border-slate-100">
+                <div>
+                  <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">Pengurusan Akaun Pengguna (Supabase DB)</h2>
+                  <p className="text-xs text-slate-500 mt-0.5">Senarai akaun pengguna terdaftar di AYEZZ Global beserta peranan (Customer vs Admin).</p>
+                </div>
+
+                <div className="relative w-full sm:w-72">
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+                  <input
+                    type="text"
+                    value={userSearchQuery}
+                    onChange={(e) => setUserSearchQuery(e.target.value)}
+                    placeholder="Cari Email / Nama Pengguna..."
+                    className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-3 py-1.5 text-xs font-semibold text-slate-900 outline-none focus:bg-white focus:border-slate-900"
+                  />
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs font-sans">
+                  <thead>
+                    <tr className="bg-slate-50/80 border-b border-slate-200 text-[11px] font-mono font-semibold text-slate-500 uppercase tracking-wider">
+                      <th className="py-3 px-4">NAMA PENGGUNA</th>
+                      <th className="py-3 px-4">EMAIL</th>
+                      <th className="py-3 px-4">NO TELEFON</th>
+                      <th className="py-3 px-4">PERANAN (ROLE)</th>
+                      <th className="py-3 px-4 text-right">TINDAKAN</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 font-medium text-slate-800">
+                    {systemUsers.length === 0 ? (
+                      <tr>
+                        <td colSpan={5} className="py-12 text-center text-slate-400 font-mono text-xs">
+                          {isUsersLoading ? 'Memuatkan senarai pengguna...' : 'Belum ada rekod pengguna terdaftar dalam Supabase DB.'}
+                        </td>
+                      </tr>
+                    ) : (
+                      systemUsers
+                        .filter(u => {
+                          const q = userSearchQuery.toLowerCase();
+                          if (!q) return true;
+                          return (u.email || '').toLowerCase().includes(q) || (u.full_name || u.fullName || '').toLowerCase().includes(q);
+                        })
+                        .map(usr => (
+                          <tr key={usr.id || usr.email} className="hover:bg-slate-50/60 transition-colors">
+                            <td className="py-3.5 px-4 font-bold text-slate-900">{usr.full_name || usr.fullName || 'Pengguna AYEZZ'}</td>
+                            <td className="py-3.5 px-4 font-mono text-slate-700">{usr.email}</td>
+                            <td className="py-3.5 px-4 font-mono text-slate-600">{usr.phone || '-'}</td>
+                            <td className="py-3.5 px-4 font-mono">
+                              <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${usr.role === 'admin' ? 'bg-purple-100 text-purple-800 border border-purple-200' : 'bg-slate-100 text-slate-700'}`}>
+                                {usr.role || 'customer'}
+                              </span>
+                            </td>
+                            <td className="py-3.5 px-4 text-right">
+                              <button
+                                onClick={async () => {
+                                  if (confirm(`Adakah anda pasti mahu memadam akaun ${usr.email}?`)) {
+                                    setSystemUsers(prev => prev.filter(u => u.email !== usr.email));
+                                    await deleteUserFromSupabase(usr.id || usr.email);
+                                  }
+                                }}
+                                className="p-1.5 text-rose-500 hover:bg-rose-50 rounded transition-colors"
+                                title="Padam Pengguna"
+                              >
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 9: BANNER SHOWCASE */}
+          {currentTab === 'showcase' && (
+            <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs p-6 space-y-6">
+              <div className="pb-4 border-b border-slate-100">
+                <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">Pengurusan Banner Showcase (Lihat Lebih Dekat)</h2>
+                <p className="text-xs text-slate-500 mt-0.5">Urus maklumat banner promosi & gambar unggulan jersi sublimasi di Laman Utama.</p>
+              </div>
+
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  setIsSavingShowcase(true);
+                  await saveShowcaseFeatureToSupabase(showcaseFeature);
+                  setIsSavingShowcase(false);
+                  setSaveSuccess(true);
+                  setTimeout(() => setSaveSuccess(false), 3000);
+                }}
+                className="space-y-4 max-w-2xl"
+              >
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1">Tajuk Utama Showcase</label>
+                  <input type="text" value={showcaseFeature.title || ''} onChange={(e) => setShowcaseFeature({ ...showcaseFeature, title: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-xs font-semibold text-slate-900 outline-none" required />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1">Sub-Tajuk / Penerangan Banner</label>
+                  <textarea rows={3} value={showcaseFeature.subtitle || ''} onChange={(e) => setShowcaseFeature({ ...showcaseFeature, subtitle: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-xs font-medium text-slate-900 outline-none resize-none" required />
+                </div>
+
+                <div>
+                  <ImageUploadCropper
+                    value={showcaseFeature.imageUrl || ''}
+                    onChange={(croppedDataUrl) => setShowcaseFeature({ ...showcaseFeature, imageUrl: croppedDataUrl })}
+                    label="Gambar Banner Showcase (16:9 HD)"
+                  />
+                </div>
+
+                <div className="pt-3 flex items-center space-x-3">
+                  <button type="submit" disabled={isSavingShowcase} className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-xs cursor-pointer">
+                    {isSavingShowcase ? 'Menyimpan...' : 'Simpan Perubahan Banner'}
+                  </button>
+                  {saveSuccess && <span className="text-xs font-bold text-emerald-600 font-mono">✓ Tetapan Berjaya Disimpan!</span>}
+                </div>
+              </form>
+            </div>
+          )}
+
+          {/* TAB 10: PENGURUSAN ADMIN */}
+          {currentTab === 'admin_management' && (
+            <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs p-6 space-y-6">
+              <div className="pb-4 border-b border-slate-100">
+                <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">Pengurusan Admin & PIN Keselamatan Master</h2>
+                <p className="text-xs text-slate-500 mt-0.5">Uruskan PIN keselamatan untuk akses kawalan Admin AYEZZ Global.</p>
+              </div>
+
+              <div className="max-w-md bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-4 font-sans">
+                <div className="space-y-1">
+                  <span className="text-[10px] font-mono text-slate-400 font-bold uppercase tracking-widest block">ADMIN AKTIF AKAN DATANG</span>
+                  <h4 className="text-sm font-bold text-slate-900 font-mono">admin@ayezz.com</h4>
+                  <span className="inline-block px-2.5 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-mono font-bold rounded-full uppercase">Full Master Access</span>
+                </div>
+
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    if (adminPinInput.length !== 4) {
+                      setAdminPinNotice('PIN hendaklah tepat 4 digit nombor.');
+                      return;
+                    }
+                    updateAdminMasterPin(adminPinInput);
+                    setAdminPinNotice('PIN Master Keselamatan Admin berjaya dikemaskini!');
+                    setAdminPinInput('');
+                  }}
+                  className="space-y-3 pt-2 border-t border-slate-200"
+                >
+                  <div>
+                    <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1">Tukar PIN Master (4 Digit)</label>
+                    <input
+                      type="password"
+                      maxLength={4}
+                      value={adminPinInput}
+                      onChange={(e) => setAdminPinInput(e.target.value)}
+                      placeholder="Contoh: 1234"
+                      className="w-full bg-white border border-slate-300 rounded-lg px-3.5 py-2 text-sm font-black font-mono tracking-widest text-slate-900 outline-none"
+                      required
+                    />
+                  </div>
+
+                  <button type="submit" className="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-xs cursor-pointer">
+                    Kemaskini PIN Master
+                  </button>
+
+                  {adminPinNotice && (
+                    <p className="text-xs font-mono font-bold text-emerald-700 pt-1">{adminPinNotice}</p>
+                  )}
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 11: TETAPAN KEDAI */}
+          {currentTab === 'settings' && (
+            <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs p-6 space-y-6">
+              <div className="pb-4 border-b border-slate-100">
+                <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">Tetapan Kedai & Maklumat Kilang</h2>
+                <p className="text-xs text-slate-500 mt-0.5">Urus maklumat rasmi perniagaan AYEZZ Global, WhatsApp hotline, dan gateway pembayaran.</p>
+              </div>
+
+              <form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  setIsLoading(true);
+                  await updateStoreSettingsInSupabase(storeSettings);
+                  setIsLoading(false);
+                  setSaveSuccess(true);
+                  setTimeout(() => setSaveSuccess(false), 3000);
+                }}
+                className="space-y-4 max-w-xl"
+              >
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1">Nama Brand / Kedai</label>
+                  <input type="text" value={storeSettings.storeName || 'AYEZZ GLOBAL'} onChange={(e) => setStoreSettings({ ...storeSettings, storeName: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-xs font-bold text-slate-900 outline-none" required />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1">No. WhatsApp Hotline (Contoh: 601187818310)</label>
+                  <input type="text" value={storeSettings.whatsappNumber || ''} onChange={(e) => setStoreSettings({ ...storeSettings, whatsappNumber: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-xs font-mono font-semibold text-slate-900 outline-none" required />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1">Simbol Mata Wang</label>
+                  <input type="text" value={storeSettings.currencySymbol || 'RM'} onChange={(e) => setStoreSettings({ ...storeSettings, currencySymbol: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-xs font-mono font-bold text-slate-900 outline-none" required />
+                </div>
+
+                <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-xl space-y-1 text-xs font-mono text-emerald-900">
+                  <span className="font-bold block">✓ CHIP PAYMENT GATEWAY STATUS: AKTIF</span>
+                  <p className="text-[11px] text-emerald-700">Brand ID: 3f4c8590-5a15-4cfc-a1d0-ef79e0bf8eb7 • Gateway URL: gate.chip-in.asia</p>
+                </div>
+
+                <div className="pt-3 flex items-center space-x-3">
+                  <button type="submit" className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-xs cursor-pointer">
+                    Simpan Tetapan Kedai
+                  </button>
+                  {saveSuccess && <span className="text-xs font-bold text-emerald-600 font-mono">✓ Tetapan Berjaya Disimpan!</span>}
+                </div>
+              </form>
+            </div>
+          )}
         </div>
       </main>
 
