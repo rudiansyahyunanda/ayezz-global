@@ -2,15 +2,16 @@
 
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Shield, KeyRound, ArrowRight, AlertCircle, RefreshCw } from 'lucide-react';
+import { Shield, KeyRound, ArrowRight, AlertCircle, RefreshCw, Mail, Lock } from 'lucide-react';
 import AdminDashboard from '../../components/admin/AdminDashboard';
-import { isAdminAuthenticated, loginAdmin } from '../../lib/authService';
+import { isAdminAuthenticated, loginAdminWithEmailPassword } from '../../lib/authService';
 
 export default function AdminPage() {
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isChecking, setIsChecking] = useState(true);
-  const [adminPin, setAdminPin] = useState('');
+  const [adminEmail, setAdminEmail] = useState('admin@ayezz.com');
+  const [adminPassword, setAdminPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -26,11 +27,11 @@ export default function AdminPage() {
     setIsSubmitting(true);
 
     try {
-      const res = await loginAdmin(adminPin.trim());
+      const res = await loginAdminWithEmailPassword(adminEmail.trim(), adminPassword.trim());
       if (res.success) {
         setIsAuthenticated(true);
       } else {
-        setErrorMessage(res.message || 'PIN Keselamatan Tidak Sah');
+        setErrorMessage(res.message || 'Email atau Kata Laluan Admin Tidak Sah');
       }
     } catch (err) {
       setErrorMessage('Ralat sambungan login admin');
@@ -47,7 +48,7 @@ export default function AdminPage() {
     );
   }
 
-  // If NOT Authenticated: Render Monochrome Apple-Style Admin Gate
+  // If NOT Authenticated: Render Secure Email & Password Admin Portal Gate
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-[#0B0F19] text-white flex items-center justify-center p-4 selection:bg-white selection:text-black font-sans select-none">
@@ -64,13 +65,13 @@ export default function AdminPage() {
             </div>
             <div className="space-y-1">
               <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-[0.2em]">
-                AKSES TERHAD • AYEZZ GLOBAL
+                PORTAL KAWALAN ADMIN • AYEZZ GLOBAL
               </span>
               <h1 className="text-2xl font-bold tracking-tight text-white">
                 Log Masuk Admin
               </h1>
               <p className="text-xs text-slate-400 font-normal">
-                Sila masukkan PIN Keselamatan Master Admin untuk meneruskan ke Panel Pengurusan.
+                Sila masukkan Email & Kata Laluan Akaun Admin anda.
               </p>
             </div>
           </div>
@@ -86,22 +87,39 @@ export default function AdminPage() {
 
             <div className="space-y-1.5">
               <label className="text-[11px] font-mono font-bold text-slate-400 uppercase tracking-wider block">
-                PIN Keselamatan Master
+                Email Admin
               </label>
               <div className="relative">
-                <KeyRound className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
                 <input
-                  type="password"
+                  type="email"
                   required
-                  value={adminPin}
-                  onChange={(e) => setAdminPin(e.target.value)}
-                  placeholder="Masukkan PIN Admin..."
+                  value={adminEmail}
+                  onChange={(e) => setAdminEmail(e.target.value)}
+                  placeholder="admin@ayezz.com"
                   className="w-full pl-10 pr-4 py-3 bg-slate-900/90 border border-slate-700 focus:border-white rounded-xl text-sm font-mono text-white placeholder:text-slate-500 outline-none transition-all"
                   autoFocus
                 />
               </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-[11px] font-mono font-bold text-slate-400 uppercase tracking-wider block">
+                Kata Laluan (Password) / Master PIN
+              </label>
+              <div className="relative">
+                <Lock className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+                <input
+                  type="password"
+                  required
+                  value={adminPassword}
+                  onChange={(e) => setAdminPassword(e.target.value)}
+                  placeholder="Masukkan kata laluan admin..."
+                  className="w-full pl-10 pr-4 py-3 bg-slate-900/90 border border-slate-700 focus:border-white rounded-xl text-sm font-mono text-white placeholder:text-slate-500 outline-none transition-all"
+                />
+              </div>
               <span className="text-[10px] text-slate-500 font-mono block">
-                PIN laluan lalai: AYEZZ2026
+                Kredensial Master Lalai: admin@ayezz.com • Password: Adminayezz2026!
               </span>
             </div>
 
@@ -110,7 +128,7 @@ export default function AdminPage() {
               disabled={isSubmitting}
               className="w-full py-3 bg-white hover:bg-slate-200 text-slate-900 font-bold text-xs uppercase tracking-widest rounded-xl transition-all active:scale-[0.98] shadow-md flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer"
             >
-              <span>{isSubmitting ? 'Mengesahkan...' : 'Pengesahan Admin'}</span>
+              <span>{isSubmitting ? 'Mengesahkan Portal...' : 'Pengesahan Admin'}</span>
               <ArrowRight className="w-4 h-4 text-slate-900" />
             </button>
           </form>

@@ -81,7 +81,7 @@ import {
   DEFAULT_SHOWCASE_FEATURE,
   PLACEHOLDER_IMAGE
 } from '../../lib/supabaseService';
-import { logoutAdmin, getAdminMasterPin, updateAdminMasterPin } from '../../lib/authService';
+import { logoutAdmin, getAdminMasterPin, updateAdminMasterPin, getAdminUsersList, addNewAdminAccount } from '../../lib/authService';
 
 export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) {
   const [currentTab, setCurrentTab] = useState('overview');
@@ -97,6 +97,12 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
   const [isOrderDetailOpen, setIsOrderDetailOpen] = useState(false);
   const [orderSearchQuery, setOrderSearchQuery] = useState('');
   const [systemUsers, setSystemUsers] = useState([]);
+  const [adminAccounts, setAdminAccounts] = useState([]);
+  const [isAddAdminModalOpen, setIsAddAdminModalOpen] = useState(false);
+  const [newAdminEmail, setNewAdminEmail] = useState('');
+  const [newAdminName, setNewAdminName] = useState('');
+  const [newAdminPhone, setNewAdminPhone] = useState('');
+  const [newAdminPass, setNewAdminPass] = useState('');
   const [userSearchQuery, setUserSearchQuery] = useState('');
   const [isUsersLoading, setIsUsersLoading] = useState(false);
   const [storeSettings, setStoreSettings] = useState({ storeName: 'AYEZZ GLOBAL', whatsappNumber: '6287818310416', currencySymbol: 'RM' });
@@ -127,7 +133,7 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
   const fetchAllData = async () => {
     setIsLoading(true);
     try {
-      const [cats, cuts, sleeves, fabs, tpls, ords, settings, uList, showcase] = await Promise.all([
+      const [cats, cuts, sleeves, fabs, tpls, ords, settings, uList, showcase, admins] = await Promise.all([
         getCategories(),
         getCutTypes(),
         getSleeveTypes(),
@@ -136,7 +142,8 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
         getOrdersFromSupabase(),
         getStoreSettingsFromSupabase(),
         getUsersFromSupabase(),
-        getShowcaseFeatureFromSupabase()
+        getShowcaseFeatureFromSupabase(),
+        getAdminUsersList()
       ]);
       setCategories(cats);
       setCutTypes(cuts);
@@ -146,6 +153,7 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
       setOrders(ords);
       if (settings) setStoreSettings(settings);
       setSystemUsers(uList || []);
+      setAdminAccounts(admins || []);
       if (showcase) setShowcaseFeature(showcase);
     } catch (err) {
       console.warn('Error loading data:', err);
@@ -1205,16 +1213,73 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
           {/* TAB 10: PENGURUSAN ADMIN */}
           {currentTab === 'admin_management' && (
             <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs p-6 space-y-6">
-              <div className="pb-4 border-b border-slate-100">
-                <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">Pengurusan Admin & PIN Keselamatan Master</h2>
-                <p className="text-xs text-slate-500 mt-0.5">Uruskan PIN keselamatan untuk akses kawalan Admin AYEZZ Global.</p>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
+                <div>
+                  <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">Pengurusan Akaun Admin & Kawalan Akses Portal</h2>
+                  <p className="text-xs text-slate-500 mt-0.5">Uruskan senarai pentadbir (Admin) yang dibenarkan mengawal portal AYEZZ Global.</p>
+                </div>
+                <button
+                  onClick={() => setIsAddAdminModalOpen(true)}
+                  className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl flex items-center space-x-1.5 transition-all shadow-xs cursor-pointer active:scale-95"
+                >
+                  <Plus className="w-4 h-4 text-white" />
+                  <span>+ Tambah Admin Baharu</span>
+                </button>
               </div>
 
-              <div className="max-w-md bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-4 font-sans">
+              {/* ADMIN LIST TABLE */}
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs font-sans">
+                  <thead>
+                    <tr className="bg-slate-50/80 border-b border-slate-200 text-[11px] font-mono font-semibold text-slate-500 uppercase tracking-wider">
+                      <th className="py-3 px-4">NAMA ADMIN</th>
+                      <th className="py-3 px-4">EMAIL ADMIN</th>
+                      <th className="py-3 px-4">NO TELEFON</th>
+                      <th className="py-3 px-4">STATUS PERANAN</th>
+                      <th className="py-3 px-4 text-right">TINDAKAN</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 font-medium text-slate-800">
+                    {adminAccounts.map((adm, idx) => (
+                      <tr key={adm.email || idx} className="hover:bg-slate-50/60 transition-colors">
+                        <td className="py-3.5 px-4 font-bold text-slate-900">
+                          {adm.fullName || 'Admin AYEZZ'}
+                          {adm.isMaster && <span className="ml-2 px-2 py-0.5 bg-amber-100 text-amber-800 rounded text-[9px] font-mono font-bold uppercase">Master</span>}
+                        </td>
+                        <td className="py-3.5 px-4 font-mono font-semibold text-slate-800">{adm.email}</td>
+                        <td className="py-3.5 px-4 font-mono text-slate-600">{adm.phone || '-'}</td>
+                        <td className="py-3.5 px-4 font-mono">
+                          <span className="px-2.5 py-1 bg-purple-100 text-purple-900 border border-purple-200 rounded-full text-[10px] font-bold uppercase">
+                            FULL ADMIN ACCESS
+                          </span>
+                        </td>
+                        <td className="py-3.5 px-4 text-right">
+                          {!adm.isMaster && (
+                            <button
+                              onClick={async () => {
+                                if (confirm(`Adakah anda pasti mahu memadam akaun admin ${adm.email}?`)) {
+                                  setAdminAccounts(prev => prev.filter(a => a.email !== adm.email));
+                                  await deleteUserFromSupabase(adm.email);
+                                }
+                              }}
+                              className="p-1.5 text-rose-500 hover:bg-rose-50 rounded transition-colors"
+                              title="Revoke Admin Status"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* MASTER SECURITY PIN FORM */}
+              <div className="max-w-md bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-4 font-sans pt-4">
                 <div className="space-y-1">
-                  <span className="text-[10px] font-mono text-slate-400 font-bold uppercase tracking-widest block">ADMIN AKTIF AKAN DATANG</span>
-                  <h4 className="text-sm font-bold text-slate-900 font-mono">admin@ayezz.com</h4>
-                  <span className="inline-block px-2.5 py-0.5 bg-emerald-100 text-emerald-800 text-[10px] font-mono font-bold rounded-full uppercase">Full Master Access</span>
+                  <span className="text-[10px] font-mono text-slate-400 font-bold uppercase tracking-widest block">TUKAR MASTER PIN (DESKTOP BACKUP)</span>
+                  <p className="text-xs text-slate-500">PIN Sandaran tambahan untuk akses kecemasan Admin.</p>
                 </div>
 
                 <form
@@ -1252,6 +1317,101 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                   )}
                 </form>
               </div>
+
+              {/* MODAL: TAMBAH ADMIN BAHARU */}
+              {isAddAdminModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-xs font-sans">
+                  <div className="bg-white w-full max-w-md rounded-3xl border border-slate-200 shadow-2xl p-6 sm:p-8 space-y-5">
+                    <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                      <div>
+                        <span className="text-[10px] font-mono font-bold text-purple-700 uppercase tracking-wider block">+ AKSES PENTADBIR BAHARU</span>
+                        <h3 className="text-lg font-black text-slate-900">Tambah Admin Baharu</h3>
+                      </div>
+                      <button onClick={() => setIsAddAdminModalOpen(false)} className="p-1 text-slate-400 hover:text-slate-900">
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+
+                    <form
+                      onSubmit={async (e) => {
+                        e.preventDefault();
+                        if (!newAdminEmail || !newAdminPass) return;
+                        await addNewAdminAccount({
+                          email: newAdminEmail,
+                          password: newAdminPass,
+                          fullName: newAdminName,
+                          phone: newAdminPhone
+                        });
+                        const updatedList = await getAdminUsersList();
+                        setAdminAccounts(updatedList || []);
+                        setIsAddAdminModalOpen(false);
+                        setNewAdminEmail('');
+                        setNewAdminName('');
+                        setNewAdminPhone('');
+                        setNewAdminPass('');
+                        alert(`Akaun Admin ${newAdminEmail} berjaya ditambahkan!`);
+                      }}
+                      className="space-y-4"
+                    >
+                      <div>
+                        <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1">Nama Penuh Admin</label>
+                        <input
+                          type="text"
+                          required
+                          value={newAdminName}
+                          onChange={(e) => setNewAdminName(e.target.value)}
+                          placeholder="Contoh: Encik Farhan Admin"
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-semibold text-slate-900 outline-none focus:bg-white focus:border-slate-900"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1">Email Admin (Untuk Log Masuk)</label>
+                        <input
+                          type="email"
+                          required
+                          value={newAdminEmail}
+                          onChange={(e) => setNewAdminEmail(e.target.value)}
+                          placeholder="farhan@ayezz.com"
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-mono font-semibold text-slate-900 outline-none focus:bg-white focus:border-slate-900"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1">No. Telefon Admin</label>
+                        <input
+                          type="text"
+                          value={newAdminPhone}
+                          onChange={(e) => setNewAdminPhone(e.target.value)}
+                          placeholder="012-3456789"
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-mono font-semibold text-slate-900 outline-none focus:bg-white focus:border-slate-900"
+                        />
+                      </div>
+
+                      <div>
+                        <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1">Kata Laluan (Password Admin)</label>
+                        <input
+                          type="password"
+                          required
+                          value={newAdminPass}
+                          onChange={(e) => setNewAdminPass(e.target.value)}
+                          placeholder="Masukkan kata laluan admin..."
+                          className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-mono font-semibold text-slate-900 outline-none focus:bg-white focus:border-slate-900"
+                        />
+                      </div>
+
+                      <div className="pt-2 flex justify-end space-x-2">
+                        <button type="button" onClick={() => setIsAddAdminModalOpen(false)} className="px-4 py-2 bg-slate-100 text-slate-700 font-bold text-xs rounded-xl">
+                          Batal
+                        </button>
+                        <button type="submit" className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs uppercase rounded-xl transition-all cursor-pointer">
+                          Simpan Akaun Admin
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+              )}
             </div>
           )}
 
