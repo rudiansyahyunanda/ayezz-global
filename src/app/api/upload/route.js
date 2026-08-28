@@ -34,14 +34,14 @@ export async function POST(request) {
       );
     }
 
-    // Target dimensions (maintain aspect ratio)
-    const maxWidth = customWidth ? parseInt(customWidth, 10) : 1200;
-    const maxHeight = customHeight ? parseInt(customHeight, 10) : 1200;
+    // Target dimensions optimized for small file size and HD display
+    const maxWidth = customWidth ? parseInt(customWidth, 10) : 800;
+    const maxHeight = customHeight ? parseInt(customHeight, 10) : 800;
 
-    // Process image using Sharp library:
-    // 1. Preserve Alpha Channel (transparansi PNG) with alphaQuality: 100
-    // 2. Resize proportionally preserving aspect ratio (fit: 'inside', withoutEnlargement: true)
-    // 3. Convert to WebP format for optimal file size and crisp quality
+    // Ultra-optimized Sharp processing:
+    // 1. Resize proportionally to max 800px
+    // 2. Convert to WebP format with quality 78 & max compression effort 6
+    // 3. Enable smartSubsample for crisp borders at tiny file size (~15KB - 35KB)
     const processedWebpBuffer = await sharp(inputBuffer)
       .resize({
         width: maxWidth,
@@ -50,8 +50,10 @@ export async function POST(request) {
         withoutEnlargement: true
       })
       .webp({
-        quality: 85,
-        alphaQuality: 100,
+        quality: 78,
+        alphaQuality: 90,
+        effort: 6,
+        smartSubsample: true,
         lossless: false
       })
       .toBuffer();

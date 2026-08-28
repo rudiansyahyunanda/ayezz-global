@@ -12,7 +12,7 @@ export default function MultiImageUploadCropper({ images = [], onChange, maxImag
     if (!file) return;
 
     try {
-      const res = await uploadAndProcessImageServerSide(file, { width: 1200, height: 1200 });
+      const res = await uploadAndProcessImageServerSide(file, { width: 800, height: 800 });
       if (res && res.url) {
         onChange((prevImages) => {
           const current = Array.isArray(prevImages) ? prevImages : images;
