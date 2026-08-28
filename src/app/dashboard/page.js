@@ -384,7 +384,7 @@ function DashboardContent() {
       }
     } catch (err) {
       console.error('Error saving profile:', err);
-    } fontally {
+    } finally {
       setIsSavingProfile(false);
     }
   };
