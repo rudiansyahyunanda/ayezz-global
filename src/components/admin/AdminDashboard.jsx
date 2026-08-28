@@ -641,7 +641,7 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                                 className="w-12 h-12 object-cover rounded-lg border border-slate-200/80 shadow-2xs"
                                 onError={(e) => {
                                   e.target.onerror = null;
-                                  e.target.src = 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=800&q=80';
+                                  e.target.src = PLACEHOLDER_IMAGE;
                                 }}
                               />
                             </td>
@@ -742,7 +742,7 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                                   className="w-12 h-12 object-cover rounded-lg border border-slate-200/80 shadow-2xs"
                                   onError={(e) => {
                                     e.target.onerror = null;
-                                    e.target.src = 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=800&q=80';
+                                    e.target.src = PLACEHOLDER_IMAGE;
                                   }}
                                 />
                               </td>
@@ -803,7 +803,7 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                             className="w-12 h-12 object-cover rounded-lg border border-slate-200/80 shadow-2xs"
                             onError={(e) => {
                               e.target.onerror = null;
-                              e.target.src = 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80';
+                              e.target.src = PLACEHOLDER_IMAGE;
                             }}
                           />
                         </td>
@@ -858,7 +858,7 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                             className="w-12 h-12 object-cover rounded-lg border border-slate-200/80 shadow-2xs"
                             onError={(e) => {
                               e.target.onerror = null;
-                              e.target.src = 'https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=800&q=80';
+                              e.target.src = PLACEHOLDER_IMAGE;
                             }}
                           />
                         </td>
@@ -922,7 +922,15 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                         <tr key={tpl.id} className="hover:bg-slate-50/60 transition-colors">
                           <td className="py-3 px-4">
                             <div className="flex items-center space-x-1.5">
-                              <img src={tplGallery[0]} alt={tpl.name} className="w-12 h-12 object-cover rounded-lg border border-slate-200 shadow-2xs aspect-square" />
+                              <img
+                                src={tplGallery[0] || PLACEHOLDER_IMAGE}
+                                alt={tpl.name}
+                                className="w-12 h-12 object-cover rounded-lg border border-slate-200 shadow-2xs aspect-square"
+                                onError={(e) => {
+                                  e.target.onerror = null;
+                                  e.target.src = PLACEHOLDER_IMAGE;
+                                }}
+                              />
                               {tplGallery.length > 1 && (
                                 <span className="px-2 py-1 bg-slate-100 border border-slate-200 rounded-md text-[10px] font-bold text-slate-700">
                                   +{tplGallery.length - 1} foto

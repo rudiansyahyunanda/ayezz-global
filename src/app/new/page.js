@@ -14,7 +14,8 @@ import {
   getDesignTemplates,
   getCategories,
   getCutTypes,
-  getFabricTypes
+  getFabricTypes,
+  PLACEHOLDER_IMAGE
 } from '../../lib/supabaseService';
 import {
   DESIGN_TEMPLATES,
@@ -413,7 +414,7 @@ export default function CleanSpecsStyleCatalogPage() {
                       style={{ imageRendering: '-webkit-optimize-contrast' }}
                       onError={(e) => {
                         e.target.onerror = null;
-                        e.target.src = 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=800&q=80';
+                        e.target.src = PLACEHOLDER_IMAGE;
                       }}
                     />
                   </div>

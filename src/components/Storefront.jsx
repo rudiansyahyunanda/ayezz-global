@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { getCategories, getDesignTemplates, PLACEHOLDER_IMAGE } from '../lib/supabaseService';
 import Link from 'next/link';
 import { ArrowRight, Grid, MessageCircle, ShoppingBag, Settings, Flame } from 'lucide-react';
 import SubCatalogModal from './modals/SubCatalogModal';
@@ -226,7 +227,7 @@ export default function Storefront({ onOpenAdmin }) {
                     style={{ imageRendering: '-webkit-optimize-contrast' }}
                     onError={(e) => {
                       e.target.onerror = null;
-                      e.target.src = 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=800&q=80';
+                      e.target.src = PLACEHOLDER_IMAGE;
                     }}
                   />
                   {/* Clean Top-Left Index Tag */}

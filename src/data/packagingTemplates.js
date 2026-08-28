@@ -1,3 +1,5 @@
+export const PLACEHOLDER_IMAGE = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400' viewBox='0 0 400 400'%3E%3Crect width='400' height='400' fill='%23F5F5F7'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='16' fill='%2386868B'%3EAYEZZ GLOBAL%3C/text%3E%3C/svg%3E";
+
 export const PACKAGING_MODELS = [
   {
     id: 'tuck_box',
@@ -6,7 +8,7 @@ export const PACKAGING_MODELS = [
     icon: '📦',
     description: 'Standard retail box with top and bottom folding flaps.',
     defaultDims: { width: 80, height: 120, depth: 50, thickness: 1.5, flap: 20 },
-    thumbnail: 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=600&q=80',
+    thumbnail: PLACEHOLDER_IMAGE,
     tags: ['Retail', 'Cosmetics', 'Pharma', 'Gadgets']
   },
   {
@@ -16,7 +18,7 @@ export const PACKAGING_MODELS = [
     icon: '📫',
     description: 'Sturdy corrugated box ideal for subscription boxes & shipping.',
     defaultDims: { width: 150, height: 60, depth: 120, thickness: 2.5, flap: 15 },
-    thumbnail: 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=600&q=80',
+    thumbnail: PLACEHOLDER_IMAGE,
     tags: ['Shipping', 'E-Commerce', 'Apparel']
   },
   {
@@ -26,7 +28,7 @@ export const PACKAGING_MODELS = [
     icon: '🧃',
     description: 'Round cardboard tube for luxury teas, candles, and wine bottles.',
     defaultDims: { width: 70, height: 160, depth: 70, thickness: 2.0, flap: 0 },
-    thumbnail: 'https://images.unsplash.com/photo-1527661591475-527312dd65f5?auto=format&fit=crop&w=600&q=80',
+    thumbnail: PLACEHOLDER_IMAGE,
     tags: ['Candles', 'Tea & Coffee', 'Spirits', 'Luxury']
   },
   {
@@ -36,7 +38,7 @@ export const PACKAGING_MODELS = [
     icon: '🎒',
     description: 'Flexible pouch with ziplock seal for food, coffee, & powders.',
     defaultDims: { width: 110, height: 170, depth: 40, thickness: 0.8, flap: 0 },
-    thumbnail: 'https://images.unsplash.com/photo-1616401784845-180882ba9ba8?auto=format&fit=crop&w=600&q=80',
+    thumbnail: PLACEHOLDER_IMAGE,
     tags: ['Coffee', 'Snacks', 'Supplements']
   },
   {
@@ -46,7 +48,7 @@ export const PACKAGING_MODELS = [
     icon: '🧪',
     description: 'Glass cosmetic dropper bottle with custom label wrapping.',
     defaultDims: { width: 45, height: 110, depth: 45, thickness: 1.0, flap: 0 },
-    thumbnail: 'https://images.unsplash.com/photo-1608248597261-e4d0450cbf1c?auto=format&fit=crop&w=600&q=80',
+    thumbnail: PLACEHOLDER_IMAGE,
     tags: ['Skincare', 'Essential Oils', 'Beauty']
   },
   {
@@ -56,7 +58,7 @@ export const PACKAGING_MODELS = [
     icon: '☕',
     description: 'Eco-friendly double wall coffee cup with sleeve.',
     defaultDims: { width: 85, height: 130, depth: 85, thickness: 1.2, flap: 0 },
-    thumbnail: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=600&q=80',
+    thumbnail: PLACEHOLDER_IMAGE,
     tags: ['Café', 'Beverages', 'Takeaway']
   }
 ];
@@ -81,7 +83,7 @@ export const PRESET_DESIGNS = [
     },
     lighting: 'cyberpunk',
     badge: 'Trending',
-    thumbnail: 'https://images.unsplash.com/photo-1608248597261-e4d0450cbf1c?auto=format&fit=crop&w=600&q=80'
+    thumbnail: PLACEHOLDER_IMAGE
   },
   {
     id: 'preset_artisan_coffee',
@@ -102,7 +104,7 @@ export const PRESET_DESIGNS = [
     },
     lighting: 'warm',
     badge: 'Popular',
-    thumbnail: 'https://images.unsplash.com/photo-1616401784845-180882ba9ba8?auto=format&fit=crop&w=600&q=80'
+    thumbnail: PLACEHOLDER_IMAGE
   },
   {
     id: 'preset_cyber_mailer',
@@ -123,7 +125,7 @@ export const PRESET_DESIGNS = [
     },
     lighting: 'neon',
     badge: 'New',
-    thumbnail: 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=600&q=80'
+    thumbnail: PLACEHOLDER_IMAGE
   },
   {
     id: 'preset_luxury_candle',
@@ -144,7 +146,7 @@ export const PRESET_DESIGNS = [
     },
     lighting: 'neutral',
     badge: 'Premium',
-    thumbnail: 'https://images.unsplash.com/photo-1527661591475-527312dd65f5?auto=format&fit=crop&w=600&q=80'
+    thumbnail: PLACEHOLDER_IMAGE
   }
 ];
 

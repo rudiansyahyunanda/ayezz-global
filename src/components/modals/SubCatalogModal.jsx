@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { X, ShoppingBag } from 'lucide-react';
-import { getDesignTemplates } from '../../lib/supabaseService';
+import { getDesignTemplates, PLACEHOLDER_IMAGE } from '../../lib/supabaseService';
 
 export default function SubCatalogModal({ catalog, onClose, onSelectProduct }) {
   const [activeSubCategory, setActiveSubCategory] = useState('Semua');
@@ -93,7 +93,7 @@ export default function SubCatalogModal({ catalog, onClose, onSelectProduct }) {
                   style={{ imageRendering: '-webkit-optimize-contrast' }}
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=800&q=80';
+                    e.target.src = PLACEHOLDER_IMAGE;
                   }}
                 />
               </div>

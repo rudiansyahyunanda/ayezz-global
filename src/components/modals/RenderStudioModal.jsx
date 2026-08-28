@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Camera, Download, Sparkles, Image as ImageIcon } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import { PLACEHOLDER_IMAGE } from '../../lib/supabaseService';
 
 export default function RenderStudioModal({ isOpen, onClose, onCaptureRender, currentModelName = 'Straight Tuck Box' }) {
   const [resolution, setResolution] = useState('1080p');
@@ -15,9 +16,9 @@ export default function RenderStudioModal({ isOpen, onClose, onCaptureRender, cu
     setTimeout(() => {
       if (onCaptureRender) {
         const imgData = onCaptureRender(resolution, backdrop);
-        setRenderedImage(imgData || 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=1200&q=80');
+        setRenderedImage(imgData || PLACEHOLDER_IMAGE);
       } else {
-        setRenderedImage('https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=1200&q=80');
+        setRenderedImage(PLACEHOLDER_IMAGE);
       }
       setIsRendering(false);
 

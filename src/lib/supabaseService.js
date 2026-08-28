@@ -329,13 +329,12 @@ export async function deleteFabricTypeFromSupabase(fabricId) {
 // 4. TEMPLATE REKA BENTUK (WITH MULTI-PHOTO GALLERY)
 // ==========================================
 export async function getDesignTemplates() {
-  if (!isSupabaseConnected) return INITIAL_TEMPLATES;
+  if (!isSupabaseConnected) return [];
   try {
     const { data, error } = await supabase.from('design_templates').select('*').order('created_at', { ascending: false });
-    
-    const templatesSource = (data && data.length > 0) ? data : INITIAL_TEMPLATES;
+    if (error || !data) return [];
 
-    return templatesSource.map(item => {
+    return data.map(item => {
       const imgList = Array.isArray(item.images) && item.images.length > 0
         ? item.images
         : (item.thumbnail ? [item.thumbnail] : [PLACEHOLDER_IMAGE]);
@@ -351,7 +350,7 @@ export async function getDesignTemplates() {
     });
   } catch (err) {
     console.warn('Supabase getDesignTemplates error:', err);
-    return INITIAL_TEMPLATES;
+    return [];
   }
 }
 

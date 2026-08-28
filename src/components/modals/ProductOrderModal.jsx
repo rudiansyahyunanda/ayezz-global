@@ -224,7 +224,7 @@ Sila maklumkan sebut harga rasmi dan langkah pembayaran. Terima kasih!`;
                   style={{ imageRendering: '-webkit-optimize-contrast' }}
                   onError={(e) => {
                     e.target.onerror = null;
-                    e.target.src = 'https://images.unsplash.com/photo-1518609878373-06d740f60d8b?auto=format&fit=crop&w=800&q=80';
+                    e.target.src = PLACEHOLDER_IMAGE;
                   }}
                 />
 
