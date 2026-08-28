@@ -302,17 +302,16 @@ function DashboardContent() {
     setCutGroups((prev) => prev.filter((g) => g.id !== groupId));
   };
 
-  const updateGroupSizeQty = (groupId, sizeKey, delta) => {
+  const setGroupSizeQtyDirect = (groupId, sizeKey, rawVal) => {
+    const numVal = Math.max(0, parseInt(rawVal, 10) || 0);
     setCutGroups((prev) =>
       prev.map((g) => {
         if (g.id !== groupId) return g;
-        const currentVal = g.sizes[sizeKey] || 0;
-        const newVal = Math.max(0, currentVal + delta);
         return {
           ...g,
           sizes: {
             ...g.sizes,
-            [sizeKey]: newVal
+            [sizeKey]: numVal
           }
         };
       })
@@ -757,7 +756,7 @@ function DashboardContent() {
           <div className="flex items-center space-x-3">
             <button
               onClick={() => setActiveTab('new-order')}
-              className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider rounded-lg transition-all flex items-center space-x-1.5 shadow-xs active:scale-95 cursor-pointer"
+              className="px-4 py-2 bg-slate-700 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider rounded-lg transition-all flex items-center space-x-1.5 shadow-xs active:scale-95 cursor-pointer"
             >
               <Plus className="w-4 h-4 text-white" />
               <span>Tempahan Baru</span>
@@ -771,10 +770,10 @@ function DashboardContent() {
           {/* TAB 1: OVERVIEW */}
           {activeTab === 'overview' && (
             <div className="space-y-8">
-              {/* WELCOME BANNER (MONOCHROME BRAND STYLE) */}
-              <div className="bg-slate-900 text-white p-8 rounded-2xl border border-slate-800 shadow-md relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+              {/* WELCOME BANNER */}
+              <div className="bg-slate-800 text-white p-8 rounded-2xl border border-slate-700 shadow-md relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                 <div className="space-y-2 relative z-10 max-w-xl">
-                  <span className="inline-flex items-center space-x-1 px-3 py-1 bg-slate-800 text-slate-200 border border-slate-700 rounded-full text-[10px] font-mono font-bold uppercase tracking-widest">
+                  <span className="inline-flex items-center space-x-1 px-3 py-1 bg-slate-700 text-slate-200 border border-slate-600 rounded-full text-[10px] font-mono font-bold uppercase tracking-widest">
                     <Sparkles className="w-3 h-3 text-slate-300" />
                     <span>PANEL KAWALAN PELANGGAN</span>
                   </span>
@@ -788,9 +787,9 @@ function DashboardContent() {
 
                 <button
                   onClick={() => setActiveTab('new-order')}
-                  className="px-6 py-3.5 bg-white hover:bg-slate-100 text-slate-950 font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-md active:scale-95 flex items-center space-x-2 shrink-0 relative z-10 cursor-pointer"
+                  className="px-6 py-3.5 bg-white hover:bg-slate-100 text-slate-900 font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-md active:scale-95 flex items-center space-x-2 shrink-0 relative z-10 cursor-pointer"
                 >
-                  <ShoppingBag className="w-4 h-4 text-slate-950" />
+                  <ShoppingBag className="w-4 h-4 text-slate-900" />
                   <span>Buat Tempahan Jersi Baru →</span>
                 </button>
               </div>
@@ -886,7 +885,7 @@ function DashboardContent() {
                     <p className="text-xs text-slate-500 font-semibold">Belum ada pesanan direkodkan.</p>
                     <button
                       onClick={() => setActiveTab('new-order')}
-                      className="px-4 py-2 bg-slate-900 text-white rounded-xl text-xs font-bold uppercase tracking-wider cursor-pointer"
+                      className="px-4 py-2 bg-slate-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider cursor-pointer"
                     >
                       Buat Tempahan Pertama
                     </button>
@@ -932,11 +931,11 @@ function DashboardContent() {
             </div>
           )}
 
-          {/* TAB 2: BUAT PESANAN BARU (ULTRA-HIGH-END LUXURY CONFIGURATOR) */}
+          {/* TAB 2: BUAT PESANAN BARU (REFINED COOL SLATE GREY CONFIGURATOR) */}
           {activeTab === 'new-order' && (
             <div className="w-full space-y-8">
               
-              {/* ULTRA-SLEEK MINIMALIST PROGRESS STEPPER */}
+              {/* MINIMALIST PROGRESS STEPPER */}
               <div className="w-full bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs">
                 <div className="flex items-center justify-between max-w-4xl mx-auto">
                   
@@ -947,7 +946,7 @@ function DashboardContent() {
                   >
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-mono font-black transition-all ${
                       orderStep === 1
-                        ? 'bg-slate-900 text-white ring-4 ring-slate-900/10 shadow-sm'
+                        ? 'bg-slate-700 text-white ring-4 ring-slate-700/10 shadow-sm'
                         : orderStep > 1
                         ? 'bg-emerald-600 text-white'
                         : 'bg-slate-100 text-slate-400 border border-slate-200'
@@ -971,7 +970,7 @@ function DashboardContent() {
                   >
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-mono font-black transition-all ${
                       orderStep === 2
-                        ? 'bg-slate-900 text-white ring-4 ring-slate-900/10 shadow-sm'
+                        ? 'bg-slate-700 text-white ring-4 ring-slate-700/10 shadow-sm'
                         : orderStep > 2
                         ? 'bg-emerald-600 text-white'
                         : 'bg-slate-100 text-slate-400 border border-slate-200'
@@ -995,7 +994,7 @@ function DashboardContent() {
                   >
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-mono font-black transition-all ${
                       orderStep === 3
-                        ? 'bg-slate-900 text-white ring-4 ring-slate-900/10 shadow-sm'
+                        ? 'bg-slate-700 text-white ring-4 ring-slate-700/10 shadow-sm'
                         : orderStep > 3
                         ? 'bg-emerald-600 text-white'
                         : 'bg-slate-100 text-slate-400 border border-slate-200'
@@ -1019,7 +1018,7 @@ function DashboardContent() {
                   >
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-mono font-black transition-all ${
                       orderStep === 4
-                        ? 'bg-slate-900 text-white ring-4 ring-slate-900/10 shadow-sm'
+                        ? 'bg-slate-700 text-white ring-4 ring-slate-700/10 shadow-sm'
                         : 'bg-slate-100 text-slate-400 border border-slate-200'
                     }`}>
                       4
@@ -1080,7 +1079,7 @@ function DashboardContent() {
                   <div className="flex items-center justify-center space-x-3 pt-2">
                     <button
                       onClick={resetOrderForm}
-                      className="px-6 py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md cursor-pointer"
+                      className="px-6 py-3.5 bg-slate-700 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md cursor-pointer"
                     >
                       Lihat Senarai Pesanan Saya →
                     </button>
@@ -1111,7 +1110,7 @@ function DashboardContent() {
                               onClick={() => setIsCustomDesign(false)}
                               className={`px-3.5 py-2 rounded-lg text-xs font-extrabold transition-all flex items-center space-x-1.5 cursor-pointer ${
                                 !isCustomDesign
-                                  ? 'bg-slate-900 text-white shadow-xs'
+                                  ? 'bg-slate-700 text-white shadow-xs'
                                   : 'text-slate-600 hover:text-slate-900'
                               }`}
                             >
@@ -1124,7 +1123,7 @@ function DashboardContent() {
                               onClick={() => setIsCustomDesign(true)}
                               className={`px-3.5 py-2 rounded-lg text-xs font-extrabold transition-all flex items-center space-x-1.5 cursor-pointer ${
                                 isCustomDesign
-                                  ? 'bg-slate-900 text-white shadow-xs'
+                                  ? 'bg-slate-700 text-white shadow-xs'
                                   : 'text-slate-600 hover:text-slate-900'
                               }`}
                             >
@@ -1163,7 +1162,7 @@ function DashboardContent() {
                               <button
                                 type="button"
                                 onClick={() => setIsTemplateModalOpen(true)}
-                                className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-xs shrink-0 cursor-pointer"
+                                className="px-5 py-2.5 bg-slate-700 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-xs shrink-0 cursor-pointer"
                               >
                                 Tukar Template
                               </button>
@@ -1190,7 +1189,7 @@ function DashboardContent() {
                                   </div>
                                 </div>
 
-                                <label className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl cursor-pointer transition-all shrink-0">
+                                <label className="px-4 py-2 bg-slate-700 hover:bg-slate-800 text-white font-bold text-xs rounded-xl cursor-pointer transition-all shrink-0">
                                   {isUploadingRefImage ? 'Memuat Naik...' : customDesignRefUrl ? 'Tukar Referensi' : 'Muat Naik Referensi'}
                                   <input type="file" accept="image/*" onChange={handleRefImageUpload} className="hidden" />
                                 </label>
@@ -1206,7 +1205,7 @@ function DashboardContent() {
                                 value={customDesignNotes}
                                 onChange={(e) => setCustomDesignNotes(e.target.value)}
                                 placeholder="Jelaskan secara teliti perubahan warna, corak badan, garisan bahu, atau gabungan gaya yang diinginkan..."
-                                className="w-full bg-white border border-slate-200 rounded-xl p-3.5 text-xs font-medium text-slate-900 outline-none focus:border-slate-900 transition-all resize-none"
+                                className="w-full bg-white border border-slate-200 rounded-xl p-3.5 text-xs font-medium text-slate-900 outline-none focus:border-slate-700 transition-all resize-none"
                               />
                             </div>
                           </div>
@@ -1217,7 +1216,7 @@ function DashboardContent() {
                           <button
                             type="button"
                             onClick={() => setOrderStep(2)}
-                            className="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-xs flex items-center space-x-2 cursor-pointer"
+                            className="px-6 py-3 bg-slate-700 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-xs flex items-center space-x-2 cursor-pointer"
                           >
                             <span>Teruskan Ke Step 2: Potongan & Saiz →</span>
                           </button>
@@ -1236,7 +1235,7 @@ function DashboardContent() {
                             <h3 className="text-lg font-black uppercase text-slate-900 pt-0.5">SPESIFIKASI POTONGAN, LENGAN & SAIZ</h3>
                           </div>
 
-                          <span className="text-xs font-mono font-black text-slate-900 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200">
+                          <span className="text-xs font-mono font-black text-slate-800 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200">
                             JUMLAH: {groupCalculations.totalQty} pcs
                           </span>
                         </div>
@@ -1252,15 +1251,15 @@ function DashboardContent() {
                             return (
                               <div
                                 key={group.id}
-                                className="p-6 bg-white border border-slate-200/90 rounded-2xl space-y-5 relative shadow-xs hover:border-slate-300 transition-all"
+                                className="p-6 bg-white border border-slate-200/90 rounded-2xl space-y-6 relative shadow-2xs hover:border-slate-300 transition-all"
                               >
                                 {/* GROUP CARD HEADER */}
                                 <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                                  <div className="flex items-center space-x-2">
-                                    <span className="w-6 h-6 rounded-full bg-slate-900 text-white text-xs font-mono font-bold flex items-center justify-center">
+                                  <div className="flex items-center space-x-2.5">
+                                    <span className="w-6 h-6 rounded-full bg-slate-700 text-white text-xs font-mono font-bold flex items-center justify-center">
                                       {idx + 1}
                                     </span>
-                                    <span className="text-xs font-mono font-extrabold text-slate-900 uppercase">
+                                    <span className="text-xs font-mono font-extrabold text-slate-800 uppercase">
                                       KUMPULAN #{idx + 1}: {activeCutName} • {activeSleeveName}
                                     </span>
                                   </div>
@@ -1292,12 +1291,12 @@ function DashboardContent() {
                                       1. POTONGAN KOLAR
                                     </label>
 
-                                    <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
+                                    <div className="p-3 bg-slate-50/80 border border-slate-200 rounded-xl flex items-center justify-between">
                                       <div className="flex items-center space-x-3 min-w-0">
                                         <img
                                           src={activeCutImg}
                                           alt={activeCutName}
-                                          className="w-12 h-12 object-contain bg-white rounded-lg p-1 border border-slate-200 shrink-0"
+                                          className="w-11 h-11 object-contain bg-white rounded-lg p-1 border border-slate-200 shrink-0"
                                         />
                                         <div className="min-w-0 flex-1">
                                           <h4 className="text-xs font-extrabold uppercase text-slate-900 truncate">{activeCutName}</h4>
@@ -1313,7 +1312,7 @@ function DashboardContent() {
                                           setActiveGroupIdForCut(group.id);
                                           setIsCutModalOpen(true);
                                         }}
-                                        className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-[11px] uppercase rounded-lg transition-colors cursor-pointer shrink-0"
+                                        className="px-3.5 py-2 bg-slate-700 hover:bg-slate-800 text-white font-bold text-[11px] uppercase rounded-lg transition-colors cursor-pointer shrink-0"
                                       >
                                         Pilih Kolar
                                       </button>
@@ -1326,12 +1325,12 @@ function DashboardContent() {
                                       2. JENIS LENGAN (SLEEVE)
                                     </label>
 
-                                    <div className="p-3 bg-slate-50 border border-slate-200 rounded-xl flex items-center justify-between">
+                                    <div className="p-3 bg-slate-50/80 border border-slate-200 rounded-xl flex items-center justify-between">
                                       <div className="flex items-center space-x-3 min-w-0">
                                         <img
                                           src={activeSleeveImg}
                                           alt={activeSleeveName}
-                                          className="w-12 h-12 object-contain bg-white rounded-lg p-1 border border-slate-200 shrink-0"
+                                          className="w-11 h-11 object-contain bg-white rounded-lg p-1 border border-slate-200 shrink-0"
                                         />
                                         <div className="min-w-0 flex-1">
                                           <h4 className="text-xs font-extrabold uppercase text-slate-900 truncate">{activeSleeveName}</h4>
@@ -1347,7 +1346,7 @@ function DashboardContent() {
                                           setActiveGroupIdForSleeve(group.id);
                                           setIsSleeveModalOpen(true);
                                         }}
-                                        className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-[11px] uppercase rounded-lg transition-colors cursor-pointer shrink-0"
+                                        className="px-3.5 py-2 bg-slate-700 hover:bg-slate-800 text-white font-bold text-[11px] uppercase rounded-lg transition-colors cursor-pointer shrink-0"
                                       >
                                         Pilih Lengan
                                       </button>
@@ -1356,79 +1355,85 @@ function DashboardContent() {
 
                                 </div>
 
-                                {/* DIRECT SIZE MATRIX COUNTER GRID (NO EXTRA MODAL FOR FAST ORDERING!) */}
-                                <div className="space-y-3 pt-3 border-t border-slate-100">
+                                {/* SLEEK THIN-LINE GRID SIZE TABLE (CLEAN, ELEGANT & PROFESSIONAL) */}
+                                <div className="space-y-4 pt-3 border-t border-slate-100">
                                   <div className="flex items-center justify-between">
                                     <label className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block">
-                                      3. KUANTITI SAIZ (DEWASA & KANAK-KANAK)
+                                      3. JADUAL SAIZ & KUANTITI (SIZE MATRIX TABLE)
                                     </label>
 
                                     <span className="text-xs font-mono font-bold text-slate-800">
-                                      Subtotal Saiz: {group.qty} pcs
+                                      Subtotal Kumpulan #{idx + 1}: {group.qty} pcs
                                     </span>
                                   </div>
 
-                                  {/* ADULT SIZES GRID */}
+                                  {/* ADULT SIZES THIN-BORDER TABLE */}
                                   <div className="space-y-1.5">
                                     <span className="text-[10px] font-mono text-slate-500 font-bold block">SAIZ DEWASA (ADULT)</span>
-                                    <div className="grid grid-cols-3 sm:grid-cols-9 gap-2">
-                                      {ADULT_SIZES.map((sz) => {
-                                        const q = group.sizes?.[sz] || 0;
-                                        return (
-                                          <div key={sz} className="p-2 bg-slate-50 border border-slate-200 rounded-xl text-center space-y-1">
-                                            <span className="text-[11px] font-mono font-bold text-slate-700 block">{sz}</span>
-                                            <div className="flex items-center justify-center space-x-1">
-                                              <button
-                                                type="button"
-                                                onClick={() => updateGroupSizeQty(group.id, sz, -1)}
-                                                className="w-5 h-5 rounded bg-white border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-200 active:scale-95 cursor-pointer flex items-center justify-center"
-                                              >
-                                                -
-                                              </button>
-                                              <span className="text-xs font-mono font-bold text-slate-900 w-4">{q}</span>
-                                              <button
-                                                type="button"
-                                                onClick={() => updateGroupSizeQty(group.id, sz, 1)}
-                                                className="w-5 h-5 rounded bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 active:scale-95 cursor-pointer flex items-center justify-center"
-                                              >
-                                                +
-                                              </button>
-                                            </div>
-                                          </div>
-                                        );
-                                      })}
+                                    <div className="overflow-x-auto border border-slate-200 rounded-xl bg-white">
+                                      <table className="w-full text-center divide-y divide-slate-200 text-xs">
+                                        <thead>
+                                          <tr className="bg-slate-50/80 divide-x divide-slate-200 text-[11px] font-mono font-bold text-slate-700 uppercase">
+                                            {ADULT_SIZES.map((sz) => (
+                                              <th key={sz} className="py-2 px-2 font-extrabold">{sz}</th>
+                                            ))}
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          <tr className="divide-x divide-slate-200 bg-white">
+                                            {ADULT_SIZES.map((sz) => {
+                                              const q = group.sizes?.[sz] || 0;
+                                              return (
+                                                <td key={sz} className="p-1">
+                                                  <input
+                                                    type="number"
+                                                    min="0"
+                                                    value={q === 0 ? '' : q}
+                                                    placeholder="0"
+                                                    onChange={(e) => setGroupSizeQtyDirect(group.id, sz, e.target.value)}
+                                                    className="w-full text-center py-1.5 px-1 font-mono font-bold text-slate-900 bg-transparent focus:bg-slate-50 outline-none text-xs"
+                                                  />
+                                                </td>
+                                              );
+                                            })}
+                                          </tr>
+                                        </tbody>
+                                      </table>
                                     </div>
                                   </div>
 
-                                  {/* KIDS SIZES GRID */}
-                                  <div className="space-y-1.5 pt-2">
+                                  {/* KIDS SIZES THIN-BORDER TABLE */}
+                                  <div className="space-y-1.5 pt-1">
                                     <span className="text-[10px] font-mono text-slate-500 font-bold block">SAIZ KANAK-KANAK (KIDS)</span>
-                                    <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
-                                      {KIDS_SIZES.map((sz) => {
-                                        const q = group.sizes?.[sz] || 0;
-                                        return (
-                                          <div key={sz} className="p-2 bg-slate-50 border border-slate-200 rounded-xl text-center space-y-1">
-                                            <span className="text-[11px] font-mono font-bold text-slate-700 block">Saiz {sz}</span>
-                                            <div className="flex items-center justify-center space-x-1">
-                                              <button
-                                                type="button"
-                                                onClick={() => updateGroupSizeQty(group.id, sz, -1)}
-                                                className="w-5 h-5 rounded bg-white border border-slate-300 text-xs font-bold text-slate-700 hover:bg-slate-200 active:scale-95 cursor-pointer flex items-center justify-center"
-                                              >
-                                                -
-                                              </button>
-                                              <span className="text-xs font-mono font-bold text-slate-900 w-4">{q}</span>
-                                              <button
-                                                type="button"
-                                                onClick={() => updateGroupSizeQty(group.id, sz, 1)}
-                                                className="w-5 h-5 rounded bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 active:scale-95 cursor-pointer flex items-center justify-center"
-                                              >
-                                                +
-                                              </button>
-                                            </div>
-                                          </div>
-                                        );
-                                      })}
+                                    <div className="overflow-x-auto border border-slate-200 rounded-xl bg-white">
+                                      <table className="w-full text-center divide-y divide-slate-200 text-xs">
+                                        <thead>
+                                          <tr className="bg-slate-50/80 divide-x divide-slate-200 text-[11px] font-mono font-bold text-slate-700 uppercase">
+                                            {KIDS_SIZES.map((sz) => (
+                                              <th key={sz} className="py-2 px-2 font-extrabold">Saiz {sz}</th>
+                                            ))}
+                                          </tr>
+                                        </thead>
+                                        <tbody>
+                                          <tr className="divide-x divide-slate-200 bg-white">
+                                            {KIDS_SIZES.map((sz) => {
+                                              const q = group.sizes?.[sz] || 0;
+                                              return (
+                                                <td key={sz} className="p-1">
+                                                  <input
+                                                    type="number"
+                                                    min="0"
+                                                    value={q === 0 ? '' : q}
+                                                    placeholder="0"
+                                                    onChange={(e) => setGroupSizeQtyDirect(group.id, sz, e.target.value)}
+                                                    className="w-full text-center py-1.5 px-1 font-mono font-bold text-slate-900 bg-transparent focus:bg-slate-50 outline-none text-xs"
+                                                  />
+                                                </td>
+                                              );
+                                            })}
+                                          </tr>
+                                        </tbody>
+                                      </table>
                                     </div>
                                   </div>
 
@@ -1443,9 +1448,9 @@ function DashboardContent() {
                         <button
                           type="button"
                           onClick={addCutGroup}
-                          className="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-900 font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all border border-dashed border-slate-300 flex items-center justify-center space-x-2 cursor-pointer active:scale-98"
+                          className="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all border border-dashed border-slate-300 flex items-center justify-center space-x-2 cursor-pointer active:scale-98"
                         >
-                          <Plus className="w-4 h-4 text-slate-900" />
+                          <Plus className="w-4 h-4 text-slate-800" />
                           <span>+ Tambah Kumpulan Potongan Baru</span>
                         </button>
 
@@ -1462,7 +1467,7 @@ function DashboardContent() {
                           <button
                             type="button"
                             onClick={() => setOrderStep(3)}
-                            className="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-xs flex items-center space-x-2 cursor-pointer"
+                            className="px-6 py-3 bg-slate-700 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-xs flex items-center space-x-2 cursor-pointer"
                           >
                             <span>Teruskan Ke Step 3: Fabrik →</span>
                           </button>
@@ -1490,7 +1495,7 @@ function DashboardContent() {
                                 onClick={() => setSelectedFabric(fab)}
                                 className={`p-5 rounded-2xl border cursor-pointer transition-all flex flex-col justify-between space-y-3 relative ${
                                   isSelected
-                                    ? 'bg-slate-900 text-white border-slate-900 shadow-md ring-2 ring-slate-900/20'
+                                    ? 'bg-slate-800 text-white border-slate-800 shadow-md ring-2 ring-slate-800/20'
                                     : 'bg-white text-slate-800 border-slate-200 hover:border-slate-400 hover:bg-slate-50'
                                 }`}
                               >
@@ -1534,7 +1539,7 @@ function DashboardContent() {
                           <button
                             type="button"
                             onClick={() => setOrderStep(4)}
-                            className="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-xs flex items-center space-x-2 cursor-pointer"
+                            className="px-6 py-3 bg-slate-700 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-xs flex items-center space-x-2 cursor-pointer"
                           >
                             <span>Teruskan Ke Step 4: Pengesahan →</span>
                           </button>
@@ -1561,7 +1566,7 @@ function DashboardContent() {
                               placeholder="Nama penuh..."
                               value={customerInfo.name}
                               onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })}
-                              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 outline-none focus:bg-white focus:border-slate-900"
+                              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 outline-none focus:bg-white focus:border-slate-700"
                             />
                           </div>
 
@@ -1573,7 +1578,7 @@ function DashboardContent() {
                               placeholder="011-XXXXXXX"
                               value={customerInfo.phone}
                               onChange={(e) => setCustomerInfo({ ...customerInfo, phone: e.target.value })}
-                              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 outline-none focus:bg-white focus:border-slate-900"
+                              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 outline-none focus:bg-white focus:border-slate-700"
                             />
                           </div>
 
@@ -1584,7 +1589,7 @@ function DashboardContent() {
                               placeholder="Contoh: FC Harimau"
                               value={customerInfo.teamName}
                               onChange={(e) => setCustomerInfo({ ...customerInfo, teamName: e.target.value })}
-                              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 outline-none focus:bg-white focus:border-slate-900"
+                              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 outline-none focus:bg-white focus:border-slate-700"
                             />
                           </div>
 
@@ -1619,7 +1624,7 @@ function DashboardContent() {
                               placeholder="Contoh: Nama pemain di belakang baju..."
                               value={customerInfo.notes}
                               onChange={(e) => setCustomerInfo({ ...customerInfo, notes: e.target.value })}
-                              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 outline-none focus:bg-white focus:border-slate-900 resize-none"
+                              className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 outline-none focus:bg-white focus:border-slate-700 resize-none"
                             />
                           </div>
                         </div>
@@ -1639,11 +1644,11 @@ function DashboardContent() {
 
                   </div>
 
-                  {/* RIGHT 5 COLS: STICKY HIGH-END LIVE ORDER SUMMARY TICKET */}
+                  {/* RIGHT 5 COLS: STICKY COOL CHARCOAL LIVE ORDER SUMMARY TICKET */}
                   <div className="lg:col-span-5 space-y-6">
-                    <div className="bg-slate-900 text-white p-6 sm:p-7 rounded-3xl shadow-xl space-y-5 sticky top-20 border border-slate-800">
-                      <div className="flex items-center justify-between border-b border-slate-800 pb-3">
-                        <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest font-bold">
+                    <div className="bg-slate-800 text-white p-6 sm:p-7 rounded-3xl shadow-lg space-y-5 sticky top-20 border border-slate-700/80">
+                      <div className="flex items-center justify-between border-b border-slate-700 pb-3">
+                        <span className="text-[10px] font-mono text-slate-300 uppercase tracking-widest font-bold">
                           RINGKASAN SEBUT HARGA KILANG
                         </span>
                         <span className="text-[10px] font-mono font-bold text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded border border-emerald-400/20">
@@ -1652,7 +1657,7 @@ function DashboardContent() {
                       </div>
 
                       {/* TEMPLATE SUMMARY */}
-                      <div className="flex items-center space-x-3 pb-3 border-b border-slate-800">
+                      <div className="flex items-center space-x-3 pb-3 border-b border-slate-700">
                         <div className="w-12 h-12 bg-white rounded-lg p-1 shrink-0 flex items-center justify-center">
                           <img
                             src={Array.isArray(selectedTemplateObj?.images) && selectedTemplateObj?.images.length > 0 ? selectedTemplateObj.images[0] : (selectedTemplateObj?.thumbnail || PLACEHOLDER_IMAGE)}
@@ -1674,21 +1679,21 @@ function DashboardContent() {
                         </div>
 
                         {groupCalculations.groupDetails.map((gd, i) => (
-                          <div key={gd.id} className="flex justify-between text-[11px] text-slate-400">
+                          <div key={gd.id} className="flex justify-between text-[11px] text-slate-300">
                             <span className="truncate max-w-[170px]">Kumpulan #{i + 1} ({gd.cut?.name}):</span>
                             <span>{gd.qty} pcs • RM {gd.subtotal.toFixed(2)}</span>
                           </div>
                         ))}
 
-                        <div className="flex justify-between border-t border-slate-800 pt-2 font-bold text-white">
+                        <div className="flex justify-between border-t border-slate-700 pt-2 font-bold text-white">
                           <span>Jumlah Kuantiti:</span>
                           <span>{groupCalculations.totalQty} pcs</span>
                         </div>
                       </div>
 
                       {/* TOTAL PRICE */}
-                      <div className="border-t border-slate-800 pt-3">
-                        <span className="text-[10px] font-mono text-slate-400 block uppercase">JUMLAH KESELURUHAN ({groupCalculations.totalQty} pcs):</span>
+                      <div className="border-t border-slate-700 pt-3">
+                        <span className="text-[10px] font-mono text-slate-300 block uppercase">JUMLAH KESELURUHAN ({groupCalculations.totalQty} pcs):</span>
                         <span className="text-3xl font-black font-mono text-white block pt-0.5">
                           RM {groupCalculations.totalPrice.toFixed(2)}
                         </span>
@@ -1699,7 +1704,7 @@ function DashboardContent() {
                         <button
                           type="button"
                           onClick={() => setOrderStep(orderStep + 1)}
-                          className="w-full py-4 bg-white hover:bg-slate-100 text-slate-950 font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center space-x-2 cursor-pointer border border-slate-200"
+                          className="w-full py-4 bg-white hover:bg-slate-100 text-slate-900 font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center space-x-2 cursor-pointer border border-slate-200"
                         >
                           <span>Seterusnya Ke Step {orderStep + 1} →</span>
                         </button>
@@ -1707,13 +1712,13 @@ function DashboardContent() {
                         <button
                           type="submit"
                           disabled={isSubmittingOrder || groupCalculations.totalQty <= 0}
-                          className="w-full py-4 bg-white hover:bg-slate-100 text-slate-950 font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer border border-slate-200"
+                          className="w-full py-4 bg-white hover:bg-slate-100 text-slate-900 font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer border border-slate-200"
                         >
                           {isSubmittingOrder ? (
-                            <RefreshCw className="w-4 h-4 animate-spin text-slate-950" />
+                            <RefreshCw className="w-4 h-4 animate-spin text-slate-900" />
                           ) : (
                             <>
-                              <Send className="w-4 h-4 text-slate-950" />
+                              <Send className="w-4 h-4 text-slate-900" />
                               <span>Hantar Tempahan Ke Kilang →</span>
                             </>
                           )}
@@ -1741,7 +1746,7 @@ function DashboardContent() {
                       placeholder="Cari Kod Pesanan / Template..."
                       value={orderSearchQuery}
                       onChange={(e) => setOrderSearchQuery(e.target.value)}
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs font-semibold text-slate-900 outline-none focus:bg-white focus:border-slate-900"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 text-xs font-semibold text-slate-900 outline-none focus:bg-white focus:border-slate-700"
                     />
                   </div>
 
@@ -1749,7 +1754,7 @@ function DashboardContent() {
                     <button
                       onClick={() => setOrderStatusFilter('all')}
                       className={`px-3 py-1.5 rounded-xl font-bold transition-all shrink-0 cursor-pointer ${
-                        orderStatusFilter === 'all' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                        orderStatusFilter === 'all' ? 'bg-slate-700 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                       }`}
                     >
                       Semua ({orders.length})
@@ -1757,7 +1762,7 @@ function DashboardContent() {
                     <button
                       onClick={() => setOrderStatusFilter('process')}
                       className={`px-3 py-1.5 rounded-xl font-bold transition-all shrink-0 cursor-pointer ${
-                        orderStatusFilter === 'process' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                        orderStatusFilter === 'process' ? 'bg-slate-700 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                       }`}
                     >
                       Dalam Proses
@@ -1765,7 +1770,7 @@ function DashboardContent() {
                     <button
                       onClick={() => setOrderStatusFilter('completed')}
                       className={`px-3 py-1.5 rounded-xl font-bold transition-all shrink-0 cursor-pointer ${
-                        orderStatusFilter === 'completed' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                        orderStatusFilter === 'completed' ? 'bg-slate-700 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                       }`}
                     >
                       Siap & Selesai
@@ -1780,7 +1785,7 @@ function DashboardContent() {
                     <p className="text-xs text-slate-500">Anda belum membuat sebarang tempahan jersi kustom.</p>
                     <button
                       onClick={() => setActiveTab('new-order')}
-                      className="px-5 py-2.5 bg-slate-900 text-white rounded-xl text-xs font-bold uppercase tracking-wider cursor-pointer"
+                      className="px-5 py-2.5 bg-slate-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider cursor-pointer"
                     >
                       Buat Tempahan Sekarang
                     </button>
@@ -1825,7 +1830,7 @@ function DashboardContent() {
 
                           <button
                             onClick={() => setSelectedOrder(ord)}
-                            className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center space-x-1 cursor-pointer"
+                            className="px-4 py-2 bg-slate-700 hover:bg-slate-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider transition-colors flex items-center space-x-1 cursor-pointer"
                           >
                             <span>Spesifikasi</span>
                             <ChevronRight className="w-3.5 h-3.5" />
@@ -1886,7 +1891,7 @@ function DashboardContent() {
                             <td className="py-3.5 px-3 text-right">
                               <button
                                 onClick={() => setSelectedInvoice(ord)}
-                                className="px-3.5 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-[11px] font-bold transition-colors inline-flex items-center space-x-1 cursor-pointer"
+                                className="px-3.5 py-1.5 bg-slate-700 hover:bg-slate-800 text-white rounded-lg text-[11px] font-bold transition-colors inline-flex items-center space-x-1 cursor-pointer"
                               >
                                 <Printer className="w-3.5 h-3.5 text-white" />
                                 <span>Lihat Invois</span>
@@ -1932,7 +1937,7 @@ function DashboardContent() {
                       value={fullName}
                       onChange={(e) => setFullName(e.target.value)}
                       placeholder="Contoh: Muhammad Ali"
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-11 pr-4 py-3 text-xs font-bold text-slate-900 focus:outline-none focus:border-slate-900 focus:bg-white transition-all"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-11 pr-4 py-3 text-xs font-bold text-slate-900 focus:outline-none focus:border-slate-700 focus:bg-white transition-all"
                     />
                   </div>
                 </div>
@@ -1963,7 +1968,7 @@ function DashboardContent() {
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="Contoh: +60123456789"
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-11 pr-4 py-3 text-xs font-bold text-slate-900 focus:outline-none focus:border-slate-900 focus:bg-white transition-all"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-11 pr-4 py-3 text-xs font-bold text-slate-900 focus:outline-none focus:border-slate-700 focus:bg-white transition-all"
                     />
                   </div>
                 </div>
@@ -1979,7 +1984,7 @@ function DashboardContent() {
                       value={address}
                       onChange={(e) => setAddress(e.target.value)}
                       placeholder="Masukkan alamat penuh rumah / premis untuk penghantaran..."
-                      className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-11 pr-4 py-3 text-xs font-medium text-slate-900 focus:outline-none focus:border-slate-900 focus:bg-white transition-all resize-none"
+                      className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-11 pr-4 py-3 text-xs font-medium text-slate-900 focus:outline-none focus:border-slate-700 focus:bg-white transition-all resize-none"
                     />
                   </div>
                 </div>
@@ -1987,7 +1992,7 @@ function DashboardContent() {
                 <button
                   type="submit"
                   disabled={isSavingProfile}
-                  className="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all flex items-center justify-center space-x-2 cursor-pointer"
+                  className="w-full py-3.5 bg-slate-700 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-widest rounded-xl transition-all flex items-center justify-center space-x-2 cursor-pointer"
                 >
                   {isSavingProfile ? (
                     <RefreshCw className="w-4 h-4 animate-spin text-white" />
@@ -2031,7 +2036,7 @@ function DashboardContent() {
                   placeholder="Cari nama template / kategori..."
                   value={templateSearchQuery}
                   onChange={(e) => setTemplateSearchQuery(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs font-bold text-slate-900 outline-none focus:bg-white focus:border-slate-900"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-xs font-bold text-slate-900 outline-none focus:bg-white focus:border-slate-700"
                 />
               </div>
 
@@ -2041,7 +2046,7 @@ function DashboardContent() {
                     type="button"
                     onClick={() => setTemplateCategoryFilter('all')}
                     className={`px-3 py-1.5 rounded-xl font-bold transition-all shrink-0 cursor-pointer ${
-                      templateCategoryFilter === 'all' ? 'bg-slate-900 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      templateCategoryFilter === 'all' ? 'bg-slate-700 text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                     }`}
                   >
                     Semua Kategori
@@ -2053,7 +2058,7 @@ function DashboardContent() {
                       onClick={() => setTemplateCategoryFilter(c.title)}
                       className={`px-3 py-1.5 rounded-xl font-bold transition-all shrink-0 cursor-pointer ${
                         templateCategoryFilter.toLowerCase() === (c.title || '').toLowerCase()
-                          ? 'bg-slate-900 text-white'
+                          ? 'bg-slate-700 text-white'
                           : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
                       }`}
                     >
@@ -2080,12 +2085,12 @@ function DashboardContent() {
                     }}
                     className={`p-3 bg-white border rounded-2xl cursor-pointer transition-all flex flex-col items-center justify-between group space-y-2 relative ${
                       isSelected
-                        ? 'border-slate-900 ring-2 ring-slate-900/30 shadow-md bg-slate-50'
+                        ? 'border-slate-700 ring-2 ring-slate-700/30 shadow-md bg-slate-50'
                         : 'border-slate-200 hover:border-slate-400 hover:shadow-md'
                     }`}
                   >
                     {isSelected && (
-                      <span className="absolute top-2 right-2 bg-slate-900 text-white p-1 rounded-full z-10 shadow-xs">
+                      <span className="absolute top-2 right-2 bg-slate-700 text-white p-1 rounded-full z-10 shadow-xs">
                         <Check className="w-3 h-3 text-white" />
                       </span>
                     )}
@@ -2109,7 +2114,7 @@ function DashboardContent() {
               <button
                 type="button"
                 onClick={() => setIsTemplateModalOpen(false)}
-                className="px-5 py-2 bg-slate-900 text-white text-xs font-bold uppercase rounded-xl cursor-pointer"
+                className="px-5 py-2 bg-slate-700 text-white text-xs font-bold uppercase rounded-xl cursor-pointer"
               >
                 Tutup Modal
               </button>
@@ -2118,7 +2123,7 @@ function DashboardContent() {
         </div>
       )}
 
-      {/* COLLAR CUT SELECTION MODAL DRAWER (CHAINS TO SLEEVE SELECTION MODAL!) */}
+      {/* COLLAR CUT SELECTION MODAL DRAWER */}
       {isCutModalOpen && activeGroupIdForCut && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-xs font-sans">
           <div className="bg-white rounded-3xl max-w-3xl w-full p-6 sm:p-8 space-y-6 shadow-2xl relative border border-slate-200 max-h-[88vh] flex flex-col">
@@ -2155,12 +2160,12 @@ function DashboardContent() {
                     }}
                     className={`p-4 bg-white border rounded-2xl cursor-pointer transition-all flex flex-col justify-between space-y-3 relative group ${
                       isSelected
-                        ? 'border-slate-900 ring-2 ring-slate-900/30 shadow-md bg-slate-50'
+                        ? 'border-slate-700 ring-2 ring-slate-700/30 shadow-md bg-slate-50'
                         : 'border-slate-200 hover:border-slate-400 hover:shadow-md'
                     }`}
                   >
                     {isSelected && (
-                      <span className="absolute top-2 right-2 bg-slate-900 text-white p-1 rounded-full z-10 shadow-xs">
+                      <span className="absolute top-2 right-2 bg-slate-700 text-white p-1 rounded-full z-10 shadow-xs">
                         <Check className="w-3 h-3 text-white" />
                       </span>
                     )}
@@ -2189,7 +2194,7 @@ function DashboardContent() {
               <button
                 type="button"
                 onClick={() => setIsCutModalOpen(false)}
-                className="px-5 py-2 bg-slate-900 text-white text-xs font-bold uppercase rounded-xl cursor-pointer"
+                className="px-5 py-2 bg-slate-700 text-white text-xs font-bold uppercase rounded-xl cursor-pointer"
               >
                 Tutup Modal
               </button>
@@ -2232,7 +2237,7 @@ function DashboardContent() {
                     }}
                     className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-center justify-between space-x-4 group ${
                       isSelected
-                        ? 'bg-slate-900 text-white border-slate-900 shadow-md ring-2 ring-slate-900/20'
+                        ? 'bg-slate-800 text-white border-slate-800 shadow-md ring-2 ring-slate-800/20'
                         : 'bg-white text-slate-800 border-slate-200 hover:border-slate-400 hover:bg-slate-50'
                     }`}
                   >
@@ -2267,7 +2272,7 @@ function DashboardContent() {
               <button
                 type="button"
                 onClick={() => setIsSleeveModalOpen(false)}
-                className="px-5 py-2 bg-slate-900 text-white text-xs font-bold uppercase rounded-xl cursor-pointer"
+                className="px-5 py-2 bg-slate-700 text-white text-xs font-bold uppercase rounded-xl cursor-pointer"
               >
                 Tutup Modal
               </button>
@@ -2352,7 +2357,7 @@ function DashboardContent() {
 
               <button
                 onClick={() => setSelectedOrder(null)}
-                className="px-5 py-2.5 bg-slate-900 text-white rounded-xl text-xs font-bold uppercase tracking-wider cursor-pointer"
+                className="px-5 py-2.5 bg-slate-700 text-white rounded-xl text-xs font-bold uppercase tracking-wider cursor-pointer"
               >
                 Tutup Spesifikasi
               </button>
@@ -2441,7 +2446,7 @@ function DashboardContent() {
               <div className="flex items-center space-x-3 print:hidden">
                 <button
                   onClick={() => window.print()}
-                  className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider inline-flex items-center space-x-1.5 shadow-xs cursor-pointer"
+                  className="px-5 py-2.5 bg-slate-700 hover:bg-slate-800 text-white rounded-xl text-xs font-bold uppercase tracking-wider inline-flex items-center space-x-1.5 shadow-xs cursor-pointer"
                 >
                   <Printer className="w-4 h-4 text-white" />
                   <span>Cetak / Simpan PDF</span>
