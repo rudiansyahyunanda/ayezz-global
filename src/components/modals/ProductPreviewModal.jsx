@@ -35,12 +35,14 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
   
   const handleProceedToOrder = async () => {
     const user = await getCurrentUser();
+    onClose();
+    const tplName = product?.name || '';
+    const targetUrl = `/dashboard?tab=new-order&templateName=${encodeURIComponent(tplName)}&cat=${encodeURIComponent(product?.category || '')}`;
     if (!user) {
-      onClose();
-      window.location.href = `/login?redirect=${encodeURIComponent('/katalog')}&msg=login_required`;
+      router.push(`/login?redirect=${encodeURIComponent(targetUrl)}&msg=login_required`);
       return;
     }
-    setViewMode('order');
+    router.push(targetUrl);
   };
   
   // Extract template images safely
