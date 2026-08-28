@@ -1986,30 +1986,15 @@ function DashboardContent() {
                               />
                             </div>
 
-                            {/* LOGO PREVIEW SUMMARY */}
-                            <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
-                              <span className="text-[10px] font-mono font-bold text-slate-600 block">STATUS LOGO & SENARAI PEMAIN</span>
-                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs font-mono">
-                                <div className="p-2.5 bg-white rounded-lg border border-slate-200">
-                                  <span className="text-slate-500 block text-[10px]">Logo Pasukan:</span>
-                                  <strong className="text-slate-900">{customLogoUrl ? '✓ Terunggah' : 'Tiada / Standard'}</strong>
-                                </div>
-                                <div className="p-2.5 bg-white rounded-lg border border-slate-200">
-                                  <span className="text-slate-500 block text-[10px]">Logo Sponsor:</span>
-                                  <strong className="text-slate-900">{sponsorLogoUrl ? '✓ Terunggah' : 'Tiada'}</strong>
-                                </div>
+                            {/* CONFIRMATION BADGE */}
+                            <div className="p-4 bg-emerald-50/80 rounded-2xl border border-emerald-200 text-xs font-mono text-emerald-900 space-y-1">
+                              <div className="flex items-center space-x-1.5 font-bold">
+                                <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+                                <span>SPESIFIKASI & LOGO BERJAYA DIKONFIGURASIKAN</span>
                               </div>
-                            </div>
-
-                            <div>
-                              <label className="text-[10px] font-mono font-bold text-slate-500 block mb-1">NOTA TAMBAHAN & ARAHAN CETAKAN</label>
-                              <textarea
-                                rows={3}
-                                placeholder="Contoh: Senarai nama & nombor pemain atau cetakan khas..."
-                                value={customerInfo.notes}
-                                onChange={(e) => setCustomerInfo({ ...customerInfo, notes: e.target.value })}
-                                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-medium text-slate-900 outline-none focus:bg-white focus:border-slate-400 resize-none"
-                              />
+                              <p className="text-[10px] text-emerald-700 font-sans">
+                                Reka bentuk, logo, dan pilihan cetakan pemain telah direkodkan dari Langkah 1. Sila masukkan maklumat perhubungan di atas untuk menghantar tempahan ke kilang.
+                              </p>
                             </div>
                           </div>
 
