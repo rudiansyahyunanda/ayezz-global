@@ -65,20 +65,43 @@ export async function POST(request) {
     const randomSuffix = Math.random().toString(36).substring(2, 8);
     const filename = `${safeBaseName}_${timestamp}_${randomSuffix}.webp`;
 
-    // Ensure public/uploads directory exists
+    // Ensure public/uploads directory exists locally
     const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
     if (!fs.existsSync(uploadsDir)) {
       fs.mkdirSync(uploadsDir, { recursive: true });
     }
 
-    // Save processed WebP file to public/uploads
+    // Save processed WebP file to local public/uploads directory
     const filePath = path.join(uploadsDir, filename);
     fs.writeFileSync(filePath, processedWebpBuffer);
 
-    // Public URL accessible via browser
-    const publicUrl = `/uploads/${filename}`;
+    let publicUrl = `/uploads/${filename}`;
 
-    // Optional: Persist to Supabase Database if table and record ID are specified
+    // 1. Try uploading to Supabase Storage Bucket ('ayezz-assets') for FREE online cloud storage
+    if (isSupabaseConnected) {
+      try {
+        const { data: uploadData, error: uploadErr } = await supabase.storage
+          .from('ayezz-assets')
+          .upload(filename, processedWebpBuffer, {
+            contentType: 'image/webp',
+            upsert: true
+          });
+
+        if (!uploadErr && uploadData) {
+          const { data: urlData } = supabase.storage
+            .from('ayezz-assets')
+            .getPublicUrl(filename);
+
+          if (urlData && urlData.publicUrl) {
+            publicUrl = urlData.publicUrl;
+          }
+        }
+      } catch (stErr) {
+        console.warn('Supabase storage bucket upload notice (using fallback):', stErr.message);
+      }
+    }
+
+    // Optional: Persist image URL to Supabase Database if table and record ID are specified
     let dbStatus = null;
     if (dbTable && dbRecordId && isSupabaseConnected) {
       try {
