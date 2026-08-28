@@ -1,6 +1,55 @@
 import { supabase, isSupabaseConnected } from './supabaseClient';
 
 /**
+ * Delete image file(s) from Supabase Storage Bucket ('ayezz-assets')
+ * Accepts single URL or array of URLs.
+ */
+export async function deleteImageFromSupabaseStorage(imageUrlOrUrls) {
+  if (!isSupabaseConnected || !imageUrlOrUrls) return;
+
+  const urls = Array.isArray(imageUrlOrUrls) ? imageUrlOrUrls : [imageUrlOrUrls];
+  const filenamesToDelete = [];
+
+  for (const url of urls) {
+    if (!url || typeof url !== 'string') continue;
+
+    let filename = '';
+    if (url.includes('/ayezz-assets/')) {
+      filename = url.split('/ayezz-assets/').pop();
+    } else if (url.includes('/uploads/')) {
+      filename = url.split('/uploads/').pop();
+    } else if (!url.startsWith('http') && !url.startsWith('data:')) {
+      filename = url.split('/').pop();
+    }
+
+    if (filename && filename.includes('.')) {
+      const cleanFilename = decodeURIComponent(filename);
+      if (!filenamesToDelete.includes(cleanFilename)) {
+        filenamesToDelete.push(cleanFilename);
+      }
+    }
+  }
+
+  if (filenamesToDelete.length === 0) return;
+
+  console.log(`[SupabaseStorage] Deleting ${filenamesToDelete.length} files from bucket 'ayezz-assets':`, filenamesToDelete);
+
+  try {
+    const { data, error } = await supabase.storage
+      .from('ayezz-assets')
+      .remove(filenamesToDelete);
+
+    if (error) {
+      console.warn('[SupabaseStorage] Delete image error:', error.message);
+    } else {
+      console.log('[SupabaseStorage] Delete image success:', data);
+    }
+  } catch (err) {
+    console.warn('[SupabaseStorage] Delete image exception:', err.message);
+  }
+}
+
+/**
  * Client-Side HTML5 Canvas WebP Converter:
  * - Accepts JPG, PNG, GIF, WebP, etc.
  * - Resizes proportionally to maxDimension (default 800px)

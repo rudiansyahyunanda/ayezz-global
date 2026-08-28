@@ -1,5 +1,5 @@
 import { supabase, isSupabaseConnected } from './supabaseClient';
-import { uploadDirectToSupabaseStorage } from './imageService';
+import { uploadDirectToSupabaseStorage, deleteImageFromSupabaseStorage } from './imageService';
 import {
   MAIN_CATALOGS as INITIAL_CATALOGS,
   DESIGN_TEMPLATES as INITIAL_TEMPLATES,
@@ -98,8 +98,28 @@ export async function updateCategoryInSupabase(categoryId, updatedCat) {
 }
 
 export async function deleteCategoryFromSupabase(categoryId) {
-  if (!isSupabaseConnected) return;
-  await supabase.from('categories').delete().eq('id', categoryId);
+  if (!isSupabaseConnected || !categoryId) return;
+  try {
+    // 1. Fetch category thumbnail and all sub_categories thumbnails before deletion
+    const { data: catData } = await supabase.from('categories').select('thumbnail').eq('id', categoryId).single();
+    const { data: subData } = await supabase.from('sub_categories').select('thumbnail').eq('category_id', categoryId);
+
+    const imagesToDelete = [];
+    if (catData?.thumbnail) imagesToDelete.push(catData.thumbnail);
+    if (Array.isArray(subData)) {
+      subData.forEach(s => {
+        if (s.thumbnail) imagesToDelete.push(s.thumbnail);
+      });
+    }
+
+    if (imagesToDelete.length > 0) {
+      await deleteImageFromSupabaseStorage(imagesToDelete);
+    }
+
+    await supabase.from('categories').delete().eq('id', categoryId);
+  } catch (err) {
+    console.error('deleteCategoryFromSupabase exception:', err);
+  }
 }
 
 // ==========================================
@@ -153,8 +173,16 @@ export async function updateSubCategoryInSupabase(subCatId, updatedSub) {
 }
 
 export async function deleteSubCategoryFromSupabase(subCatId) {
-  if (!isSupabaseConnected) return;
-  await supabase.from('sub_categories').delete().eq('id', subCatId);
+  if (!isSupabaseConnected || !subCatId) return;
+  try {
+    const { data } = await supabase.from('sub_categories').select('thumbnail').eq('id', subCatId).single();
+    if (data?.thumbnail) {
+      await deleteImageFromSupabaseStorage(data.thumbnail);
+    }
+    await supabase.from('sub_categories').delete().eq('id', subCatId);
+  } catch (err) {
+    console.error('deleteSubCategoryFromSupabase exception:', err);
+  }
 }
 
 // ==========================================
@@ -243,6 +271,10 @@ export async function updateCutTypeInSupabase(cutId, updatedCut) {
 export async function deleteCutTypeFromSupabase(cutId) {
   if (!isSupabaseConnected || !cutId) return;
   try {
+    const { data } = await supabase.from('cut_types').select('thumbnail').eq('id', cutId).single();
+    if (data?.thumbnail) {
+      await deleteImageFromSupabaseStorage(data.thumbnail);
+    }
     const { error } = await supabase.from('cut_types').delete().eq('id', cutId);
     if (error) console.error('Supabase deleteCutType error:', error);
   } catch (err) {
@@ -345,6 +377,10 @@ export async function updateFabricTypeInSupabase(fabricId, updatedFabric) {
 export async function deleteFabricTypeFromSupabase(fabricId) {
   if (!isSupabaseConnected || !fabricId) return;
   try {
+    const { data } = await supabase.from('fabric_types').select('thumbnail').eq('id', fabricId).single();
+    if (data?.thumbnail) {
+      await deleteImageFromSupabaseStorage(data.thumbnail);
+    }
     const { error } = await supabase.from('fabric_types').delete().eq('id', fabricId);
     if (error) console.error('Supabase deleteFabricType error:', error);
   } catch (err) {
@@ -480,8 +516,19 @@ export async function updateDesignTemplateInSupabase(templateId, updatedTpl) {
 }
 
 export async function deleteDesignTemplateFromSupabase(templateId) {
-  if (!isSupabaseConnected) return;
+  if (!isSupabaseConnected || !templateId) return;
   try {
+    const { data } = await supabase.from('design_templates').select('thumbnail, images').eq('id', templateId).single();
+    const imagesToDelete = [];
+    if (data?.thumbnail) imagesToDelete.push(data.thumbnail);
+    if (Array.isArray(data?.images)) {
+      data.images.forEach(img => {
+        if (img) imagesToDelete.push(img);
+      });
+    }
+    if (imagesToDelete.length > 0) {
+      await deleteImageFromSupabaseStorage(imagesToDelete);
+    }
     const { error } = await supabase.from('design_templates').delete().eq('id', templateId);
     if (error) console.error('Supabase deleteDesignTemplate error:', error);
   } catch (err) {
