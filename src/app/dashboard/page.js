@@ -40,7 +40,10 @@ import {
   Palette,
   Image as ImageIcon,
   HelpCircle,
-  Check
+  Check,
+  Scissors,
+  Trash2,
+  Shirt
 } from 'lucide-react';
 
 import { getCurrentUser, logoutUser, updateUserProfile } from '../../lib/authService';
@@ -49,9 +52,11 @@ import {
   getCategories,
   getSubCategories,
   getCutTypes,
+  getSleeveTypes,
   getFabricTypes,
   getDesignTemplates,
   saveOrderToSupabase,
+  FALLBACK_SLEEVE_TYPES,
   PLACEHOLDER_IMAGE
 } from '../../lib/supabaseService';
 
@@ -61,6 +66,9 @@ import {
 } from '../../data/sublimationProducts';
 
 import { uploadDirectToSupabaseStorage } from '../../lib/imageService';
+
+const ADULT_SIZES = ['XS', 'S', 'M', 'L', 'XL', '2XL', '3XL', '4XL', '5XL'];
+const KIDS_SIZES = ['KIDS-22', 'KIDS-24', 'KIDS-26', 'KIDS-28', 'KIDS-30', 'KIDS-32'];
 
 function DashboardContent() {
   const router = useRouter();
@@ -72,6 +80,7 @@ function DashboardContent() {
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
   const [cutTypes, setCutTypes] = useState(FALLBACK_CUTS);
+  const [sleeveTypes, setSleeveTypes] = useState(FALLBACK_SLEEVE_TYPES);
   const [fabricTypes, setFabricTypes] = useState(FALLBACK_FABRICS);
   const [loading, setLoading] = useState(true);
 
@@ -115,17 +124,31 @@ function DashboardContent() {
   const [orderTemplateName, setOrderTemplateName] = useState('');
   const [orderCategory, setOrderCategory] = useState('SUBLIMASI');
   const [orderSubCategory, setOrderSubCategory] = useState('');
-  const [selectedCut, setSelectedCut] = useState(FALLBACK_CUTS[0]);
   const [selectedFabric, setSelectedFabric] = useState(FALLBACK_FABRICS[0]);
 
-  const [sizeQuantities, setSizeQuantities] = useState({
-    S: 0,
-    M: 0,
-    L: 0,
-    XL: 0,
-    '2XL': 0,
-    '3XL': 0
-  });
+  // SECTION 2 & 3: MULTI-CUT & SLEEVE GROUPS WITH SIZES
+  const [cutGroups, setCutGroups] = useState([
+    {
+      id: 'group_1',
+      cut: FALLBACK_CUTS[0],
+      sleeve: FALLBACK_SLEEVE_TYPES[0],
+      sizes: {
+        XS: 0, S: 0, M: 0, L: 0, XL: 0, '2XL': 0, '3XL': 0, '4XL': 0, '5XL': 0,
+        'KIDS-22': 0, 'KIDS-24': 0, 'KIDS-26': 0, 'KIDS-28': 0, 'KIDS-30': 0, 'KIDS-32': 0
+      }
+    }
+  ]);
+
+  // Modals for Cut, Sleeve & Size Selection
+  const [isCutModalOpen, setIsCutModalOpen] = useState(false);
+  const [activeGroupIdForCut, setActiveGroupIdForCut] = useState(null);
+
+  const [isSleeveModalOpen, setIsSleeveModalOpen] = useState(false);
+  const [activeGroupIdForSleeve, setActiveGroupIdForSleeve] = useState(null);
+
+  const [isSizeModalOpen, setIsSizeModalOpen] = useState(false);
+  const [activeGroupIdForSize, setActiveGroupIdForSize] = useState(null);
+  const [sizeModalTab, setSizeModalTab] = useState('dewasa'); // 'dewasa' | 'kids'
 
   const [customerInfo, setCustomerInfo] = useState({
     name: '',
@@ -162,10 +185,11 @@ function DashboardContent() {
         phone: currentUser.phone || ''
       }));
 
-      // Load User Orders, Cut Types, Fabric Types, Design Templates, Categories & Subcategories directly from Supabase DB
-      const [userOrders, cuts, fabrics, tpls, cats, subs] = await Promise.all([
+      // Load User Orders, Cut Types, Sleeve Types, Fabric Types, Design Templates, Categories & Subcategories directly from Supabase DB
+      const [userOrders, cuts, sleeves, fabrics, tpls, cats, subs] = await Promise.all([
         getUserOrdersFromSupabase(currentUser.email),
         getCutTypes(),
+        getSleeveTypes(),
         getFabricTypes(),
         getDesignTemplates(),
         getCategories(),
@@ -176,10 +200,30 @@ function DashboardContent() {
       if (cats && cats.length > 0) setCategories(cats);
       if (subs && subs.length > 0) setSubCategories(subs);
 
+      let loadedCuts = FALLBACK_CUTS;
       if (cuts && cuts.length > 0) {
         setCutTypes(cuts);
-        setSelectedCut(cuts[0]);
+        loadedCuts = cuts;
       }
+
+      let loadedSleeves = FALLBACK_SLEEVE_TYPES;
+      if (sleeves && sleeves.length > 0) {
+        setSleeveTypes(sleeves);
+        loadedSleeves = sleeves;
+      }
+
+      setCutGroups([
+        {
+          id: 'group_1',
+          cut: loadedCuts[0],
+          sleeve: loadedSleeves[0],
+          sizes: {
+            XS: 0, S: 0, M: 0, L: 0, XL: 0, '2XL': 0, '3XL': 0, '4XL': 0, '5XL': 0,
+            'KIDS-22': 0, 'KIDS-24': 0, 'KIDS-26': 0, 'KIDS-28': 0, 'KIDS-30': 0, 'KIDS-32': 0
+          }
+        }
+      ]);
+
       if (fabrics && fabrics.length > 0) {
         setFabricTypes(fabrics);
         setSelectedFabric(fabrics[0]);
@@ -228,6 +272,82 @@ function DashboardContent() {
       return (tpl.category || '').toLowerCase() === templateCategoryFilter.toLowerCase();
     });
   }, [templates, templateSearchQuery, templateCategoryFilter]);
+
+  // ----------------------------------------------------
+  // MULTI-CUT GROUPS HANDLERS
+  // ----------------------------------------------------
+  const addCutGroup = () => {
+    const nextId = `group_${Date.now()}`;
+    setCutGroups((prev) => [
+      ...prev,
+      {
+        id: nextId,
+        cut: cutTypes[0] || FALLBACK_CUTS[0],
+        sleeve: sleeveTypes[0] || FALLBACK_SLEEVE_TYPES[0],
+        sizes: {
+          XS: 0, S: 0, M: 0, L: 0, XL: 0, '2XL': 0, '3XL': 0, '4XL': 0, '5XL': 0,
+          'KIDS-22': 0, 'KIDS-24': 0, 'KIDS-26': 0, 'KIDS-28': 0, 'KIDS-30': 0, 'KIDS-32': 0
+        }
+      }
+    ]);
+  };
+
+  const removeCutGroup = (groupId) => {
+    if (cutGroups.length <= 1) {
+      alert('Anda mesti mempunyai sekurang-kurangnya 1 kumpulan potongan.');
+      return;
+    }
+    setCutGroups((prev) => prev.filter((g) => g.id !== groupId));
+  };
+
+  const updateGroupSizeQty = (groupId, sizeKey, delta) => {
+    setCutGroups((prev) =>
+      prev.map((g) => {
+        if (g.id !== groupId) return g;
+        const currentVal = g.sizes[sizeKey] || 0;
+        const newVal = Math.max(0, currentVal + delta);
+        return {
+          ...g,
+          sizes: {
+            ...g.sizes,
+            [sizeKey]: newVal
+          }
+        };
+      })
+    );
+  };
+
+  // Dynamic Price & Quantity Calculations across groups
+  const basePricePerPcs = Number(selectedFabric?.basePrice ?? selectedFabric?.base_price ?? 70);
+
+  const groupCalculations = useMemo(() => {
+    let totalQty = 0;
+    let totalPrice = 0;
+
+    const groupDetails = cutGroups.map((group) => {
+      const gQty = Object.values(group.sizes || {}).reduce((a, b) => a + Number(b || 0), 0);
+      const cutAddOn = Number(group.cut?.addOnPrice ?? group.cut?.add_on_price ?? 0);
+      const sleeveAddOn = Number(group.sleeve?.addOnPrice ?? group.sleeve?.add_on_price ?? 0);
+      const groupUnitPrice = basePricePerPcs + cutAddOn + sleeveAddOn;
+      const groupSubtotal = gQty * groupUnitPrice;
+
+      totalQty += gQty;
+      totalPrice += groupSubtotal;
+
+      return {
+        ...group,
+        qty: gQty,
+        unitPrice: groupUnitPrice,
+        subtotal: groupSubtotal
+      };
+    });
+
+    return {
+      totalQty,
+      totalPrice,
+      groupDetails
+    };
+  }, [cutGroups, selectedFabric]);
 
   // ----------------------------------------------------
   // LOGOUT HANDLER
@@ -306,25 +426,12 @@ function DashboardContent() {
   };
 
   // ----------------------------------------------------
-  // SIZE QUANTITY CALCULATIONS & NEW ORDER SUBMISSION
+  // CREATE NEW ORDER SUBMISSION
   // ----------------------------------------------------
-  const updateSizeQty = (sz, delta) => {
-    setSizeQuantities((prev) => ({
-      ...prev,
-      [sz]: Math.max(0, (prev[sz] || 0) + delta)
-    }));
-  };
-
-  const totalQuantity = Object.values(sizeQuantities).reduce((a, b) => a + b, 0);
-  const basePricePerPcs = Number(selectedFabric?.basePrice ?? selectedFabric?.base_price ?? 70);
-  const cutAddOn = Number(selectedCut?.addOnPrice ?? selectedCut?.add_on_price ?? 0);
-  const pricePerPcs = basePricePerPcs + cutAddOn;
-  const totalPrice = totalQuantity * pricePerPcs;
-
   const handleCreateNewOrder = async (e) => {
     e.preventDefault();
-    if (totalQuantity <= 0) {
-      alert('Sila masukkan sekurang-kurangnya 1 saiz kuantiti pesanan.');
+    if (groupCalculations.totalQty <= 0) {
+      alert('Sila masukkan sekurang-kurangnya 1 saiz kuantiti pesanan pada kumpulan potongan anda.');
       return;
     }
 
@@ -335,6 +442,10 @@ function DashboardContent() {
       ? `Reka Bentuk Kustom ${orderTemplateName ? `- Base: ${orderTemplateName}` : ''}`
       : (orderTemplateName || 'Template Reka Bentuk');
 
+    const cutTypesSummary = cutGroups
+      .map((g) => `${g.cut.name} (${g.sleeve.name})`)
+      .join(' + ');
+
     const orderPayload = {
       order_id: generatedOrderId,
       userEmail: user?.email || '',
@@ -343,16 +454,16 @@ function DashboardContent() {
       product_name: finalTemplateTitle,
       category: orderCategory || 'SUBLIMASI',
       sub_category: orderSubCategory || '',
-      cutType: selectedCut?.name || '',
-      collar_cut: selectedCut?.name || '',
+      cutType: cutTypesSummary,
+      collar_cut: cutTypesSummary,
       fabricMaterial: selectedFabric?.name || '',
       fabric_type: selectedFabric?.name || '',
-      sizeBreakdown: sizeQuantities,
-      totalQty: totalQuantity,
-      total_qty: totalQuantity,
-      unitPrice: pricePerPcs,
-      totalPrice: totalPrice,
-      total_price: totalPrice,
+      cutGroups: groupCalculations.groupDetails,
+      totalQty: groupCalculations.totalQty,
+      total_qty: groupCalculations.totalQty,
+      unitPrice: basePricePerPcs,
+      totalPrice: groupCalculations.totalPrice,
+      total_price: groupCalculations.totalPrice,
       clientName: customerInfo.name || user?.fullName || 'Pelanggan Sistem',
       customer_phone: customerInfo.phone || user?.phone || '',
       team_name: customerInfo.teamName || '-',
@@ -378,10 +489,20 @@ function DashboardContent() {
 
   const resetOrderForm = () => {
     setOrderSuccessData(null);
-    setSizeQuantities({ S: 0, M: 0, L: 0, XL: 0, '2XL': 0, '3XL': 0 });
     setCustomLogoUrl('');
     setCustomDesignRefUrl('');
     setCustomDesignNotes('');
+    setCutGroups([
+      {
+        id: 'group_1',
+        cut: cutTypes[0] || FALLBACK_CUTS[0],
+        sleeve: sleeveTypes[0] || FALLBACK_SLEEVE_TYPES[0],
+        sizes: {
+          XS: 0, S: 0, M: 0, L: 0, XL: 0, '2XL': 0, '3XL': 0, '4XL': 0, '5XL': 0,
+          'KIDS-22': 0, 'KIDS-24': 0, 'KIDS-26': 0, 'KIDS-28': 0, 'KIDS-30': 0, 'KIDS-32': 0
+        }
+      }
+    ]);
     setCustomerInfo({
       name: user?.fullName || '',
       phone: user?.phone || '',
@@ -821,7 +942,7 @@ function DashboardContent() {
                     Borang Tempahan Jersi Custom
                   </h2>
                   <p className="text-xs text-slate-500 font-medium">
-                    Pilih spesifikasi potongan kolar, fabrik, kuantiti saiz, dan muat naik logo pasukan anda secara dalam talian.
+                    Pilih spesifikasi potongan kolar, jenis lengan, fabrik, kuantiti saiz, dan muat naik logo pasukan anda secara dalam talian.
                   </p>
                 </div>
 
@@ -859,7 +980,7 @@ function DashboardContent() {
                       <span className="font-bold text-slate-900">{orderSuccessData.templateName}</span>
                     </div>
                     <div className="flex justify-between border-b border-slate-200 pb-2">
-                      <span className="text-slate-500">Potongan Kolar:</span>
+                      <span className="text-slate-500">Spesifikasi Potongan:</span>
                       <span className="font-bold text-slate-900">{orderSuccessData.cutType}</span>
                     </div>
                     <div className="flex justify-between border-b border-slate-200 pb-2">
@@ -1047,37 +1168,127 @@ function DashboardContent() {
                         )}
                       </div>
 
-                      {/* 2. SELEKSI JENIS POTONGAN / KOLAR (FETCHED DIRECTLY FROM DATABASE) */}
-                      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs space-y-3">
-                        <div className="flex items-center justify-between">
+                      {/* ========================================================== */}
+                      {/* 2. PILIHAN POTONGAN, LENGAN & SAIZ (MULTI-GROUP ENGINE) */}
+                      {/* ========================================================== */}
+                      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs space-y-6">
+                        <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                           <label className="text-xs font-extrabold uppercase tracking-wider text-slate-900 flex items-center space-x-2">
                             <span className="w-5 h-5 rounded-full bg-slate-900 text-white text-[10px] flex items-center justify-center font-mono">2</span>
-                            <span>JENIS POTONGAN / KOLAR ({cutTypes.length} Pilihan)</span>
+                            <span>JENIS POTONGAN, LENGAN & KUANTITI SAIZ</span>
                           </label>
+                          <span className="text-xs font-mono font-black text-slate-900 bg-slate-100 px-3 py-1 rounded-lg">
+                            JUMLAH: {groupCalculations.totalQty} pcs
+                          </span>
                         </div>
 
-                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                          {cutTypes.map((cut) => {
-                            const isSelected = selectedCut.id === cut.id;
-                            const addOn = Number(cut.addOnPrice ?? cut.add_on_price ?? 0);
+                        {/* LIST OF CUT GROUPS */}
+                        <div className="space-y-4">
+                          {groupCalculations.groupDetails.map((group, idx) => {
+                            const activeCutName = group.cut?.name || 'Pilih Potongan';
+                            const activeSleeveName = group.sleeve?.name || 'Pilih Lengan';
+                            const activeCutImg = group.cut?.thumbnail || PLACEHOLDER_IMAGE;
+
                             return (
                               <div
-                                key={cut.id}
-                                onClick={() => setSelectedCut(cut)}
-                                className={`p-3.5 rounded-xl border cursor-pointer transition-all flex flex-col justify-between ${
-                                  isSelected
-                                    ? 'bg-slate-900 text-white border-slate-900 shadow-md ring-2 ring-slate-900/20'
-                                    : 'bg-slate-50 text-slate-800 border-slate-200 hover:border-slate-400 hover:bg-slate-100'
-                                }`}
+                                key={group.id}
+                                className="p-5 bg-slate-50 border border-slate-200 rounded-2xl space-y-4 relative"
                               >
-                                <span className="text-xs font-extrabold uppercase line-clamp-1">{cut.name}</span>
-                                <span className="text-[10px] font-mono font-bold opacity-80 pt-2">
-                                  {addOn > 0 ? `+RM ${addOn}.00` : 'PERCUMA / STANDARD'}
-                                </span>
+                                <div className="flex items-center justify-between border-b border-slate-200/80 pb-3">
+                                  <span className="text-xs font-mono font-extrabold text-slate-900 uppercase">
+                                    Kumpulan #{idx + 1}: {activeCutName} • {activeSleeveName}
+                                  </span>
+
+                                  {cutGroups.length > 1 && (
+                                    <button
+                                      type="button"
+                                      onClick={() => removeCutGroup(group.id)}
+                                      className="p-1.5 text-rose-500 hover:bg-rose-100 rounded-lg transition-colors cursor-pointer"
+                                      title="Padam Kumpulan Ini"
+                                    >
+                                      <Trash2 className="w-4 h-4" />
+                                    </button>
+                                  )}
+                                </div>
+
+                                <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
+                                  {/* CUT & SLEEVE SELECTION BUTTONS */}
+                                  <div className="sm:col-span-8 space-y-2.5">
+                                    {/* BUTTON SELECT COLLAR CUT (OPENS CUT MODAL) */}
+                                    <div className="flex items-center justify-between p-3 bg-white border border-slate-200 rounded-xl">
+                                      <div className="flex items-center space-x-3">
+                                        <img src={activeCutImg} alt={activeCutName} className="w-10 h-10 object-cover rounded-lg border border-slate-200" />
+                                        <div>
+                                          <span className="text-[10px] font-mono text-slate-400 font-bold block uppercase">POTONGAN KOLAR</span>
+                                          <span className="text-xs font-extrabold text-slate-900 block uppercase">{activeCutName}</span>
+                                        </div>
+                                      </div>
+
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setActiveGroupIdForCut(group.id);
+                                          setIsCutModalOpen(true);
+                                        }}
+                                        className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-[11px] uppercase rounded-lg transition-colors cursor-pointer"
+                                      >
+                                        Pilih Kolar Modal →
+                                      </button>
+                                    </div>
+
+                                    {/* BUTTON SELECT SLEEVE TYPE (OPENS SLEEVE MODAL) */}
+                                    <div className="flex items-center justify-between p-3 bg-white border border-slate-200 rounded-xl">
+                                      <div>
+                                        <span className="text-[10px] font-mono text-slate-400 font-bold block uppercase">JENIS LENGAN (SLEEVE)</span>
+                                        <span className="text-xs font-extrabold text-slate-900 block uppercase">{activeSleeveName}</span>
+                                      </div>
+
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setActiveGroupIdForSleeve(group.id);
+                                          setIsSleeveModalOpen(true);
+                                        }}
+                                        className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-[11px] uppercase rounded-lg transition-colors cursor-pointer"
+                                      >
+                                        Pilih Lengan Modal →
+                                      </button>
+                                    </div>
+                                  </div>
+
+                                  {/* SIZE MATRIX COUNTER DISPLAY & EDIT BUTTON */}
+                                  <div className="sm:col-span-4 p-4 bg-white rounded-xl border border-slate-200 space-y-2.5 text-center">
+                                    <span className="text-[10px] font-mono text-slate-400 font-bold block uppercase">KUANTITI SAIZ KUMPULAN</span>
+                                    <span className="text-2xl font-black font-mono text-slate-900 block">
+                                      {group.qty} <span className="text-xs font-normal text-slate-500">pcs</span>
+                                    </span>
+
+                                    <button
+                                      type="button"
+                                      onClick={() => {
+                                        setActiveGroupIdForSize(group.id);
+                                        setIsSizeModalOpen(true);
+                                      }}
+                                      className="w-full py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider rounded-lg transition-all cursor-pointer shadow-xs"
+                                    >
+                                      Tambah / Edit Saiz →
+                                    </button>
+                                  </div>
+                                </div>
                               </div>
                             );
                           })}
                         </div>
+
+                        {/* BUTTON ADD NEW CUT GROUP */}
+                        <button
+                          type="button"
+                          onClick={addCutGroup}
+                          className="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-900 font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all border border-dashed border-slate-300 flex items-center justify-center space-x-2 cursor-pointer active:scale-98"
+                        >
+                          <Plus className="w-4 h-4 text-slate-900" />
+                          <span>+ Tambah Kumpulan Potongan Baru (Multi-Cut Group)</span>
+                        </button>
                       </div>
 
                       {/* 3. SELEKSI BAHAN KAIN SUBLIMASI (FETCHED DIRECTLY FROM DATABASE) */}
@@ -1113,44 +1324,6 @@ function DashboardContent() {
                         </div>
                       </div>
 
-                      {/* 4. MATRIKS KUANTITI SAIZ (S-3XL) */}
-                      <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs space-y-3">
-                        <div className="flex items-center justify-between">
-                          <label className="text-xs font-extrabold uppercase tracking-wider text-slate-900 flex items-center space-x-2">
-                            <span className="w-5 h-5 rounded-full bg-slate-900 text-white text-[10px] flex items-center justify-center font-mono">4</span>
-                            <span>MATRIKS SAIZ & KUANTITI</span>
-                          </label>
-                          <span className="text-xs font-mono font-black text-slate-900 bg-slate-100 px-3 py-1 rounded-lg">
-                            JUMLAH: {totalQuantity} pcs
-                          </span>
-                        </div>
-
-                        <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
-                          {Object.keys(sizeQuantities).map((sz) => (
-                            <div key={sz} className="p-3 bg-slate-50 border border-slate-200 rounded-xl text-center space-y-2">
-                              <span className="text-xs font-mono font-bold text-slate-700 block">{sz}</span>
-                              <div className="flex items-center justify-center space-x-2">
-                                <button
-                                  type="button"
-                                  onClick={() => updateSizeQty(sz, -1)}
-                                  className="w-6 h-6 rounded-full bg-white border border-slate-300 text-xs font-bold text-slate-800 hover:bg-slate-200 active:scale-95 cursor-pointer"
-                                >
-                                  -
-                                </button>
-                                <span className="text-xs font-mono font-black text-slate-900 w-5">{sizeQuantities[sz]}</span>
-                                <button
-                                  type="button"
-                                  onClick={() => updateSizeQty(sz, 1)}
-                                  className="w-6 h-6 rounded-full bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 active:scale-95 cursor-pointer"
-                                >
-                                  +
-                                </button>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-
                     </div>
 
                     {/* RIGHT 5 COLS: CUSTOMER INFO, LOGO UPLOAD & STICKY ORDER SUMMARY */}
@@ -1159,7 +1332,7 @@ function DashboardContent() {
                       {/* MAKLUMAT PELANGGAN & PASUKAN */}
                       <div className="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-2xs space-y-4">
                         <label className="text-xs font-extrabold uppercase tracking-wider text-slate-900 flex items-center space-x-2 border-b border-slate-100 pb-3">
-                          <span className="w-5 h-5 rounded-full bg-slate-900 text-white text-[10px] flex items-center justify-center font-mono">5</span>
+                          <span className="w-5 h-5 rounded-full bg-slate-900 text-white text-[10px] flex items-center justify-center font-mono">4</span>
                           <span>MAKLUMAT TEMPAHAN & LOGO</span>
                         </label>
 
@@ -1247,26 +1420,30 @@ function DashboardContent() {
                             <span>Harga Asas Fabrik ({selectedFabric?.name}):</span>
                             <span>RM {basePricePerPcs.toFixed(2)}</span>
                           </div>
-                          <div className="flex justify-between">
-                            <span>Caj Kolar ({selectedCut?.name}):</span>
-                            <span>+RM {cutAddOn.toFixed(2)}</span>
-                          </div>
+
+                          {groupCalculations.groupDetails.map((gd, i) => (
+                            <div key={gd.id} className="flex justify-between text-[11px] text-slate-400">
+                              <span>Kumpulan #{i + 1} ({gd.cut?.name} • {gd.qty} pcs):</span>
+                              <span>RM {gd.subtotal.toFixed(2)}</span>
+                            </div>
+                          ))}
+
                           <div className="flex justify-between border-t border-slate-800 pt-2 font-bold text-white">
-                            <span>Harga per Pcs:</span>
-                            <span>RM {pricePerPcs.toFixed(2)}</span>
+                            <span>Jumlah Kuantiti:</span>
+                            <span>{groupCalculations.totalQty} pcs</span>
                           </div>
                         </div>
 
                         <div className="border-t border-slate-800 pt-3">
-                          <span className="text-[10px] font-mono text-slate-400 block">JUMLAH KESELURUHAN ({totalQuantity} pcs):</span>
+                          <span className="text-[10px] font-mono text-slate-400 block">JUMLAH KESELURUHAN ({groupCalculations.totalQty} pcs):</span>
                           <span className="text-3xl font-black font-mono text-white block pt-0.5">
-                            RM {totalPrice.toFixed(2)}
+                            RM {groupCalculations.totalPrice.toFixed(2)}
                           </span>
                         </div>
 
                         <button
                           type="submit"
-                          disabled={isSubmittingOrder || totalQuantity <= 0}
+                          disabled={isSubmittingOrder || groupCalculations.totalQty <= 0}
                           className="w-full py-4 bg-white hover:bg-slate-100 text-slate-950 font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer border border-slate-200"
                         >
                           {isSubmittingOrder ? (
@@ -1369,7 +1546,7 @@ function DashboardContent() {
                               {ord.template}
                             </h3>
                             <p className="text-xs text-slate-500 font-mono pt-0.5">
-                              Kolar: <strong className="text-slate-800">{ord.cutType}</strong> • Kain: <strong className="text-slate-800">{ord.fabricMaterial}</strong>
+                              Potongan: <strong className="text-slate-800">{ord.cutType}</strong> • Kain: <strong className="text-slate-800">{ord.fabricMaterial}</strong>
                             </p>
                           </div>
                         </div>
@@ -1567,13 +1744,12 @@ function DashboardContent() {
       </main>
 
       {/* ========================================================================= */}
-      {/* INTERACTIVE TEMPLATE SELECTION MODAL DRAWER */}
+      {/* 1. INTERACTIVE TEMPLATE SELECTION MODAL DRAWER */}
       {/* ========================================================================= */}
       {isTemplateModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-xs font-sans">
           <div className="bg-white rounded-3xl max-w-4xl w-full p-6 sm:p-8 space-y-6 shadow-2xl relative border border-slate-200 max-h-[90vh] flex flex-col">
             
-            {/* MODAL HEADER */}
             <div className="flex items-center justify-between border-b border-slate-100 pb-4 shrink-0">
               <div>
                 <h3 className="text-lg font-black uppercase text-slate-900">PILIH TEMPLATE REKA BENTUK</h3>
@@ -1587,7 +1763,6 @@ function DashboardContent() {
               </button>
             </div>
 
-            {/* MODAL SEARCH & CATEGORY FILTERS */}
             <div className="space-y-3 shrink-0">
               <div className="relative w-full">
                 <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3" />
@@ -1629,7 +1804,6 @@ function DashboardContent() {
               )}
             </div>
 
-            {/* MODAL TEMPLATE GRID CANVAS */}
             <div className="flex-1 overflow-y-auto pr-1 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
               {filteredModalTemplates.map((tpl) => {
                 const img = Array.isArray(tpl.images) && tpl.images.length > 0 ? tpl.images[0] : (tpl.thumbnail || PLACEHOLDER_IMAGE);
@@ -1671,7 +1845,6 @@ function DashboardContent() {
               })}
             </div>
 
-            {/* MODAL FOOTER */}
             <div className="pt-3 border-t border-slate-100 flex justify-end shrink-0">
               <button
                 type="button"
@@ -1685,9 +1858,291 @@ function DashboardContent() {
         </div>
       )}
 
+      {/* ========================================================================= */}
+      {/* 2. INTERACTIVE COLLAR CUT SELECTION MODAL DRAWER */}
+      {/* ========================================================================= */}
+      {isCutModalOpen && activeGroupIdForCut && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-xs font-sans">
+          <div className="bg-white rounded-3xl max-w-3xl w-full p-6 sm:p-8 space-y-6 shadow-2xl relative border border-slate-200 max-h-[88vh] flex flex-col">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4 shrink-0">
+              <div>
+                <h3 className="text-lg font-black uppercase text-slate-900">PILIH JENIS POTONGAN / KOLAR</h3>
+                <p className="text-xs text-slate-500 font-medium">Pilih jenis gaya kolar jersi bersama gambar ilustrasi lengkap</p>
+              </div>
+              <button
+                onClick={() => setIsCutModalOpen(false)}
+                className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto grid grid-cols-2 sm:grid-cols-3 gap-4 pr-1">
+              {cutTypes.map((cut) => {
+                const addOn = Number(cut.addOnPrice ?? cut.add_on_price ?? 0);
+                const activeGroupObj = cutGroups.find((g) => g.id === activeGroupIdForCut);
+                const isSelected = activeGroupObj?.cut?.id === cut.id;
+
+                return (
+                  <div
+                    key={cut.id}
+                    onClick={() => {
+                      setCutGroups((prev) =>
+                        prev.map((g) => (g.id === activeGroupIdForCut ? { ...g, cut } : g))
+                      );
+                      setIsCutModalOpen(false);
+                    }}
+                    className={`p-4 bg-white border rounded-2xl cursor-pointer transition-all flex flex-col justify-between space-y-3 relative group ${
+                      isSelected
+                        ? 'border-slate-900 ring-2 ring-slate-900/30 shadow-md bg-slate-50'
+                        : 'border-slate-200 hover:border-slate-400 hover:shadow-md'
+                    }`}
+                  >
+                    {isSelected && (
+                      <span className="absolute top-2 right-2 bg-slate-900 text-white p-1 rounded-full z-10 shadow-xs">
+                        <Check className="w-3 h-3 text-white" />
+                      </span>
+                    )}
+
+                    <div className="w-full aspect-square bg-[#F5F5F7] rounded-xl overflow-hidden p-3 flex items-center justify-center">
+                      <img
+                        src={cut.thumbnail || PLACEHOLDER_IMAGE}
+                        alt={cut.name}
+                        className="w-full h-full object-contain img-crisp group-hover:scale-105 transition-transform"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <h4 className="text-xs font-extrabold uppercase text-slate-900 line-clamp-1">{cut.name}</h4>
+                      <p className="text-[10px] text-slate-500 line-clamp-2 leading-tight">{cut.desc || cut.description || '-'}</p>
+                      <span className="text-[10px] font-mono font-bold text-slate-900 block pt-1">
+                        {addOn > 0 ? `+RM ${addOn}.00` : 'STANDARD / FREE'}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="pt-3 border-t border-slate-100 flex justify-end shrink-0">
+              <button
+                type="button"
+                onClick={() => setIsCutModalOpen(false)}
+                className="px-5 py-2 bg-slate-900 text-white text-xs font-bold uppercase rounded-xl cursor-pointer"
+              >
+                Tutup Modal
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* 3. INTERACTIVE SLEEVE TYPE SELECTION MODAL DRAWER */}
+      {/* ========================================================================= */}
+      {isSleeveModalOpen && activeGroupIdForSleeve && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-xs font-sans">
+          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 space-y-6 shadow-2xl relative border border-slate-200 max-h-[85vh] flex flex-col">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4 shrink-0">
+              <div>
+                <h3 className="text-lg font-black uppercase text-slate-900">PILIH JENIS LENGAN (SLEEVE)</h3>
+                <p className="text-xs text-slate-500 font-medium">Pilih jenis lengan pilihan anda beserta caj harga tambahan</p>
+              </div>
+              <button
+                onClick={() => setIsSleeveModalOpen(false)}
+                className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 gap-4 pr-1">
+              {sleeveTypes.map((sleeve) => {
+                const addOn = Number(sleeve.addOnPrice ?? sleeve.add_on_price ?? 0);
+                const activeGroupObj = cutGroups.find((g) => g.id === activeGroupIdForSleeve);
+                const isSelected = activeGroupObj?.sleeve?.id === sleeve.id;
+
+                return (
+                  <div
+                    key={sleeve.id}
+                    onClick={() => {
+                      setCutGroups((prev) =>
+                        prev.map((g) => (g.id === activeGroupIdForSleeve ? { ...g, sleeve } : g))
+                      );
+                      setIsSleeveModalOpen(false);
+                    }}
+                    className={`p-4 bg-white border rounded-2xl cursor-pointer transition-all flex items-center space-x-4 relative group ${
+                      isSelected
+                        ? 'border-slate-900 ring-2 ring-slate-900/30 shadow-md bg-slate-50'
+                        : 'border-slate-200 hover:border-slate-400 hover:shadow-md'
+                    }`}
+                  >
+                    {isSelected && (
+                      <span className="absolute top-2 right-2 bg-slate-900 text-white p-1 rounded-full z-10 shadow-xs">
+                        <Check className="w-3 h-3 text-white" />
+                      </span>
+                    )}
+
+                    <div className="w-14 h-14 bg-[#F5F5F7] rounded-xl overflow-hidden p-2 flex items-center justify-center shrink-0 border border-slate-200">
+                      <img
+                        src={sleeve.thumbnail || PLACEHOLDER_IMAGE}
+                        alt={sleeve.name}
+                        className="w-full h-full object-contain img-crisp"
+                      />
+                    </div>
+
+                    <div className="space-y-1 min-w-0 flex-1">
+                      <h4 className="text-xs font-extrabold uppercase text-slate-900 truncate">{sleeve.name}</h4>
+                      <p className="text-[10px] text-slate-500 line-clamp-1">{sleeve.desc || sleeve.description || '-'}</p>
+                      <span className="text-[10px] font-mono font-bold text-slate-900 block pt-0.5">
+                        {addOn > 0 ? `+RM ${addOn}.00` : 'STANDARD / FREE'}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="pt-3 border-t border-slate-100 flex justify-end shrink-0">
+              <button
+                type="button"
+                onClick={() => setIsSleeveModalOpen(false)}
+                className="px-5 py-2 bg-slate-900 text-white text-xs font-bold uppercase rounded-xl cursor-pointer"
+              >
+                Tutup Modal
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* 4. INTERACTIVE SIZE & QUANTITY SELECTION MODAL DRAWER (DEWASA & KIDS) */}
+      {/* ========================================================================= */}
+      {isSizeModalOpen && activeGroupIdForSize && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/75 backdrop-blur-xs font-sans">
+          <div className="bg-white rounded-3xl max-w-2xl w-full p-6 sm:p-8 space-y-6 shadow-2xl relative border border-slate-200 max-h-[90vh] flex flex-col">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4 shrink-0">
+              <div>
+                <h3 className="text-lg font-black uppercase text-slate-900">TETAPKAN KUANTITI SAIZ</h3>
+                <p className="text-xs text-slate-500 font-medium">Masukkan kuantiti bilangan baju mengikut saiz Dewasa atau Kanak-Kanak</p>
+              </div>
+              <button
+                onClick={() => setIsSizeModalOpen(false)}
+                className="p-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-full transition-colors cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* TAB SELECTOR: DEWASA vs KIDS */}
+            <div className="flex items-center space-x-2 bg-slate-100 p-1 rounded-xl border border-slate-200 shrink-0">
+              <button
+                type="button"
+                onClick={() => setSizeModalTab('dewasa')}
+                className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
+                  sizeModalTab === 'dewasa' ? 'bg-slate-900 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                SAIZ DEWASA (ADULT: XS - 5XL)
+              </button>
+              <button
+                type="button"
+                onClick={() => setSizeModalTab('kids')}
+                className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
+                  sizeModalTab === 'kids' ? 'bg-slate-900 text-white shadow-xs' : 'text-slate-600 hover:text-slate-900'
+                }`}
+              >
+                SAIZ KANAK-KANAK (KIDS: 22 - 32)
+              </button>
+            </div>
+
+            {/* SIZE MATRIX INPUT GRID */}
+            <div className="flex-1 overflow-y-auto pr-1">
+              {sizeModalTab === 'dewasa' ? (
+                <div className="grid grid-cols-3 sm:grid-cols-3 gap-3">
+                  {ADULT_SIZES.map((sz) => {
+                    const activeGroupObj = cutGroups.find((g) => g.id === activeGroupIdForSize);
+                    const currentQty = activeGroupObj?.sizes?.[sz] || 0;
+
+                    return (
+                      <div key={sz} className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-center space-y-2">
+                        <span className="text-xs font-mono font-bold text-slate-800 block">{sz}</span>
+                        <div className="flex items-center justify-center space-x-3">
+                          <button
+                            type="button"
+                            onClick={() => updateGroupSizeQty(activeGroupIdForSize, sz, -1)}
+                            className="w-7 h-7 rounded-full bg-white border border-slate-300 text-xs font-bold text-slate-800 hover:bg-slate-200 active:scale-95 cursor-pointer flex items-center justify-center"
+                          >
+                            -
+                          </button>
+                          <span className="text-sm font-mono font-black text-slate-900 w-6">{currentQty}</span>
+                          <button
+                            type="button"
+                            onClick={() => updateGroupSizeQty(activeGroupIdForSize, sz, 1)}
+                            className="w-7 h-7 rounded-full bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 active:scale-95 cursor-pointer flex items-center justify-center"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="grid grid-cols-3 sm:grid-cols-3 gap-3">
+                  {KIDS_SIZES.map((sz) => {
+                    const activeGroupObj = cutGroups.find((g) => g.id === activeGroupIdForSize);
+                    const currentQty = activeGroupObj?.sizes?.[sz] || 0;
+
+                    return (
+                      <div key={sz} className="p-3.5 bg-slate-50 border border-slate-200 rounded-xl text-center space-y-2">
+                        <span className="text-xs font-mono font-bold text-slate-800 block">{sz}</span>
+                        <div className="flex items-center justify-center space-x-3">
+                          <button
+                            type="button"
+                            onClick={() => updateGroupSizeQty(activeGroupIdForSize, sz, -1)}
+                            className="w-7 h-7 rounded-full bg-white border border-slate-300 text-xs font-bold text-slate-800 hover:bg-slate-200 active:scale-95 cursor-pointer flex items-center justify-center"
+                          >
+                            -
+                          </button>
+                          <span className="text-sm font-mono font-black text-slate-900 w-6">{currentQty}</span>
+                          <button
+                            type="button"
+                            onClick={() => updateGroupSizeQty(activeGroupIdForSize, sz, 1)}
+                            className="w-7 h-7 rounded-full bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 active:scale-95 cursor-pointer flex items-center justify-center"
+                          >
+                            +
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {/* MODAL FOOTER */}
+            <div className="pt-3 border-t border-slate-100 flex items-center justify-between shrink-0">
+              <span className="text-xs font-mono font-bold text-slate-700">
+                JUMLAH KUMPULAN: {Object.values(cutGroups.find((g) => g.id === activeGroupIdForSize)?.sizes || {}).reduce((a, b) => a + Number(b || 0), 0)} pcs
+              </span>
+
+              <button
+                type="button"
+                onClick={() => setIsSizeModalOpen(false)}
+                className="px-6 py-2.5 bg-slate-900 text-white text-xs font-bold uppercase rounded-xl cursor-pointer"
+              >
+                Simpan & Selesai
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ORDER SPECIFICATION MODAL DRAWER */}
       {selectedOrder && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs font-sans">
           <div className="bg-white rounded-2xl max-w-lg w-full p-6 sm:p-8 space-y-6 shadow-2xl relative border border-slate-200 font-sans">
             <button
               onClick={() => setSelectedOrder(null)}
@@ -1772,7 +2227,7 @@ function DashboardContent() {
 
       {/* INVOICE & RECEIPT PRINTABLE MODAL VIEWER */}
       {selectedInvoice && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-xs font-sans">
           <div className="bg-white rounded-2xl max-w-2xl w-full p-6 sm:p-10 space-y-6 shadow-2xl relative border border-slate-200 font-sans max-h-[92vh] overflow-y-auto">
             <button
               onClick={() => setSelectedInvoice(null)}

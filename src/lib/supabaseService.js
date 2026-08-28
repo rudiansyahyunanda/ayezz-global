@@ -296,6 +296,83 @@ export async function deleteCutTypeFromSupabase(cutId) {
 }
 
 // ==========================================
+// 2.5 JENIS LENGAN / SLEEVE TYPES
+// ==========================================
+export const FALLBACK_SLEEVE_TYPES = [
+  { id: 'sleeve_short', name: 'Lengan Pendek (Short Sleeve)', addOnPrice: 0, desc: 'Potongan standard lengan pendek', thumbnail: PLACEHOLDER_IMAGE },
+  { id: 'sleeve_long', name: 'Lengan Panjang (Long Sleeve)', addOnPrice: 5, desc: 'Lengan panjang dengan kemasan cuff', thumbnail: PLACEHOLDER_IMAGE },
+  { id: 'sleeve_muslimah', name: 'Potongan Muslimah (Long & Labuh)', addOnPrice: 8, desc: 'Lengan panjang & labuh belakang', thumbnail: PLACEHOLDER_IMAGE },
+  { id: 'sleeve_sleeveless', name: 'Tanpa Lengan (Sleeveless / Singlet)', addOnPrice: 0, desc: 'Potongan tanpa lengan', thumbnail: PLACEHOLDER_IMAGE }
+];
+
+export async function getSleeveTypes() {
+  if (!isSupabaseConnected) return FALLBACK_SLEEVE_TYPES;
+  try {
+    const { data, error } = await supabase.from('sleeve_types').select('*').order('created_at', { ascending: true });
+    if (error || !data || data.length === 0) return FALLBACK_SLEEVE_TYPES;
+    return data.map(item => ({
+      id: item.id,
+      name: item.name,
+      addOnPrice: Number(item.add_on_price) || 0,
+      desc: item.description || '',
+      thumbnail: item.thumbnail || PLACEHOLDER_IMAGE
+    }));
+  } catch (err) {
+    console.warn('Supabase getSleeveTypes error:', err);
+    return FALLBACK_SLEEVE_TYPES;
+  }
+}
+
+export async function insertSleeveTypeToSupabase(sleeve) {
+  if (!isSupabaseConnected || !sleeve) return;
+  try {
+    const cloudCover = await ensureSupabaseCloudImageUrl(sleeve.thumbnail, sleeve.name || 'sleeve');
+    const payload = {
+      id: sleeve.id || `sleeve_${Date.now()}`,
+      name: sleeve.name,
+      add_on_price: Number(sleeve.addOnPrice ?? sleeve.add_on_price ?? 0),
+      description: sleeve.desc || sleeve.description || 'Jenis lengan kustom',
+      thumbnail: cloudCover || PLACEHOLDER_IMAGE
+    };
+    const { error } = await supabase.from('sleeve_types').insert([payload]);
+    if (error) {
+      console.error('Supabase insertSleeveType error:', error);
+    } else {
+      console.log('Supabase insertSleeveType succeeded:', payload.id);
+    }
+  } catch (err) {
+    console.error('Supabase insertSleeveType exception:', err);
+  }
+}
+
+export async function updateSleeveTypeInSupabase(sleeveId, updatedSleeve) {
+  if (!isSupabaseConnected || !sleeveId) return;
+  try {
+    const cloudCover = await ensureSupabaseCloudImageUrl(updatedSleeve.thumbnail, updatedSleeve.name || 'sleeve');
+    const payload = {
+      name: updatedSleeve.name,
+      add_on_price: Number(updatedSleeve.addOnPrice ?? updatedSleeve.add_on_price ?? 0),
+      description: updatedSleeve.desc || updatedSleeve.description || '',
+      thumbnail: cloudCover || PLACEHOLDER_IMAGE
+    };
+    const { error } = await supabase.from('sleeve_types').update(payload).eq('id', sleeveId);
+    if (error) console.error('Supabase updateSleeveType error:', error);
+  } catch (err) {
+    console.error('Supabase updateSleeveType exception:', err);
+  }
+}
+
+export async function deleteSleeveTypeFromSupabase(sleeveId) {
+  if (!isSupabaseConnected || !sleeveId) return;
+  try {
+    const { error } = await supabase.from('sleeve_types').delete().eq('id', sleeveId);
+    if (error) console.error('Supabase deleteSleeveType error:', error);
+  } catch (err) {
+    console.error('Supabase deleteSleeveType exception:', err);
+  }
+}
+
+// ==========================================
 // 3. BAHAN KAIN SUBLIMASI
 // ==========================================
 export async function getFabricTypes() {
