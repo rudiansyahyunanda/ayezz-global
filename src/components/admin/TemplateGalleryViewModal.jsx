@@ -81,7 +81,7 @@ export default function TemplateGalleryViewModal({ template: initialTemplate, on
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md animate-fade-in font-sans">
       {/* KEYFRAME ANIMATION FOR GENTLE BREATHING ZOOM IN / OUT TO ORIGINAL */}
-      <style jsx global>{`
+      <style>{`
         @keyframes gentleBreathingZoom {
           0% {
             transform: rotateY(0deg) scale(1);
