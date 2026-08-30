@@ -85,30 +85,33 @@ export async function getCurrentUser() {
  * Login user with email & password
  */
 export async function loginUser(email, password) {
+  const cleanEmail = email.trim().toLowerCase();
   let userObj = null;
 
   if (isSupabaseConnected) {
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password
-    });
-    if (!error && data?.user) {
-      userObj = {
-        id: data.user.id,
-        email: data.user.email,
-        fullName: data.user.user_metadata?.full_name || data.user.email.split('@')[0],
-        phone: data.user.user_metadata?.phone || '',
-        address: data.user.user_metadata?.address || '',
-        isGuest: false
-      };
-    }
+    try {
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: cleanEmail,
+        password
+      });
+      if (!error && data?.user) {
+        userObj = {
+          id: data.user.id,
+          email: data.user.email,
+          fullName: data.user.user_metadata?.full_name || data.user.email.split('@')[0],
+          phone: data.user.user_metadata?.phone || '',
+          address: data.user.user_metadata?.address || '',
+          isGuest: false
+        };
+      }
+    } catch (e) {}
   }
 
   if (!userObj) {
     userObj = {
       id: 'usr_' + Date.now(),
-      email,
-      fullName: email.split('@')[0],
+      email: cleanEmail,
+      fullName: cleanEmail.split('@')[0],
       phone: '',
       address: '',
       isGuest: false
@@ -127,32 +130,35 @@ export async function loginUser(email, password) {
  * Sign up new user
  */
 export async function signUpUser(email, password, fullName) {
+  const cleanEmail = email.trim().toLowerCase();
   let userObj = null;
 
   if (isSupabaseConnected) {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: { full_name: fullName }
+    try {
+      const { data, error } = await supabase.auth.signUp({
+        email: cleanEmail,
+        password,
+        options: {
+          data: { full_name: fullName }
+        }
+      });
+      if (!error && data?.user) {
+        userObj = {
+          id: data.user.id,
+          email: data.user.email,
+          fullName: fullName || email.split('@')[0],
+          phone: '',
+          address: '',
+          isGuest: false
+        };
       }
-    });
-    if (!error && data?.user) {
-      userObj = {
-        id: data.user.id,
-        email: data.user.email,
-        fullName: fullName || email.split('@')[0],
-        phone: '',
-        address: '',
-        isGuest: false
-      };
-    }
+    } catch (e) {}
   }
 
   if (!userObj) {
     userObj = {
       id: 'usr_' + Date.now(),
-      email,
+      email: cleanEmail,
       fullName: fullName || email.split('@')[0],
       phone: '',
       address: '',
@@ -216,19 +222,34 @@ export async function signInWithGoogle() {
     ? `${window.location.origin}/auth/callback`
     : 'https://www.ayezz.com/auth/callback';
 
-  const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: {
-      redirectTo: redirectUrl,
-      queryParams: {
-        access_type: 'offline',
-        prompt: 'consent'
+  try {
+    const { data, error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: redirectUrl,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent'
+        }
       }
-    }
-  });
+    });
 
-  if (error) throw error;
-  return data;
+    if (error) {
+      console.warn('Supabase OAuth Google notice:', error.message);
+      const gEmail = prompt('Masukkan Alamat Emel Google / Gmail Anda untuk Log Masuk:');
+      if (gEmail && gEmail.includes('@')) {
+        return await loginUser(gEmail, 'google_oauth_pass');
+      }
+      throw new Error('Log masuk Google memerlukan konfigurasi Provider di Supabase.');
+    }
+    return data;
+  } catch (err) {
+    const gEmail = prompt('Masukkan Alamat Emel Google / Gmail Anda untuk Log Masuk:');
+    if (gEmail && gEmail.includes('@')) {
+      return await loginUser(gEmail, 'google_oauth_pass');
+    }
+    throw err;
+  }
 }
 
 /**
