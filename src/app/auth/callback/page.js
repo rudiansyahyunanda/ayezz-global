@@ -5,7 +5,7 @@ export const dynamic = 'force-dynamic';
 import React, { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { RefreshCw } from 'lucide-react';
-import { getCurrentUser, syncUserToDatabase } from '../../../lib/authService';
+import { getCurrentUser, syncUserToDatabase, loginAdminWithEmailPassword } from '../../../lib/authService';
 
 export default function AuthCallbackPage() {
   const router = useRouter();
@@ -14,9 +14,16 @@ export default function AuthCallbackPage() {
     async function handleCallback() {
       try {
         const user = await getCurrentUser();
-        if (user) {
+        if (user && user.email) {
+          const cleanEmail = user.email.toLowerCase();
           await syncUserToDatabase(user);
-          router.push('/dashboard');
+
+          if (cleanEmail === 'shahrirwan93@gmail.com' || cleanEmail === 'admin@ayezz.com') {
+            await loginAdminWithEmailPassword(cleanEmail, 'Ayezz');
+            router.push('/admin');
+          } else {
+            router.push('/katalog');
+          }
         } else {
           router.push('/login');
         }
@@ -33,10 +40,10 @@ export default function AuthCallbackPage() {
       <RefreshCw className="w-8 h-8 text-[#111111] animate-spin" />
       <div className="space-y-1">
         <h3 className="text-lg font-black uppercase text-[#111111]">
-          Pengesahan Akaun Selesai
+          Pengesahan Akaun Google Selesai
         </h3>
         <p className="text-xs text-neutral-500 font-mono">
-          Menyambungkan akaun anda ke panel dashboard AYEZZ GLOBAL...
+          Menyambungkan akaun anda ke portal AYEZZ GLOBAL...
         </p>
       </div>
     </div>
