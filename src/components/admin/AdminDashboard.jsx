@@ -31,7 +31,8 @@ import {
   Film,
   KeyRound,
   LogOut,
-  Scissors
+  Scissors,
+  FileText
 } from 'lucide-react';
 import ImageUploadCropper from './ImageUploadCropper';
 import MultiImageUploadCropper from './MultiImageUploadCropper';
@@ -865,50 +866,53 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                                 <option value="Ditolak / Dibatalkan">Ditolak / Dibatalkan</option>
                               </select>
                             </td>
-                            <td className="py-3.5 px-4 text-right space-x-1">
-                              <a
-                                href={`/invoice?orderId=${ord.orderId || ord.id}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="px-2.5 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded text-[10px] font-bold uppercase transition-colors inline-block"
-                              >
-                                Invois / Job Sheet (PDF)
-                              </a>
-                              <button
-                                onClick={() => {
-                                  setSelectedOrderForDetail(ord);
-                                  setIsOrderDetailOpen(true);
-                                }}
-                                className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded text-[10px] font-bold uppercase transition-colors"
-                              >
-                                Butiran
-                              </button>
-                              <button
-                                onClick={async () => {
-                                  const reason = prompt('Masukkan sebab pembatalan / reject pesanan ini:');
-                                  if (reason !== null) {
-                                    const newSt = 'Ditolak / Dibatalkan';
-                                    setOrders(prev => prev.map(item => item.id === ord.id ? { ...item, status: newSt, paymentStatus: 'rejected' } : item));
-                                    await updateOrderStatusInSupabase(ord.id, newSt, reason);
-                                  }
-                                }}
-                                className="px-2.5 py-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded text-[10px] font-bold uppercase transition-colors"
-                                title="Reject / Batal Pesanan Ini"
-                              >
-                                Reject
-                              </button>
-                              <button
-                                onClick={async () => {
-                                  if (confirm('Adakah anda pasti mahu memadam pesanan ini?')) {
-                                    setOrders(prev => prev.filter(o => o.id !== ord.id));
-                                    await deleteOrderFromSupabase(ord.id);
-                                  }
-                                }}
-                                className="p-1.5 text-rose-500 hover:bg-rose-50 rounded transition-colors"
-                                title="Padam"
-                              >
-                                <Trash2 className="w-4 h-4" />
-                              </button>
+                            <td className="py-3.5 px-4 text-right">
+                              <div className="flex items-center justify-end gap-1.5">
+                                <a
+                                  href={`/invoice?orderId=${ord.orderId || ord.id}`}
+                                  target="_blank"
+                                  rel="noreferrer"
+                                  className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md text-[11px] font-semibold transition-colors inline-flex items-center gap-1 shadow-2xs"
+                                >
+                                  <FileText className="w-3.5 h-3.5" />
+                                  <span>Invois PDF</span>
+                                </a>
+                                <button
+                                  onClick={() => {
+                                    setSelectedOrderForDetail(ord);
+                                    setIsOrderDetailOpen(true);
+                                  }}
+                                  className="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-white rounded-md text-[11px] font-semibold transition-colors shadow-2xs"
+                                >
+                                  Butiran
+                                </button>
+                                <button
+                                  onClick={async () => {
+                                    const reason = prompt('Masukkan sebab pembatalan / reject pesanan ini:');
+                                    if (reason !== null) {
+                                      const newSt = 'Ditolak / Dibatalkan';
+                                      setOrders(prev => prev.map(item => item.id === ord.id ? { ...item, status: newSt, paymentStatus: 'rejected' } : item));
+                                      await updateOrderStatusInSupabase(ord.id, newSt, reason);
+                                    }
+                                  }}
+                                  className="px-2.5 py-1 bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 rounded-md text-[11px] font-semibold transition-colors"
+                                  title="Batal Pesanan Ini"
+                                >
+                                  Tolak
+                                </button>
+                                <button
+                                  onClick={async () => {
+                                    if (confirm('Adakah anda pasti mahu memadam pesanan ini?')) {
+                                      setOrders(prev => prev.filter(o => o.id !== ord.id));
+                                      await deleteOrderFromSupabase(ord.id);
+                                    }
+                                  }}
+                                  className="p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition-colors"
+                                  title="Padam Pesanan"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
                             </td>
                           </tr>
                         ))
@@ -959,13 +963,15 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                           <td className="py-3.5 px-4 font-mono font-bold text-slate-900">{cat.category_code || cat.code || 'CAT'}</td>
                           <td className="py-3.5 px-4 font-bold text-slate-900 uppercase">{cat.title}</td>
                           <td className="py-3.5 px-4 text-slate-600 max-w-xs">{cat.desc || cat.description}</td>
-                          <td className="py-3.5 px-4 text-right space-x-1">
-                            <button onClick={() => openEditModal('category', cat)} className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-md">
-                              <Edit2 className="w-4 h-4" />
-                            </button>
-                            <button onClick={async () => { setCategories(prev => prev.filter(c => c.id !== cat.id)); await deleteCategoryFromSupabase(cat.id); }} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-md">
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                          <td className="py-3.5 px-4 text-right">
+                            <div className="flex items-center justify-end gap-1">
+                              <button onClick={() => openEditModal('category', cat)} className="p-1.5 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors" title="Edit Kategori">
+                                <Edit2 className="w-4 h-4" />
+                              </button>
+                              <button onClick={() => handleDeleteCategory(cat)} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors" title="Padam Kategori">
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))
@@ -1048,15 +1054,16 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                     <tr className="bg-slate-50/80 border-b border-slate-200 text-[11px] font-mono font-semibold text-slate-500 uppercase tracking-wider">
                       <th className="py-3 px-4">GAMBAR COVER (1:1)</th>
                       <th className="py-3 px-4">NAMA TEMPLATE / KOD</th>
-                      <th className="py-3 px-4">KATEGORI</th>
-                      <th className="py-3 px-4">HARGA ASAS (RM)</th>
+                      <th className="py-3 px-4">KATEGORI UTAMA</th>
+                      <th className="py-3 px-4">SUB-KATEGORI</th>
+                      <th className="py-3 px-4">DESKRIPSI</th>
                       <th className="py-3 px-4 text-right">TINDAKAN</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 font-medium text-slate-800">
                     {templates.length === 0 ? (
                       <tr>
-                        <td colSpan={5} className="py-12 text-center text-slate-400 font-mono text-xs">
+                        <td colSpan={6} className="py-12 text-center text-slate-400 font-mono text-xs">
                           Belum ada template terrekod. Tekan "+ Tambah Template" untuk cipta rekod baharu.
                         </td>
                       </tr>
@@ -1067,23 +1074,26 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                             <img src={tpl.thumbnail || PLACEHOLDER_IMAGE} alt={tpl.name} className="w-12 h-12 object-cover rounded-lg border border-slate-200" />
                           </td>
                           <td className="py-3.5 px-4 font-bold text-slate-900 uppercase">{tpl.name}</td>
-                          <td className="py-3.5 px-4 font-mono text-slate-600">{tpl.category || 'SUBLIMASI'}</td>
-                          <td className="py-3.5 px-4 font-mono font-bold text-slate-900">RM {Number(tpl.price || tpl.basePrice || 70).toFixed(2)}</td>
-                          <td className="py-3.5 px-4 text-right space-x-1">
-                            <button onClick={() => setViewingTemplate(tpl)} className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-md" title="Pratonton Galeri Template">
-                              <Eye className="w-4 h-4" />
-                            </button>
-                            <button onClick={() => openEditModal('template', tpl)} className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-md" title="Edit Template">
-                              <Edit2 className="w-4 h-4" />
-                            </button>
-                            <button onClick={async () => {
-                              if (window.confirm(`Adakah anda pasti untuk memadam Template "${tpl.name}"?`)) {
-                                setTemplates(prev => prev.filter(t => t.id !== tpl.id));
-                                await deleteDesignTemplateFromSupabase(tpl.id);
-                              }
-                            }} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-md" title="Padam Template">
-                              <Trash2 className="w-4 h-4" />
-                            </button>
+                          <td className="py-3.5 px-4 text-slate-700 font-semibold">{tpl.category || 'SUBLIMASI'}</td>
+                          <td className="py-3.5 px-4 text-slate-600 font-mono">{tpl.subCategory || '-'}</td>
+                          <td className="py-3.5 px-4 text-slate-500 max-w-xs truncate">{tpl.description || 'Tiada deskripsi'}</td>
+                          <td className="py-3.5 px-4 text-right">
+                            <div className="flex items-center justify-end gap-1">
+                              <button onClick={() => setViewingTemplate(tpl)} className="p-1.5 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors" title="Pratonton Galeri Template">
+                                <Eye className="w-4 h-4" />
+                              </button>
+                              <button onClick={() => openEditModal('template', tpl)} className="p-1.5 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors" title="Edit Template">
+                                <Edit2 className="w-4 h-4" />
+                              </button>
+                              <button onClick={async () => {
+                                if (window.confirm(`Adakah anda pasti untuk memadam Template "${tpl.name}"?`)) {
+                                  setTemplates(prev => prev.filter(t => t.id !== tpl.id));
+                                  await deleteDesignTemplateFromSupabase(tpl.id);
+                                }
+                              }} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors" title="Padam Template">
+                                <Trash2 className="w-4 h-4" />
+                              </button>
+                            </div>
                           </td>
                         </tr>
                       ))
