@@ -1,5 +1,6 @@
 import '../index.css';
 import ImageProtectionGuard from '../components/ImageProtectionGuard';
+import CookieConsentBanner from '../components/CookieConsentBanner';
 
 export const metadata = {
   title: 'AYEZZ GLOBAL — Studio Pakaian Sublimasi High-End',
@@ -21,6 +22,7 @@ export default function RootLayout({ children }) {
       <body className="bg-white text-[#111111] font-sans antialiased selection:bg-[#111111] selection:text-white">
         <ImageProtectionGuard />
         {children}
+        <CookieConsentBanner />
       </body>
     </html>
   );

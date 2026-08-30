@@ -62,21 +62,7 @@ export default function ImageProtectionGuard() {
       }
     };
 
-    // 2. Detect Window Blur (when user activates external Snipping Tool app)
-    const handleBlur = () => {
-      triggerBlackout();
-    };
-
-    // 3. Detect Visibility Change (tab or app switching)
-    const handleVisibilityChange = () => {
-      if (document.hidden) {
-        setIsBlackout(true);
-      } else {
-        triggerBlackout();
-      }
-    };
-
-    // 4. Block Context Menu (Right-Click) & Image Dragging
+    // Block Context Menu (Right-Click) & Image Dragging
     const handleContextMenu = (e) => {
       e.preventDefault();
       return false;
@@ -91,16 +77,12 @@ export default function ImageProtectionGuard() {
 
     window.addEventListener('keydown', handleKeyDown);
     window.addEventListener('keyup', handleKeyUp);
-    window.addEventListener('blur', handleBlur);
-    document.addEventListener('visibilitychange', handleVisibilityChange);
     window.addEventListener('contextmenu', handleContextMenu);
     window.addEventListener('dragstart', handleDragStart);
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
       window.removeEventListener('keyup', handleKeyUp);
-      window.removeEventListener('blur', handleBlur);
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
       window.removeEventListener('contextmenu', handleContextMenu);
       window.removeEventListener('dragstart', handleDragStart);
       if (blackoutTimer) clearTimeout(blackoutTimer);
