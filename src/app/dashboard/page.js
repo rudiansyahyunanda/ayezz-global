@@ -50,7 +50,10 @@ import {
   CheckSquare,
   FileSpreadsheet,
   Edit3,
-  Ruler
+  Ruler,
+  PlusCircle,
+  MinusCircle,
+  ChevronUp
 } from 'lucide-react';
 
 import { getCurrentUser, logoutUser, updateUserProfile } from '../../lib/authService';
@@ -1991,168 +1994,243 @@ function DashboardContent() {
                                 </div>
 
                                 {/* ── SHEET SCROLLABLE BODY ── */}
-                                <div className="overflow-y-auto flex-1 overscroll-contain px-5 py-5 space-y-7">
+                                <div className="overflow-y-auto flex-1 overscroll-contain">
 
-                                  {/* ─── SECTION A: PILIH KOLAR ─── */}
-                                  <div>
-                                    <p className="text-[10px] font-bold text-[#8E8E93] uppercase tracking-widest mb-3">
-                                      1 — Potongan Kolar
-                                    </p>
-                                    {/* Frameless image grid: 3 columns on mobile, larger images */}
-                                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-x-3 gap-y-4">
-                                      {cutTypes.map((cut) => {
-                                        const isSelected = sheetDraft.cut?.id === cut.id;
-                                        const addOn = Number(cut.addOnPrice ?? cut.add_on_price ?? 0);
-                                        return (
-                                          <button
-                                            key={cut.id}
-                                            type="button"
-                                            onClick={() => setSheetDraft(prev => ({ ...prev, cut, sleeve: null }))}
-                                            className="flex flex-col items-center text-center cursor-pointer select-none active:opacity-70 transition-opacity"
-                                          >
-                                            {/* Large frameless image */}
-                                            <div className="w-full aspect-square rounded-xl overflow-hidden bg-[#F7F8F9] mb-1.5">
-                                              <img
-                                                src={cut.thumbnail || PLACEHOLDER_IMAGE}
-                                                alt={cut.name}
-                                                className="w-full h-full object-contain p-2"
-                                              />
-                                            </div>
-                                            {/* Name: bold + underline if selected */}
-                                            <p className={`text-[11px] leading-snug line-clamp-2 ${isSelected ? 'font-bold text-[#111827] underline underline-offset-2 decoration-1' : 'font-medium text-[#374151]'}`}>
-                                              {cut.name}
-                                            </p>
-                                            {/* Price add-on */}
-                                            <p className="text-[10px] text-[#9CA3AF] mt-0.5 tabular-nums">
-                                              {addOn > 0 ? `+RM ${addOn}` : 'Standard'}
-                                            </p>
-                                            {/* Thin checkmark row */}
-                                            {isSelected && (
-                                              <span className="mt-1 flex items-center justify-center">
-                                                <Check className="w-3 h-3 text-[#111827]" strokeWidth={2.5} />
-                                              </span>
-                                            )}
-                                          </button>
-                                        );
-                                      })}
-                                    </div>
-                                  </div>
+                                  {/* ─────────────────────────────────────────────── */}
+                                  {/* SECTION A: PILIH KOLAR                          */}
+                                  {/* Collapsed once selection made, re-opens on tap  */}
+                                  {/* ─────────────────────────────────────────────── */}
+                                  <div className="border-b border-[#F2F2F2]">
+                                    {/* Section header — always visible */}
+                                    <button
+                                      type="button"
+                                      onClick={() => sheetDraft.cut && setSheetDraft(prev => ({ ...prev, cut: prev.cut }))}
+                                      className="w-full flex items-center justify-between px-5 py-4 cursor-default"
+                                    >
+                                      <div className="flex items-center space-x-2.5">
+                                        <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
+                                          sheetDraft.cut ? 'bg-[#111827] text-white' : 'bg-[#F2F2F7] text-[#8E8E93]'
+                                        }`}>1</span>
+                                        <span className="text-[11px] font-semibold text-[#6B7280] uppercase tracking-widest">Potongan Kolar</span>
+                                      </div>
+                                      {/* Collapsed summary */}
+                                      {sheetDraft.cut && (
+                                        <div className="flex items-center space-x-1.5">
+                                          <span className="text-sm font-semibold text-[#111827]">{sheetDraft.cut.name}</span>
+                                          <CheckCircle2 className="w-4 h-4 text-[#111827] shrink-0" />
+                                        </div>
+                                      )}
+                                    </button>
 
-                                  {/* ─── SECTION B: PILIH LENGAN (appears after Kolar) ─── */}
-                                  {sheetDraft.cut && (
-                                    <div>
-                                      <p className="text-[10px] font-bold text-[#8E8E93] uppercase tracking-widest mb-3">
-                                        2 — Jenis Lengan
-                                      </p>
-                                      <div className="grid grid-cols-3 sm:grid-cols-4 gap-x-3 gap-y-4">
-                                        {sleeveTypes.map((slv) => {
-                                          const isSelected = sheetDraft.sleeve?.id === slv.id;
-                                          const addOn = Number(slv.addOnPrice ?? slv.add_on_price ?? 0);
+                                    {/* GRID — shown when no cut selected yet, OR always on desktop */}
+                                    {/* On mobile: hide grid once cut is selected (collapse) */}
+                                    <div className={`px-5 pb-5 ${sheetDraft.cut ? 'hidden' : 'block'}`}>
+                                      <div className="grid grid-cols-3 sm:grid-cols-4 gap-x-2.5 gap-y-4">
+                                        {cutTypes.map((cut) => {
+                                          const isSelected = sheetDraft.cut?.id === cut.id;
+                                          const addOn = Number(cut.addOnPrice ?? cut.add_on_price ?? 0);
                                           return (
                                             <button
-                                              key={slv.id}
+                                              key={cut.id}
                                               type="button"
-                                              onClick={() => setSheetDraft(prev => ({ ...prev, sleeve: slv }))}
-                                              className="flex flex-col items-center text-center cursor-pointer select-none active:opacity-70 transition-opacity"
+                                              onClick={() => setSheetDraft(prev => ({ ...prev, cut, sleeve: null }))}
+                                              className="flex flex-col items-center text-center cursor-pointer select-none active:scale-95 transition-transform"
                                             >
-                                              <div className="w-full aspect-square rounded-xl overflow-hidden bg-[#F7F8F9] mb-1.5">
+                                              {/* Image with overlay for non-selected */}
+                                              <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-[#F7F8F9] mb-2">
                                                 <img
-                                                  src={slv.thumbnail || PLACEHOLDER_IMAGE}
-                                                  alt={slv.name}
-                                                  className="w-full h-full object-contain p-2"
+                                                  src={cut.thumbnail || PLACEHOLDER_IMAGE}
+                                                  alt={cut.name}
+                                                  className="w-full h-full object-contain p-2.5"
                                                 />
+                                                {/* Gray overlay on unselected when something IS selected */}
+                                                {sheetDraft.cut && !isSelected && (
+                                                  <div className="absolute inset-0 bg-white/60 rounded-2xl" />
+                                                )}
+                                                {/* Checkmark badge on selected */}
+                                                {isSelected && (
+                                                  <div className="absolute inset-0 rounded-2xl ring-2 ring-[#111827] ring-inset flex items-end justify-end p-1.5">
+                                                    <span className="w-5 h-5 rounded-full bg-[#111827] flex items-center justify-center">
+                                                      <Check className="w-3 h-3 text-white" strokeWidth={3} />
+                                                    </span>
+                                                  </div>
+                                                )}
                                               </div>
-                                              <p className={`text-[11px] leading-snug line-clamp-2 ${isSelected ? 'font-bold text-[#111827] underline underline-offset-2 decoration-1' : 'font-medium text-[#374151]'}`}>
-                                                {slv.name}
+                                              <p className={`text-[11px] leading-snug line-clamp-2 transition-all ${
+                                                isSelected ? 'font-bold text-[#111827]' : 'font-medium text-[#6B7280]'
+                                              }`}>
+                                                {cut.name}
                                               </p>
                                               <p className="text-[10px] text-[#9CA3AF] mt-0.5 tabular-nums">
                                                 {addOn > 0 ? `+RM ${addOn}` : 'Standard'}
                                               </p>
-                                              {isSelected && (
-                                                <span className="mt-1 flex items-center justify-center">
-                                                  <Check className="w-3 h-3 text-[#111827]" strokeWidth={2.5} />
-                                                </span>
-                                              )}
                                             </button>
                                           );
                                         })}
                                       </div>
                                     </div>
-                                  )}
+                                  </div>
 
-                                  {/* ─── SECTION C: SAIZ & KUANTITI (appears after both selected) ─── */}
-                                  {sheetDraft.cut && sheetDraft.sleeve && (
-                                    <div>
-                                      <p className="text-[10px] font-bold text-[#8E8E93] uppercase tracking-widest mb-3">
-                                        3 — Saiz &amp; Kuantiti
-                                      </p>
-
-                                      {/* Segmented Control: Dewasa / Kanak-kanak */}
-                                      <div className="flex bg-[#F2F2F7] rounded-xl p-0.5 mb-4">
-                                        {[
-                                          { key: 'adult', label: `Dewasa (${sheetAdultQty})` },
-                                          { key: 'kids',  label: `Kanak-kanak (${sheetKidsQty})` }
-                                        ].map(({ key, label }) => (
-                                          <button
-                                            key={key}
-                                            type="button"
-                                            onClick={() => setSheetDraft(prev => ({ ...prev, sizeTab: key }))}
-                                            className={`flex-1 py-2 rounded-[10px] text-xs font-semibold transition-all duration-150 cursor-pointer ${
-                                              sheetDraft.sizeTab === key
-                                                ? 'bg-white text-[#111827] shadow-sm'
-                                                : 'text-[#8E8E93]'
-                                            }`}
-                                          >
-                                            {label}
-                                          </button>
-                                        ))}
+                                  {/* ─────────────────────────────────────────────── */}
+                                  {/* SECTION B: PILIH LENGAN (unlocked after Kolar)  */}
+                                  {/* ─────────────────────────────────────────────── */}
+                                  <div className={`border-b border-[#F2F2F2] transition-all ${!sheetDraft.cut ? 'opacity-40 pointer-events-none' : ''}`}>
+                                    <button
+                                      type="button"
+                                      onClick={() => sheetDraft.sleeve && setSheetDraft(prev => ({ ...prev }))}
+                                      className="w-full flex items-center justify-between px-5 py-4 cursor-default"
+                                    >
+                                      <div className="flex items-center space-x-2.5">
+                                        <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
+                                          sheetDraft.sleeve ? 'bg-[#111827] text-white' : 'bg-[#F2F2F7] text-[#8E8E93]'
+                                        }`}>2</span>
+                                        <span className="text-[11px] font-semibold text-[#6B7280] uppercase tracking-widest">Jenis Lengan</span>
                                       </div>
+                                      {sheetDraft.sleeve && (
+                                        <div className="flex items-center space-x-1.5">
+                                          <span className="text-sm font-semibold text-[#111827]">{sheetDraft.sleeve.name}</span>
+                                          <CheckCircle2 className="w-4 h-4 text-[#111827] shrink-0" />
+                                        </div>
+                                      )}
+                                    </button>
 
-                                      {/* Size rows: clean thin stepper, no background pill */}
-                                      <div className="divide-y divide-[#F3F4F6]">
-                                        {sheetActiveSizes.map((sz) => {
-                                          const q = Number(sheetDraft.sizes[sz] || 0);
-                                          return (
-                                            <div key={sz} className="flex items-center justify-between py-3">
-                                              {/* Size label */}
-                                              <span className={`text-sm w-14 ${q > 0 ? 'font-bold text-[#111827]' : 'font-medium text-[#6B7280]'}`}>
-                                                {sz}
-                                              </span>
-
-                                              {/* Clean thin stepper — NO background pill */}
-                                              <div className="flex items-center space-x-3">
-                                                <button
-                                                  type="button"
-                                                  disabled={q <= 0}
-                                                  onClick={() => setSheetSize(sz, q - 1)}
-                                                  className={`w-8 h-8 rounded-full border flex items-center justify-center cursor-pointer transition-colors active:scale-90 text-lg leading-none select-none ${
-                                                    q <= 0
-                                                      ? 'border-[#E5E7EB] text-[#D1D5DB] cursor-not-allowed'
-                                                      : 'border-[#374151] text-[#111827] hover:border-[#111827]'
-                                                  }`}
-                                                >
-                                                  −
-                                                </button>
-                                                <span className={`w-6 text-center text-sm tabular-nums ${q > 0 ? 'font-bold text-[#111827]' : 'font-medium text-[#D1D5DB]'}`}>
-                                                  {q}
-                                                </span>
-                                                <button
-                                                  type="button"
-                                                  onClick={() => setSheetSize(sz, q + 1)}
-                                                  className="w-8 h-8 rounded-full border border-[#374151] text-[#111827] flex items-center justify-center cursor-pointer hover:border-[#111827] hover:bg-[#111827] hover:text-white transition-colors active:scale-90 text-lg leading-none select-none"
-                                                >
-                                                  +
-                                                </button>
-                                              </div>
-                                            </div>
-                                          );
-                                        })}
+                                    {sheetDraft.cut && (
+                                      <div className={`px-5 pb-5 ${sheetDraft.sleeve ? 'hidden' : 'block'}`}>
+                                        <div className="grid grid-cols-3 sm:grid-cols-4 gap-x-2.5 gap-y-4">
+                                          {sleeveTypes.map((slv) => {
+                                            const isSelected = sheetDraft.sleeve?.id === slv.id;
+                                            const addOn = Number(slv.addOnPrice ?? slv.add_on_price ?? 0);
+                                            return (
+                                              <button
+                                                key={slv.id}
+                                                type="button"
+                                                onClick={() => setSheetDraft(prev => ({ ...prev, sleeve: slv }))}
+                                                className="flex flex-col items-center text-center cursor-pointer select-none active:scale-95 transition-transform"
+                                              >
+                                                <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-[#F7F8F9] mb-2">
+                                                  <img
+                                                    src={slv.thumbnail || PLACEHOLDER_IMAGE}
+                                                    alt={slv.name}
+                                                    className="w-full h-full object-contain p-2.5"
+                                                  />
+                                                  {sheetDraft.sleeve && !isSelected && (
+                                                    <div className="absolute inset-0 bg-white/60 rounded-2xl" />
+                                                  )}
+                                                  {isSelected && (
+                                                    <div className="absolute inset-0 rounded-2xl ring-2 ring-[#111827] ring-inset flex items-end justify-end p-1.5">
+                                                      <span className="w-5 h-5 rounded-full bg-[#111827] flex items-center justify-center">
+                                                        <Check className="w-3 h-3 text-white" strokeWidth={3} />
+                                                      </span>
+                                                    </div>
+                                                  )}
+                                                </div>
+                                                <p className={`text-[11px] leading-snug line-clamp-2 transition-all ${
+                                                  isSelected ? 'font-bold text-[#111827]' : 'font-medium text-[#6B7280]'
+                                                }`}>
+                                                  {slv.name}
+                                                </p>
+                                                <p className="text-[10px] text-[#9CA3AF] mt-0.5 tabular-nums">
+                                                  {addOn > 0 ? `+RM ${addOn}` : 'Standard'}
+                                                </p>
+                                              </button>
+                                            );
+                                          })}
+                                        </div>
                                       </div>
+                                    )}
+                                  </div>
+
+                                  {/* ─────────────────────────────────────────────── */}
+                                  {/* SECTION C: SAIZ & KUANTITI                      */}
+                                  {/* ─────────────────────────────────────────────── */}
+                                  <div className={`transition-all ${!(sheetDraft.cut && sheetDraft.sleeve) ? 'opacity-40 pointer-events-none' : ''}`}>
+                                    <div className="px-5 py-4 flex items-center space-x-2.5">
+                                      <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
+                                        sheetDraftQty > 0 ? 'bg-[#111827] text-white' : 'bg-[#F2F2F7] text-[#8E8E93]'
+                                      }`}>3</span>
+                                      <span className="text-[11px] font-semibold text-[#6B7280] uppercase tracking-widest">Saiz &amp; Kuantiti</span>
+                                      {sheetDraftQty > 0 && (
+                                        <span className="ml-auto text-sm font-semibold text-[#111827] tabular-nums">{sheetDraftQty} pcs</span>
+                                      )}
                                     </div>
-                                  )}
 
-                                  {/* Bottom padding so last item is not hidden behind save bar */}
-                                  <div className="h-4" />
+                                    {sheetDraft.cut && sheetDraft.sleeve && (
+                                      <div className="px-5 pb-6">
+                                        {/* Segmented Control */}
+                                        <div className="flex bg-[#F2F2F7] rounded-xl p-[3px] mb-4">
+                                          {[
+                                            { key: 'adult', label: `Dewasa${sheetAdultQty > 0 ? ` · ${sheetAdultQty}` : ''}` },
+                                            { key: 'kids',  label: `Kanak-kanak${sheetKidsQty > 0 ? ` · ${sheetKidsQty}` : ''}` }
+                                          ].map(({ key, label }) => (
+                                            <button
+                                              key={key}
+                                              type="button"
+                                              onClick={() => setSheetDraft(prev => ({ ...prev, sizeTab: key }))}
+                                              className={`flex-1 py-2 rounded-[9px] text-[12px] font-medium transition-all duration-150 cursor-pointer ${
+                                                sheetDraft.sizeTab === key
+                                                  ? 'bg-white text-[#111827] font-semibold shadow-sm'
+                                                  : 'text-[#8E8E93]'
+                                              }`}
+                                            >
+                                              {label}
+                                            </button>
+                                          ))}
+                                        </div>
+
+                                        {/* Size rows — Lucide icon steppers */}
+                                        <div className="divide-y divide-[#F5F5F5]">
+                                          {sheetActiveSizes.map((sz) => {
+                                            const q = Number(sheetDraft.sizes[sz] || 0);
+                                            return (
+                                              <div key={sz} className="flex items-center justify-between py-3.5">
+                                                {/* Size label */}
+                                                <span className={`text-[15px] w-12 tabular-nums ${
+                                                  q > 0 ? 'font-semibold text-[#111827]' : 'font-normal text-[#AEAEAE]'
+                                                }`}>
+                                                  {sz}
+                                                </span>
+
+                                                {/* Lucide MinusCircle · count · PlusCircle */}
+                                                <div className="flex items-center space-x-3">
+                                                  <button
+                                                    type="button"
+                                                    disabled={q <= 0}
+                                                    onClick={() => setSheetSize(sz, q - 1)}
+                                                    className="cursor-pointer disabled:cursor-not-allowed active:scale-90 transition-transform"
+                                                  >
+                                                    <MinusCircle
+                                                      className={`w-7 h-7 transition-colors ${
+                                                        q <= 0 ? 'text-[#E5E7EB]' : 'text-[#374151] hover:text-[#111827]'
+                                                      }`}
+                                                      strokeWidth={1.5}
+                                                    />
+                                                  </button>
+                                                  <span className={`w-7 text-center text-[15px] tabular-nums ${
+                                                    q > 0 ? 'font-semibold text-[#111827]' : 'text-[#D4D4D4]'
+                                                  }`}>
+                                                    {q}
+                                                  </span>
+                                                  <button
+                                                    type="button"
+                                                    onClick={() => setSheetSize(sz, q + 1)}
+                                                    className="cursor-pointer active:scale-90 transition-transform"
+                                                  >
+                                                    <PlusCircle
+                                                      className="w-7 h-7 text-[#374151] hover:text-[#111827] transition-colors"
+                                                      strokeWidth={1.5}
+                                                    />
+                                                  </button>
+                                                </div>
+                                              </div>
+                                            );
+                                          })}
+                                        </div>
+                                      </div>
+                                    )}
+                                  </div>
+
+                                  {/* Bottom padding */}
+                                  <div className="h-6" />
                                 </div>
 
                                 {/* ── SHEET FOOTER: SIMPAN BUTTON ── */}
