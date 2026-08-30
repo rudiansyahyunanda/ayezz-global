@@ -218,9 +218,10 @@ export async function signInWithGoogle() {
     throw new Error('Supabase client belum disambungkan.');
   }
 
-  const redirectUrl = typeof window !== 'undefined'
-    ? `${window.location.origin}/auth/callback`
-    : 'https://www.ayezz.com/auth/callback';
+  let redirectUrl = 'https://www.ayezz.com/auth/callback';
+  if (typeof window !== 'undefined' && window.location.hostname.includes('ayezz.com')) {
+    redirectUrl = `${window.location.origin}/auth/callback`;
+  }
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
