@@ -406,6 +406,18 @@ function DashboardContent() {
     );
   };
 
+  const setGroupCutDirect = (groupId, cutObj) => {
+    setCutGroups((prev) =>
+      prev.map((g) => (g.id === groupId ? { ...g, cut: cutObj } : g))
+    );
+  };
+
+  const setGroupSleeveDirect = (groupId, sleeveObj) => {
+    setCutGroups((prev) =>
+      prev.map((g) => (g.id === groupId ? { ...g, sleeve: sleeveObj } : g))
+    );
+  };
+
   // Dynamic Price & Quantity Calculations across groups
   const basePricePerPcs = Number(selectedFabric?.basePrice ?? selectedFabric?.base_price ?? 70);
 
@@ -1121,100 +1133,100 @@ function DashboardContent() {
 
           {/* TAB 2: BUAT PESANAN BARU (LIGHTER SOFT GREY THEME CONFIGURATOR) */}
           {activeTab === 'new-order' && (
-            <div className="w-full space-y-8">
+            <div className="w-full space-y-6 pb-20 md:pb-0">
               
-              {/* MINIMALIST PROGRESS STEPPER (FIXED AT TOP OF VIEWPORT) */}
-              <div className="w-full bg-white p-5 rounded-2xl border border-slate-200/80 shadow-2xs shrink-0">
+              {/* MINIMALIST NATIVE PROGRESS STEPPER */}
+              <div className="w-full bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200/80 shadow-2xs shrink-0">
                 <div className="flex items-center justify-between max-w-4xl mx-auto">
                   
                   {/* STEP 1 BADGE */}
                   <div
                     onClick={() => setOrderStep(1)}
-                    className="flex items-center space-x-2.5 cursor-pointer group"
+                    className="flex items-center space-x-2 cursor-pointer group"
                   >
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-mono font-black transition-all ${
+                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-mono font-black transition-all ${
                       orderStep === 1
-                        ? 'bg-slate-700 text-white ring-4 ring-slate-700/10 shadow-sm'
+                        ? 'bg-slate-900 text-white shadow-xs'
                         : orderStep > 1
                         ? 'bg-emerald-600 text-white'
                         : 'bg-slate-100 text-slate-400 border border-slate-200'
                     }`}>
-                      {orderStep > 1 ? <Check className="w-4 h-4" /> : '1'}
+                      <Shirt className="w-4 h-4 shrink-0" />
                     </div>
-                    <div className="hidden sm:block">
-                      <span className="text-[9px] font-mono uppercase text-slate-400 font-bold block">LANGKAH 1</span>
-                      <span className={`text-xs font-extrabold uppercase ${orderStep === 1 ? 'text-slate-900' : 'text-slate-500'}`}>
-                        Reka Bentuk
+                    <div className={orderStep === 1 ? 'block' : 'hidden sm:block'}>
+                      <span className="text-[9px] font-mono uppercase text-slate-400 font-bold block">01</span>
+                      <span className="text-xs font-extrabold uppercase text-slate-900">
+                        Jersey
                       </span>
                     </div>
                   </div>
 
-                  <div className={`flex-1 h-0.5 mx-3 sm:mx-6 ${orderStep > 1 ? 'bg-emerald-600' : 'bg-slate-200'}`} />
+                  <div className={`flex-1 h-0.5 mx-2 sm:mx-6 ${orderStep > 1 ? 'bg-emerald-600' : 'bg-slate-200'}`} />
 
                   {/* STEP 2 BADGE */}
                   <div
                     onClick={() => setOrderStep(2)}
-                    className="flex items-center space-x-2.5 cursor-pointer group"
+                    className="flex items-center space-x-2 cursor-pointer group"
                   >
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-mono font-black transition-all ${
+                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-mono font-black transition-all ${
                       orderStep === 2
-                        ? 'bg-slate-700 text-white ring-4 ring-slate-700/10 shadow-sm'
+                        ? 'bg-slate-900 text-white shadow-xs'
                         : orderStep > 2
                         ? 'bg-emerald-600 text-white'
                         : 'bg-slate-100 text-slate-400 border border-slate-200'
                     }`}>
-                      {orderStep > 2 ? <Check className="w-4 h-4" /> : '2'}
+                      <Scissors className="w-4 h-4 shrink-0" />
                     </div>
-                    <div className="hidden sm:block">
-                      <span className="text-[9px] font-mono uppercase text-slate-400 font-bold block">LANGKAH 2</span>
-                      <span className={`text-xs font-extrabold uppercase ${orderStep === 2 ? 'text-slate-900' : 'text-slate-500'}`}>
-                        Potongan & Saiz
+                    <div className={orderStep === 2 ? 'block' : 'hidden sm:block'}>
+                      <span className="text-[9px] font-mono uppercase text-slate-400 font-bold block">02</span>
+                      <span className="text-xs font-extrabold uppercase text-slate-900">
+                        Specs
                       </span>
                     </div>
                   </div>
 
-                  <div className={`flex-1 h-0.5 mx-3 sm:mx-6 ${orderStep > 2 ? 'bg-emerald-600' : 'bg-slate-200'}`} />
+                  <div className={`flex-1 h-0.5 mx-2 sm:mx-6 ${orderStep > 2 ? 'bg-emerald-600' : 'bg-slate-200'}`} />
 
                   {/* STEP 3 BADGE */}
                   <div
                     onClick={() => setOrderStep(3)}
-                    className="flex items-center space-x-2.5 cursor-pointer group"
+                    className="flex items-center space-x-2 cursor-pointer group"
                   >
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-mono font-black transition-all ${
+                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-mono font-black transition-all ${
                       orderStep === 3
-                        ? 'bg-slate-700 text-white ring-4 ring-slate-700/10 shadow-sm'
+                        ? 'bg-slate-900 text-white shadow-xs'
                         : orderStep > 3
                         ? 'bg-emerald-600 text-white'
                         : 'bg-slate-100 text-slate-400 border border-slate-200'
                     }`}>
-                      {orderStep > 3 ? <Check className="w-4 h-4" /> : '3'}
+                      <Layers className="w-4 h-4 shrink-0" />
                     </div>
-                    <div className="hidden sm:block">
-                      <span className="text-[9px] font-mono uppercase text-slate-400 font-bold block">LANGKAH 3</span>
-                      <span className={`text-xs font-extrabold uppercase ${orderStep === 3 ? 'text-slate-900' : 'text-slate-500'}`}>
-                        Fabrik
+                    <div className={orderStep === 3 ? 'block' : 'hidden sm:block'}>
+                      <span className="text-[9px] font-mono uppercase text-slate-400 font-bold block">03</span>
+                      <span className="text-xs font-extrabold uppercase text-slate-900">
+                        Fabric
                       </span>
                     </div>
                   </div>
 
-                  <div className={`flex-1 h-0.5 mx-3 sm:mx-6 ${orderStep > 3 ? 'bg-emerald-600' : 'bg-slate-200'}`} />
+                  <div className={`flex-1 h-0.5 mx-2 sm:mx-6 ${orderStep > 3 ? 'bg-emerald-600' : 'bg-slate-200'}`} />
 
                   {/* STEP 4 BADGE */}
                   <div
                     onClick={() => setOrderStep(4)}
-                    className="flex items-center space-x-2.5 cursor-pointer group"
+                    className="flex items-center space-x-2 cursor-pointer group"
                   >
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-mono font-black transition-all ${
+                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-mono font-black transition-all ${
                       orderStep === 4
-                        ? 'bg-slate-700 text-white ring-4 ring-slate-700/10 shadow-sm'
+                        ? 'bg-slate-900 text-white shadow-xs'
                         : 'bg-slate-100 text-slate-400 border border-slate-200'
                     }`}>
-                      4
+                      <CheckCircle2 className="w-4 h-4 shrink-0" />
                     </div>
-                    <div className="hidden sm:block">
-                      <span className="text-[9px] font-mono uppercase text-slate-400 font-bold block">LANGKAH 4</span>
-                      <span className={`text-xs font-extrabold uppercase ${orderStep === 4 ? 'text-slate-900' : 'text-slate-500'}`}>
-                        Pengesahan
+                    <div className={orderStep === 4 ? 'block' : 'hidden sm:block'}>
+                      <span className="text-[9px] font-mono uppercase text-slate-400 font-bold block">04</span>
+                      <span className="text-xs font-extrabold uppercase text-slate-900">
+                        Checkout
                       </span>
                     </div>
                   </div>
@@ -1275,7 +1287,7 @@ function DashboardContent() {
                 </div>
               ) : (
                 /* MAIN WIZARD FULL WIDTH CANVAS FOR STEPS 1-3, 2-COLS ONLY FOR STEP 4 */
-                <form onSubmit={handleCreateNewOrder} className="w-full space-y-6">
+                <form id="order-wizard-form" onSubmit={handleCreateNewOrder} className="w-full space-y-6">
                   
                   {orderStep < 4 ? (
                     /* STEPS 1, 2 & 3: 100% FULL-WIDTH SPACIOUS CANVAS (NO RIGHT SUMMARY CARD CLUTTER!) */
@@ -1285,11 +1297,11 @@ function DashboardContent() {
                       {/* LANGKAH 1: REKA BENTUK (LARGE IMAGE SHOWCASE + DYNAMIC CHECKBOXES & LOGO/NAMES UPLOADS) */}
                       {/* ========================================================== */}
                       {orderStep === 1 && (
-                        <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-2xs space-y-6 w-full">
+                        <div className="bg-white p-4 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-2xs space-y-6 w-full">
                           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
                             <div>
                               <span className="text-[10px] font-mono text-slate-400 font-bold uppercase tracking-widest block">LANGKAH 1 DARI 4</span>
-                              <h3 className="text-lg font-black uppercase text-slate-900 pt-0.5">PILIH REKA BENTUK JERSI & CIRI KHAS</h3>
+                              <h3 className="text-base sm:text-lg font-black uppercase text-slate-900 pt-0.5">Order Jersey & Ciri Khas</h3>
                             </div>
 
                             {/* SEGMENTED CONTROL TOGGLE */}
@@ -1299,7 +1311,7 @@ function DashboardContent() {
                                 onClick={() => setIsCustomDesign(false)}
                                 className={`px-3.5 py-2 rounded-lg text-xs font-extrabold transition-all flex items-center space-x-1.5 cursor-pointer ${
                                   !isCustomDesign
-                                    ? 'bg-slate-700 text-white shadow-xs'
+                                    ? 'bg-slate-900 text-white shadow-xs'
                                     : 'text-slate-600 hover:text-slate-900'
                                 }`}
                               >
@@ -1312,7 +1324,7 @@ function DashboardContent() {
                                 onClick={() => setIsCustomDesign(true)}
                                 className={`px-3.5 py-2 rounded-lg text-xs font-extrabold transition-all flex items-center space-x-1.5 cursor-pointer ${
                                   isCustomDesign
-                                    ? 'bg-slate-700 text-white shadow-xs'
+                                    ? 'bg-slate-900 text-white shadow-xs'
                                     : 'text-slate-600 hover:text-slate-900'
                                 }`}
                               >
@@ -1325,7 +1337,7 @@ function DashboardContent() {
                           {!isCustomDesign ? (
                             <div className="grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
                               {/* LARGE 1:1 HIGH-RES PREVIEW CARD */}
-                              <div className="md:col-span-5 p-6 bg-[#F8FAFC] border border-slate-200 rounded-3xl flex flex-col items-center justify-center space-y-4">
+                              <div className="md:col-span-5 p-6 bg-slate-50 border border-slate-200 rounded-3xl flex flex-col items-center justify-center space-y-4">
                                 <div className="w-full aspect-square max-w-[280px] bg-white border border-slate-200/90 rounded-2xl p-4 flex items-center justify-center shadow-xs overflow-hidden">
                                   {selectedTemplateObj ? (
                                     <img
@@ -1350,67 +1362,94 @@ function DashboardContent() {
                                 <button
                                   type="button"
                                   onClick={() => setIsTemplateModalOpen(true)}
-                                  className="w-full py-3 bg-slate-200 hover:bg-slate-300 text-slate-900 font-bold text-xs uppercase tracking-wider rounded-xl transition-all border border-slate-300/80 cursor-pointer"
+                                  className="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-xs cursor-pointer"
                                 >
                                   Tukar Template Reka Bentuk →
                                 </button>
                               </div>
 
-                              {/* SPECIFICATION OPTIONS & DYNAMIC CHECKBOXES */}
+                              {/* SPECIFICATION OPTIONS & NATIVE TOGGLE SWITCHES */}
                               <div className="md:col-span-7 space-y-6">
                                 <div className="space-y-3">
-                                  <label className="text-xs font-bold text-slate-800 uppercase block">
-                                    1. PILIHAN CIRI TAMBAHAN (SECARA DEFAULT BELUM DICEKLIS)
+                                  <label className="text-xs font-extrabold text-slate-900 uppercase block">
+                                    Pilihan Ciri Tambahan Jersi:
                                   </label>
 
-                                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                                    {/* CHECKBOX 1: NAMA & NOMBOR PEMAIN */}
-                                    <label className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-start space-x-3 ${
-                                      hasPlayerNames ? 'bg-slate-100 border-slate-400 shadow-2xs ring-2 ring-slate-300' : 'bg-white border-slate-200 hover:border-slate-300'
-                                    }`}>
-                                      <input
-                                        type="checkbox"
-                                        checked={hasPlayerNames}
-                                        onChange={(e) => setHasPlayerNames(e.target.checked)}
-                                        className="mt-0.5 accent-slate-800 w-4 h-4 cursor-pointer"
-                                      />
-                                      <div>
-                                        <span className="text-xs font-extrabold text-slate-900 block">Nama & Nombor</span>
-                                        <span className="text-[10px] text-slate-500 block">Cetakan nama pemain kustom</span>
+                                  <div className="space-y-2.5">
+                                    {/* TOGGLE 1: NAMA & NOMBOR PEMAIN */}
+                                    <div
+                                      onClick={() => setHasPlayerNames(!hasPlayerNames)}
+                                      className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-center justify-between ${
+                                        hasPlayerNames
+                                          ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
+                                          : 'bg-white text-slate-900 border-slate-200 hover:border-slate-300'
+                                      }`}
+                                    >
+                                      <div className="flex items-center space-x-3">
+                                        <div className={`p-2 rounded-xl ${hasPlayerNames ? 'bg-slate-800 text-emerald-400' : 'bg-slate-100 text-slate-600'}`}>
+                                          <User className="w-4 h-4 shrink-0" />
+                                        </div>
+                                        <div>
+                                          <span className="text-xs font-extrabold block">Nama & Nombor Pemain</span>
+                                          <span className={`text-[10px] block ${hasPlayerNames ? 'text-slate-300' : 'text-slate-500'}`}>Cetakan nama & no. baju individu</span>
+                                        </div>
                                       </div>
-                                    </label>
 
-                                    {/* CHECKBOX 2: LOGO PASUKAN */}
-                                    <label className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-start space-x-3 ${
-                                      hasTeamLogo ? 'bg-slate-100 border-slate-400 shadow-2xs ring-2 ring-slate-300' : 'bg-white border-slate-200 hover:border-slate-300'
-                                    }`}>
-                                      <input
-                                        type="checkbox"
-                                        checked={hasTeamLogo}
-                                        onChange={(e) => setHasTeamLogo(e.target.checked)}
-                                        className="mt-0.5 accent-slate-800 w-4 h-4 cursor-pointer"
-                                      />
-                                      <div>
-                                        <span className="text-xs font-extrabold text-slate-900 block">Logo Pasukan</span>
-                                        <span className="text-[10px] text-slate-500 block">Cetak di dada jersi</span>
+                                      {/* Switch Toggle Knob */}
+                                      <div className={`w-11 h-6 rounded-full transition-colors relative p-0.5 shrink-0 ${hasPlayerNames ? 'bg-emerald-500' : 'bg-slate-200'}`}>
+                                        <div className={`w-5 h-5 rounded-full bg-white shadow-xs transition-transform transform ${hasPlayerNames ? 'translate-x-5' : 'translate-x-0'}`} />
                                       </div>
-                                    </label>
+                                    </div>
 
-                                    {/* CHECKBOX 3: LOGO SPONSOR */}
-                                    <label className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-start space-x-3 ${
-                                      hasSponsorLogo ? 'bg-slate-100 border-slate-400 shadow-2xs ring-2 ring-slate-300' : 'bg-white border-slate-200 hover:border-slate-300'
-                                    }`}>
-                                      <input
-                                        type="checkbox"
-                                        checked={hasSponsorLogo}
-                                        onChange={(e) => setHasSponsorLogo(e.target.checked)}
-                                        className="mt-0.5 accent-slate-800 w-4 h-4 cursor-pointer"
-                                      />
-                                      <div>
-                                        <span className="text-xs font-extrabold text-slate-900 block">Logo Sponsor</span>
-                                        <span className="text-[10px] text-slate-500 block">Cetakan sponsor tambahan</span>
+                                    {/* TOGGLE 2: LOGO PASUKAN */}
+                                    <div
+                                      onClick={() => setHasTeamLogo(!hasTeamLogo)}
+                                      className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-center justify-between ${
+                                        hasTeamLogo
+                                          ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
+                                          : 'bg-white text-slate-900 border-slate-200 hover:border-slate-300'
+                                      }`}
+                                    >
+                                      <div className="flex items-center space-x-3">
+                                        <div className={`p-2 rounded-xl ${hasTeamLogo ? 'bg-slate-800 text-emerald-400' : 'bg-slate-100 text-slate-600'}`}>
+                                          <ShieldCheck className="w-4 h-4 shrink-0" />
+                                        </div>
+                                        <div>
+                                          <span className="text-xs font-extrabold block">Logo Pasukan (Crest)</span>
+                                          <span className={`text-[10px] block ${hasTeamLogo ? 'text-slate-300' : 'text-slate-500'}`}>Muat naik & cetak logo kelab di dada</span>
+                                        </div>
                                       </div>
-                                    </label>
+
+                                      {/* Switch Toggle Knob */}
+                                      <div className={`w-11 h-6 rounded-full transition-colors relative p-0.5 shrink-0 ${hasTeamLogo ? 'bg-emerald-500' : 'bg-slate-200'}`}>
+                                        <div className={`w-5 h-5 rounded-full bg-white shadow-xs transition-transform transform ${hasTeamLogo ? 'translate-x-5' : 'translate-x-0'}`} />
+                                      </div>
+                                    </div>
+
+                                    {/* TOGGLE 3: LOGO SPONSOR */}
+                                    <div
+                                      onClick={() => setHasSponsorLogo(!hasSponsorLogo)}
+                                      className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-center justify-between ${
+                                        hasSponsorLogo
+                                          ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
+                                          : 'bg-white text-slate-900 border-slate-200 hover:border-slate-300'
+                                      }`}
+                                    >
+                                      <div className="flex items-center space-x-3">
+                                        <div className={`p-2 rounded-xl ${hasSponsorLogo ? 'bg-slate-800 text-emerald-400' : 'bg-slate-100 text-slate-600'}`}>
+                                          <Sparkles className="w-4 h-4 shrink-0" />
+                                        </div>
+                                        <div>
+                                          <span className="text-xs font-extrabold block">Logo Penaja / Sponsor</span>
+                                          <span className={`text-[10px] block ${hasSponsorLogo ? 'text-slate-300' : 'text-slate-500'}`}>Cetakan penaja tambahan jersi</span>
+                                        </div>
+                                      </div>
+
+                                      {/* Switch Toggle Knob */}
+                                      <div className={`w-11 h-6 rounded-full transition-colors relative p-0.5 shrink-0 ${hasSponsorLogo ? 'bg-emerald-500' : 'bg-slate-200'}`}>
+                                        <div className={`w-5 h-5 rounded-full bg-white shadow-xs transition-transform transform ${hasSponsorLogo ? 'translate-x-5' : 'translate-x-0'}`} />
+                                      </div>
+                                    </div>
                                   </div>
                                 </div>
 
@@ -1516,60 +1555,73 @@ function DashboardContent() {
                                     {/* MODE 1: INPUT MANUAL DYNAMIC TABLE & MOBILE CARDS */}
                                     {playerInputMode === 'manual' ? (
                                       <div className="space-y-3">
-                                        {/* MOBILE RESPONSIVE CARDS (MD:HIDDEN) */}
+                                        {/* MOBILE RESPONSIVE VERTICAL CARDS FOR PLAYER INPUT (MD:HIDDEN) */}
                                         <div className="space-y-3 md:hidden">
                                           {playerRows.map((row, idx) => (
-                                            <div key={row.id} className="p-3 bg-white border border-slate-200 rounded-xl space-y-2 relative shadow-2xs">
-                                              <div className="flex items-center justify-between">
-                                                <span className="text-[10px] font-mono font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                                            <div key={row.id} className="p-4 bg-white border border-slate-200 rounded-2xl space-y-3 relative shadow-2xs">
+                                              <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                                                <span className="text-xs font-mono font-extrabold text-slate-900">
                                                   Pemain #{idx + 1}
                                                 </span>
                                                 <button
                                                   type="button"
                                                   onClick={() => removePlayerRow(row.id)}
                                                   className="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
-                                                  title="Padam"
+                                                  title="Padam Pemain"
                                                 >
                                                   <Trash2 className="w-4 h-4 shrink-0" />
                                                 </button>
                                               </div>
 
-                                              <div className="grid grid-cols-12 gap-2">
-                                                <div className="col-span-6">
-                                                  <label className="text-[9px] font-bold text-slate-500 uppercase block mb-1">Nama Pemain</label>
+                                              <div className="space-y-2.5">
+                                                <div>
+                                                  <label className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Nama Pemain</label>
                                                   <input
                                                     type="text"
                                                     placeholder="Contoh: MUHAMMAD ALI"
                                                     value={row.name}
                                                     onChange={(e) => updatePlayerRow(row.id, 'name', e.target.value)}
-                                                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs font-bold text-slate-900 outline-none focus:bg-white focus:border-slate-400 uppercase"
+                                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-900 outline-none focus:bg-white focus:border-slate-900 uppercase"
                                                   />
                                                 </div>
-                                                <div className="col-span-3">
-                                                  <label className="text-[9px] font-bold text-slate-500 uppercase block mb-1">No. Baju</label>
-                                                  <input
-                                                    type="text"
-                                                    placeholder="10"
-                                                    value={row.number}
-                                                    onChange={(e) => updatePlayerRow(row.id, 'number', e.target.value)}
-                                                    className="w-full text-center bg-slate-50 border border-slate-200 rounded-lg px-2 py-2 text-xs font-black text-slate-900 outline-none focus:bg-white focus:border-slate-400"
-                                                  />
-                                                </div>
-                                                <div className="col-span-3">
-                                                  <label className="text-[9px] font-bold text-slate-500 uppercase block mb-1">Saiz</label>
-                                                  <select
-                                                    value={row.size}
-                                                    onChange={(e) => updatePlayerRow(row.id, 'size', e.target.value)}
-                                                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-2 text-xs font-bold text-slate-900 outline-none focus:bg-white cursor-pointer"
-                                                  >
-                                                    {ALL_SIZES.map((sz) => (
-                                                      <option key={sz} value={sz}>{sz}</option>
-                                                    ))}
-                                                  </select>
+
+                                                <div className="grid grid-cols-2 gap-2.5">
+                                                  <div>
+                                                    <label className="text-[10px] font-bold text-slate-500 uppercase block mb-1">No. Baju</label>
+                                                    <input
+                                                      type="text"
+                                                      placeholder="10"
+                                                      value={row.number}
+                                                      onChange={(e) => updatePlayerRow(row.id, 'number', e.target.value)}
+                                                      className="w-full text-center bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-black text-slate-900 outline-none focus:bg-white focus:border-slate-900"
+                                                    />
+                                                  </div>
+
+                                                  <div>
+                                                    <label className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Saiz Jersi</label>
+                                                    <select
+                                                      value={row.size}
+                                                      onChange={(e) => updatePlayerRow(row.id, 'size', e.target.value)}
+                                                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-900 outline-none focus:bg-white cursor-pointer"
+                                                    >
+                                                      {ALL_SIZES.map((sz) => (
+                                                        <option key={sz} value={sz}>{sz}</option>
+                                                      ))}
+                                                    </select>
+                                                  </div>
                                                 </div>
                                               </div>
                                             </div>
                                           ))}
+
+                                          <button
+                                            type="button"
+                                            onClick={addPlayerRow}
+                                            className="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all inline-flex items-center justify-center space-x-2 cursor-pointer shadow-xs whitespace-nowrap shrink-0"
+                                          >
+                                            <Plus className="w-4 h-4 text-white shrink-0" />
+                                            <span className="whitespace-nowrap">Tambah Pemain Baru</span>
+                                          </button>
                                         </div>
 
                                         {/* DESKTOP TABLE (HIDDEN ON MOBILE) */}
@@ -1803,7 +1855,7 @@ function DashboardContent() {
                                     </div>
                                   </div>
 
-                                  {/* COLLAR CUT & SLEEVE SELECTION MODAL CARD BUTTONS */}
+                                  {/* COLLAR CUT & SLEEVE SELECTION VISUAL GRID FOR MOBILE & DESKTOP */}
                                   <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
                                     
                                     {/* COLLAR CUT */}
@@ -1812,7 +1864,39 @@ function DashboardContent() {
                                         1. POTONGAN KOLAR
                                       </label>
 
-                                      <div className="p-3 bg-slate-50/80 border border-slate-200 rounded-xl flex items-center justify-between">
+                                      {/* MOBILE VISUAL 2-COLUMN GRID (MD:HIDDEN) */}
+                                      <div className="md:hidden grid grid-cols-2 gap-2">
+                                        {cutTypes.map((cut) => {
+                                          const isSelected = group.cut?.id === cut.id;
+                                          const addOn = Number(cut.addOnPrice ?? cut.add_on_price ?? 0);
+                                          return (
+                                            <div
+                                              key={cut.id}
+                                              onClick={() => setGroupCutDirect(group.id, cut)}
+                                              className={`p-3 rounded-2xl border cursor-pointer transition-all flex flex-col items-center justify-between text-center space-y-2 ${
+                                                isSelected
+                                                  ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
+                                                  : 'bg-white text-slate-800 border-slate-200 hover:border-slate-400'
+                                              }`}
+                                            >
+                                              <img
+                                                src={cut.thumbnail || PLACEHOLDER_IMAGE}
+                                                alt={cut.name}
+                                                className="w-14 h-14 object-contain bg-slate-50 rounded-xl p-1 shrink-0"
+                                              />
+                                              <div>
+                                                <span className="text-xs font-extrabold block truncate">{cut.name}</span>
+                                                <span className="text-[10px] font-mono opacity-80 block">
+                                                  {addOn > 0 ? `+RM ${addOn}` : 'Standard'}
+                                                </span>
+                                              </div>
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
+
+                                      {/* DESKTOP COLLAR CUT SELECTOR */}
+                                      <div className="hidden md:flex p-3 bg-slate-50/80 border border-slate-200 rounded-xl items-center justify-between">
                                         <div className="flex items-center space-x-3 min-w-0">
                                           <img
                                             src={activeCutImg}
@@ -1846,7 +1930,39 @@ function DashboardContent() {
                                         2. JENIS LENGAN (SLEEVE)
                                       </label>
 
-                                      <div className="p-3 bg-slate-50/80 border border-slate-200 rounded-xl flex items-center justify-between">
+                                      {/* MOBILE VISUAL 2-COLUMN GRID (MD:HIDDEN) */}
+                                      <div className="md:hidden grid grid-cols-2 gap-2">
+                                        {sleeveTypes.map((slv) => {
+                                          const isSelected = group.sleeve?.id === slv.id;
+                                          const addOn = Number(slv.addOnPrice ?? slv.add_on_price ?? 0);
+                                          return (
+                                            <div
+                                              key={slv.id}
+                                              onClick={() => setGroupSleeveDirect(group.id, slv)}
+                                              className={`p-3 rounded-2xl border cursor-pointer transition-all flex flex-col items-center justify-between text-center space-y-2 ${
+                                                isSelected
+                                                  ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
+                                                  : 'bg-white text-slate-800 border-slate-200 hover:border-slate-400'
+                                              }`}
+                                            >
+                                              <img
+                                                src={slv.thumbnail || PLACEHOLDER_IMAGE}
+                                                alt={slv.name}
+                                                className="w-14 h-14 object-contain bg-slate-50 rounded-xl p-1 shrink-0"
+                                              />
+                                              <div>
+                                                <span className="text-xs font-extrabold block truncate">{slv.name}</span>
+                                                <span className="text-[10px] font-mono opacity-80 block">
+                                                  {addOn > 0 ? `+RM ${addOn}` : 'Standard'}
+                                                </span>
+                                              </div>
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
+
+                                      {/* DESKTOP SLEEVE SELECTOR */}
+                                      <div className="hidden md:flex p-3 bg-slate-50/80 border border-slate-200 rounded-xl items-center justify-between">
                                         <div className="flex items-center space-x-3 min-w-0">
                                           <img
                                             src={activeSleeveImg}
@@ -2022,50 +2138,53 @@ function DashboardContent() {
                       )}
 
                       {/* ========================================================== */}
-                      {/* LANGKAH 3: FABRIK SUBLIMASI (FULL-WIDTH 100% SPACIOUS GRID!) */}
+                      {/* LANGKAH 3: FABRIK SUBLIMASI (VISUAL FABRIC CARDS GRID - DIRECTIVE 6) */}
                       {/* ========================================================== */}
                       {orderStep === 3 && (
-                        <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-2xs space-y-6 w-full">
+                        <div className="bg-white p-4 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-2xs space-y-6 w-full">
                           <div className="border-b border-slate-100 pb-4">
                             <span className="text-[10px] font-mono text-slate-400 font-bold uppercase tracking-widest block">LANGKAH 3 DARI 4</span>
-                            <h3 className="text-lg font-black uppercase text-slate-900 pt-0.5">PILIH BAHAN KAIN / FABRIK SUBLIMASI</h3>
+                            <h3 className="text-base sm:text-lg font-black uppercase text-slate-900 pt-0.5">PILIH BAHAN KAIN / FABRIK SUBLIMASI</h3>
                           </div>
 
-                          <div className="grid grid-cols-1 sm:grid-cols-3 md:grid-cols-4 gap-5 w-full">
+                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
                             {fabricTypes.map((fab) => {
                               const isSelected = selectedFabric.id === fab.id;
                               const baseP = Number(fab.basePrice ?? fab.base_price ?? 70);
+                              const gsm = fab.gsm || '150 GSM';
                               return (
                                 <div
                                   key={fab.id}
                                   onClick={() => setSelectedFabric(fab)}
-                                  className={`p-6 rounded-2xl border cursor-pointer transition-all flex flex-col justify-between space-y-4 relative ${
+                                  className={`p-5 rounded-2xl border cursor-pointer transition-all flex flex-col justify-between space-y-4 relative ${
                                     isSelected
-                                      ? 'bg-slate-100 text-slate-900 border-slate-400 shadow-md ring-2 ring-slate-300'
-                                      : 'bg-white text-slate-800 border-slate-200 hover:border-slate-400 hover:bg-slate-50'
+                                      ? 'bg-slate-900 text-white border-slate-900 shadow-md ring-2 ring-slate-400'
+                                      : 'bg-white text-slate-900 border-slate-200 hover:border-slate-400 hover:bg-slate-50'
                                   }`}
                                 >
-                                  {isSelected && (
-                                    <span className="absolute top-3 right-3 bg-slate-900 text-white p-1 rounded-full shadow-xs">
-                                      <Check className="w-3.5 h-3.5 text-white" />
+                                  <div className="flex items-start justify-between">
+                                    <span className={`text-[10px] font-mono font-black uppercase px-2.5 py-1 rounded-full border ${
+                                      isSelected ? 'bg-slate-800 text-emerald-400 border-slate-700' : 'bg-slate-100 text-slate-600 border-slate-200'
+                                    }`}>
+                                      {gsm}
                                     </span>
-                                  )}
+                                    {isSelected && (
+                                      <span className="bg-emerald-500 text-white p-1 rounded-full shadow-xs">
+                                        <Check className="w-3.5 h-3.5 text-white" />
+                                      </span>
+                                    )}
+                                  </div>
 
-                                  <div className="space-y-1.5">
-                                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider block text-slate-400">
-                                      {fab.gsm || '150 GSM'} • {fab.tier || 'PREMIUM'}
-                                    </span>
-                                    <h4 className="text-sm font-extrabold uppercase line-clamp-1">{fab.name}</h4>
-                                    <p className="text-[11px] line-clamp-3 leading-relaxed text-slate-600">
-                                      {fab.desc || fab.description || 'Kain sublimasi berkualiti tinggi'}
+                                  <div className="space-y-1">
+                                    <h4 className="text-sm font-extrabold uppercase tracking-tight">{fab.name}</h4>
+                                    <p className={`text-xs font-mono ${isSelected ? 'text-slate-300' : 'text-slate-500'}`}>
+                                      Kain Sublimasi High-Performance
                                     </p>
                                   </div>
 
-                                  <div className="pt-3 border-t border-slate-200/80 flex items-center justify-between">
-                                    <span className="text-[10px] font-mono uppercase text-slate-500">HARGA ASAS:</span>
-                                    <span className="text-sm font-mono font-black text-slate-900">
-                                      RM {baseP}.00 / pcs
-                                    </span>
+                                  <div className="pt-3 border-t border-slate-200/40 flex items-center justify-between">
+                                    <span className="text-xs font-mono font-bold">Harga Asas:</span>
+                                    <span className="text-base font-black">RM {baseP}.00 / pcs</span>
                                   </div>
                                 </div>
                               );
@@ -2248,6 +2367,56 @@ function DashboardContent() {
                   )}
 
                 </form>
+              )}
+
+              {/* FIXED NATIVE MOBILE BOTTOM NAVIGATION BAR (DIRECTIVE 7 & 8) */}
+              {!orderSuccessData && (
+                <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 p-3 sm:p-4 shadow-xl md:hidden font-sans">
+                  <div className="flex items-center justify-between gap-3 max-w-lg mx-auto">
+                    {/* Total Price Summary */}
+                    <div className="min-w-0 flex-1">
+                      <span className="text-[9px] font-mono font-bold text-slate-400 uppercase tracking-widest block">ANGGARAN HARGA</span>
+                      <div className="flex items-baseline space-x-1 truncate">
+                        <span className="text-base font-black text-slate-900 truncate">RM {groupCalculations.totalPrice.toFixed(2)}</span>
+                        <span className="text-[10px] font-mono text-slate-500 font-bold">({groupCalculations.totalQty} pcs)</span>
+                      </div>
+                    </div>
+
+                    {/* Nav Controls Pair */}
+                    <div className="flex items-center space-x-2 shrink-0">
+                      {orderStep > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => setOrderStep(orderStep - 1)}
+                          className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-xs rounded-xl transition-all border border-slate-200 active:scale-95 whitespace-nowrap shrink-0 cursor-pointer"
+                        >
+                          ← Kembali
+                        </button>
+                      )}
+
+                      {orderStep < 4 ? (
+                        <button
+                          type="button"
+                          onClick={() => setOrderStep(orderStep + 1)}
+                          className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-95 flex items-center space-x-1 whitespace-nowrap shrink-0 cursor-pointer"
+                        >
+                          <span>Teruskan: {orderStep === 1 ? 'Specs' : orderStep === 2 ? 'Fabrik' : 'Checkout'}</span>
+                          <ChevronRight className="w-4 h-4 text-white shrink-0" />
+                        </button>
+                      ) : (
+                        <button
+                          type="submit"
+                          form="order-wizard-form"
+                          disabled={isSubmittingOrder || groupCalculations.totalQty <= 0}
+                          className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-95 flex items-center space-x-1 whitespace-nowrap shrink-0 cursor-pointer disabled:opacity-50"
+                        >
+                          <span>Bayar Tempahan</span>
+                          <ChevronRight className="w-4 h-4 text-white shrink-0" />
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                </div>
               )}
             </div>
           )}
