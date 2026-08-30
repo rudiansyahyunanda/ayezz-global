@@ -48,7 +48,8 @@ import {
   Info,
   CheckSquare,
   FileSpreadsheet,
-  Edit3
+  Edit3,
+  Ruler
 } from 'lucide-react';
 
 import { getCurrentUser, logoutUser, updateUserProfile } from '../../lib/authService';
@@ -173,6 +174,10 @@ function DashboardContent() {
 
   const [isSleeveModalOpen, setIsSleeveModalOpen] = useState(false);
   const [activeGroupIdForSleeve, setActiveGroupIdForSleeve] = useState(null);
+
+  // Mobile Size Bottom Sheet Modal
+  const [isMobileSizeModalOpen, setIsMobileSizeModalOpen] = useState(false);
+  const [activeGroupIdForSize, setActiveGroupIdForSize] = useState(null);
 
   // Customer & Shipping Info
   const [customerInfo, setCustomerInfo] = useState({
@@ -1883,73 +1888,97 @@ function DashboardContent() {
                                       </span>
                                     </div>
 
-                                    {/* ADULT SIZES THIN-BORDER TABLE */}
-                                    <div className="space-y-1.5 w-full">
-                                      <span className="text-[10px] font-mono text-slate-500 font-bold block">SAIZ DEWASA (ADULT)</span>
-                                      <div className="overflow-x-auto border border-slate-200 rounded-xl bg-white w-full">
-                                        <table className="w-full text-center divide-y divide-slate-200 text-xs">
-                                          <thead>
-                                            <tr className="bg-slate-50/80 divide-x divide-slate-200 text-[11px] font-mono font-bold text-slate-700 uppercase">
-                                              {ADULT_SIZES.map((sz) => (
-                                                <th key={sz} className="py-2 px-2 font-extrabold">{sz}</th>
-                                              ))}
-                                            </tr>
-                                          </thead>
-                                          <tbody>
-                                            <tr className="divide-x divide-slate-200 bg-white">
-                                              {ADULT_SIZES.map((sz) => {
-                                                const q = group.sizes?.[sz] || 0;
-                                                return (
-                                                  <td key={sz} className="p-1">
-                                                    <input
-                                                      type="number"
-                                                      min="0"
-                                                      value={q === 0 ? '' : q}
-                                                      placeholder="0"
-                                                      onChange={(e) => setGroupSizeQtyDirect(group.id, sz, e.target.value)}
-                                                      className="w-full text-center py-1.5 px-1 font-mono font-bold text-slate-900 bg-transparent focus:bg-slate-50 outline-none text-xs"
-                                                    />
-                                                  </td>
-                                                );
-                                              })}
-                                            </tr>
-                                          </tbody>
-                                        </table>
-                                      </div>
+                                    {/* MOBILE SIZE TRIGGER BUTTON (MD:HIDDEN) */}
+                                    <div className="md:hidden pt-1">
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          setActiveGroupIdForSize(group.id);
+                                          setIsMobileSizeModalOpen(true);
+                                        }}
+                                        className="w-full py-3.5 px-4 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-extrabold text-xs flex items-center justify-between shadow-xs active:scale-98 transition-all cursor-pointer"
+                                      >
+                                        <div className="flex items-center space-x-2">
+                                          <Ruler className="w-4 h-4 text-emerald-400 shrink-0" />
+                                          <span>Saiz & Kuantiti: <strong className="text-white font-mono">{group.qty} pcs</strong></span>
+                                        </div>
+                                        <div className="flex items-center space-x-1 text-slate-300 text-[11px] uppercase font-bold">
+                                          <span>Kemaskini Saiz</span>
+                                          <ChevronRight className="w-4 h-4 shrink-0 text-white" />
+                                        </div>
+                                      </button>
                                     </div>
 
-                                    {/* KIDS SIZES THIN-BORDER TABLE */}
-                                    <div className="space-y-1.5 pt-1 w-full">
-                                      <span className="text-[10px] font-mono text-slate-500 font-bold block">SAIZ KANAK-KANAK (KIDS)</span>
-                                      <div className="overflow-x-auto border border-slate-200 rounded-xl bg-white w-full">
-                                        <table className="w-full text-center divide-y divide-slate-200 text-xs">
-                                          <thead>
-                                            <tr className="bg-slate-50/80 divide-x divide-slate-200 text-[11px] font-mono font-bold text-slate-700 uppercase">
-                                              {KIDS_SIZES.map((sz) => (
-                                                <th key={sz} className="py-2 px-2 font-extrabold">Saiz {sz}</th>
-                                              ))}
-                                            </tr>
-                                          </thead>
-                                          <tbody>
-                                            <tr className="divide-x divide-slate-200 bg-white">
-                                              {KIDS_SIZES.map((sz) => {
-                                                const q = group.sizes?.[sz] || 0;
-                                                return (
-                                                  <td key={sz} className="p-1">
-                                                    <input
-                                                      type="number"
-                                                      min="0"
-                                                      value={q === 0 ? '' : q}
-                                                      placeholder="0"
-                                                      onChange={(e) => setGroupSizeQtyDirect(group.id, sz, e.target.value)}
-                                                      className="w-full text-center py-1.5 px-1 font-mono font-bold text-slate-900 bg-transparent focus:bg-slate-50 outline-none text-xs"
-                                                    />
-                                                  </td>
-                                                );
-                                              })}
-                                            </tr>
-                                          </tbody>
-                                        </table>
+                                    {/* DESKTOP SIZES THIN-BORDER TABLES (HIDDEN ON MOBILE) */}
+                                    <div className="hidden md:block space-y-4 w-full">
+                                      {/* ADULT SIZES THIN-BORDER TABLE */}
+                                      <div className="space-y-1.5 w-full">
+                                        <span className="text-[10px] font-mono text-slate-500 font-bold block">SAIZ DEWASA (ADULT)</span>
+                                        <div className="overflow-x-auto border border-slate-200 rounded-xl bg-white w-full">
+                                          <table className="w-full text-center divide-y divide-slate-200 text-xs">
+                                            <thead>
+                                              <tr className="bg-slate-50/80 divide-x divide-slate-200 text-[11px] font-mono font-bold text-slate-700 uppercase">
+                                                {ADULT_SIZES.map((sz) => (
+                                                  <th key={sz} className="py-2 px-2 font-extrabold">{sz}</th>
+                                                ))}
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                              <tr className="divide-x divide-slate-200 bg-white">
+                                                {ADULT_SIZES.map((sz) => {
+                                                  const q = group.sizes?.[sz] || 0;
+                                                  return (
+                                                    <td key={sz} className="p-1">
+                                                      <input
+                                                        type="number"
+                                                        min="0"
+                                                        value={q === 0 ? '' : q}
+                                                        placeholder="0"
+                                                        onChange={(e) => setGroupSizeQtyDirect(group.id, sz, e.target.value)}
+                                                        className="w-full text-center py-1.5 px-1 font-mono font-bold text-slate-900 bg-transparent focus:bg-slate-50 outline-none text-xs"
+                                                      />
+                                                    </td>
+                                                  );
+                                                })}
+                                              </tr>
+                                            </tbody>
+                                          </table>
+                                        </div>
+                                      </div>
+
+                                      {/* KIDS SIZES THIN-BORDER TABLE */}
+                                      <div className="space-y-1.5 pt-1 w-full">
+                                        <span className="text-[10px] font-mono text-slate-500 font-bold block">SAIZ KANAK-KANAK (KIDS)</span>
+                                        <div className="overflow-x-auto border border-slate-200 rounded-xl bg-white w-full">
+                                          <table className="w-full text-center divide-y divide-slate-200 text-xs">
+                                            <thead>
+                                              <tr className="bg-slate-50/80 divide-x divide-slate-200 text-[11px] font-mono font-bold text-slate-700 uppercase">
+                                                {KIDS_SIZES.map((sz) => (
+                                                  <th key={sz} className="py-2 px-2 font-extrabold">Saiz {sz}</th>
+                                                ))}
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                              <tr className="divide-x divide-slate-200 bg-white">
+                                                {KIDS_SIZES.map((sz) => {
+                                                  const q = group.sizes?.[sz] || 0;
+                                                  return (
+                                                    <td key={sz} className="p-1">
+                                                      <input
+                                                        type="number"
+                                                        min="0"
+                                                        value={q === 0 ? '' : q}
+                                                        placeholder="0"
+                                                        onChange={(e) => setGroupSizeQtyDirect(group.id, sz, e.target.value)}
+                                                        className="w-full text-center py-1.5 px-1 font-mono font-bold text-slate-900 bg-transparent focus:bg-slate-50 outline-none text-xs"
+                                                      />
+                                                    </td>
+                                                  );
+                                                })}
+                                              </tr>
+                                            </tbody>
+                                          </table>
+                                        </div>
                                       </div>
                                     </div>
 
@@ -3034,6 +3063,84 @@ function DashboardContent() {
         </div>
       )}
 
+      {/* MOBILE SIZE BOTTOM SHEET MODAL */}
+      {isMobileSizeModalOpen && activeGroupIdForSize && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-900/60 backdrop-blur-xs animate-fade-in font-sans">
+          <div className="bg-white w-full max-w-lg rounded-t-3xl sm:rounded-3xl border-t sm:border border-slate-200 shadow-2xl p-5 space-y-5 max-h-[88vh] flex flex-col">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-3 shrink-0">
+              <div>
+                <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest block">SAIZ & KUANTITI</span>
+                <h3 className="text-sm font-black uppercase text-slate-900">Tetapkan Kuantiti Saiz</h3>
+              </div>
+              <button
+                onClick={() => setIsMobileSizeModalOpen(false)}
+                className="p-2 text-slate-400 hover:text-slate-900 rounded-full cursor-pointer"
+              >
+                <X className="w-5 h-5 shrink-0" />
+              </button>
+            </div>
+
+            <div className="flex-1 overflow-y-auto space-y-5 pr-1">
+              {/* Adult Sizes Grid */}
+              <div className="space-y-2">
+                <span className="text-xs font-extrabold text-slate-900 uppercase tracking-wider block">1. Saiz Dewasa (Adult)</span>
+                <div className="grid grid-cols-3 gap-2.5">
+                  {ADULT_SIZES.map((sz) => {
+                    const currentGroup = cutGroups.find(g => g.id === activeGroupIdForSize);
+                    const q = currentGroup?.sizes?.[sz] || 0;
+                    return (
+                      <div key={sz} className="p-3 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col items-center justify-center space-y-1.5">
+                        <span className="text-xs font-black text-slate-900">{sz}</span>
+                        <input
+                          type="number"
+                          min="0"
+                          value={q === 0 ? '' : q}
+                          placeholder="0"
+                          onChange={(e) => setGroupSizeQtyDirect(activeGroupIdForSize, sz, e.target.value)}
+                          className="w-full text-center py-1.5 font-mono font-extrabold text-sm text-slate-900 bg-white border border-slate-200 rounded-xl outline-none focus:border-slate-900"
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* Kids Sizes Grid */}
+              <div className="space-y-2 pt-2">
+                <span className="text-xs font-extrabold text-slate-900 uppercase tracking-wider block">2. Saiz Kanak-Kanak (Kids)</span>
+                <div className="grid grid-cols-3 gap-2.5">
+                  {KIDS_SIZES.map((sz) => {
+                    const currentGroup = cutGroups.find(g => g.id === activeGroupIdForSize);
+                    const q = currentGroup?.sizes?.[sz] || 0;
+                    return (
+                      <div key={sz} className="p-3 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col items-center justify-center space-y-1.5">
+                        <span className="text-xs font-black text-slate-900">Saiz {sz}</span>
+                        <input
+                          type="number"
+                          min="0"
+                          value={q === 0 ? '' : q}
+                          placeholder="0"
+                          onChange={(e) => setGroupSizeQtyDirect(activeGroupIdForSize, sz, e.target.value)}
+                          className="w-full text-center py-1.5 font-mono font-extrabold text-sm text-slate-900 bg-white border border-slate-200 rounded-xl outline-none focus:border-slate-900"
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-3 border-t border-slate-100 shrink-0">
+              <button
+                onClick={() => setIsMobileSizeModalOpen(false)}
+                className="w-full py-3.5 bg-slate-900 text-white font-extrabold text-xs uppercase tracking-widest rounded-2xl shadow-md cursor-pointer"
+              >
+                Selesai & Simpan Saiz
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
