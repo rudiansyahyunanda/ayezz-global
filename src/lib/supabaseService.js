@@ -141,11 +141,11 @@ export async function deleteCategoryFromSupabase(categoryId) {
 export async function getSubCategories(categoryId) {
   if (!isSupabaseConnected) return [];
   try {
-    const { data, error } = await supabase
-      .from('sub_categories')
-      .select('*')
-      .eq('category_id', categoryId)
-      .order('code', { ascending: true });
+    let query = supabase.from('sub_categories').select('*');
+    if (categoryId) {
+      query = query.eq('category_id', categoryId);
+    }
+    const { data, error } = await query.order('code', { ascending: true });
     if (error || !data) return [];
     return data.map(item => ({
       id: item.id,

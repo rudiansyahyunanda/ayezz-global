@@ -128,8 +128,9 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
   const fetchAllData = async () => {
     setIsLoading(true);
     try {
-      const [cats, cuts, sleeves, fabs, tpls, ords, settings, uList, showcase, admins] = await Promise.all([
+      const [cats, subs, cuts, sleeves, fabs, tpls, ords, settings, uList, showcase, admins] = await Promise.all([
         getCategories(),
+        getSubCategories(),
         getCutTypes(),
         getSleeveTypes(),
         getFabricTypes(),
@@ -141,6 +142,7 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
         getAdminUsersList()
       ]);
       setCategories(cats);
+      setSubCategoryItems(subs || []);
       setCutTypes(cuts);
       setSleeveTypes(sleeves);
       setFabricTypes(fabs);
@@ -163,12 +165,10 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
 
   useEffect(() => {
     async function loadSubs() {
-      if (selectedParentCategory) {
-        setIsLoading(true);
-        const subs = await getSubCategories(selectedParentCategory.id);
-        setSubCategoryItems(subs);
-        setIsLoading(false);
-      }
+      setIsLoading(true);
+      const subs = await getSubCategories(selectedParentCategory?.id);
+      setSubCategoryItems(subs || []);
+      setIsLoading(false);
     }
     loadSubs();
   }, [selectedParentCategory]);
@@ -246,6 +246,13 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
         return;
       }
       setCategories(prev => prev.filter(c => c.id !== cat.id));
+    }
+  };
+
+  const handleDeleteSubCategory = async (sub) => {
+    if (window.confirm(`Adakah anda pasti untuk memadam Sub-Kategori "${sub.title}"?`)) {
+      setSubCategoryItems(prev => prev.filter(s => s.id !== sub.id));
+      await deleteSubCategoryFromSupabase(sub.id);
     }
   };
 
@@ -437,6 +444,16 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
             >
               <Box className="w-4 h-4 text-slate-400" />
               <span>Kategori Utama</span>
+            </button>
+
+            <button
+              onClick={() => { setCurrentTab('subcategories'); }}
+              className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors ${
+                currentTab === 'subcategories' ? 'bg-slate-800 text-white font-semibold shadow-xs' : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+              }`}
+            >
+              <ListTree className="w-4 h-4 text-slate-400" />
+              <span>Sub-Kategori Utama</span>
             </button>
 
             <button
@@ -944,37 +961,159 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                       <th className="py-3 px-4">KOD</th>
                       <th className="py-3 px-4">NAMA KATEGORI</th>
                       <th className="py-3 px-4">DESKRIPSI</th>
+                      <th className="py-3 px-4">SUB-KATEGORI</th>
                       <th className="py-3 px-4 text-right">TINDAKAN</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 font-medium text-slate-800">
                     {categories.length === 0 ? (
                       <tr>
-                        <td colSpan={5} className="py-12 text-center text-slate-400 font-mono text-xs">
+                        <td colSpan={6} className="py-12 text-center text-slate-400 font-mono text-xs">
                           Belum ada kategori terrekod. Tekan "+ Tambah Kategori" untuk cipta rekod baharu.
                         </td>
                       </tr>
                     ) : (
-                      categories.map(cat => (
-                        <tr key={cat.id} className="hover:bg-slate-50/60 transition-colors">
-                          <td className="py-3 px-4">
-                            <img src={cat.thumbnail || PLACEHOLDER_IMAGE} alt={cat.title} className="w-10 h-10 object-cover rounded-lg border border-slate-200" />
-                          </td>
-                          <td className="py-3.5 px-4 font-mono font-bold text-slate-900">{cat.category_code || cat.code || 'CAT'}</td>
-                          <td className="py-3.5 px-4 font-bold text-slate-900 uppercase">{cat.title}</td>
-                          <td className="py-3.5 px-4 text-slate-600 max-w-xs">{cat.desc || cat.description}</td>
-                          <td className="py-3.5 px-4 text-right">
-                            <div className="flex items-center justify-end gap-1">
-                              <button onClick={() => openEditModal('category', cat)} className="p-1.5 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors" title="Edit Kategori">
-                                <Edit2 className="w-4 h-4" />
+                      categories.map(cat => {
+                        const childCount = subCategoryItems.filter(s => String(s.categoryId || s.category_id) === String(cat.id)).length;
+                        return (
+                          <tr key={cat.id} className="hover:bg-slate-50/60 transition-colors">
+                            <td className="py-3 px-4">
+                              <img src={cat.thumbnail || PLACEHOLDER_IMAGE} alt={cat.title} className="w-10 h-10 object-cover rounded-lg border border-slate-200" />
+                            </td>
+                            <td className="py-3.5 px-4 font-mono font-bold text-slate-900">{cat.category_code || cat.code || 'CAT'}</td>
+                            <td className="py-3.5 px-4 font-bold text-slate-900 uppercase">{cat.title}</td>
+                            <td className="py-3.5 px-4 text-slate-600 max-w-xs">{cat.desc || cat.description}</td>
+                            <td className="py-3.5 px-4">
+                              <button
+                                onClick={() => {
+                                  setSelectedParentCategory(cat);
+                                  setCurrentTab('subcategories');
+                                }}
+                                className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-800 rounded-md text-[11px] font-semibold transition-colors inline-flex items-center gap-1.5"
+                                title="Urus Sub-Kategori bawah kategori ini"
+                              >
+                                <ListTree className="w-3.5 h-3.5 text-slate-600" />
+                                <span>Urus Sub-Kategori ({childCount})</span>
                               </button>
-                              <button onClick={() => handleDeleteCategory(cat)} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors" title="Padam Kategori">
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
-                      ))
+                            </td>
+                            <td className="py-3.5 px-4 text-right">
+                              <div className="flex items-center justify-end gap-1">
+                                <button
+                                  onClick={() => {
+                                    setSelectedParentCategory(cat);
+                                    openAddModal('subcategory');
+                                  }}
+                                  className="px-2.5 py-1 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 rounded-md text-[11px] font-semibold transition-colors flex items-center space-x-1"
+                                  title="Tambah Sub-Kategori Baharu"
+                                >
+                                  <Plus className="w-3.5 h-3.5" />
+                                  <span>+ Sub-Kategori</span>
+                                </button>
+                                <button onClick={() => openEditModal('category', cat)} className="p-1.5 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors" title="Edit Kategori">
+                                  <Edit2 className="w-4 h-4" />
+                                </button>
+                                <button onClick={() => handleDeleteCategory(cat)} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors" title="Padam Kategori">
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
+          {/* TAB 5B: PENGURUSAN SUB-KATEGORI UTAMA */}
+          {currentTab === 'subcategories' && (
+            <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs p-6 space-y-6">
+              <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b border-slate-100">
+                <div>
+                  <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">
+                    {selectedParentCategory ? `Sub-Kategori bawah "${selectedParentCategory.title}"` : 'Pengurusan Semua Sub-Kategori'}
+                  </h2>
+                  <p className="text-xs text-slate-500 mt-0.5">Uruskan pecahan sub-kategori seperti Jersi Sukan, Windbreaker, Jacket, Collar, Polo, dll.</p>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <select
+                    value={selectedParentCategory?.id || ''}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (!val) {
+                        setSelectedParentCategory(null);
+                      } else {
+                        const matched = categories.find(c => String(c.id) === String(val));
+                        setSelectedParentCategory(matched || null);
+                      }
+                    }}
+                    className="bg-slate-50 border border-slate-200 focus:bg-white focus:border-slate-900 rounded-lg px-3 py-2 text-xs font-semibold text-slate-900 outline-none"
+                  >
+                    <option value="">-- Semua Kategori Utama --</option>
+                    {categories.map(c => (
+                      <option key={c.id} value={c.id}>{c.title}</option>
+                    ))}
+                  </select>
+                  <button
+                    onClick={() => {
+                      if (!selectedParentCategory && categories.length > 0) {
+                        setSelectedParentCategory(categories[0]);
+                      }
+                      openAddModal('subcategory');
+                    }}
+                    className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-lg flex items-center space-x-1.5 transition-colors shadow-xs active:scale-95 cursor-pointer"
+                  >
+                    <Plus className="w-3.5 h-3.5" /> <span>Tambah Sub-Kategori</span>
+                  </button>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-left border-collapse text-xs font-sans">
+                  <thead>
+                    <tr className="bg-slate-50/80 border-b border-slate-200 text-[11px] font-mono font-semibold text-slate-500 uppercase tracking-wider">
+                      <th className="py-3 px-4">GAMBAR COVER</th>
+                      <th className="py-3 px-4">KOD</th>
+                      <th className="py-3 px-4">NAMA SUB-KATEGORI</th>
+                      <th className="py-3 px-4">KATEGORI UTAMA</th>
+                      <th className="py-3 px-4">DESKRIPSI</th>
+                      <th className="py-3 px-4 text-right">TINDAKAN</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 font-medium text-slate-800">
+                    {subCategoryItems.length === 0 ? (
+                      <tr>
+                        <td colSpan={6} className="py-12 text-center text-slate-400 font-mono text-xs">
+                          Belum ada sub-kategori terrekod. Tekan "+ Tambah Sub-Kategori" untuk cipta rekod baharu.
+                        </td>
+                      </tr>
+                    ) : (
+                      subCategoryItems.map(sub => {
+                        const parentCat = categories.find(c => String(c.id) === String(sub.categoryId || sub.category_id));
+                        return (
+                          <tr key={sub.id} className="hover:bg-slate-50/60 transition-colors">
+                            <td className="py-3 px-4">
+                              <img src={sub.thumbnail || PLACEHOLDER_IMAGE} alt={sub.title} className="w-10 h-10 object-cover rounded-lg border border-slate-200" />
+                            </td>
+                            <td className="py-3.5 px-4 font-mono font-bold text-slate-900">{sub.code || 'SUB'}</td>
+                            <td className="py-3.5 px-4 font-bold text-slate-900 uppercase">{sub.title}</td>
+                            <td className="py-3.5 px-4 font-semibold text-slate-700">{parentCat?.title || '-'}</td>
+                            <td className="py-3.5 px-4 text-slate-600 max-w-xs">{sub.description || '-'}</td>
+                            <td className="py-3.5 px-4 text-right">
+                              <div className="flex items-center justify-end gap-1">
+                                <button onClick={() => openEditModal('subcategory', sub)} className="p-1.5 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors" title="Edit Sub-Kategori">
+                                  <Edit2 className="w-4 h-4" />
+                                </button>
+                                <button onClick={() => handleDeleteSubCategory(sub)} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors" title="Padam Sub-Kategori">
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        );
+                      })
                     )}
                   </tbody>
                 </table>
