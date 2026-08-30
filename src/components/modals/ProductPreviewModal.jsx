@@ -506,15 +506,15 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
             </div>
           ) : (
             /* ========================================================
-               MODE 2: MODUS PEMESANAN / CONFIGURATOR (INTERNAL SYSTEM ORDER MODE)
+               MODE 2: MODUS PEMESANAN / CONFIGURATOR (INTERNAL SYSTEM ORDER MODE - FRAMELESS ULTRA-CLEAN)
                ======================================================== */
-            <form onSubmit={handleSystemOrder} className="space-y-8">
-              <div className="flex items-center justify-between border-b border-neutral-100 pb-4">
+            <form onSubmit={handleSystemOrder} className="space-y-6 bg-white p-4 sm:p-6">
+              <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div>
-                  <span className="text-[10px] font-mono font-bold text-neutral-400 uppercase tracking-widest block">
-                    MODUS KONFIGURASI SPESIFIKASI
+                  <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest block">
+                    BORANG SPESIFIKASI PESANAN
                   </span>
-                  <h3 className="text-xl font-black uppercase text-[#111111]">
+                  <h3 className="text-base sm:text-lg font-extrabold uppercase text-slate-900">
                     Spesifikasi & Pesanan Custom
                   </h3>
                 </div>
@@ -522,19 +522,19 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
                 <button
                   type="button"
                   onClick={() => setViewMode('preview')}
-                  className="text-xs font-bold text-neutral-600 hover:text-black underline flex items-center space-x-1"
+                  className="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold transition-all flex items-center space-x-1 whitespace-nowrap shrink-0"
                 >
-                  <Eye className="w-3.5 h-3.5" />
-                  <span>Kembali ke Pratonton</span>
+                  <Eye className="w-3.5 h-3.5 shrink-0" />
+                  <span className="whitespace-nowrap">Pratonton</span>
                 </button>
               </div>
 
               {/* 1. SELEKSI KOLAR / CUT TYPE */}
-              <div className="space-y-3">
-                <label className="text-xs font-bold uppercase tracking-wider text-[#111111] block">
-                  1. PILIH JENIS POTONGAN / KOLAR:
+              <div className="space-y-2.5">
+                <label className="text-xs font-extrabold uppercase tracking-wider text-slate-900 block">
+                  1. Pilih Jenis Potongan / Kolar:
                 </label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                   {cutTypes.map((cut) => {
                     const isSelected = selectedCut.id === cut.id;
                     const addOn = Number(cut.addOnPrice ?? cut.add_on_price ?? 0);
@@ -544,13 +544,13 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
                         onClick={() => setSelectedCut(cut)}
                         className={`p-3 rounded-2xl border cursor-pointer transition-all ${
                           isSelected
-                            ? 'bg-[#111111] text-white border-[#111111] shadow-sm'
-                            : 'bg-neutral-50 text-neutral-800 border-neutral-200 hover:border-neutral-400'
+                            ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
+                            : 'bg-white text-slate-800 border-slate-200 hover:border-slate-400'
                         }`}
                       >
-                        <span className="text-xs font-bold uppercase block line-clamp-1">{cut.name}</span>
+                        <span className="text-xs font-extrabold uppercase block truncate">{cut.name}</span>
                         <span className="text-[10px] font-mono opacity-80 block">
-                          {addOn > 0 ? `+RM ${addOn}.00` : 'FREE'}
+                          {addOn > 0 ? `+RM ${addOn}.00` : 'Standard'}
                         </span>
                       </div>
                     );
@@ -559,11 +559,11 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
               </div>
 
               {/* 2. SELEKSI FABRIK / FABRIC TYPE */}
-              <div className="space-y-3">
-                <label className="text-xs font-bold uppercase tracking-wider text-[#111111] block">
-                  2. PILIH JENIS KAIN / FABRIK:
+              <div className="space-y-2.5">
+                <label className="text-xs font-extrabold uppercase tracking-wider text-slate-900 block">
+                  2. Pilih Jenis Kain / Fabrik Sublimasi:
                 </label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
                   {fabricTypes.map((fab) => {
                     const isSelected = selectedFabric.id === fab.id;
                     const baseP = Number(fab.basePrice ?? fab.base_price ?? 70);
@@ -573,11 +573,11 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
                         onClick={() => setSelectedFabric(fab)}
                         className={`p-3 rounded-2xl border cursor-pointer transition-all ${
                           isSelected
-                            ? 'bg-[#111111] text-white border-[#111111] shadow-sm'
-                            : 'bg-neutral-50 text-neutral-800 border-neutral-200 hover:border-neutral-400'
+                            ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
+                            : 'bg-white text-slate-800 border-slate-200 hover:border-slate-400'
                         }`}
                       >
-                        <span className="text-xs font-bold uppercase block line-clamp-1">{fab.name}</span>
+                        <span className="text-xs font-extrabold uppercase block truncate">{fab.name}</span>
                         <span className="text-[10px] font-mono opacity-80 block">RM {baseP}.00 / pcs</span>
                       </div>
                     );
@@ -586,27 +586,27 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
               </div>
 
               {/* 3. PECAHAN SAIZ QUANTITY MATRIX */}
-              <div className="space-y-3">
-                <label className="text-xs font-bold uppercase tracking-wider text-[#111111] block">
-                  3. MASUKKAN KUANTITI SAIZ:
+              <div className="space-y-2.5">
+                <label className="text-xs font-extrabold uppercase tracking-wider text-slate-900 block">
+                  3. Masukkan Kuantiti Saiz:
                 </label>
-                <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
                   {Object.keys(sizeQuantities).map((sz) => (
-                    <div key={sz} className="p-3 bg-neutral-50 border border-neutral-200 rounded-2xl text-center space-y-2">
-                      <span className="text-xs font-mono font-bold block">{sz}</span>
-                      <div className="flex items-center justify-center space-x-2">
+                    <div key={sz} className="p-2.5 bg-slate-50 border border-slate-200 rounded-2xl text-center space-y-1.5">
+                      <span className="text-xs font-black block text-slate-900">{sz}</span>
+                      <div className="flex items-center justify-center space-x-1.5">
                         <button
                           type="button"
                           onClick={() => updateSizeQty(sz, -1)}
-                          className="w-6 h-6 rounded-full bg-white border border-neutral-300 text-xs font-bold hover:bg-neutral-200"
+                          className="w-7 h-7 rounded-xl bg-white border border-slate-200 text-slate-900 text-xs font-black hover:bg-slate-200 active:scale-95 transition-all"
                         >
                           -
                         </button>
-                        <span className="text-xs font-mono font-bold w-5">{sizeQuantities[sz]}</span>
+                        <span className="text-xs font-mono font-extrabold w-4 text-center">{sizeQuantities[sz]}</span>
                         <button
                           type="button"
                           onClick={() => updateSizeQty(sz, 1)}
-                          className="w-6 h-6 rounded-full bg-[#111111] text-white text-xs font-bold hover:bg-neutral-800"
+                          className="w-7 h-7 rounded-xl bg-slate-900 text-white text-xs font-black hover:bg-slate-800 active:scale-95 transition-all"
                         >
                           +
                         </button>
@@ -617,50 +617,50 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
               </div>
 
               {/* 4. MAKLUMAT PELANGGAN */}
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
                 <div>
-                  <label className="text-[11px] font-mono font-bold text-neutral-500 block mb-1">NAMA PELANGGAN</label>
+                  <label className="text-[10px] font-mono font-bold text-slate-500 uppercase block mb-1">Nama Pelanggan</label>
                   <input
                     type="text"
                     required
                     placeholder="Nama penuh..."
                     value={customerInfo.name}
                     onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })}
-                    className="w-full px-3.5 py-2 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-medium outline-none focus:bg-[#111111] focus:text-white"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 outline-none focus:bg-white focus:border-slate-900 transition-all"
                   />
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-mono font-bold text-neutral-500 block mb-1">NO. TELEFON</label>
+                  <label className="text-[10px] font-mono font-bold text-slate-500 uppercase block mb-1">No. Telefon</label>
                   <input
                     type="text"
                     required
                     placeholder="011-XXXXXXX"
                     value={customerInfo.phone}
                     onChange={(e) => setCustomerInfo({ ...customerInfo, phone: e.target.value })}
-                    className="w-full px-3.5 py-2 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-medium outline-none focus:bg-[#111111] focus:text-white"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 outline-none focus:bg-white focus:border-slate-900 transition-all"
                   />
                 </div>
 
                 <div>
-                  <label className="text-[11px] font-mono font-bold text-neutral-500 block mb-1">NAMA PASUKAN / KELAB</label>
+                  <label className="text-[10px] font-mono font-bold text-slate-500 uppercase block mb-1">Nama Pasukan / Kelab</label>
                   <input
                     type="text"
                     placeholder="Contoh: FC Harimau"
-                    className="w-full px-3.5 py-2 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-medium outline-none focus:bg-[#111111] focus:text-white"
+                    className="w-full px-3.5 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-900 outline-none focus:bg-white focus:border-slate-900 transition-all"
                   />
                 </div>
               </div>
 
               {/* 5. MUAT NAIK GAMBAR LOGO (CREST & SPONSOR) */}
-              <div className="space-y-3 pt-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-[#111111] block">
-                  5. MUAT NAIK GAMBAR LOGO PASUKAN & SPONSOR (OPTIONAL):
+              <div className="space-y-2.5 pt-1">
+                <label className="text-xs font-extrabold uppercase tracking-wider text-slate-900 block">
+                  5. Muat Naik Gambar Logo (Optional):
                 </label>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-2xl space-y-2">
-                    <label className="text-[11px] font-mono font-bold text-neutral-600 block uppercase">
-                      LOGO PASUKAN (CREST LOGO)
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
+                    <label className="text-[10px] font-mono font-bold text-slate-500 block uppercase">
+                      Logo Pasukan (Crest Logo)
                     </label>
                     <input
                       type="file"
@@ -673,19 +673,19 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
                           reader.readAsDataURL(file);
                         }
                       }}
-                      className="w-full text-xs text-neutral-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#111111] file:text-white hover:file:bg-neutral-800 cursor-pointer"
+                      className="w-full text-xs text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-slate-900 file:text-white hover:file:bg-slate-800 cursor-pointer"
                     />
                     {customLogoUrl && (
                       <div className="flex items-center space-x-2 pt-1">
-                        <img src={customLogoUrl} alt="Preview Logo Pasukan" className="w-12 h-12 object-contain bg-white rounded-lg p-1 border border-neutral-200" />
-                        <span className="text-[10px] font-mono text-emerald-700 font-bold">Logo Pasukan Dipilih</span>
+                        <img src={customLogoUrl} alt="Preview Logo Pasukan" className="w-10 h-10 object-contain bg-white rounded-lg p-1 border border-slate-200" />
+                        <span className="text-[10px] font-mono text-emerald-600 font-bold">Logo Pasukan Dipilih</span>
                       </div>
                     )}
                   </div>
 
-                  <div className="p-4 bg-neutral-50 border border-neutral-200 rounded-2xl space-y-2">
-                    <label className="text-[11px] font-mono font-bold text-neutral-600 block uppercase">
-                      LOGO SPONSOR (CHEST SPONSOR)
+                  <div className="p-3.5 bg-slate-50 border border-slate-200 rounded-2xl space-y-2">
+                    <label className="text-[10px] font-mono font-bold text-slate-500 block uppercase">
+                      Logo Sponsor (Chest Sponsor)
                     </label>
                     <input
                       type="file"
@@ -698,35 +698,35 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
                           reader.readAsDataURL(file);
                         }
                       }}
-                      className="w-full text-xs text-neutral-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#111111] file:text-white hover:file:bg-neutral-800 cursor-pointer"
+                      className="w-full text-xs text-slate-600 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-slate-900 file:text-white hover:file:bg-slate-800 cursor-pointer"
                     />
                     {sponsorLogoUrl && (
                       <div className="flex items-center space-x-2 pt-1">
-                        <img src={sponsorLogoUrl} alt="Preview Logo Sponsor" className="w-12 h-12 object-contain bg-white rounded-lg p-1 border border-neutral-200" />
-                        <span className="text-[10px] font-mono text-emerald-700 font-bold">Logo Sponsor Dipilih</span>
+                        <img src={sponsorLogoUrl} alt="Preview Logo Sponsor" className="w-10 h-10 object-contain bg-white rounded-lg p-1 border border-slate-200" />
+                        <span className="text-[10px] font-mono text-emerald-600 font-bold">Logo Sponsor Dipilih</span>
                       </div>
                     )}
                   </div>
                 </div>
               </div>
 
-              {/* PRICE SUMMARY & SUBMIT TO SYSTEM DATABASE */}
-              <div className="p-5 bg-neutral-900 text-white rounded-2xl flex flex-col sm:flex-row items-center justify-between gap-4">
+              {/* PRICE SUMMARY & SUBMIT BUTTON */}
+              <div className="p-4 bg-slate-900 text-white rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
                 <div>
-                  <span className="text-[10px] font-mono text-neutral-400 block uppercase">RINGKASAN ANGGARAN</span>
+                  <span className="text-[10px] font-mono text-slate-400 block uppercase">RINGKASAN ANGGARAN</span>
                   <div className="flex items-baseline space-x-2">
                     <span className="text-2xl font-black">RM {totalPrice.toFixed(2)}</span>
-                    <span className="text-xs font-mono text-neutral-400">({totalQuantity} pcs x RM {pricePerPcs})</span>
+                    <span className="text-xs font-mono text-slate-300">({totalQuantity} pcs x RM {pricePerPcs})</span>
                   </div>
                 </div>
 
                 <button
                   type="submit"
                   disabled={isSubmitting || totalQuantity <= 0}
-                  className="px-6 py-3 bg-emerald-500 hover:bg-emerald-600 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-95 flex items-center space-x-2 disabled:opacity-50 whitespace-nowrap"
+                  className="w-full sm:w-auto px-6 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center space-x-2 disabled:opacity-50 whitespace-nowrap shrink-0 cursor-pointer"
                 >
-                  <Send className="w-4 h-4 text-white" />
-                  <span>Hantar Pesanan</span>
+                  <Send className="w-4 h-4 text-white shrink-0" />
+                  <span className="whitespace-nowrap">Hantar Pesanan</span>
                 </button>
               </div>
             </form>
