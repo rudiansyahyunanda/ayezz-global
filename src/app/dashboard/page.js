@@ -913,21 +913,21 @@ function DashboardContent() {
       <main className="flex-1 flex flex-col h-full overflow-hidden bg-[#FAFBFD] text-slate-900">
 
         {/* TOP HEADER BAR */}
-        <header className="h-16 bg-white border-b border-slate-200/80 px-8 flex items-center justify-between z-10 shrink-0 shadow-2xs">
-          <div className="flex items-center space-x-3">
+        <header className="h-16 bg-white border-b border-slate-200/80 px-4 sm:px-8 flex items-center justify-between z-10 shrink-0 shadow-2xs">
+          <div className="flex items-center space-x-3 min-w-0">
             <button
               onClick={() => setIsMobileSidebarOpen(true)}
-              className="md:hidden p-2 text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl"
+              className="md:hidden p-2 text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-xl shrink-0"
             >
-              <Menu className="w-5 h-5" />
+              <Menu className="w-5 h-5 shrink-0" />
             </button>
-            <div>
-              <h2 className="text-sm font-black text-slate-900 uppercase tracking-tight">
-                {activeTab === 'overview' && 'Dashboard Utama Pengguna'}
-                {activeTab === 'new-order' && 'Konfigurator Tempahan Jersi Sublimasi High-Performance'}
-                {activeTab === 'orders' && 'Sejarah Pesanan Pengguna'}
-                {activeTab === 'invoices' && 'Invois & Resit Rasmi Kilang'}
-                {activeTab === 'profile' && 'Tetapan Profil & Alamat Akaun'}
+            <div className="min-w-0">
+              <h2 className="text-xs sm:text-sm font-black text-slate-900 uppercase tracking-tight truncate">
+                {activeTab === 'overview' && 'Dashboard Pengguna'}
+                {activeTab === 'new-order' && 'Konfigurator Tempahan'}
+                {activeTab === 'orders' && 'Sejarah Pesanan'}
+                {activeTab === 'invoices' && 'Invois & Resit'}
+                {activeTab === 'profile' && 'Tetapan Profil'}
               </h2>
               <p className="text-[10px] text-slate-500 font-medium hidden sm:block">
                 AYEZZ GLOBAL — Panel Pengurusan Pelanggan
@@ -935,13 +935,14 @@ function DashboardContent() {
             </div>
           </div>
 
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-2 sm:space-x-3 shrink-0">
             <button
               onClick={() => setActiveTab('new-order')}
-              className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-900 font-bold text-xs uppercase tracking-wider rounded-lg transition-all flex items-center space-x-1.5 shadow-2xs border border-slate-300/80 active:scale-95 cursor-pointer"
+              className="px-3 py-2 sm:px-4 sm:py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider rounded-xl transition-all flex items-center space-x-1.5 shadow-2xs active:scale-95 cursor-pointer whitespace-nowrap shrink-0"
             >
-              <Plus className="w-4 h-4 text-slate-900" />
-              <span>Tempahan Baru</span>
+              <Plus className="w-4 h-4 text-white shrink-0" />
+              <span className="hidden sm:inline whitespace-nowrap">Tempahan Baru</span>
+              <span className="sm:hidden whitespace-nowrap">Baru</span>
             </button>
           </div>
         </header>
@@ -1507,10 +1508,67 @@ function DashboardContent() {
                                       </div>
                                     </div>
 
-                                    {/* MODE 1: INPUT MANUAL DYNAMIC TABLE */}
+                                    {/* MODE 1: INPUT MANUAL DYNAMIC TABLE & MOBILE CARDS */}
                                     {playerInputMode === 'manual' ? (
                                       <div className="space-y-3">
-                                        <div className="overflow-x-auto border border-slate-200 rounded-xl bg-white">
+                                        {/* MOBILE RESPONSIVE CARDS (MD:HIDDEN) */}
+                                        <div className="space-y-3 md:hidden">
+                                          {playerRows.map((row, idx) => (
+                                            <div key={row.id} className="p-3 bg-white border border-slate-200 rounded-xl space-y-2 relative shadow-2xs">
+                                              <div className="flex items-center justify-between">
+                                                <span className="text-[10px] font-mono font-bold text-slate-600 bg-slate-100 px-2 py-0.5 rounded border border-slate-200">
+                                                  Pemain #{idx + 1}
+                                                </span>
+                                                <button
+                                                  type="button"
+                                                  onClick={() => removePlayerRow(row.id)}
+                                                  className="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                                                  title="Padam"
+                                                >
+                                                  <Trash2 className="w-4 h-4 shrink-0" />
+                                                </button>
+                                              </div>
+
+                                              <div className="grid grid-cols-12 gap-2">
+                                                <div className="col-span-6">
+                                                  <label className="text-[9px] font-bold text-slate-500 uppercase block mb-1">Nama Pemain</label>
+                                                  <input
+                                                    type="text"
+                                                    placeholder="Contoh: MUHAMMAD ALI"
+                                                    value={row.name}
+                                                    onChange={(e) => updatePlayerRow(row.id, 'name', e.target.value)}
+                                                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs font-bold text-slate-900 outline-none focus:bg-white focus:border-slate-400 uppercase"
+                                                  />
+                                                </div>
+                                                <div className="col-span-3">
+                                                  <label className="text-[9px] font-bold text-slate-500 uppercase block mb-1">No. Baju</label>
+                                                  <input
+                                                    type="text"
+                                                    placeholder="10"
+                                                    value={row.number}
+                                                    onChange={(e) => updatePlayerRow(row.id, 'number', e.target.value)}
+                                                    className="w-full text-center bg-slate-50 border border-slate-200 rounded-lg px-2 py-2 text-xs font-black text-slate-900 outline-none focus:bg-white focus:border-slate-400"
+                                                  />
+                                                </div>
+                                                <div className="col-span-3">
+                                                  <label className="text-[9px] font-bold text-slate-500 uppercase block mb-1">Saiz</label>
+                                                  <select
+                                                    value={row.size}
+                                                    onChange={(e) => updatePlayerRow(row.id, 'size', e.target.value)}
+                                                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-2 text-xs font-bold text-slate-900 outline-none focus:bg-white cursor-pointer"
+                                                  >
+                                                    {ALL_SIZES.map((sz) => (
+                                                      <option key={sz} value={sz}>{sz}</option>
+                                                    ))}
+                                                  </select>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          ))}
+                                        </div>
+
+                                        {/* DESKTOP TABLE (HIDDEN ON MOBILE) */}
+                                        <div className="hidden md:block overflow-x-auto border border-slate-200 rounded-xl bg-white">
                                           <table className="w-full text-left text-xs">
                                             <thead>
                                               <tr className="bg-slate-100/80 border-b border-slate-200 text-[10px] font-mono font-bold text-slate-600 uppercase">
@@ -1573,10 +1631,10 @@ function DashboardContent() {
                                         <button
                                           type="button"
                                           onClick={addPlayerRow}
-                                          className="w-full py-2.5 bg-white hover:bg-slate-100 text-slate-900 font-bold text-xs uppercase tracking-wider rounded-xl transition-all border border-slate-300 flex items-center justify-center space-x-2 cursor-pointer shadow-2xs"
+                                          className="w-full py-2.5 bg-white hover:bg-slate-100 text-slate-900 font-bold text-xs uppercase tracking-wider rounded-xl transition-all border border-slate-300 inline-flex items-center justify-center space-x-2 cursor-pointer shadow-2xs whitespace-nowrap shrink-0"
                                         >
-                                          <Plus className="w-3.5 h-3.5 text-slate-900" />
-                                          <span>+ Tambah Baris Pemain Baru</span>
+                                          <Plus className="w-3.5 h-3.5 text-slate-900 shrink-0" />
+                                          <span className="whitespace-nowrap">Tambah Pemain</span>
                                         </button>
                                       </div>
                                     ) : (
@@ -1671,9 +1729,10 @@ function DashboardContent() {
                             <button
                               type="button"
                               onClick={() => setOrderStep(2)}
-                              className="px-6 py-3 bg-slate-200 hover:bg-slate-300 text-slate-900 font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all border border-slate-300 flex items-center space-x-2 cursor-pointer"
+                              className="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all inline-flex items-center space-x-2 cursor-pointer shadow-sm whitespace-nowrap shrink-0"
                             >
-                              <span>Teruskan Ke Step 2: Potongan & Saiz →</span>
+                              <span>Teruskan</span>
+                              <ChevronRight className="w-4 h-4 text-white shrink-0" />
                             </button>
                           </div>
                         </div>
@@ -1769,9 +1828,9 @@ function DashboardContent() {
                                             setActiveGroupIdForCut(group.id);
                                             setIsCutModalOpen(true);
                                           }}
-                                          className="px-3.5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-900 font-bold text-[11px] uppercase rounded-lg border border-slate-300 transition-colors cursor-pointer shrink-0"
+                                          className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase rounded-xl transition-colors cursor-pointer whitespace-nowrap shrink-0"
                                         >
-                                          Pilih Kolar
+                                          Pilih
                                         </button>
                                       </div>
                                     </div>
@@ -1803,20 +1862,20 @@ function DashboardContent() {
                                             setActiveGroupIdForSleeve(group.id);
                                             setIsSleeveModalOpen(true);
                                           }}
-                                          className="px-3.5 py-2 bg-slate-200 hover:bg-slate-300 text-slate-900 font-bold text-[11px] uppercase rounded-lg border border-slate-300 transition-colors cursor-pointer shrink-0"
+                                          className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase rounded-xl transition-colors cursor-pointer whitespace-nowrap shrink-0"
                                         >
-                                          Pilih Lengan
+                                          Pilih
                                         </button>
                                       </div>
                                     </div>
 
                                   </div>
 
-                                  {/* SLEEK THIN-LINE GRID SIZE TABLE (CLEAN, ELEGANT & PROFESSIONAL) */}
+                                  {/* SLEEK THIN-LINE GRID SIZE TABLE */}
                                   <div className="space-y-4 pt-3 border-t border-slate-100 w-full">
                                     <div className="flex items-center justify-between">
                                       <label className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block">
-                                        3. JADUAL SAIZ & KUANTITI (SIZE MATRIX TABLE)
+                                        3. JADUAL SAIZ & KUANTITI
                                       </label>
 
                                       <span className="text-xs font-mono font-bold text-slate-800">
@@ -1904,10 +1963,10 @@ function DashboardContent() {
                             <button
                               type="button"
                               onClick={addCutGroup}
-                              className="w-full py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all border border-dashed border-slate-300 flex items-center justify-center space-x-2 cursor-pointer active:scale-98"
+                              className="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold text-xs uppercase tracking-wider rounded-xl transition-all border border-dashed border-slate-300 inline-flex items-center justify-center space-x-2 cursor-pointer whitespace-nowrap shrink-0"
                             >
-                              <Plus className="w-4 h-4 text-slate-800" />
-                              <span>+ Tambah Kumpulan Potongan Baru</span>
+                              <Plus className="w-4 h-4 text-slate-900 shrink-0" />
+                              <span className="whitespace-nowrap">Tambah Kumpulan Potongan</span>
                             </button>
                           </div>
 
@@ -1916,17 +1975,18 @@ function DashboardContent() {
                             <button
                               type="button"
                               onClick={() => setOrderStep(1)}
-                              className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer"
+                              className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer whitespace-nowrap shrink-0"
                             >
-                              ← Kembali Ke Step 1
+                              Kembali
                             </button>
 
                             <button
                               type="button"
                               onClick={() => setOrderStep(3)}
-                              className="px-6 py-3 bg-slate-200 hover:bg-slate-300 text-slate-900 font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all border border-slate-300 flex items-center space-x-2 cursor-pointer"
+                              className="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all inline-flex items-center space-x-2 cursor-pointer shadow-sm whitespace-nowrap shrink-0"
                             >
-                              <span>Teruskan Ke Step 3: Fabrik →</span>
+                              <span>Teruskan</span>
+                              <ChevronRight className="w-4 h-4 text-white shrink-0" />
                             </button>
                           </div>
                         </div>
@@ -1988,17 +2048,18 @@ function DashboardContent() {
                             <button
                               type="button"
                               onClick={() => setOrderStep(2)}
-                              className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer"
+                              className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer whitespace-nowrap shrink-0"
                             >
-                              ← Kembali Ke Step 2
+                              Kembali
                             </button>
 
                             <button
                               type="button"
                               onClick={() => setOrderStep(4)}
-                              className="px-6 py-3 bg-slate-200 hover:bg-slate-300 text-slate-900 font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all border border-slate-300 flex items-center space-x-2 cursor-pointer"
+                              className="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all inline-flex items-center space-x-2 cursor-pointer shadow-sm whitespace-nowrap shrink-0"
                             >
-                              <span>Teruskan Ke Step 4: Pengesahan & Summary →</span>
+                              <span>Teruskan</span>
+                              <ChevronRight className="w-4 h-4 text-white shrink-0" />
                             </button>
                           </div>
                         </div>
@@ -2139,14 +2200,14 @@ function DashboardContent() {
                           <button
                             type="submit"
                             disabled={isSubmittingOrder || groupCalculations.totalQty <= 0}
-                            className="w-full py-4 bg-slate-200 hover:bg-slate-300 text-slate-900 font-extrabold text-xs uppercase tracking-widest rounded-xl transition-all shadow-2xs active:scale-95 flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer border border-slate-300"
+                            className="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer"
                           >
                             {isSubmittingOrder ? (
-                              <RefreshCw className="w-4 h-4 animate-spin text-slate-900" />
+                              <RefreshCw className="w-4 h-4 animate-spin text-white" />
                             ) : (
                               <>
-                                <CreditCard className="w-4 h-4 text-slate-900" />
-                                <span>Teruskan Ke Pembayaran (ChipIn) →</span>
+                                <CreditCard className="w-4 h-4 text-white shrink-0" />
+                                <span className="whitespace-nowrap">Bayar Tempahan</span>
                               </>
                             )}
                           </button>
