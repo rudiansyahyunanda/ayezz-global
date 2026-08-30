@@ -176,13 +176,71 @@ function DashboardContent() {
   const [isSleeveModalOpen, setIsSleeveModalOpen] = useState(false);
   const [activeGroupIdForSleeve, setActiveGroupIdForSleeve] = useState(null);
 
-  // Mobile Size Bottom Sheet Modal
+  // Mobile Size Bottom Sheet Modal (legacy, kept for safety)
   const [isMobileSizeModalOpen, setIsMobileSizeModalOpen] = useState(false);
   const [activeGroupIdForSize, setActiveGroupIdForSize] = useState(null);
   const [isAdultAccordionOpen, setIsAdultAccordionOpen] = useState(true);
   const [isKidsAccordionOpen, setIsKidsAccordionOpen] = useState(false);
   // Segmented Control per group: 'adult' | 'kids'
   const [sizeSegmentTabs, setSizeSegmentTabs] = useState({});
+
+  // ── GROUP CONFIG BOTTOM SHEET ──
+  const [isGroupSheetOpen, setIsGroupSheetOpen] = useState(false);
+  // null = add new, string = editing existing group id
+  const [sheetGroupId, setSheetGroupId] = useState(null);
+  // Draft state inside the sheet
+  const [sheetDraft, setSheetDraft] = useState({ cut: null, sleeve: null, sizes: {}, sizeTab: 'adult' });
+
+  // Helper: open sheet in ADD mode
+  const openSheetAdd = () => {
+    setSheetDraft({ cut: null, sleeve: null, sizes: {}, sizeTab: 'adult' });
+    setSheetGroupId(null);
+    setIsGroupSheetOpen(true);
+  };
+
+  // Helper: open sheet in EDIT mode
+  const openSheetEdit = (group) => {
+    setSheetDraft({
+      cut: group.cut,
+      sleeve: group.sleeve,
+      sizes: { ...(group.sizes || {}) },
+      sizeTab: 'adult'
+    });
+    setSheetGroupId(group.id);
+    setIsGroupSheetOpen(true);
+  };
+
+  // Helper: save sheet draft back to cutGroups
+  const saveSheet = () => {
+    if (sheetGroupId) {
+      // Edit existing group
+      setCutGroups(prev => prev.map(g => g.id === sheetGroupId
+        ? { ...g, cut: sheetDraft.cut, sleeve: sheetDraft.sleeve, sizes: sheetDraft.sizes }
+        : g
+      ));
+    } else {
+      // Add new group
+      const newId = 'group_' + Date.now();
+      setCutGroups(prev => [...prev, {
+        id: newId,
+        cut: sheetDraft.cut,
+        sleeve: sheetDraft.sleeve,
+        sizes: sheetDraft.sizes
+      }]);
+    }
+    setIsGroupSheetOpen(false);
+  };
+
+  // Helper: update size qty inside sheet draft
+  const setSheetSize = (sz, val) => {
+    setSheetDraft(prev => ({ ...prev, sizes: { ...prev.sizes, [sz]: Math.max(0, val) } }));
+  };
+
+  // Derived: total qty inside sheet draft
+  const sheetDraftQty = Object.values(sheetDraft.sizes).reduce((s, v) => s + Number(v || 0), 0);
+  const sheetAdultQty = ADULT_SIZES.reduce((s, sz) => s + Number(sheetDraft.sizes[sz] || 0), 0);
+  const sheetKidsQty  = KIDS_SIZES.reduce((s, sz) => s + Number(sheetDraft.sizes[sz] || 0), 0);
+  const sheetActiveSizes = sheetDraft.sizeTab === 'adult' ? ADULT_SIZES : KIDS_SIZES;
 
   // Customer & Shipping Info
   const [customerInfo, setCustomerInfo] = useState({
@@ -1801,257 +1859,331 @@ function DashboardContent() {
                       )}
 
                       {/* ========================================================== */}
-                      {/* LANGKAH 2: APPLE HIG NATIVE iOS GROUPED UI */}
+                      {/* LANGKAH 2: SUMMARY LIST + BOTTOM SHEET ARCHITECTURE        */}
                       {/* ========================================================== */}
                       {orderStep === 2 && (
-                        /* Apple HIG: Page bg is off-white #F2F2F7, white blocks are edge-to-edge sections */
-                        <div className="w-full -mx-4 sm:mx-0 font-sans">
+                        <div className="w-full font-sans">
 
-                          {/* PAGE TITLE — sits above the grouped sections */}
-                          <div className="px-4 sm:px-6 pb-3 flex items-center justify-between">
+                          {/* ── STEP HEADER ── */}
+                          <div className="flex items-center justify-between mb-4">
                             <div>
                               <p className="text-[10px] font-semibold text-[#8E8E93] uppercase tracking-widest">Langkah 2 dari 4</p>
-                              <h3 className="text-base font-bold text-[#1C1C1E] mt-0.5">Potongan, Lengan & Saiz</h3>
+                              <h3 className="text-base font-bold text-[#111827] mt-0.5">Potongan, Lengan &amp; Saiz</h3>
                             </div>
                             <span className="text-xs font-semibold text-[#8E8E93] tabular-nums">{groupCalculations.totalQty} pcs</span>
                           </div>
 
-                          {/* PER-GROUP CONFIGURATION BLOCKS */}
-                          {groupCalculations.groupDetails.map((group, idx) => {
-                            const segTab = sizeSegmentTabs[group.id] || 'adult';
-                            const activeSizes = segTab === 'adult' ? ADULT_SIZES : KIDS_SIZES;
-
-                            return (
-                              <div key={group.id} className="mb-2">
-
-                                {/* GROUP LABEL ROW */}
-                                <div className="px-4 sm:px-6 pt-4 pb-1.5 flex items-center justify-between">
-                                  <p className="text-[11px] font-bold text-[#8E8E93] uppercase tracking-wider">
-                                    Kumpulan #{idx + 1}
-                                  </p>
-                                  <div className="flex items-center space-x-2">
-                                    <span className="text-[11px] font-semibold text-[#8E8E93] tabular-nums">{group.qty} pcs</span>
-                                    {cutGroups.length > 1 && (
-                                      <button
-                                        type="button"
-                                        onClick={() => removeCutGroup(group.id)}
-                                        className="text-[#FF3B30] text-[11px] font-semibold cursor-pointer"
-                                      >
-                                        Padam
-                                      </button>
-                                    )}
+                          {/* ── COMPACT SUMMARY LIST ── */}
+                          <div className="space-y-2 mb-4">
+                            {groupCalculations.groupDetails.map((group, idx) => (
+                              <div
+                                key={group.id}
+                                className="flex items-center justify-between px-4 py-3.5 bg-white rounded-2xl border border-[#E5E7EB]"
+                              >
+                                {/* Left: number badge + summary text */}
+                                <div className="flex items-center space-x-3 min-w-0">
+                                  <span className="w-7 h-7 rounded-full bg-[#111827] text-white text-[11px] font-bold flex items-center justify-center shrink-0">
+                                    {idx + 1}
+                                  </span>
+                                  <div className="min-w-0">
+                                    <p className="text-sm font-semibold text-[#111827] truncate">
+                                      {group.cut?.name || '—'} · {group.sleeve?.name || '—'}
+                                    </p>
+                                    <p className="text-[11px] text-[#8E8E93] mt-0.5">
+                                      {group.qty > 0 ? `${group.qty} pcs` : 'Belum ada saiz'}
+                                    </p>
                                   </div>
                                 </div>
 
-                                {/* ── SECTION 1: KOLAR ── edge-to-edge white block */}
-                                <div className="bg-white border-t border-b border-[#C6C6C8]/40">
-                                  <div className="px-4 sm:px-6 py-3 border-b border-[#C6C6C8]/30">
-                                    <p className="text-[11px] font-semibold text-[#8E8E93] uppercase tracking-wider">1. Pilih Potongan Kolar</p>
-                                  </div>
-                                  <div className="px-4 sm:px-6 py-4">
-                                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5">
-                                      {cutTypes.map((cut) => {
-                                        const isSelected = group.cut?.id === cut.id;
-                                        const addOn = Number(cut.addOnPrice ?? cut.add_on_price ?? 0);
-                                        return (
-                                          <div
-                                            key={cut.id}
-                                            onClick={() => setGroupCutDirect(group.id, cut)}
-                                            className={`rounded-2xl border cursor-pointer transition-all duration-150 flex flex-col items-center text-center p-3 space-y-1.5 select-none active:scale-95 ${
-                                              isSelected
-                                                ? 'border-[#007AFF] bg-[#007AFF]/5 ring-1 ring-[#007AFF]'
-                                                : 'border-[#C6C6C8]/50 bg-white hover:border-[#007AFF]/40'
-                                            }`}
-                                          >
-                                            <img
-                                              src={cut.thumbnail || PLACEHOLDER_IMAGE}
-                                              alt={cut.name}
-                                              className="w-12 h-12 object-contain rounded-xl bg-[#F2F2F7] p-1 shrink-0"
-                                            />
-                                            <div className="w-full">
-                                              <p className={`text-[11px] font-semibold leading-snug line-clamp-2 ${isSelected ? 'text-[#007AFF]' : 'text-[#1C1C1E]'}`}>{cut.name}</p>
-                                              <p className={`text-[10px] mt-0.5 ${isSelected ? 'text-[#007AFF]/70' : 'text-[#8E8E93]'}`}>
-                                                {addOn > 0 ? `+RM ${addOn}` : 'Standard'}
-                                              </p>
-                                            </div>
-                                            {isSelected && (
-                                              <span className="w-4 h-4 rounded-full bg-[#007AFF] flex items-center justify-center shrink-0">
-                                                <svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                                              </span>
-                                            )}
-                                          </div>
-                                        );
-                                      })}
-                                    </div>
-                                  </div>
+                                {/* Right: Edit + Delete */}
+                                <div className="flex items-center space-x-1 shrink-0 ml-2">
+                                  <button
+                                    type="button"
+                                    onClick={() => openSheetEdit(group)}
+                                    className="w-8 h-8 rounded-xl flex items-center justify-center text-[#8E8E93] hover:text-[#111827] hover:bg-[#F2F2F7] transition-colors cursor-pointer"
+                                    title="Edit"
+                                  >
+                                    <Edit3 className="w-4 h-4" />
+                                  </button>
+                                  {cutGroups.length > 1 && (
+                                    <button
+                                      type="button"
+                                      onClick={() => removeCutGroup(group.id)}
+                                      className="w-8 h-8 rounded-xl flex items-center justify-center text-[#8E8E93] hover:text-rose-500 hover:bg-rose-50 transition-colors cursor-pointer"
+                                      title="Padam"
+                                    >
+                                      <Trash2 className="w-4 h-4" />
+                                    </button>
+                                  )}
                                 </div>
-
-                                {/* ── SECTION 2: LENGAN (revealed after Kolar) ── */}
-                                {group.cut && (
-                                  <div className="bg-white border-b border-[#C6C6C8]/40 mt-3">
-                                    <div className="px-4 sm:px-6 py-3 border-b border-[#C6C6C8]/30">
-                                      <p className="text-[11px] font-semibold text-[#8E8E93] uppercase tracking-wider">2. Pilih Jenis Lengan</p>
-                                    </div>
-                                    <div className="px-4 sm:px-6 py-4">
-                                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5">
-                                        {sleeveTypes.map((slv) => {
-                                          const isSelected = group.sleeve?.id === slv.id;
-                                          const addOn = Number(slv.addOnPrice ?? slv.add_on_price ?? 0);
-                                          return (
-                                            <div
-                                              key={slv.id}
-                                              onClick={() => setGroupSleeveDirect(group.id, slv)}
-                                              className={`rounded-2xl border cursor-pointer transition-all duration-150 flex flex-col items-center text-center p-3 space-y-1.5 select-none active:scale-95 ${
-                                                isSelected
-                                                  ? 'border-[#007AFF] bg-[#007AFF]/5 ring-1 ring-[#007AFF]'
-                                                  : 'border-[#C6C6C8]/50 bg-white hover:border-[#007AFF]/40'
-                                              }`}
-                                            >
-                                              <img
-                                                src={slv.thumbnail || PLACEHOLDER_IMAGE}
-                                                alt={slv.name}
-                                                className="w-12 h-12 object-contain rounded-xl bg-[#F2F2F7] p-1 shrink-0"
-                                              />
-                                              <div className="w-full">
-                                                <p className={`text-[11px] font-semibold leading-snug line-clamp-2 ${isSelected ? 'text-[#007AFF]' : 'text-[#1C1C1E]'}`}>{slv.name}</p>
-                                                <p className={`text-[10px] mt-0.5 ${isSelected ? 'text-[#007AFF]/70' : 'text-[#8E8E93]'}`}>
-                                                  {addOn > 0 ? `+RM ${addOn}` : 'Standard'}
-                                                </p>
-                                              </div>
-                                              {isSelected && (
-                                                <span className="w-4 h-4 rounded-full bg-[#007AFF] flex items-center justify-center shrink-0">
-                                                  <svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-                                                </span>
-                                              )}
-                                            </div>
-                                          );
-                                        })}
-                                      </div>
-                                    </div>
-                                  </div>
-                                )}
-
-                                {/* ── SECTION 3: SAIZ & KUANTITI (revealed after Kolar + Lengan) ── */}
-                                {group.cut && group.sleeve && (
-                                  <div className="bg-white border-b border-[#C6C6C8]/40 mt-3">
-                                    <div className="px-4 sm:px-6 py-3 border-b border-[#C6C6C8]/30 flex items-center justify-between">
-                                      <p className="text-[11px] font-semibold text-[#8E8E93] uppercase tracking-wider">3. Saiz & Kuantiti</p>
-                                      <span className="text-[11px] font-semibold text-[#8E8E93]">{group.qty} pcs</span>
-                                    </div>
-
-                                    {/* SEGMENTED CONTROL — Dewasa | Kanak-kanak */}
-                                    <div className="px-4 sm:px-6 pt-4 pb-3">
-                                      <div className="flex bg-[#F2F2F7] rounded-xl p-0.5">
-                                        {['adult', 'kids'].map((tab) => (
-                                          <button
-                                            key={tab}
-                                            type="button"
-                                            onClick={() => setSizeSegmentTabs(prev => ({ ...prev, [group.id]: tab }))}
-                                            className={`flex-1 py-2 rounded-[10px] text-xs font-semibold transition-all duration-200 cursor-pointer ${
-                                              segTab === tab
-                                                ? 'bg-white text-[#1C1C1E] shadow-sm'
-                                                : 'text-[#8E8E93]'
-                                            }`}
-                                          >
-                                            {tab === 'adult' ? `Dewasa (${ADULT_SIZES.reduce((s, sz) => s + Number(group.sizes?.[sz] || 0), 0)})` : `Kanak-kanak (${KIDS_SIZES.reduce((s, sz) => s + Number(group.sizes?.[sz] || 0), 0)})`}
-                                          </button>
-                                        ))}
-                                      </div>
-                                    </div>
-
-                                    {/* INTERACTIVE SIZE GRID — 4 columns, no vertical list */}
-                                    <div className="px-4 sm:px-6 pb-5">
-                                      <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
-                                        {activeSizes.map((sz) => {
-                                          const q = Number(group.sizes?.[sz] || 0);
-                                          return (
-                                            <div
-                                              key={sz}
-                                              className={`rounded-2xl transition-all duration-150 select-none ${
-                                                q > 0
-                                                  ? 'bg-[#1C1C1E] text-white'
-                                                  : 'bg-[#F2F2F7] text-[#1C1C1E]'
-                                              }`}
-                                            >
-                                              {q === 0 ? (
-                                                /* IDLE STATE: just the size label, tap to start */
-                                                <button
-                                                  type="button"
-                                                  onClick={() => setGroupSizeQtyDirect(group.id, sz, 1)}
-                                                  className="w-full h-14 flex items-center justify-center cursor-pointer active:scale-95 transition-transform rounded-2xl"
-                                                >
-                                                  <span className="text-sm font-bold text-[#1C1C1E]">{sz}</span>
-                                                </button>
-                                              ) : (
-                                                /* ACTIVE STATE: micro-stepper in-place */
-                                                <div className="w-full h-14 flex flex-col items-center justify-center">
-                                                  <span className="text-[9px] font-semibold text-white/60 leading-none mb-0.5">{sz}</span>
-                                                  <div className="flex items-center space-x-1">
-                                                    <button
-                                                      type="button"
-                                                      onClick={() => setGroupSizeQtyDirect(group.id, sz, Math.max(0, q - 1))}
-                                                      className="w-6 h-6 rounded-full bg-white/20 text-white font-black text-sm flex items-center justify-center active:scale-90 cursor-pointer leading-none"
-                                                    >
-                                                      −
-                                                    </button>
-                                                    <span className="text-sm font-black text-white w-5 text-center tabular-nums">{q}</span>
-                                                    <button
-                                                      type="button"
-                                                      onClick={() => setGroupSizeQtyDirect(group.id, sz, q + 1)}
-                                                      className="w-6 h-6 rounded-full bg-white/20 text-white font-black text-sm flex items-center justify-center active:scale-90 cursor-pointer leading-none"
-                                                    >
-                                                      +
-                                                    </button>
-                                                  </div>
-                                                </div>
-                                              )}
-                                            </div>
-                                          );
-                                        })}
-                                      </div>
-                                    </div>
-                                  </div>
-                                )}
-
                               </div>
-                            );
-                          })}
-
-                          {/* "+ TAMBAH POTONGAN BARU" — edge-to-edge */}
-                          <div className="px-4 sm:px-6 pt-3 pb-2">
-                            <button
-                              type="button"
-                              onClick={addCutGroup}
-                              className="w-full py-3 rounded-2xl bg-white border border-[#C6C6C8]/50 text-[#007AFF] text-sm font-semibold flex items-center justify-center space-x-1.5 cursor-pointer active:bg-[#F2F2F7] transition-colors"
-                            >
-                              <Plus className="w-4 h-4 shrink-0" />
-                              <span>Tambah Potongan Baru</span>
-                            </button>
+                            ))}
                           </div>
 
-                          {/* DESKTOP FOOTER NAVIGATION (HIDDEN ON MOBILE) */}
-                          <div className="px-4 sm:px-6 pt-4 border-t border-[#C6C6C8]/30 hidden md:flex items-center justify-between mt-4">
+                          {/* ── + TAMBAH POTONGAN BARU ── */}
+                          <button
+                            type="button"
+                            onClick={openSheetAdd}
+                            className="w-full py-3.5 rounded-2xl bg-white border border-dashed border-[#D1D5DB] text-[#111827] text-sm font-semibold flex items-center justify-center space-x-2 cursor-pointer hover:bg-[#F9FAFB] transition-colors"
+                          >
+                            <Plus className="w-4 h-4 shrink-0" />
+                            <span>Tambah Potongan Baru</span>
+                          </button>
+
+                          {/* ── DESKTOP FOOTER NAV (hidden on mobile) ── */}
+                          <div className="pt-5 border-t border-[#E5E7EB] mt-5 hidden md:flex items-center justify-between">
                             <button
                               type="button"
                               onClick={() => setOrderStep(1)}
-                              className="px-5 py-2.5 bg-[#F2F2F7] hover:bg-[#E5E5EA] text-[#1C1C1E] font-semibold text-sm rounded-xl transition-all cursor-pointer whitespace-nowrap"
+                              className="px-5 py-2.5 bg-[#F2F2F7] hover:bg-[#E5E5EA] text-[#111827] font-semibold text-sm rounded-xl transition-all cursor-pointer"
                             >
                               Kembali
                             </button>
                             <button
                               type="button"
                               onClick={() => setOrderStep(3)}
-                              className="px-6 py-2.5 bg-[#1C1C1E] hover:bg-black text-white font-semibold text-sm rounded-xl transition-all inline-flex items-center space-x-2 cursor-pointer whitespace-nowrap"
+                              className="px-6 py-2.5 bg-[#111827] hover:bg-black text-white font-semibold text-sm rounded-xl transition-all inline-flex items-center space-x-2 cursor-pointer"
                             >
                               <span>Teruskan</span>
-                              <ChevronRight className="w-4 h-4 text-white shrink-0" />
+                              <ChevronRight className="w-4 h-4 shrink-0" />
                             </button>
                           </div>
-              
-             </div>
+
+                          {/* ================================================================ */}
+                          {/* iOS-STYLE BOTTOM SHEET — GROUP CONFIG DRAWER                    */}
+                          {/* ================================================================ */}
+                          {isGroupSheetOpen && (
+                            <>
+                              {/* Backdrop */}
+                              <div
+                                className="fixed inset-0 bg-black/40 z-40 backdrop-blur-[2px]"
+                                onClick={() => setIsGroupSheetOpen(false)}
+                              />
+
+                              {/* Sheet panel — slides up from bottom */}
+                              <div
+                                className="fixed left-0 right-0 bottom-0 z-50 bg-white rounded-t-3xl shadow-2xl flex flex-col"
+                                style={{ maxHeight: '92vh' }}
+                              >
+                                {/* ── SHEET HANDLE & HEADER ── */}
+                                <div className="px-5 pt-3 pb-4 border-b border-[#F2F2F2] flex items-center justify-between shrink-0">
+                                  <div className="absolute left-1/2 -translate-x-1/2 top-2.5 w-10 h-1 bg-[#D1D5DB] rounded-full" />
+                                  <div className="pt-3">
+                                    <p className="text-[10px] font-semibold text-[#8E8E93] uppercase tracking-widest">
+                                      {sheetGroupId ? 'Edit Kumpulan' : 'Potongan Baru'}
+                                    </p>
+                                    <h4 className="text-base font-bold text-[#111827] mt-0.5">
+                                      Kolar · Lengan · Saiz
+                                    </h4>
+                                  </div>
+                                  <div className="flex items-center space-x-3 pt-3">
+                                    {sheetDraftQty > 0 && (
+                                      <span className="text-xs font-semibold text-[#8E8E93] tabular-nums">{sheetDraftQty} pcs</span>
+                                    )}
+                                    <button
+                                      type="button"
+                                      onClick={() => setIsGroupSheetOpen(false)}
+                                      className="w-7 h-7 rounded-full bg-[#F2F2F2] flex items-center justify-center cursor-pointer hover:bg-[#E5E5E5] transition-colors"
+                                    >
+                                      <X className="w-3.5 h-3.5 text-[#6B7280]" />
+                                    </button>
+                                  </div>
+                                </div>
+
+                                {/* ── SHEET SCROLLABLE BODY ── */}
+                                <div className="overflow-y-auto flex-1 overscroll-contain px-5 py-5 space-y-7">
+
+                                  {/* ─── SECTION A: PILIH KOLAR ─── */}
+                                  <div>
+                                    <p className="text-[10px] font-bold text-[#8E8E93] uppercase tracking-widest mb-3">
+                                      1 — Potongan Kolar
+                                    </p>
+                                    {/* Frameless image grid: 3 columns on mobile, larger images */}
+                                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-x-3 gap-y-4">
+                                      {cutTypes.map((cut) => {
+                                        const isSelected = sheetDraft.cut?.id === cut.id;
+                                        const addOn = Number(cut.addOnPrice ?? cut.add_on_price ?? 0);
+                                        return (
+                                          <button
+                                            key={cut.id}
+                                            type="button"
+                                            onClick={() => setSheetDraft(prev => ({ ...prev, cut, sleeve: null }))}
+                                            className="flex flex-col items-center text-center cursor-pointer select-none active:opacity-70 transition-opacity"
+                                          >
+                                            {/* Large frameless image */}
+                                            <div className="w-full aspect-square rounded-xl overflow-hidden bg-[#F7F8F9] mb-1.5">
+                                              <img
+                                                src={cut.thumbnail || PLACEHOLDER_IMAGE}
+                                                alt={cut.name}
+                                                className="w-full h-full object-contain p-2"
+                                              />
+                                            </div>
+                                            {/* Name: bold + underline if selected */}
+                                            <p className={`text-[11px] leading-snug line-clamp-2 ${isSelected ? 'font-bold text-[#111827] underline underline-offset-2 decoration-1' : 'font-medium text-[#374151]'}`}>
+                                              {cut.name}
+                                            </p>
+                                            {/* Price add-on */}
+                                            <p className="text-[10px] text-[#9CA3AF] mt-0.5 tabular-nums">
+                                              {addOn > 0 ? `+RM ${addOn}` : 'Standard'}
+                                            </p>
+                                            {/* Thin checkmark row */}
+                                            {isSelected && (
+                                              <span className="mt-1 flex items-center justify-center">
+                                                <Check className="w-3 h-3 text-[#111827]" strokeWidth={2.5} />
+                                              </span>
+                                            )}
+                                          </button>
+                                        );
+                                      })}
+                                    </div>
+                                  </div>
+
+                                  {/* ─── SECTION B: PILIH LENGAN (appears after Kolar) ─── */}
+                                  {sheetDraft.cut && (
+                                    <div>
+                                      <p className="text-[10px] font-bold text-[#8E8E93] uppercase tracking-widest mb-3">
+                                        2 — Jenis Lengan
+                                      </p>
+                                      <div className="grid grid-cols-3 sm:grid-cols-4 gap-x-3 gap-y-4">
+                                        {sleeveTypes.map((slv) => {
+                                          const isSelected = sheetDraft.sleeve?.id === slv.id;
+                                          const addOn = Number(slv.addOnPrice ?? slv.add_on_price ?? 0);
+                                          return (
+                                            <button
+                                              key={slv.id}
+                                              type="button"
+                                              onClick={() => setSheetDraft(prev => ({ ...prev, sleeve: slv }))}
+                                              className="flex flex-col items-center text-center cursor-pointer select-none active:opacity-70 transition-opacity"
+                                            >
+                                              <div className="w-full aspect-square rounded-xl overflow-hidden bg-[#F7F8F9] mb-1.5">
+                                                <img
+                                                  src={slv.thumbnail || PLACEHOLDER_IMAGE}
+                                                  alt={slv.name}
+                                                  className="w-full h-full object-contain p-2"
+                                                />
+                                              </div>
+                                              <p className={`text-[11px] leading-snug line-clamp-2 ${isSelected ? 'font-bold text-[#111827] underline underline-offset-2 decoration-1' : 'font-medium text-[#374151]'}`}>
+                                                {slv.name}
+                                              </p>
+                                              <p className="text-[10px] text-[#9CA3AF] mt-0.5 tabular-nums">
+                                                {addOn > 0 ? `+RM ${addOn}` : 'Standard'}
+                                              </p>
+                                              {isSelected && (
+                                                <span className="mt-1 flex items-center justify-center">
+                                                  <Check className="w-3 h-3 text-[#111827]" strokeWidth={2.5} />
+                                                </span>
+                                              )}
+                                            </button>
+                                          );
+                                        })}
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  {/* ─── SECTION C: SAIZ & KUANTITI (appears after both selected) ─── */}
+                                  {sheetDraft.cut && sheetDraft.sleeve && (
+                                    <div>
+                                      <p className="text-[10px] font-bold text-[#8E8E93] uppercase tracking-widest mb-3">
+                                        3 — Saiz &amp; Kuantiti
+                                      </p>
+
+                                      {/* Segmented Control: Dewasa / Kanak-kanak */}
+                                      <div className="flex bg-[#F2F2F7] rounded-xl p-0.5 mb-4">
+                                        {[
+                                          { key: 'adult', label: `Dewasa (${sheetAdultQty})` },
+                                          { key: 'kids',  label: `Kanak-kanak (${sheetKidsQty})` }
+                                        ].map(({ key, label }) => (
+                                          <button
+                                            key={key}
+                                            type="button"
+                                            onClick={() => setSheetDraft(prev => ({ ...prev, sizeTab: key }))}
+                                            className={`flex-1 py-2 rounded-[10px] text-xs font-semibold transition-all duration-150 cursor-pointer ${
+                                              sheetDraft.sizeTab === key
+                                                ? 'bg-white text-[#111827] shadow-sm'
+                                                : 'text-[#8E8E93]'
+                                            }`}
+                                          >
+                                            {label}
+                                          </button>
+                                        ))}
+                                      </div>
+
+                                      {/* Size rows: clean thin stepper, no background pill */}
+                                      <div className="divide-y divide-[#F3F4F6]">
+                                        {sheetActiveSizes.map((sz) => {
+                                          const q = Number(sheetDraft.sizes[sz] || 0);
+                                          return (
+                                            <div key={sz} className="flex items-center justify-between py-3">
+                                              {/* Size label */}
+                                              <span className={`text-sm w-14 ${q > 0 ? 'font-bold text-[#111827]' : 'font-medium text-[#6B7280]'}`}>
+                                                {sz}
+                                              </span>
+
+                                              {/* Clean thin stepper — NO background pill */}
+                                              <div className="flex items-center space-x-3">
+                                                <button
+                                                  type="button"
+                                                  disabled={q <= 0}
+                                                  onClick={() => setSheetSize(sz, q - 1)}
+                                                  className={`w-8 h-8 rounded-full border flex items-center justify-center cursor-pointer transition-colors active:scale-90 text-lg leading-none select-none ${
+                                                    q <= 0
+                                                      ? 'border-[#E5E7EB] text-[#D1D5DB] cursor-not-allowed'
+                                                      : 'border-[#374151] text-[#111827] hover:border-[#111827]'
+                                                  }`}
+                                                >
+                                                  −
+                                                </button>
+                                                <span className={`w-6 text-center text-sm tabular-nums ${q > 0 ? 'font-bold text-[#111827]' : 'font-medium text-[#D1D5DB]'}`}>
+                                                  {q}
+                                                </span>
+                                                <button
+                                                  type="button"
+                                                  onClick={() => setSheetSize(sz, q + 1)}
+                                                  className="w-8 h-8 rounded-full border border-[#374151] text-[#111827] flex items-center justify-center cursor-pointer hover:border-[#111827] hover:bg-[#111827] hover:text-white transition-colors active:scale-90 text-lg leading-none select-none"
+                                                >
+                                                  +
+                                                </button>
+                                              </div>
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
+                                    </div>
+                                  )}
+
+                                  {/* Bottom padding so last item is not hidden behind save bar */}
+                                  <div className="h-4" />
+                                </div>
+
+                                {/* ── SHEET FOOTER: SIMPAN BUTTON ── */}
+                                <div className="px-5 pb-8 pt-4 border-t border-[#F2F2F2] shrink-0">
+                                  <button
+                                    type="button"
+                                    onClick={saveSheet}
+                                    disabled={!sheetDraft.cut || !sheetDraft.sleeve}
+                                    className="w-full py-4 rounded-2xl bg-[#111827] disabled:bg-[#D1D5DB] text-white font-bold text-sm flex items-center justify-center space-x-2 cursor-pointer disabled:cursor-not-allowed transition-colors active:scale-[0.99]"
+                                  >
+                                    <Check className="w-4 h-4 shrink-0" strokeWidth={2.5} />
+                                    <span>
+                                      {sheetGroupId ? 'Simpan Perubahan' : 'Tambah Kumpulan'}
+                                      {sheetDraftQty > 0 ? ` · ${sheetDraftQty} pcs` : ''}
+                                    </span>
+                                  </button>
+                                  {(!sheetDraft.cut || !sheetDraft.sleeve) && (
+                                    <p className="text-center text-[11px] text-[#9CA3AF] mt-2">
+                                      Pilih Kolar &amp; Lengan untuk meneruskan
+                                    </p>
+                                  )}
+                                </div>
+                              </div>
+                            </>
+                          )}
+
+                        </div>
                       )}
 
                       {/* ========================================================== */}
+
                       {/* LANGKAH 3: FABRIK SUBLIMASI (VISUAL FABRIC CARDS GRID - DIRECTIVE 6) */}
                       {/* ========================================================== */}
                       {orderStep === 3 && (
