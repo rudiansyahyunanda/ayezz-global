@@ -160,17 +160,8 @@ function DashboardContent() {
   const [selectedFabric, setSelectedFabric] = useState(FALLBACK_FABRICS[0]);
 
   // SECTION 2 & 3: MULTI-CUT & SLEEVE GROUPS WITH SIZES
-  const [cutGroups, setCutGroups] = useState([
-    {
-      id: 'group_1',
-      cut: FALLBACK_CUTS[0],
-      sleeve: FALLBACK_SLEEVE_TYPES[0],
-      sizes: {
-        XS: 0, S: 0, M: 0, L: 0, XL: 0, '2XL': 0, '3XL': 0, '4XL': 0, '5XL': 0,
-        '22': 0, '24': 0, '26': 0, '28': 0, '30': 0, '32': 0
-      }
-    }
-  ]);
+  // Start empty — user must tap "+ Tambah Potongan Baru" to add their first group
+  const [cutGroups, setCutGroups] = useState([]);
 
   // Collar Cut Selection Modal & Sleeve Selection Modal
   const [isCutModalOpen, setIsCutModalOpen] = useState(false);
@@ -333,17 +324,8 @@ function DashboardContent() {
           loadedSleeves = sleeves;
         }
 
-        setCutGroups([
-          {
-            id: 'group_1',
-            cut: loadedCuts[0],
-            sleeve: loadedSleeves[0],
-            sizes: {
-              XS: 0, S: 0, M: 0, L: 0, XL: 0, '2XL': 0, '3XL': 0, '4XL': 0, '5XL': 0,
-              '22': 0, '24': 0, '26': 0, '28': 0, '30': 0, '32': 0
-            }
-          }
-        ]);
+        // Keep cutGroups empty — user will add groups manually
+        setCutGroups([]);
 
         if (fabrics && fabrics.length > 0) {
           setFabricTypes(fabrics);
@@ -449,10 +431,6 @@ function DashboardContent() {
   };
 
   const removeCutGroup = (groupId) => {
-    if (cutGroups.length <= 1) {
-      alert('Anda mesti mempunyai sekurang-kurangnya 1 kumpulan potongan.');
-      return;
-    }
     setCutGroups((prev) => prev.filter((g) => g.id !== groupId));
   };
 
@@ -1878,37 +1856,46 @@ function DashboardContent() {
 
                           {/* ── COMPACT SUMMARY LIST ── */}
                           <div className="space-y-2 mb-4">
-                            {groupCalculations.groupDetails.map((group, idx) => (
-                              <div
-                                key={group.id}
-                                className="flex items-center justify-between px-4 py-3.5 bg-white rounded-2xl border border-[#E5E7EB]"
-                              >
-                                {/* Left: number badge + summary text */}
-                                <div className="flex items-center space-x-3 min-w-0">
-                                  <span className="w-7 h-7 rounded-full bg-[#111827] text-white text-[11px] font-bold flex items-center justify-center shrink-0">
-                                    {idx + 1}
-                                  </span>
-                                  <div className="min-w-0">
-                                    <p className="text-sm font-semibold text-[#111827] truncate">
-                                      {group.cut?.name || '—'} · {group.sleeve?.name || '—'}
-                                    </p>
-                                    <p className="text-[11px] text-[#8E8E93] mt-0.5">
-                                      {group.qty > 0 ? `${group.qty} pcs` : 'Belum ada saiz'}
-                                    </p>
-                                  </div>
+                            {groupCalculations.groupDetails.length === 0 ? (
+                              /* Empty state */
+                              <div className="flex flex-col items-center justify-center py-10 text-center">
+                                <div className="w-12 h-12 rounded-2xl bg-[#F5F5F5] flex items-center justify-center mb-3">
+                                  <Shirt className="w-6 h-6 text-[#AEAEAE]" />
                                 </div>
+                                <p className="text-[13px] font-semibold text-[#374151]">Belum ada potongan ditambah</p>
+                                <p className="text-[11px] text-[#9CA3AF] mt-1">Klik butang di bawah untuk mula konfigurasi</p>
+                              </div>
+                            ) : (
+                              groupCalculations.groupDetails.map((group, idx) => (
+                                <div
+                                  key={group.id}
+                                  className="flex items-center justify-between px-4 py-3.5 bg-white rounded-2xl border border-[#E5E7EB]"
+                                >
+                                  {/* Left: number badge + summary text */}
+                                  <div className="flex items-center space-x-3 min-w-0">
+                                    <span className="w-7 h-7 rounded-full bg-[#111827] text-white text-[11px] font-bold flex items-center justify-center shrink-0">
+                                      {idx + 1}
+                                    </span>
+                                    <div className="min-w-0">
+                                      <p className="text-sm font-semibold text-[#111827] truncate">
+                                        {group.cut?.name || '—'} · {group.sleeve?.name || '—'}
+                                      </p>
+                                      <p className="text-[11px] text-[#8E8E93] mt-0.5">
+                                        {group.qty > 0 ? `${group.qty} pcs` : 'Belum ada saiz'}
+                                      </p>
+                                    </div>
+                                  </div>
 
-                                {/* Right: Edit + Delete */}
-                                <div className="flex items-center space-x-1 shrink-0 ml-2">
-                                  <button
-                                    type="button"
-                                    onClick={() => openSheetEdit(group)}
-                                    className="w-8 h-8 rounded-xl flex items-center justify-center text-[#8E8E93] hover:text-[#111827] hover:bg-[#F2F2F7] transition-colors cursor-pointer"
-                                    title="Edit"
-                                  >
-                                    <Edit3 className="w-4 h-4" />
-                                  </button>
-                                  {cutGroups.length > 1 && (
+                                  {/* Right: Edit + Delete */}
+                                  <div className="flex items-center space-x-1 shrink-0 ml-2">
+                                    <button
+                                      type="button"
+                                      onClick={() => openSheetEdit(group)}
+                                      className="w-8 h-8 rounded-xl flex items-center justify-center text-[#8E8E93] hover:text-[#111827] hover:bg-[#F2F2F7] transition-colors cursor-pointer"
+                                      title="Edit"
+                                    >
+                                      <Edit3 className="w-4 h-4" />
+                                    </button>
                                     <button
                                       type="button"
                                       onClick={() => removeCutGroup(group.id)}
@@ -1917,10 +1904,10 @@ function DashboardContent() {
                                     >
                                       <Trash2 className="w-4 h-4" />
                                     </button>
-                                  )}
+                                  </div>
                                 </div>
-                              </div>
-                            ))}
+                              ))
+                            )}
                           </div>
 
                           {/* ── + TAMBAH POTONGAN BARU ── */}
