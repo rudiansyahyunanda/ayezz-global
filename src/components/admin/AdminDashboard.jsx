@@ -30,19 +30,12 @@ import {
   Tv,
   Film,
   KeyRound,
-  LogOut,
-  Lock,
-  Scissors
+  LogOut
 } from 'lucide-react';
 import ImageUploadCropper from './ImageUploadCropper';
 import MultiImageUploadCropper from './MultiImageUploadCropper';
 import TemplateGalleryViewModal from './TemplateGalleryViewModal';
-import {
-  MAIN_CATALOGS as INITIAL_CATALOGS,
-  DESIGN_TEMPLATES as INITIAL_TEMPLATES,
-  CUT_TYPES as INITIAL_CUTS,
-  FABRIC_TYPES as INITIAL_FABRICS
-} from '../../data/sublimationProducts';
+
 import {
   getCategories,
   insertCategoryToSupabase,
@@ -81,7 +74,7 @@ import {
   DEFAULT_SHOWCASE_FEATURE,
   PLACEHOLDER_IMAGE
 } from '../../lib/supabaseService';
-import { logoutAdmin, getAdminMasterPin, updateAdminMasterPin, getAdminUsersList, addNewAdminAccount } from '../../lib/authService';
+import { updateAdminMasterPin, getAdminUsersList, addNewAdminAccount } from '../../lib/authService';
 
 export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) {
   const [currentTab, setCurrentTab] = useState('overview');
@@ -223,8 +216,11 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
       if (selectedCategoryObj) {
         const subs = await getSubCategories(selectedCategoryObj.id);
         const titles = subs.length > 0 ? subs.map(s => s.title) : (selectedCategoryObj.subCategories?.filter(s => s !== 'Semua') || []);
+        if (tplSubCat && !titles.includes(tplSubCat)) {
+          titles.push(tplSubCat);
+        }
         setDynamicSubCategories(titles);
-        if (titles.length > 0 && !titles.includes(tplSubCat)) {
+        if (titles.length > 0 && !tplSubCat) {
           setTplSubCat(titles[0]);
         }
       }
@@ -1073,10 +1069,18 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                           <td className="py-3.5 px-4 font-mono text-slate-600">{tpl.category || 'SUBLIMASI'}</td>
                           <td className="py-3.5 px-4 font-mono font-bold text-slate-900">RM {Number(tpl.price || tpl.basePrice || 70).toFixed(2)}</td>
                           <td className="py-3.5 px-4 text-right space-x-1">
-                            <button onClick={() => openEditModal('template', tpl)} className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-md">
+                            <button onClick={() => setViewingTemplate(tpl)} className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-md" title="Pratonton Galeri Template">
+                              <Eye className="w-4 h-4" />
+                            </button>
+                            <button onClick={() => openEditModal('template', tpl)} className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-md" title="Edit Template">
                               <Edit2 className="w-4 h-4" />
                             </button>
-                            <button onClick={async () => { setTemplates(prev => prev.filter(t => t.id !== tpl.id)); await deleteDesignTemplateFromSupabase(tpl.id); }} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-md">
+                            <button onClick={async () => {
+                              if (window.confirm(`Adakah anda pasti untuk memadam Template "${tpl.name}"?`)) {
+                                setTemplates(prev => prev.filter(t => t.id !== tpl.id));
+                                await deleteDesignTemplateFromSupabase(tpl.id);
+                              }
+                            }} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-md" title="Padam Template">
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </td>
@@ -1780,6 +1784,13 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                       className="w-full bg-slate-50 border border-slate-200 focus:bg-white focus:border-slate-900 rounded-lg px-3.5 py-2 text-xs font-medium text-slate-900 outline-none transition-all resize-none"
                     />
                   </div>
+                  <div className="pt-2 border-t border-slate-100">
+                    <MultiImageUploadCropper
+                      images={tplImages}
+                      onChange={(imgs) => setTplImages(imgs)}
+                      maxImages={5}
+                    />
+                  </div>
                 </div>
               )}
 
@@ -1790,6 +1801,16 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
             </form>
           </div>
         </div>
+      )}
+
+      {/* TEMPLATE GALLERY VIEW MODAL */}
+      {viewingTemplate && (
+        <TemplateGalleryViewModal
+          template={viewingTemplate}
+          onClose={() => setViewingTemplate(null)}
+          allTemplates={templates}
+          onSelectTemplate={(t) => setViewingTemplate(t)}
+        />
       )}
     </div>
   );

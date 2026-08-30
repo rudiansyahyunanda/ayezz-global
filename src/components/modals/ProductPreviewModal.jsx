@@ -11,7 +11,6 @@ import {
   ChevronRight,
   CheckCircle2,
   Sparkles,
-  Send,
   ArrowRight
 } from 'lucide-react';
 import TransparentImage from '../TransparentImage';

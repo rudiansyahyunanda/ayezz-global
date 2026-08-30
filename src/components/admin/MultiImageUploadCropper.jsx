@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useRef } from 'react';
-import { Upload, Trash2, Plus, Star, Loader2 } from 'lucide-react';
+import { Trash2, Plus, Star, Loader2 } from 'lucide-react';
 import { uploadAndProcessImageServerSide, uploadDirectToSupabaseStorage } from '../../lib/imageService';
 
 export default function MultiImageUploadCropper({ images = [], onChange, maxImages = 5 }) {
@@ -33,7 +33,18 @@ export default function MultiImageUploadCropper({ images = [], onChange, maxImag
           const directUrl = await uploadDirectToSupabaseStorage(file, 'tpl');
           if (directUrl) updatedList.push(directUrl);
         } catch (stErr) {
-          console.error('[MultiImageUpload] Direct upload failed:', stErr);
+          console.error('[MultiImageUpload] Direct upload failed, using DataURL fallback:', stErr);
+          await new Promise((resolve) => {
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+              if (ev.target?.result) {
+                updatedList.push(ev.target.result);
+              }
+              resolve();
+            };
+            reader.onerror = () => resolve();
+            reader.readAsDataURL(file);
+          });
         }
       }
     }

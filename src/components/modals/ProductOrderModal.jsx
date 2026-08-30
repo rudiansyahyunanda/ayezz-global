@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { X, ShoppingBag, MessageSquare, Plus, Minus, Calculator, Star, ChevronLeft, ChevronRight } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { SIZE_CHART, FABRIC_TYPES as FALLBACK_FABRICS, CUT_TYPES as FALLBACK_CUTS, DESIGN_TEMPLATES } from '../../data/sublimationProducts';
+import { SIZE_CHART } from '../../data/sublimationProducts';
 import { getCutTypes, getFabricTypes, saveOrderToSupabase, getDesignTemplates, PLACEHOLDER_IMAGE } from '../../lib/supabaseService';
 
 export default function ProductOrderModal({ product: initialProduct, onClose, allProducts = [], onSelectProduct }) {
