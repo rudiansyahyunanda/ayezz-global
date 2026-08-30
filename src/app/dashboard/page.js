@@ -184,11 +184,16 @@ function DashboardContent() {
   const [sheetGroupId, setSheetGroupId] = useState(null);
   // Draft state inside the sheet
   const [sheetDraft, setSheetDraft] = useState({ cut: null, sleeve: null, sizes: {}, sizeTab: 'adult' });
+  // Accordion expand state for each section inside the sheet
+  const [sheetCutOpen, setSheetCutOpen] = useState(true);   // Section 1: always open initially
+  const [sheetSleeveOpen, setSheetSleeveOpen] = useState(false); // Section 2: unlocks after cut chosen
 
   // Helper: open sheet in ADD mode
   const openSheetAdd = () => {
     setSheetDraft({ cut: null, sleeve: null, sizes: {}, sizeTab: 'adult' });
     setSheetGroupId(null);
+    setSheetCutOpen(true);
+    setSheetSleeveOpen(false);
     setIsGroupSheetOpen(true);
   };
 
@@ -201,6 +206,9 @@ function DashboardContent() {
       sizeTab: 'adult'
     });
     setSheetGroupId(group.id);
+    // In edit mode: both sections start collapsed so user sees the summary first
+    setSheetCutOpen(false);
+    setSheetSleeveOpen(false);
     setIsGroupSheetOpen(true);
   };
 
@@ -1985,14 +1993,13 @@ function DashboardContent() {
 
                                   {/* ─────────────────────────────────────────────── */}
                                   {/* SECTION A: PILIH KOLAR                          */}
-                                  {/* Collapsed once selection made, re-opens on tap  */}
                                   {/* ─────────────────────────────────────────────── */}
                                   <div className="border-b border-[#F2F2F2]">
-                                    {/* Section header — always visible */}
+                                    {/* Section header row — always visible, clickable to toggle */}
                                     <button
                                       type="button"
-                                      onClick={() => sheetDraft.cut && setSheetDraft(prev => ({ ...prev, cut: prev.cut }))}
-                                      className="w-full flex items-center justify-between px-5 py-4 cursor-default"
+                                      onClick={() => setSheetCutOpen(o => !o)}
+                                      className="w-full flex items-center justify-between px-5 py-4 cursor-pointer active:bg-[#FAFAFA] transition-colors"
                                     >
                                       <div className="flex items-center space-x-2.5">
                                         <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
@@ -2000,72 +2007,80 @@ function DashboardContent() {
                                         }`}>1</span>
                                         <span className="text-[11px] font-semibold text-[#6B7280] uppercase tracking-widest">Potongan Kolar</span>
                                       </div>
-                                      {/* Collapsed summary */}
-                                      {sheetDraft.cut && (
-                                        <div className="flex items-center space-x-1.5">
+                                      <div className="flex items-center space-x-2">
+                                        {/* Selected name preview (shown when collapsed) */}
+                                        {sheetDraft.cut && !sheetCutOpen && (
                                           <span className="text-sm font-semibold text-[#111827]">{sheetDraft.cut.name}</span>
-                                          <CheckCircle2 className="w-4 h-4 text-[#111827] shrink-0" />
-                                        </div>
-                                      )}
+                                        )}
+                                        {/* Arrow icon: down when collapsed, up when open */}
+                                        {sheetCutOpen
+                                          ? <ChevronUp className="w-4 h-4 text-[#9CA3AF] shrink-0" />
+                                          : <ChevronDown className="w-4 h-4 text-[#9CA3AF] shrink-0" />
+                                        }
+                                      </div>
                                     </button>
 
-                                    {/* GRID — shown when no cut selected yet, OR always on desktop */}
-                                    {/* On mobile: hide grid once cut is selected (collapse) */}
-                                    <div className={`px-5 pb-5 ${sheetDraft.cut ? 'hidden' : 'block'}`}>
-                                      <div className="grid grid-cols-3 sm:grid-cols-4 gap-x-2.5 gap-y-4">
-                                        {cutTypes.map((cut) => {
-                                          const isSelected = sheetDraft.cut?.id === cut.id;
-                                          const addOn = Number(cut.addOnPrice ?? cut.add_on_price ?? 0);
-                                          return (
-                                            <button
-                                              key={cut.id}
-                                              type="button"
-                                              onClick={() => setSheetDraft(prev => ({ ...prev, cut, sleeve: null }))}
-                                              className="flex flex-col items-center text-center cursor-pointer select-none active:scale-95 transition-transform"
-                                            >
-                                              {/* Image with overlay for non-selected */}
-                                              <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-[#F7F8F9] mb-2">
-                                                <img
-                                                  src={cut.thumbnail || PLACEHOLDER_IMAGE}
-                                                  alt={cut.name}
-                                                  className="w-full h-full object-contain p-2.5"
-                                                />
-                                                {/* Gray overlay on unselected when something IS selected */}
-                                                {sheetDraft.cut && !isSelected && (
-                                                  <div className="absolute inset-0 bg-white/60 rounded-2xl" />
-                                                )}
-                                                {/* Checkmark badge on selected */}
-                                                {isSelected && (
-                                                  <div className="absolute inset-0 rounded-2xl ring-2 ring-[#111827] ring-inset flex items-end justify-end p-1.5">
-                                                    <span className="w-5 h-5 rounded-full bg-[#111827] flex items-center justify-center">
-                                                      <Check className="w-3 h-3 text-white" strokeWidth={3} />
-                                                    </span>
-                                                  </div>
-                                                )}
-                                              </div>
-                                              <p className={`text-[11px] leading-snug line-clamp-2 transition-all ${
-                                                isSelected ? 'font-bold text-[#111827]' : 'font-medium text-[#6B7280]'
-                                              }`}>
-                                                {cut.name}
-                                              </p>
-                                              <p className="text-[10px] text-[#9CA3AF] mt-0.5 tabular-nums">
-                                                {addOn > 0 ? `+RM ${addOn}` : 'Standard'}
-                                              </p>
-                                            </button>
-                                          );
-                                        })}
+                                    {/* GRID — shown only when sheetCutOpen */}
+                                    {sheetCutOpen && (
+                                      <div className="px-5 pb-5">
+                                        <div className="grid grid-cols-3 sm:grid-cols-4 gap-x-2.5 gap-y-4">
+                                          {cutTypes.map((cut) => {
+                                            const isSelected = sheetDraft.cut?.id === cut.id;
+                                            const addOn = Number(cut.addOnPrice ?? cut.add_on_price ?? 0);
+                                            return (
+                                              <button
+                                                key={cut.id}
+                                                type="button"
+                                                onClick={() => {
+                                                  setSheetDraft(prev => ({ ...prev, cut, sleeve: null }));
+                                                  setSheetCutOpen(false);   // collapse section A
+                                                  setSheetSleeveOpen(true); // auto-open section B
+                                                }}
+                                                className="flex flex-col items-center text-center cursor-pointer select-none active:scale-95 transition-transform"
+                                              >
+                                                <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-[#F7F8F9] mb-2">
+                                                  <img
+                                                    src={cut.thumbnail || PLACEHOLDER_IMAGE}
+                                                    alt={cut.name}
+                                                    className="w-full h-full object-contain p-2.5"
+                                                  />
+                                                  {sheetDraft.cut && !isSelected && (
+                                                    <div className="absolute inset-0 bg-white/60 rounded-2xl" />
+                                                  )}
+                                                  {isSelected && (
+                                                    <div className="absolute inset-0 rounded-2xl ring-2 ring-[#111827] ring-inset flex items-end justify-end p-1.5">
+                                                      <span className="w-5 h-5 rounded-full bg-[#111827] flex items-center justify-center">
+                                                        <Check className="w-3 h-3 text-white" strokeWidth={3} />
+                                                      </span>
+                                                    </div>
+                                                  )}
+                                                </div>
+                                                <p className={`text-[11px] leading-snug line-clamp-2 transition-all ${
+                                                  isSelected ? 'font-bold text-[#111827]' : 'font-medium text-[#6B7280]'
+                                                }`}>
+                                                  {cut.name}
+                                                </p>
+                                                <p className="text-[10px] text-[#9CA3AF] mt-0.5 tabular-nums">
+                                                  {addOn > 0 ? `+RM ${addOn}` : 'Standard'}
+                                                </p>
+                                              </button>
+                                            );
+                                          })}
+                                        </div>
                                       </div>
-                                    </div>
+                                    )}
                                   </div>
 
                                   {/* ─────────────────────────────────────────────── */}
                                   {/* SECTION B: PILIH LENGAN (unlocked after Kolar)  */}
                                   {/* ─────────────────────────────────────────────── */}
-                                  <div className={`border-b border-[#F2F2F2] transition-all ${!sheetDraft.cut ? 'opacity-40 pointer-events-none' : ''}`}>
+                                  <div className={`border-b border-[#F2F2F2] transition-opacity ${
+                                    !sheetDraft.cut ? 'opacity-40 pointer-events-none' : ''
+                                  }`}>
                                     <button
                                       type="button"
-                                      onClick={() => sheetDraft.sleeve && setSheetDraft(prev => ({ ...prev }))}
-                                      className="w-full flex items-center justify-between px-5 py-4 cursor-default"
+                                      onClick={() => sheetDraft.cut && setSheetSleeveOpen(o => !o)}
+                                      className="w-full flex items-center justify-between px-5 py-4 cursor-pointer active:bg-[#FAFAFA] transition-colors disabled:cursor-default"
                                     >
                                       <div className="flex items-center space-x-2.5">
                                         <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
@@ -2073,16 +2088,20 @@ function DashboardContent() {
                                         }`}>2</span>
                                         <span className="text-[11px] font-semibold text-[#6B7280] uppercase tracking-widest">Jenis Lengan</span>
                                       </div>
-                                      {sheetDraft.sleeve && (
-                                        <div className="flex items-center space-x-1.5">
+                                      <div className="flex items-center space-x-2">
+                                        {sheetDraft.sleeve && !sheetSleeveOpen && (
                                           <span className="text-sm font-semibold text-[#111827]">{sheetDraft.sleeve.name}</span>
-                                          <CheckCircle2 className="w-4 h-4 text-[#111827] shrink-0" />
-                                        </div>
-                                      )}
+                                        )}
+                                        {sheetDraft.cut && (
+                                          sheetSleeveOpen
+                                            ? <ChevronUp className="w-4 h-4 text-[#9CA3AF] shrink-0" />
+                                            : <ChevronDown className="w-4 h-4 text-[#9CA3AF] shrink-0" />
+                                        )}
+                                      </div>
                                     </button>
 
-                                    {sheetDraft.cut && (
-                                      <div className={`px-5 pb-5 ${sheetDraft.sleeve ? 'hidden' : 'block'}`}>
+                                    {sheetDraft.cut && sheetSleeveOpen && (
+                                      <div className="px-5 pb-5">
                                         <div className="grid grid-cols-3 sm:grid-cols-4 gap-x-2.5 gap-y-4">
                                           {sleeveTypes.map((slv) => {
                                             const isSelected = sheetDraft.sleeve?.id === slv.id;
@@ -2091,7 +2110,10 @@ function DashboardContent() {
                                               <button
                                                 key={slv.id}
                                                 type="button"
-                                                onClick={() => setSheetDraft(prev => ({ ...prev, sleeve: slv }))}
+                                                onClick={() => {
+                                                  setSheetDraft(prev => ({ ...prev, sleeve: slv }));
+                                                  setSheetSleeveOpen(false); // collapse section B
+                                                }}
                                                 className="flex flex-col items-center text-center cursor-pointer select-none active:scale-95 transition-transform"
                                               >
                                                 <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-[#F7F8F9] mb-2">
