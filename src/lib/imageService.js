@@ -49,15 +49,45 @@ export async function deleteImageFromSupabaseStorage(imageUrlOrUrls) {
   }
 }
 
+function applyPhotoshopBicubicSharpen(ctx, width, height, mix = 0.22) {
+  try {
+    const imgData = ctx.getImageData(0, 0, width, height);
+    const data = imgData.data;
+    const copy = new Uint8ClampedArray(data);
+    const w = width;
+    const h = height;
+
+    for (let y = 1; y < h - 1; y++) {
+      for (let x = 1; x < w - 1; x++) {
+        const idx = (y * w + x) * 4;
+        for (let c = 0; c < 3; c++) {
+          const current = copy[idx + c];
+          const top = copy[((y - 1) * w + x) * 4 + c];
+          const bottom = copy[((y + 1) * w + x) * 4 + c];
+          const left = copy[(y * w + (x - 1)) * 4 + c];
+          const right = copy[(y * w + (x + 1)) * 4 + c];
+
+          const sharpened = current * 5 - (top + bottom + left + right);
+          data[idx + c] = Math.min(255, Math.max(0, current + (sharpened - current) * mix));
+        }
+      }
+    }
+    ctx.putImageData(imgData, 0, 0);
+  } catch (e) {
+    console.warn('[ImageService] Canvas sharpen filter warning:', e);
+  }
+}
+
 /**
- * Client-Side HTML5 Canvas WebP Converter:
+ * Client-Side HTML5 Canvas WebP Converter (Photoshop Bicubic Sharper Quality):
  * - Accepts JPG, PNG, GIF, WebP, etc.
  * - Preserves Full HD crisp resolution up to 1920px
  * - Preserves 100% original alpha channel / transparency from source file
+ * - Applies Bicubic Sharper unsharp mask filter for vivid image clarity
  * - Converts to crystal clear image/webp Blob (Quality 0.92)
  */
 export async function convertImageToWebpBlob(fileOrDataUrl, maxDimension = 1920, quality = 0.92) {
-  if (typeof window === 'undefined') return null; // Server environment fallback
+  if (typeof window === 'undefined') return null;
 
   return new Promise((resolve) => {
     const img = new Image();
@@ -82,10 +112,15 @@ export async function convertImageToWebpBlob(fileOrDataUrl, maxDimension = 1920,
         canvas.width = width;
         canvas.height = height;
 
-        const ctx = canvas.getContext('2d');
-        ctx.imageSmoothingEnabled = true;
-        ctx.imageSmoothingQuality = 'high';
-        ctx.drawImage(img, 0, 0, width, height);
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        if (ctx) {
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
+          ctx.drawImage(img, 0, 0, width, height);
+
+          // Apply Photoshop Bicubic Sharper filter to keep details 100% crisp
+          applyPhotoshopBicubicSharpen(ctx, width, height, 0.22);
+        }
 
         canvas.toBlob(
           (blob) => {

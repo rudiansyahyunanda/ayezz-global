@@ -508,7 +508,7 @@ export async function getDesignTemplates() {
 }
 
 export async function insertDesignTemplateToSupabase(template) {
-  if (!isSupabaseConnected || !template) return;
+  if (!isSupabaseConnected || !template) return { success: false };
   const rawList = Array.isArray(template?.images) && template.images.length > 0
     ? template.images
     : (template?.thumbnail ? [template.thumbnail] : [PLACEHOLDER_IMAGE]);
@@ -520,9 +520,9 @@ export async function insertDesignTemplateToSupabase(template) {
   }
   
   const payloadWithImages = {
-    id: template.id,
+    id: template.id || `tpl_${Date.now()}_${Math.random().toString(36).substring(2, 6)}`,
     name: template.name,
-    category: template.category,
+    category: template.category || 'SUBLIMASI',
     sub_category: template.subCategory || '',
     description: template.description || '',
     thumbnail: cloudList[0] || PLACEHOLDER_IMAGE,
@@ -530,29 +530,29 @@ export async function insertDesignTemplateToSupabase(template) {
   };
 
   try {
-    const { error } = await supabase.from('design_templates').insert([payloadWithImages]);
+    const { error } = await supabase.from('design_templates').upsert([payloadWithImages], { onConflict: 'id' });
     if (error) {
       console.warn('Supabase insertDesignTemplate error with images column:', error);
       if (error.code === 'PGRST204' || (error.message && error.message.includes('images'))) {
-        console.info('Retrying insertDesignTemplate without images column fallback...');
         const { images, ...payloadWithoutImages } = payloadWithImages;
-        const { error: fallbackErr } = await supabase.from('design_templates').insert([payloadWithoutImages]);
+        const { error: fallbackErr } = await supabase.from('design_templates').upsert([payloadWithoutImages], { onConflict: 'id' });
         if (fallbackErr) {
           console.error('Supabase insertDesignTemplate fallback failed:', fallbackErr);
-        } else {
-          console.log('Supabase insertDesignTemplate succeeded with fallback payload.');
+          return { success: false, error: fallbackErr.message };
         }
+      } else {
+        return { success: false, error: error.message };
       }
-    } else {
-      console.log('Supabase insertDesignTemplate succeeded.');
     }
+    return { success: true, payload: payloadWithImages };
   } catch (err) {
     console.error('Supabase insertDesignTemplate exception:', err);
+    return { success: false, error: err.message };
   }
 }
 
 export async function updateDesignTemplateInSupabase(templateId, updatedTpl) {
-  if (!isSupabaseConnected) return;
+  if (!isSupabaseConnected) return { success: false };
 
   let targetId = templateId;
   let tplData = updatedTpl;
@@ -562,7 +562,7 @@ export async function updateDesignTemplateInSupabase(templateId, updatedTpl) {
     targetId = templateId.id;
   }
 
-  if (!targetId || !tplData) return;
+  if (!targetId || !tplData) return { success: false };
 
   const rawList = Array.isArray(tplData?.images) && tplData.images.length > 0
     ? tplData.images
@@ -575,8 +575,9 @@ export async function updateDesignTemplateInSupabase(templateId, updatedTpl) {
   }
 
   const payloadWithImages = {
+    id: targetId,
     name: tplData.name,
-    category: tplData.category,
+    category: tplData.category || 'SUBLIMASI',
     sub_category: tplData.subCategory || '',
     description: tplData.description || '',
     thumbnail: cloudList[0] || PLACEHOLDER_IMAGE,
@@ -584,24 +585,24 @@ export async function updateDesignTemplateInSupabase(templateId, updatedTpl) {
   };
 
   try {
-    const { error } = await supabase.from('design_templates').update(payloadWithImages).eq('id', targetId);
+    const { error } = await supabase.from('design_templates').upsert([payloadWithImages], { onConflict: 'id' });
     if (error) {
       console.warn('Supabase updateDesignTemplate error with images column:', error);
       if (error.code === 'PGRST204' || (error.message && error.message.includes('images'))) {
-        console.info('Retrying updateDesignTemplate without images column fallback...');
         const { images, ...payloadWithoutImages } = payloadWithImages;
-        const { error: fallbackErr } = await supabase.from('design_templates').update(payloadWithoutImages).eq('id', targetId);
+        const { error: fallbackErr } = await supabase.from('design_templates').upsert([payloadWithoutImages], { onConflict: 'id' });
         if (fallbackErr) {
           console.error('Supabase updateDesignTemplate fallback failed:', fallbackErr);
-        } else {
-          console.log('Supabase updateDesignTemplate succeeded with fallback payload.');
+          return { success: false, error: fallbackErr.message };
         }
+      } else {
+        return { success: false, error: error.message };
       }
-    } else {
-      console.log('Supabase updateDesignTemplate succeeded.');
     }
+    return { success: true, payload: payloadWithImages };
   } catch (err) {
     console.error('Supabase updateDesignTemplate exception:', err);
+    return { success: false, error: err.message };
   }
 }
 

@@ -38,9 +38,10 @@ export async function POST(request) {
     const maxWidth = customWidth ? parseInt(customWidth, 10) : 1920;
     const maxHeight = customHeight ? parseInt(customHeight, 10) : 1920;
 
-    // Ultra-crisp Sharp HD WebP processing:
+    // Ultra-crisp Sharp HD WebP processing (Photoshop Bicubic Sharper Quality):
     // 1. Resize proportionally to max 1920px (Full HD) using Lanczos3 high-definition interpolation
-    // 2. Convert to WebP format with high quality (90) to preserve text & image crispness
+    // 2. Apply edge sharpen filter to preserve fabric pattern & line details
+    // 3. Convert to WebP format with high quality (92)
     const processedWebpBuffer = await sharp(inputBuffer)
       .resize({
         width: maxWidth,
@@ -49,12 +50,16 @@ export async function POST(request) {
         withoutEnlargement: true,
         kernel: sharp.kernel.lanczos3
       })
+      .sharpen({
+        sigma: 1.0,
+        m1: 0.5,
+        m2: 2.0
+      })
       .webp({
-        quality: 90,
-        alphaQuality: 95,
+        quality: 92,
+        alphaQuality: 100,
         effort: 6,
-        smartSubsample: false,
-        lossless: false
+        smartSubsample: true
       })
       .toBuffer();
 

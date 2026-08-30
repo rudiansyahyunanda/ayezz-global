@@ -379,17 +379,22 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
       }
     } else if (modalType === 'template') {
       if (!tplName) return;
+      setIsLoading(true);
       const galleryImages = tplImages.length > 0 ? tplImages : [PLACEHOLDER_IMAGE];
       const primaryThumb = galleryImages[0];
 
       if (modalMode === 'add') {
-        const newTpl = { id: `tpl_${Date.now()}`, name: tplName, category: tplCat, subCategory: tplSubCat, description: tplDesc, thumbnail: primaryThumb, images: galleryImages };
-        setTemplates(prev => [...prev, newTpl]);
-        await insertDesignTemplateToSupabase(newTpl);
+        const newTpl = { id: `tpl_${Date.now()}`, name: tplName, category: tplCat || 'SUBLIMASI', subCategory: tplSubCat || '', description: tplDesc || '', thumbnail: primaryThumb, images: galleryImages };
+        const res = await insertDesignTemplateToSupabase(newTpl);
+        if (res && res.payload) {
+          setTemplates(prev => [res.payload, ...prev.filter(t => t.id !== res.payload.id)]);
+        }
       } else {
-        const updated = { id: editingId, name: tplName, category: tplCat, subCategory: tplSubCat, description: tplDesc, thumbnail: primaryThumb, images: galleryImages };
-        setTemplates(prev => prev.map(t => t.id === editingId ? { ...t, ...updated } : t));
-        await updateDesignTemplateInSupabase(editingId, updated);
+        const updated = { id: editingId, name: tplName, category: tplCat || 'SUBLIMASI', subCategory: tplSubCat || '', description: tplDesc || '', thumbnail: primaryThumb, images: galleryImages };
+        const res = await updateDesignTemplateInSupabase(editingId, updated);
+        if (res && res.payload) {
+          setTemplates(prev => prev.map(t => t.id === editingId ? { ...t, ...res.payload } : t));
+        }
       }
     }
     setIsModalOpen(false);
@@ -398,6 +403,7 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
       const subs = await getSubCategories(selectedParentCategory.id);
       setSubCategoryItems(subs || []);
     }
+    setIsLoading(false);
   };
 
   const handleSaveStoreSettings = async (e) => {
