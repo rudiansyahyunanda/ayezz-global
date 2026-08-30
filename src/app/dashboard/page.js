@@ -19,6 +19,7 @@ import {
   Truck,
   ChevronRight,
   ChevronLeft,
+  ChevronDown,
   ShieldCheck,
   MapPin,
   Phone,
@@ -178,6 +179,8 @@ function DashboardContent() {
   // Mobile Size Bottom Sheet Modal
   const [isMobileSizeModalOpen, setIsMobileSizeModalOpen] = useState(false);
   const [activeGroupIdForSize, setActiveGroupIdForSize] = useState(null);
+  const [isAdultAccordionOpen, setIsAdultAccordionOpen] = useState(true);
+  const [isKidsAccordionOpen, setIsKidsAccordionOpen] = useState(false);
 
   // Customer & Shipping Info
   const [customerInfo, setCustomerInfo] = useState({
@@ -1556,53 +1559,53 @@ function DashboardContent() {
                                     {playerInputMode === 'manual' ? (
                                       <div className="space-y-3">
                                         {/* MOBILE RESPONSIVE VERTICAL CARDS FOR PLAYER INPUT (MD:HIDDEN) */}
-                                        <div className="space-y-3 md:hidden">
+                                        <div className="space-y-2 md:hidden">
                                           {playerRows.map((row, idx) => (
-                                            <div key={row.id} className="p-4 bg-white border border-slate-200 rounded-2xl space-y-3 relative shadow-2xs">
-                                              <div className="flex items-center justify-between border-b border-slate-100 pb-2">
-                                                <span className="text-xs font-mono font-extrabold text-slate-900">
+                                            <div key={row.id} className="p-3 bg-white border border-slate-200 rounded-xl space-y-2 relative shadow-2xs">
+                                              <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
+                                                <span className="text-[11px] font-mono font-extrabold text-slate-900">
                                                   Pemain #{idx + 1}
                                                 </span>
                                                 <button
                                                   type="button"
                                                   onClick={() => removePlayerRow(row.id)}
-                                                  className="p-1.5 text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                                                  className="p-1 text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
                                                   title="Padam Pemain"
                                                 >
-                                                  <Trash2 className="w-4 h-4 shrink-0" />
+                                                  <Trash2 className="w-3.5 h-3.5 shrink-0" />
                                                 </button>
                                               </div>
 
-                                              <div className="space-y-2.5">
+                                              <div className="space-y-2">
                                                 <div>
-                                                  <label className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Nama Pemain</label>
+                                                  <label className="text-[9px] font-bold text-slate-500 uppercase block mb-0.5">Nama Pemain</label>
                                                   <input
                                                     type="text"
                                                     placeholder="Contoh: MUHAMMAD ALI"
                                                     value={row.name}
                                                     onChange={(e) => updatePlayerRow(row.id, 'name', e.target.value)}
-                                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2.5 text-xs font-bold text-slate-900 outline-none focus:bg-white focus:border-slate-900 uppercase"
+                                                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs font-bold text-slate-900 outline-none focus:bg-white focus:border-slate-900 uppercase"
                                                   />
                                                 </div>
 
-                                                <div className="grid grid-cols-2 gap-2.5">
+                                                <div className="grid grid-cols-2 gap-2">
                                                   <div>
-                                                    <label className="text-[10px] font-bold text-slate-500 uppercase block mb-1">No. Baju</label>
+                                                    <label className="text-[9px] font-bold text-slate-500 uppercase block mb-0.5">No. Baju</label>
                                                     <input
                                                       type="text"
                                                       placeholder="10"
                                                       value={row.number}
                                                       onChange={(e) => updatePlayerRow(row.id, 'number', e.target.value)}
-                                                      className="w-full text-center bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-black text-slate-900 outline-none focus:bg-white focus:border-slate-900"
+                                                      className="w-full text-center bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-2 text-xs font-black text-slate-900 outline-none focus:bg-white focus:border-slate-900"
                                                     />
                                                   </div>
 
                                                   <div>
-                                                    <label className="text-[10px] font-bold text-slate-500 uppercase block mb-1">Saiz Jersi</label>
+                                                    <label className="text-[9px] font-bold text-slate-500 uppercase block mb-0.5">Saiz Jersi</label>
                                                     <select
                                                       value={row.size}
                                                       onChange={(e) => updatePlayerRow(row.id, 'size', e.target.value)}
-                                                      className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-xs font-bold text-slate-900 outline-none focus:bg-white cursor-pointer"
+                                                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-2 text-xs font-bold text-slate-900 outline-none focus:bg-white cursor-pointer"
                                                     >
                                                       {ALL_SIZES.map((sz) => (
                                                         <option key={sz} value={sz}>{sz}</option>
@@ -3232,10 +3235,12 @@ function DashboardContent() {
         </div>
       )}
 
-      {/* MOBILE SIZE BOTTOM SHEET MODAL */}
+      {/* MOBILE SIZE BOTTOM SHEET MODAL (APPLE-STYLE STEPPER & ACCORDION) */}
       {isMobileSizeModalOpen && activeGroupIdForSize && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-900/60 backdrop-blur-xs animate-fade-in font-sans">
-          <div className="bg-white w-full max-w-lg rounded-t-3xl sm:rounded-3xl border-t sm:border border-slate-200 shadow-2xl p-5 space-y-5 max-h-[88vh] flex flex-col">
+          <div className="bg-white w-full max-w-lg rounded-t-3xl sm:rounded-3xl border-t sm:border border-slate-200 shadow-2xl p-5 space-y-4 max-h-[88vh] flex flex-col">
+            
+            {/* MODAL HEADER */}
             <div className="flex items-center justify-between border-b border-slate-100 pb-3 shrink-0">
               <div>
                 <span className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest block">SAIZ & KUANTITI</span>
@@ -3249,60 +3254,128 @@ function DashboardContent() {
               </button>
             </div>
 
-            <div className="flex-1 overflow-y-auto space-y-5 pr-1">
-              {/* Adult Sizes Grid */}
-              <div className="space-y-2">
-                <span className="text-xs font-extrabold text-slate-900 uppercase tracking-wider block">1. Saiz Dewasa (Adult)</span>
-                <div className="grid grid-cols-3 gap-2.5">
-                  {ADULT_SIZES.map((sz) => {
-                    const currentGroup = cutGroups.find(g => g.id === activeGroupIdForSize);
-                    const q = currentGroup?.sizes?.[sz] || 0;
-                    return (
-                      <div key={sz} className="p-3 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col items-center justify-center space-y-1.5">
-                        <span className="text-xs font-black text-slate-900">{sz}</span>
-                        <input
-                          type="number"
-                          min="0"
-                          value={q === 0 ? '' : q}
-                          placeholder="0"
-                          onChange={(e) => setGroupSizeQtyDirect(activeGroupIdForSize, sz, e.target.value)}
-                          className="w-full text-center py-1.5 font-mono font-extrabold text-sm text-slate-900 bg-white border border-slate-200 rounded-xl outline-none focus:border-slate-900"
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
+            {/* ACCORDION CONTAINER */}
+            <div className="flex-1 overflow-y-auto space-y-3 pr-1">
+              
+              {/* ACCORDION SECTION 1: SAIZ DEWASA (ADULT) */}
+              <div className="border border-slate-200/90 rounded-2xl overflow-hidden bg-white">
+                <button
+                  type="button"
+                  onClick={() => setIsAdultAccordionOpen(!isAdultAccordionOpen)}
+                  className="w-full p-3.5 bg-slate-50 hover:bg-slate-100/80 flex items-center justify-between transition-colors cursor-pointer text-left"
+                >
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xs font-black text-slate-900 uppercase">1. Saiz Dewasa (Adult)</span>
+                    <span className="text-[10px] font-mono font-bold bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full">
+                      {ADULT_SIZES.reduce((sum, sz) => sum + Number(cutGroups.find(g => g.id === activeGroupIdForSize)?.sizes?.[sz] || 0), 0)} pcs
+                    </span>
+                  </div>
+                  <ChevronDown className={`w-4 h-4 text-slate-600 transition-transform ${isAdultAccordionOpen ? 'transform rotate-180' : ''}`} />
+                </button>
+
+                {isAdultAccordionOpen && (
+                  <div className="divide-y divide-slate-100 p-2 sm:p-3">
+                    {ADULT_SIZES.map((sz) => {
+                      const currentGroup = cutGroups.find(g => g.id === activeGroupIdForSize);
+                      const q = Number(currentGroup?.sizes?.[sz] || 0);
+                      return (
+                        <div key={sz} className="py-2 px-2 flex items-center justify-between hover:bg-slate-50 rounded-xl transition-colors">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-xs font-black text-slate-900 w-12">{sz}</span>
+                            <span className="text-[10px] font-mono text-slate-400 font-medium">Size {sz}</span>
+                          </div>
+
+                          {/* APPLE-STYLE STEPPER CONTROLS */}
+                          <div className="flex items-center space-x-2">
+                            <button
+                              type="button"
+                              disabled={q <= 0}
+                              onClick={() => setGroupSizeQtyDirect(activeGroupIdForSize, sz, Math.max(0, q - 1))}
+                              className="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 text-slate-700 font-black text-sm flex items-center justify-center active:scale-95 disabled:opacity-30 disabled:bg-slate-50 cursor-pointer"
+                            >
+                              -
+                            </button>
+                            <span className={`w-8 text-center text-xs font-mono font-black ${q > 0 ? 'text-slate-900' : 'text-slate-300'}`}>
+                              {q}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => setGroupSizeQtyDirect(activeGroupIdForSize, sz, q + 1)}
+                              className="w-8 h-8 rounded-full bg-slate-900 text-white font-black text-sm flex items-center justify-center active:scale-95 shadow-2xs cursor-pointer"
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
 
-              {/* Kids Sizes Grid */}
-              <div className="space-y-2 pt-2">
-                <span className="text-xs font-extrabold text-slate-900 uppercase tracking-wider block">2. Saiz Kanak-Kanak (Kids)</span>
-                <div className="grid grid-cols-3 gap-2.5">
-                  {KIDS_SIZES.map((sz) => {
-                    const currentGroup = cutGroups.find(g => g.id === activeGroupIdForSize);
-                    const q = currentGroup?.sizes?.[sz] || 0;
-                    return (
-                      <div key={sz} className="p-3 bg-slate-50 rounded-2xl border border-slate-200 flex flex-col items-center justify-center space-y-1.5">
-                        <span className="text-xs font-black text-slate-900">Saiz {sz}</span>
-                        <input
-                          type="number"
-                          min="0"
-                          value={q === 0 ? '' : q}
-                          placeholder="0"
-                          onChange={(e) => setGroupSizeQtyDirect(activeGroupIdForSize, sz, e.target.value)}
-                          className="w-full text-center py-1.5 font-mono font-extrabold text-sm text-slate-900 bg-white border border-slate-200 rounded-xl outline-none focus:border-slate-900"
-                        />
-                      </div>
-                    );
-                  })}
-                </div>
+              {/* ACCORDION SECTION 2: SAIZ KANAK-KANAK (KIDS) */}
+              <div className="border border-slate-200/90 rounded-2xl overflow-hidden bg-white">
+                <button
+                  type="button"
+                  onClick={() => setIsKidsAccordionOpen(!isKidsAccordionOpen)}
+                  className="w-full p-3.5 bg-slate-50 hover:bg-slate-100/80 flex items-center justify-between transition-colors cursor-pointer text-left"
+                >
+                  <div className="flex items-center space-x-2">
+                    <span className="text-xs font-black text-slate-900 uppercase">2. Saiz Kanak-Kanak (Kids)</span>
+                    <span className="text-[10px] font-mono font-bold bg-slate-200 text-slate-700 px-2 py-0.5 rounded-full">
+                      {KIDS_SIZES.reduce((sum, sz) => sum + Number(cutGroups.find(g => g.id === activeGroupIdForSize)?.sizes?.[sz] || 0), 0)} pcs
+                    </span>
+                  </div>
+                  <ChevronDown className={`w-4 h-4 text-slate-600 transition-transform ${isKidsAccordionOpen ? 'transform rotate-180' : ''}`} />
+                </button>
+
+                {isKidsAccordionOpen && (
+                  <div className="divide-y divide-slate-100 p-2 sm:p-3">
+                    {KIDS_SIZES.map((sz) => {
+                      const currentGroup = cutGroups.find(g => g.id === activeGroupIdForSize);
+                      const q = Number(currentGroup?.sizes?.[sz] || 0);
+                      return (
+                        <div key={sz} className="py-2 px-2 flex items-center justify-between hover:bg-slate-50 rounded-xl transition-colors">
+                          <div className="flex items-center space-x-2">
+                            <span className="text-xs font-black text-slate-900 w-16">Saiz {sz}</span>
+                            <span className="text-[10px] font-mono text-slate-400 font-medium">Kids</span>
+                          </div>
+
+                          {/* APPLE-STYLE STEPPER CONTROLS */}
+                          <div className="flex items-center space-x-2">
+                            <button
+                              type="button"
+                              disabled={q <= 0}
+                              onClick={() => setGroupSizeQtyDirect(activeGroupIdForSize, sz, Math.max(0, q - 1))}
+                              className="w-8 h-8 rounded-full bg-slate-100 border border-slate-200 text-slate-700 font-black text-sm flex items-center justify-center active:scale-95 disabled:opacity-30 disabled:bg-slate-50 cursor-pointer"
+                            >
+                              -
+                            </button>
+                            <span className={`w-8 text-center text-xs font-mono font-black ${q > 0 ? 'text-slate-900' : 'text-slate-300'}`}>
+                              {q}
+                            </span>
+                            <button
+                              type="button"
+                              onClick={() => setGroupSizeQtyDirect(activeGroupIdForSize, sz, q + 1)}
+                              className="w-8 h-8 rounded-full bg-slate-900 text-white font-black text-sm flex items-center justify-center active:scale-95 shadow-2xs cursor-pointer"
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
+
             </div>
 
+            {/* MODAL FOOTER DONE BUTTON */}
             <div className="pt-3 border-t border-slate-100 shrink-0">
               <button
                 onClick={() => setIsMobileSizeModalOpen(false)}
-                className="w-full py-3.5 bg-slate-900 text-white font-extrabold text-xs uppercase tracking-widest rounded-2xl shadow-md cursor-pointer"
+                className="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-widest rounded-2xl shadow-md cursor-pointer"
               >
                 Selesai & Simpan Saiz
               </button>
