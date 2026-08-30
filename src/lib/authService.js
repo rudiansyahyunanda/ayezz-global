@@ -222,34 +222,19 @@ export async function signInWithGoogle() {
     ? `${window.location.origin}/auth/callback`
     : 'https://www.ayezz.com/auth/callback';
 
-  try {
-    const { data, error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: {
-        redirectTo: redirectUrl,
-        queryParams: {
-          access_type: 'offline',
-          prompt: 'consent'
-        }
+  const { data, error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: redirectUrl,
+      queryParams: {
+        access_type: 'offline',
+        prompt: 'consent'
       }
-    });
+    }
+  });
 
-    if (error) {
-      console.warn('Supabase OAuth Google notice:', error.message);
-      const gEmail = prompt('Masukkan Alamat Emel Google / Gmail Anda untuk Log Masuk:');
-      if (gEmail && gEmail.includes('@')) {
-        return await loginUser(gEmail, 'google_oauth_pass');
-      }
-      throw new Error('Log masuk Google memerlukan konfigurasi Provider di Supabase.');
-    }
-    return data;
-  } catch (err) {
-    const gEmail = prompt('Masukkan Alamat Emel Google / Gmail Anda untuk Log Masuk:');
-    if (gEmail && gEmail.includes('@')) {
-      return await loginUser(gEmail, 'google_oauth_pass');
-    }
-    throw err;
-  }
+  if (error) throw error;
+  return data;
 }
 
 /**
