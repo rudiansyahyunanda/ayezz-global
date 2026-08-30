@@ -1349,7 +1349,7 @@ function DashboardContent() {
                       {/* LANGKAH 1: REKA BENTUK (LARGE IMAGE SHOWCASE + DYNAMIC CHECKBOXES & LOGO/NAMES UPLOADS) */}
                       {/* ========================================================== */}
                       {orderStep === 1 && (
-                        <div className="bg-white p-4 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-2xs space-y-6 w-full">
+                        <div className="w-full space-y-6">
                           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-100 pb-4">
                             <div>
                               <span className="text-[10px] font-mono text-slate-400 font-bold uppercase tracking-widest block">LANGKAH 1 DARI 4</span>
@@ -1357,31 +1357,31 @@ function DashboardContent() {
                             </div>
 
                             {/* SEGMENTED CONTROL TOGGLE */}
-                            <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 shrink-0">
+                            <div className="flex items-center bg-[#F2F2F7] p-[3px] rounded-xl shrink-0">
                               <button
                                 type="button"
                                 onClick={() => setIsCustomDesign(false)}
-                                className={`px-3.5 py-2 rounded-lg text-xs font-extrabold transition-all flex items-center space-x-1.5 cursor-pointer ${
+                                className={`px-4 py-2 rounded-[10px] text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer ${
                                   !isCustomDesign
-                                    ? 'bg-slate-900 text-white shadow-xs'
-                                    : 'text-slate-600 hover:text-slate-900'
+                                    ? 'bg-white text-[#111827] shadow-sm'
+                                    : 'text-[#8E8E93] hover:text-[#111827]'
                                 }`}
                               >
                                 <Palette className="w-3.5 h-3.5" />
-                                <span>Template Sedia Ada</span>
+                                <span>Template</span>
                               </button>
 
                               <button
                                 type="button"
                                 onClick={() => setIsCustomDesign(true)}
-                                className={`px-3.5 py-2 rounded-lg text-xs font-extrabold transition-all flex items-center space-x-1.5 cursor-pointer ${
+                                className={`px-4 py-2 rounded-[10px] text-xs font-bold transition-all flex items-center space-x-1.5 cursor-pointer ${
                                   isCustomDesign
-                                    ? 'bg-slate-900 text-white shadow-xs'
-                                    : 'text-slate-600 hover:text-slate-900'
+                                    ? 'bg-white text-[#111827] shadow-sm'
+                                    : 'text-[#8E8E93] hover:text-[#111827]'
                                 }`}
                               >
-                                <Sparkles className="w-3.5 h-3.5 text-white" />
-                                <span>Custom Design</span>
+                                <Sparkles className="w-3.5 h-3.5" />
+                                <span>Custom</span>
                               </button>
                             </div>
                           </div>
@@ -1433,12 +1433,12 @@ function DashboardContent() {
                                       onClick={() => setHasPlayerNames(!hasPlayerNames)}
                                       className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-center justify-between ${
                                         hasPlayerNames
-                                          ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
+                                          ? 'bg-white text-[#111827] border-[#111827] shadow-sm'
                                           : 'bg-white text-slate-900 border-slate-200 hover:border-slate-300'
                                       }`}
                                     >
                                       <div className="flex items-center space-x-3">
-                                        <div className={`p-2 rounded-xl ${hasPlayerNames ? 'bg-slate-800 text-emerald-400' : 'bg-slate-100 text-slate-600'}`}>
+                                        <div className={`p-2 rounded-xl ${hasPlayerNames ? 'bg-[#111827] text-white' : 'bg-slate-100 text-slate-600'}`}>
                                           <User className="w-4 h-4 shrink-0" />
                                         </div>
                                         <div>
@@ -1448,7 +1448,7 @@ function DashboardContent() {
                                       </div>
 
                                       {/* Switch Toggle Knob */}
-                                      <div className={`w-11 h-6 rounded-full transition-colors relative p-0.5 shrink-0 ${hasPlayerNames ? 'bg-emerald-500' : 'bg-slate-200'}`}>
+                                      <div className={`w-11 h-6 rounded-full transition-colors relative p-0.5 shrink-0 ${hasPlayerNames ? 'bg-[#111827]' : 'bg-slate-200'}`}>
                                         <div className={`w-5 h-5 rounded-full bg-white shadow-xs transition-transform transform ${hasPlayerNames ? 'translate-x-5' : 'translate-x-0'}`} />
                                       </div>
                                     </div>
@@ -1458,12 +1458,12 @@ function DashboardContent() {
                                       onClick={() => setHasTeamLogo(!hasTeamLogo)}
                                       className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-center justify-between ${
                                         hasTeamLogo
-                                          ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
+                                          ? 'bg-white text-[#111827] border-[#111827] shadow-sm'
                                           : 'bg-white text-slate-900 border-slate-200 hover:border-slate-300'
                                       }`}
                                     >
                                       <div className="flex items-center space-x-3">
-                                        <div className={`p-2 rounded-xl ${hasTeamLogo ? 'bg-slate-800 text-emerald-400' : 'bg-slate-100 text-slate-600'}`}>
+                                        <div className={`p-2 rounded-xl ${hasTeamLogo ? 'bg-[#111827] text-white' : 'bg-slate-100 text-slate-600'}`}>
                                           <ShieldCheck className="w-4 h-4 shrink-0" />
                                         </div>
                                         <div>
@@ -1473,7 +1473,7 @@ function DashboardContent() {
                                       </div>
 
                                       {/* Switch Toggle Knob */}
-                                      <div className={`w-11 h-6 rounded-full transition-colors relative p-0.5 shrink-0 ${hasTeamLogo ? 'bg-emerald-500' : 'bg-slate-200'}`}>
+                                      <div className={`w-11 h-6 rounded-full transition-colors relative p-0.5 shrink-0 ${hasTeamLogo ? 'bg-[#111827]' : 'bg-slate-200'}`}>
                                         <div className={`w-5 h-5 rounded-full bg-white shadow-xs transition-transform transform ${hasTeamLogo ? 'translate-x-5' : 'translate-x-0'}`} />
                                       </div>
                                     </div>
@@ -1483,12 +1483,12 @@ function DashboardContent() {
                                       onClick={() => setHasSponsorLogo(!hasSponsorLogo)}
                                       className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-center justify-between ${
                                         hasSponsorLogo
-                                          ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
+                                          ? 'bg-white text-[#111827] border-[#111827] shadow-sm'
                                           : 'bg-white text-slate-900 border-slate-200 hover:border-slate-300'
                                       }`}
                                     >
                                       <div className="flex items-center space-x-3">
-                                        <div className={`p-2 rounded-xl ${hasSponsorLogo ? 'bg-slate-800 text-emerald-400' : 'bg-slate-100 text-slate-600'}`}>
+                                        <div className={`p-2 rounded-xl ${hasSponsorLogo ? 'bg-[#111827] text-white' : 'bg-slate-100 text-slate-600'}`}>
                                           <Sparkles className="w-4 h-4 shrink-0" />
                                         </div>
                                         <div>
@@ -1498,7 +1498,7 @@ function DashboardContent() {
                                       </div>
 
                                       {/* Switch Toggle Knob */}
-                                      <div className={`w-11 h-6 rounded-full transition-colors relative p-0.5 shrink-0 ${hasSponsorLogo ? 'bg-emerald-500' : 'bg-slate-200'}`}>
+                                      <div className={`w-11 h-6 rounded-full transition-colors relative p-0.5 shrink-0 ${hasSponsorLogo ? 'bg-[#111827]' : 'bg-slate-200'}`}>
                                         <div className={`w-5 h-5 rounded-full bg-white shadow-xs transition-transform transform ${hasSponsorLogo ? 'translate-x-5' : 'translate-x-0'}`} />
                                       </div>
                                     </div>
@@ -1833,17 +1833,6 @@ function DashboardContent() {
                             </div>
                           )}
 
-                          {/* STEP 1 FOOTER NAV */}
-                          <div className="pt-4 border-t border-slate-100 flex justify-end">
-                            <button
-                              type="button"
-                              onClick={() => setOrderStep(2)}
-                              className="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all inline-flex items-center space-x-2 cursor-pointer shadow-sm whitespace-nowrap shrink-0"
-                            >
-                              <span>Teruskan</span>
-                              <ChevronRight className="w-4 h-4 text-white shrink-0" />
-                            </button>
-                          </div>
                         </div>
                       )}
 
@@ -2274,74 +2263,61 @@ function DashboardContent() {
                       {/* LANGKAH 3: FABRIK SUBLIMASI (VISUAL FABRIC CARDS GRID - DIRECTIVE 6) */}
                       {/* ========================================================== */}
                       {orderStep === 3 && (
-                        <div className="bg-white p-4 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-2xs space-y-6 w-full">
+                        <div className="w-full space-y-6">
                           <div className="border-b border-slate-100 pb-4">
                             <span className="text-[10px] font-mono text-slate-400 font-bold uppercase tracking-widest block">LANGKAH 3 DARI 4</span>
                             <h3 className="text-base sm:text-lg font-black uppercase text-slate-900 pt-0.5">PILIH BAHAN KAIN / FABRIK SUBLIMASI</h3>
                           </div>
 
-                          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 w-full">
+                          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 w-full">
                             {fabricTypes.map((fab) => {
                               const isSelected = selectedFabric.id === fab.id;
                               const baseP = Number(fab.basePrice ?? fab.base_price ?? 70);
                               const gsm = fab.gsm || '150 GSM';
                               return (
-                                <div
+                                <button
                                   key={fab.id}
+                                  type="button"
                                   onClick={() => setSelectedFabric(fab)}
-                                  className={`p-5 rounded-2xl border cursor-pointer transition-all flex flex-col justify-between space-y-4 relative ${
-                                    isSelected
-                                      ? 'bg-slate-900 text-white border-slate-900 shadow-md ring-2 ring-slate-400'
-                                      : 'bg-white text-slate-900 border-slate-200 hover:border-slate-400 hover:bg-slate-50'
-                                  }`}
+                                  className="flex flex-col items-center text-center cursor-pointer select-none active:scale-95 transition-transform"
                                 >
-                                  <div className="flex items-start justify-between">
-                                    <span className={`text-[10px] font-mono font-black uppercase px-2.5 py-1 rounded-full border ${
-                                      isSelected ? 'bg-slate-800 text-emerald-400 border-slate-700' : 'bg-slate-100 text-slate-600 border-slate-200'
-                                    }`}>
-                                      {gsm}
-                                    </span>
+                                  <div className="relative w-full aspect-square rounded-2xl overflow-hidden bg-[#F7F8F9] mb-3">
+                                    {/* Usually fabrics don't have thumbnails in the db yet, we'll use a placeholder or check if they do */}
+                                    <img
+                                      src={fab.thumbnail || PLACEHOLDER_IMAGE}
+                                      alt={fab.name}
+                                      className="w-full h-full object-cover"
+                                    />
+                                    {/* Gray overlay on unselected */}
+                                    {!isSelected && (
+                                      <div className="absolute inset-0 bg-white/60 rounded-2xl" />
+                                    )}
+                                    {/* Checkmark badge on selected */}
                                     {isSelected && (
-                                      <span className="bg-emerald-500 text-white p-1 rounded-full shadow-xs">
-                                        <Check className="w-3.5 h-3.5 text-white" />
-                                      </span>
+                                      <div className="absolute inset-0 rounded-2xl ring-2 ring-[#111827] ring-inset flex items-start justify-end p-2">
+                                        <span className="w-6 h-6 rounded-full bg-[#111827] flex items-center justify-center">
+                                          <Check className="w-3.5 h-3.5 text-white" strokeWidth={3} />
+                                        </span>
+                                      </div>
                                     )}
                                   </div>
-
-                                  <div className="space-y-1">
-                                    <h4 className="text-sm font-extrabold uppercase tracking-tight">{fab.name}</h4>
-                                    <p className={`text-xs font-mono ${isSelected ? 'text-slate-300' : 'text-slate-500'}`}>
-                                      Kain Sublimasi High-Performance
+                                  
+                                  <div className="space-y-0.5">
+                                    <span className="text-[9px] font-bold uppercase px-2 py-0.5 rounded-full bg-[#F2F2F7] text-[#8E8E93]">
+                                      {gsm}
+                                    </span>
+                                    <p className={`text-[12px] leading-snug line-clamp-2 transition-all mt-1 ${
+                                      isSelected ? 'font-bold text-[#111827]' : 'font-semibold text-[#6B7280]'
+                                    }`}>
+                                      {fab.name}
+                                    </p>
+                                    <p className="text-[11px] text-[#9CA3AF] tabular-nums">
+                                      RM {baseP}.00 / pcs
                                     </p>
                                   </div>
-
-                                  <div className="pt-3 border-t border-slate-200/40 flex items-center justify-between">
-                                    <span className="text-xs font-mono font-bold">Harga Asas:</span>
-                                    <span className="text-base font-black">RM {baseP}.00 / pcs</span>
-                                  </div>
-                                </div>
+                                </button>
                               );
                             })}
-                          </div>
-
-                          {/* STEP 3 FOOTER NAV */}
-                          <div className="pt-4 border-t border-slate-100 flex items-center justify-between">
-                            <button
-                              type="button"
-                              onClick={() => setOrderStep(2)}
-                              className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer whitespace-nowrap shrink-0"
-                            >
-                              Kembali
-                            </button>
-
-                            <button
-                              type="button"
-                              onClick={() => setOrderStep(4)}
-                              className="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all inline-flex items-center space-x-2 cursor-pointer shadow-sm whitespace-nowrap shrink-0"
-                            >
-                              <span>Teruskan</span>
-                              <ChevronRight className="w-4 h-4 text-white shrink-0" />
-                            </button>
                           </div>
                         </div>
                       )}
@@ -2354,8 +2330,8 @@ function DashboardContent() {
                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 w-full items-start">
                       
                       {/* LEFT 7 COLS: CLIENT INFO & FINAL CHECKLIST */}
-                      <div className="lg:col-span-7 space-y-6">
-                        <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-2xs space-y-5">
+                      <div className="lg:col-span-7 space-y-6 w-full">
+                        <div className="space-y-5">
                           <div className="border-b border-slate-100 pb-3">
                             <span className="text-[10px] font-mono text-slate-400 font-bold uppercase tracking-widest block">LANGKAH 4 DARI 4</span>
                             <h3 className="text-lg font-black uppercase text-slate-900 pt-0.5">MAKLUMAT PELANGGAN & PENGESAHAN</h3>
@@ -2370,7 +2346,7 @@ function DashboardContent() {
                                 placeholder="Nama penuh..."
                                 value={customerInfo.name}
                                 onChange={(e) => setCustomerInfo({ ...customerInfo, name: e.target.value })}
-                                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 outline-none focus:bg-white focus:border-slate-400"
+                                className="w-full px-4 py-3 bg-white border border-[#E5E7EB] rounded-xl text-xs font-semibold text-[#111827] outline-none focus:border-[#111827] transition-colors"
                               />
                             </div>
 
@@ -2382,7 +2358,7 @@ function DashboardContent() {
                                 placeholder="011-XXXXXXX"
                                 value={customerInfo.phone}
                                 onChange={(e) => setCustomerInfo({ ...customerInfo, phone: e.target.value })}
-                                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 outline-none focus:bg-white focus:border-slate-400"
+                                className="w-full px-4 py-3 bg-white border border-[#E5E7EB] rounded-xl text-xs font-semibold text-[#111827] outline-none focus:border-[#111827] transition-colors"
                               />
                             </div>
 
@@ -2393,7 +2369,7 @@ function DashboardContent() {
                                 placeholder="Contoh: FC Harimau"
                                 value={customerInfo.teamName}
                                 onChange={(e) => setCustomerInfo({ ...customerInfo, teamName: e.target.value })}
-                                className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 outline-none focus:bg-white focus:border-slate-400"
+                                className="w-full px-4 py-3 bg-white border border-[#E5E7EB] rounded-xl text-xs font-semibold text-[#111827] outline-none focus:border-[#111827] transition-colors"
                               />
                             </div>
 
@@ -2408,28 +2384,17 @@ function DashboardContent() {
                               </p>
                             </div>
                           </div>
-
-                          {/* STEP 4 FOOTER NAV */}
-                          <div className="pt-4 border-t border-slate-100">
-                            <button
-                              type="button"
-                              onClick={() => setOrderStep(3)}
-                              className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer"
-                            >
-                              ← Kembali Ke Step 3
-                            </button>
-                          </div>
                         </div>
                       </div>
 
                       {/* RIGHT 5 COLS: FINAL FACTORY ORDER SUMMARY TICKET */}
                       <div className="lg:col-span-5 space-y-6">
-                        <div className="bg-[#F3F5F8] text-slate-900 p-6 sm:p-7 rounded-3xl shadow-sm space-y-5 sticky top-20 border border-slate-200/90">
-                          <div className="flex items-center justify-between border-b border-slate-200/80 pb-3">
-                            <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest font-bold">
+                        <div className="bg-[#F9FAFB] text-[#111827] p-5 rounded-2xl space-y-5 sticky top-20 border border-[#E5E7EB]">
+                          <div className="flex items-center justify-between border-b border-[#E5E7EB] pb-3">
+                            <span className="text-[10px] font-mono text-[#6B7280] uppercase tracking-widest font-bold">
                               RINGKASAN SEBUT HARGA KILANG
                             </span>
-                            <span className="text-[10px] font-mono font-bold text-emerald-800 bg-emerald-100/80 px-2 py-0.5 rounded border border-emerald-300">
+                            <span className="text-[9px] font-mono font-bold text-[#111827] bg-[#F2F2F7] px-2 py-0.5 rounded border border-[#111827]">
                               LIVE ESTIMATE
                             </span>
                           </div>
@@ -2481,7 +2446,7 @@ function DashboardContent() {
                           <button
                             type="submit"
                             disabled={isSubmittingOrder || groupCalculations.totalQty <= 0}
-                            className="w-full py-4 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-widest rounded-xl transition-all shadow-md active:scale-95 flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer"
+                            className="w-full py-4 bg-[#111827] hover:bg-[#1A1F2B] text-white font-extrabold text-xs uppercase tracking-widest rounded-xl transition-all active:scale-95 flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer"
                           >
                             {isSubmittingOrder ? (
                               <RefreshCw className="w-4 h-4 animate-spin text-white" />
@@ -2531,9 +2496,9 @@ function DashboardContent() {
                         <button
                           type="button"
                           onClick={() => setOrderStep(orderStep + 1)}
-                          className="px-4 py-2.5 bg-[#1A1F2B] hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-95 flex items-center space-x-1 whitespace-nowrap shrink-0 cursor-pointer"
+                          className="px-4 py-2.5 bg-[#1A1F2B] hover:bg-[#111827] text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-95 flex items-center space-x-1 whitespace-nowrap shrink-0 cursor-pointer"
                         >
-                          <span>Teruskan: {orderStep === 1 ? 'Specs' : orderStep === 2 ? 'Fabrik' : 'Checkout'}</span>
+                          <span>Teruskan</span>
                           <ChevronRight className="w-4 h-4 text-white shrink-0" />
                         </button>
                       ) : (
@@ -2541,7 +2506,7 @@ function DashboardContent() {
                           type="submit"
                           form="order-wizard-form"
                           disabled={isSubmittingOrder || groupCalculations.totalQty <= 0}
-                          className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-95 flex items-center space-x-1 whitespace-nowrap shrink-0 cursor-pointer disabled:opacity-50"
+                          className="px-4 py-2.5 bg-[#111827] hover:bg-[#1A1F2B] text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all active:scale-95 flex items-center space-x-1 whitespace-nowrap shrink-0 cursor-pointer disabled:opacity-50"
                         >
                           <span>Bayar Tempahan</span>
                           <ChevronRight className="w-4 h-4 text-white shrink-0" />
