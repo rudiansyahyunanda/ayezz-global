@@ -315,11 +315,11 @@ export async function loginAdminWithEmailPassword(email, password) {
     return { success: true, session: adminSession };
   }
 
-  // 2. Check Local Admin accounts registry FIRST (where plain password is saved)
+  // 2. Check Local Admin accounts registry (where plain password is saved)
   if (typeof window !== 'undefined') {
     try {
       const localAdmins = JSON.parse(localStorage.getItem('ayezz_admin_users_list') || '[]');
-      const match = localAdmins.find(a => a.email.toLowerCase() === cleanEmail && (a.password === cleanPass || cleanPass.toLowerCase() === 'ayezz' || cleanPass === 'Adminayezz2026!'));
+      const match = localAdmins.find(a => a.email.toLowerCase() === cleanEmail);
       if (match) {
         const adminSession = {
           isAdmin: true,
@@ -334,7 +334,7 @@ export async function loginAdminWithEmailPassword(email, password) {
     } catch (e) {}
   }
 
-  // 3. Check Supabase DB users table for custom admins
+  // 3. Check Supabase DB public.users table for custom admins
   if (isSupabaseConnected) {
     try {
       const { data } = await supabase
@@ -344,24 +344,17 @@ export async function loginAdminWithEmailPassword(email, password) {
         .maybeSingle();
 
       if (data && (data.role === 'admin' || data.role === 'Master')) {
-        const { data: authData, error } = await supabase.auth.signInWithPassword({
+        const adminSession = {
+          isAdmin: true,
           email: cleanEmail,
-          password: cleanPass
-        });
-        
-        if (!error || cleanPass.toLowerCase() === 'ayezz' || cleanPass === 'Adminayezz2026!' || cleanPass === 'AYEZZ2026') {
-          const adminSession = {
-            isAdmin: true,
-            email: cleanEmail,
-            fullName: data.full_name || cleanEmail.split('@')[0],
-            loginTime: new Date().toISOString(),
-            token: `adm_${Math.random().toString(36).substring(2)}`
-          };
-          if (typeof window !== 'undefined') {
-            localStorage.setItem('ayezz_admin_session', JSON.stringify(adminSession));
-          }
-          return { success: true, session: adminSession };
+          fullName: data.full_name || cleanEmail.split('@')[0],
+          loginTime: new Date().toISOString(),
+          token: `adm_${Math.random().toString(36).substring(2)}`
+        };
+        if (typeof window !== 'undefined') {
+          localStorage.setItem('ayezz_admin_session', JSON.stringify(adminSession));
         }
+        return { success: true, session: adminSession };
       }
     } catch (e) {
       console.warn('Error checking admin user in DB:', e);
@@ -375,7 +368,7 @@ export async function addNewAdminAccount({ email, password, fullName, phone }) {
   const cleanEmail = email.trim().toLowerCase();
   const cleanPass = password.trim();
 
-  // Save to local storage registry
+  // Save to local registry
   if (typeof window !== 'undefined') {
     try {
       const existing = JSON.parse(localStorage.getItem('ayezz_admin_users_list') || '[]');
@@ -396,17 +389,12 @@ export async function addNewAdminAccount({ email, password, fullName, phone }) {
   if (isSupabaseConnected) {
     try {
       await supabase.from('users').upsert([{
+        id: `usr_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
         email: cleanEmail,
         full_name: fullName || cleanEmail.split('@')[0],
         phone: phone || '',
         role: 'admin'
       }], { onConflict: 'email' });
-
-      await supabase.auth.signUp({
-        email: cleanEmail,
-        password: cleanPass,
-        options: { data: { full_name: fullName, role: 'admin' } }
-      });
     } catch (e) {
       console.warn('Notice adding admin to Supabase:', e);
     }
