@@ -76,7 +76,7 @@ import {
   DEFAULT_SHOWCASE_FEATURE,
   PLACEHOLDER_IMAGE
 } from '../../lib/supabaseService';
-import { updateAdminMasterPin, getAdminUsersList, addNewAdminAccount } from '../../lib/authService';
+import { updateAdminMasterPin, getAdminUsersList, addNewAdminAccount, logoutAdmin } from '../../lib/authService';
 
 export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) {
   const [currentTab, setCurrentTab] = useState('overview');

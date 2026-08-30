@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Shield, KeyRound, ArrowRight, AlertCircle, RefreshCw, Mail, Lock } from 'lucide-react';
 import AdminDashboard from '../../components/admin/AdminDashboard';
-import { isAdminAuthenticated, loginAdminWithEmailPassword } from '../../lib/authService';
+import { isAdminAuthenticated, loginAdminWithEmailPassword, logoutAdmin } from '../../lib/authService';
 
 export default function AdminPage() {
   const router = useRouter();
