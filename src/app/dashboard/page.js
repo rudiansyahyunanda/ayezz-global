@@ -181,6 +181,8 @@ function DashboardContent() {
   const [activeGroupIdForSize, setActiveGroupIdForSize] = useState(null);
   const [isAdultAccordionOpen, setIsAdultAccordionOpen] = useState(true);
   const [isKidsAccordionOpen, setIsKidsAccordionOpen] = useState(false);
+  // Segmented Control per group: 'adult' | 'kids'
+  const [sizeSegmentTabs, setSizeSegmentTabs] = useState({});
 
   // Customer & Shipping Info
   const [customerInfo, setCustomerInfo] = useState({
@@ -1799,68 +1801,54 @@ function DashboardContent() {
                       )}
 
                       {/* ========================================================== */}
-                      {/* LANGKAH 2: POTONGAN, LENGAN & SAIZ (NATIVE APPLE STORE STYLE INLINE CONFIG) */}
+                      {/* LANGKAH 2: APPLE HIG NATIVE iOS GROUPED UI */}
                       {/* ========================================================== */}
                       {orderStep === 2 && (
-                        <div className="bg-white p-4 sm:p-8 rounded-2xl sm:rounded-3xl border border-[#E5E7EB] shadow-2xs space-y-6 w-full font-sans">
-                          
-                          {/* STEP 2 HEADER */}
-                          <div className="flex items-center justify-between border-b border-[#E5E7EB] pb-4">
-                            <div>
-                              <span className="text-[10px] font-mono text-[#6B7280] font-bold uppercase tracking-widest block">LANGKAH 2 DARI 4</span>
-                              <h3 className="text-base sm:text-lg font-black uppercase text-[#111827] pt-0.5">Spesifikasi Potongan, Lengan & Saiz</h3>
-                            </div>
+                        /* Apple HIG: Page bg is off-white #F2F2F7, white blocks are edge-to-edge sections */
+                        <div className="w-full -mx-4 sm:mx-0 font-sans">
 
-                            <span className="text-xs font-mono font-black text-[#111827] bg-[#F7F9FA] px-3 py-1.5 rounded-xl border border-[#E5E7EB]">
-                              {groupCalculations.totalQty} pcs
-                            </span>
+                          {/* PAGE TITLE — sits above the grouped sections */}
+                          <div className="px-4 sm:px-6 pb-3 flex items-center justify-between">
+                            <div>
+                              <p className="text-[10px] font-semibold text-[#8E8E93] uppercase tracking-widest">Langkah 2 dari 4</p>
+                              <h3 className="text-base font-bold text-[#1C1C1E] mt-0.5">Potongan, Lengan & Saiz</h3>
+                            </div>
+                            <span className="text-xs font-semibold text-[#8E8E93] tabular-nums">{groupCalculations.totalQty} pcs</span>
                           </div>
 
-                          {/* INLINE CONTENT BODY (NO NESTED SCROLLING, NO POPUPS!) */}
-                          <div className="space-y-6 w-full">
+                          {/* PER-GROUP CONFIGURATION BLOCKS */}
+                          {groupCalculations.groupDetails.map((group, idx) => {
+                            const segTab = sizeSegmentTabs[group.id] || 'adult';
+                            const activeSizes = segTab === 'adult' ? ADULT_SIZES : KIDS_SIZES;
 
-                            {/* RINGKASAN & PENGATURAN KUMPULAN POTONGAN */}
-                            {groupCalculations.groupDetails.map((group, idx) => (
-                              <div key={group.id} className="p-4 sm:p-5 bg-[#F7F9FA] border border-[#E5E7EB] rounded-2xl space-y-5 shadow-2xs">
-                                
-                                {/* GROUP TITLE & REMOVE BUTTON */}
-                                <div className="flex items-center justify-between border-b border-[#E5E7EB] pb-3">
-                                  <div className="flex items-center space-x-2.5">
-                                    <span className="w-6 h-6 rounded-lg bg-[#1A1F2B] text-white text-xs font-mono font-black flex items-center justify-center shrink-0">
-                                      #{idx + 1}
-                                    </span>
-                                    <span className="text-xs font-extrabold uppercase text-[#111827]">
-                                      KUMPULAN #{idx + 1}: {group.cut?.name || 'Kolar'} • {group.sleeve?.name || 'Lengan'}
-                                    </span>
-                                  </div>
+                            return (
+                              <div key={group.id} className="mb-2">
 
+                                {/* GROUP LABEL ROW */}
+                                <div className="px-4 sm:px-6 pt-4 pb-1.5 flex items-center justify-between">
+                                  <p className="text-[11px] font-bold text-[#8E8E93] uppercase tracking-wider">
+                                    Kumpulan #{idx + 1}
+                                  </p>
                                   <div className="flex items-center space-x-2">
-                                    <span className="text-xs font-mono font-bold text-[#111827] bg-white px-2.5 py-0.5 rounded-md border border-[#E5E7EB]">
-                                      {group.qty} pcs
-                                    </span>
-
+                                    <span className="text-[11px] font-semibold text-[#8E8E93] tabular-nums">{group.qty} pcs</span>
                                     {cutGroups.length > 1 && (
                                       <button
                                         type="button"
                                         onClick={() => removeCutGroup(group.id)}
-                                        className="p-1 text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
-                                        title="Padam Kumpulan Ini"
+                                        className="text-[#FF3B30] text-[11px] font-semibold cursor-pointer"
                                       >
-                                        <Trash2 className="w-4 h-4 shrink-0" />
+                                        Padam
                                       </button>
                                     )}
                                   </div>
                                 </div>
 
-                                {/* PROGRESSIVE DISCLOSURE STEPS FOR THIS GROUP */}
-                                <div className="space-y-5">
-                                  
-                                  {/* STEP 2.1: PILIH KOLAR (ALWAYS VISIBLE) */}
-                                  <div className="space-y-2.5">
-                                    <label className="text-xs font-extrabold text-[#111827] uppercase tracking-wide block">
-                                      1. Pilih Potongan Kolar:
-                                    </label>
-
+                                {/* ── SECTION 1: KOLAR ── edge-to-edge white block */}
+                                <div className="bg-white border-t border-b border-[#C6C6C8]/40">
+                                  <div className="px-4 sm:px-6 py-3 border-b border-[#C6C6C8]/30">
+                                    <p className="text-[11px] font-semibold text-[#8E8E93] uppercase tracking-wider">1. Pilih Potongan Kolar</p>
+                                  </div>
+                                  <div className="px-4 sm:px-6 py-4">
                                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5">
                                       {cutTypes.map((cut) => {
                                         const isSelected = group.cut?.id === cut.id;
@@ -1869,36 +1857,42 @@ function DashboardContent() {
                                           <div
                                             key={cut.id}
                                             onClick={() => setGroupCutDirect(group.id, cut)}
-                                            className={`p-3.5 rounded-2xl border cursor-pointer transition-all flex flex-col items-center justify-between text-center space-y-2 ${
+                                            className={`rounded-2xl border cursor-pointer transition-all duration-150 flex flex-col items-center text-center p-3 space-y-1.5 select-none active:scale-95 ${
                                               isSelected
-                                                ? 'bg-[#1A1F2B] text-white border-[#1A1F2B] shadow-xs'
-                                                : 'bg-white text-[#111827] border-[#E5E7EB] hover:border-slate-300'
+                                                ? 'border-[#007AFF] bg-[#007AFF]/5 ring-1 ring-[#007AFF]'
+                                                : 'border-[#C6C6C8]/50 bg-white hover:border-[#007AFF]/40'
                                             }`}
                                           >
                                             <img
                                               src={cut.thumbnail || PLACEHOLDER_IMAGE}
                                               alt={cut.name}
-                                              className="w-14 h-14 object-contain bg-[#F7F9FA] rounded-xl p-1 shrink-0"
+                                              className="w-12 h-12 object-contain rounded-xl bg-[#F2F2F7] p-1 shrink-0"
                                             />
-                                            <div className="w-full text-center">
-                                              <span className="text-[11px] font-extrabold leading-snug block line-clamp-2">{cut.name}</span>
-                                              <span className={`text-[10px] font-mono block pt-0.5 ${isSelected ? 'text-slate-300' : 'text-[#6B7280]'}`}>
+                                            <div className="w-full">
+                                              <p className={`text-[11px] font-semibold leading-snug line-clamp-2 ${isSelected ? 'text-[#007AFF]' : 'text-[#1C1C1E]'}`}>{cut.name}</p>
+                                              <p className={`text-[10px] mt-0.5 ${isSelected ? 'text-[#007AFF]/70' : 'text-[#8E8E93]'}`}>
                                                 {addOn > 0 ? `+RM ${addOn}` : 'Standard'}
-                                              </span>
+                                              </p>
                                             </div>
+                                            {isSelected && (
+                                              <span className="w-4 h-4 rounded-full bg-[#007AFF] flex items-center justify-center shrink-0">
+                                                <svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                                              </span>
+                                            )}
                                           </div>
                                         );
                                       })}
                                     </div>
                                   </div>
+                                </div>
 
-                                  {/* STEP 2.2: PILIH LENGAN (REVEALED AFTER KOLAR IS SELECTED) */}
-                                  {group.cut && (
-                                    <div className="space-y-2.5 pt-3 border-t border-[#E5E7EB] animate-fade-in">
-                                      <label className="text-xs font-extrabold text-[#111827] uppercase tracking-wide block">
-                                        2. Pilih Jenis Lengan:
-                                      </label>
-
+                                {/* ── SECTION 2: LENGAN (revealed after Kolar) ── */}
+                                {group.cut && (
+                                  <div className="bg-white border-b border-[#C6C6C8]/40 mt-3">
+                                    <div className="px-4 sm:px-6 py-3 border-b border-[#C6C6C8]/30">
+                                      <p className="text-[11px] font-semibold text-[#8E8E93] uppercase tracking-wider">2. Pilih Jenis Lengan</p>
+                                    </div>
+                                    <div className="px-4 sm:px-6 py-4">
                                       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5">
                                         {sleeveTypes.map((slv) => {
                                           const isSelected = group.sleeve?.id === slv.id;
@@ -1907,156 +1901,154 @@ function DashboardContent() {
                                             <div
                                               key={slv.id}
                                               onClick={() => setGroupSleeveDirect(group.id, slv)}
-                                              className={`p-3.5 rounded-2xl border cursor-pointer transition-all flex flex-col items-center justify-between text-center space-y-2 ${
+                                              className={`rounded-2xl border cursor-pointer transition-all duration-150 flex flex-col items-center text-center p-3 space-y-1.5 select-none active:scale-95 ${
                                                 isSelected
-                                                  ? 'bg-[#1A1F2B] text-white border-[#1A1F2B] shadow-xs'
-                                                  : 'bg-white text-[#111827] border-[#E5E7EB] hover:border-slate-300'
+                                                  ? 'border-[#007AFF] bg-[#007AFF]/5 ring-1 ring-[#007AFF]'
+                                                  : 'border-[#C6C6C8]/50 bg-white hover:border-[#007AFF]/40'
                                               }`}
                                             >
                                               <img
                                                 src={slv.thumbnail || PLACEHOLDER_IMAGE}
                                                 alt={slv.name}
-                                                className="w-14 h-14 object-contain bg-[#F7F9FA] rounded-xl p-1 shrink-0"
+                                                className="w-12 h-12 object-contain rounded-xl bg-[#F2F2F7] p-1 shrink-0"
                                               />
-                                              <div className="w-full text-center">
-                                                <span className="text-[11px] font-extrabold leading-snug block line-clamp-2">{slv.name}</span>
-                                                <span className={`text-[10px] font-mono block pt-0.5 ${isSelected ? 'text-slate-300' : 'text-[#6B7280]'}`}>
+                                              <div className="w-full">
+                                                <p className={`text-[11px] font-semibold leading-snug line-clamp-2 ${isSelected ? 'text-[#007AFF]' : 'text-[#1C1C1E]'}`}>{slv.name}</p>
+                                                <p className={`text-[10px] mt-0.5 ${isSelected ? 'text-[#007AFF]/70' : 'text-[#8E8E93]'}`}>
                                                   {addOn > 0 ? `+RM ${addOn}` : 'Standard'}
-                                                </span>
+                                                </p>
                                               </div>
+                                              {isSelected && (
+                                                <span className="w-4 h-4 rounded-full bg-[#007AFF] flex items-center justify-center shrink-0">
+                                                  <svg width="8" height="6" viewBox="0 0 8 6" fill="none"><path d="M1 3l2 2 4-4" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                                                </span>
+                                              )}
                                             </div>
                                           );
                                         })}
                                       </div>
                                     </div>
-                                  )}
+                                  </div>
+                                )}
 
-                                  {/* STEP 2.3: INLINE SIZE & QUANTITY STEPPER LIST (RULE 1 & 4 - NO MODALS, NO OVERLAYS!) */}
-                                  {group.cut && group.sleeve && (
-                                    <div className="pt-4 border-t border-[#E5E7EB] space-y-4 animate-fade-in">
-                                      <div className="flex items-center justify-between">
-                                        <label className="text-xs font-black text-[#111827] uppercase tracking-wide block">
-                                          3. Atur Saiz & Kuantiti (Inline Stepper):
-                                        </label>
-                                        <span className="text-xs font-mono font-bold text-[#111827] bg-white px-2.5 py-1 rounded-lg border border-[#E5E7EB]">
-                                          {group.qty} pcs
-                                        </span>
-                                      </div>
-
-                                      {/* ADULT SIZES INLINE STEPPER LIST */}
-                                      <div className="space-y-1 bg-white border border-[#E5E7EB] rounded-2xl p-3 sm:p-4 divide-y divide-slate-100">
-                                        <span className="text-[10px] font-mono font-bold text-[#6B7280] uppercase tracking-wider block pb-2">
-                                          SAIZ DEWASA (ADULT)
-                                        </span>
-                                        {ADULT_SIZES.map((sz) => {
-                                          const q = Number(group.sizes?.[sz] || 0);
-                                          return (
-                                            <div key={sz} className="py-2.5 px-1 flex items-center justify-between hover:bg-[#F7F9FA] rounded-xl transition-colors">
-                                              <span className="text-xs font-extrabold text-[#111827] w-12">{sz}</span>
-
-                                              {/* INLINE STEPPER CONTROL */}
-                                              <div className="flex items-center space-x-2.5">
-                                                <button
-                                                  type="button"
-                                                  disabled={q <= 0}
-                                                  onClick={() => setGroupSizeQtyDirect(group.id, sz, Math.max(0, q - 1))}
-                                                  className="w-8 h-8 rounded-full bg-[#F7F9FA] border border-[#E5E7EB] text-[#111827] font-black text-sm flex items-center justify-center active:scale-95 disabled:opacity-30 cursor-pointer"
-                                                >
-                                                  -
-                                                </button>
-                                                <span className={`w-7 text-center text-xs font-mono font-black ${q > 0 ? 'text-[#111827]' : 'text-[#6B7280]/40'}`}>
-                                                  {q}
-                                                </span>
-                                                <button
-                                                  type="button"
-                                                  onClick={() => setGroupSizeQtyDirect(group.id, sz, q + 1)}
-                                                  className="w-8 h-8 rounded-full bg-[#1A1F2B] text-white font-black text-sm flex items-center justify-center active:scale-95 shadow-2xs cursor-pointer"
-                                                >
-                                                  +
-                                                </button>
-                                              </div>
-                                            </div>
-                                          );
-                                        })}
-                                      </div>
-
-                                      {/* KIDS SIZES INLINE STEPPER LIST */}
-                                      <div className="space-y-1 bg-white border border-[#E5E7EB] rounded-2xl p-3 sm:p-4 divide-y divide-slate-100">
-                                        <span className="text-[10px] font-mono font-bold text-[#6B7280] uppercase tracking-wider block pb-2">
-                                          SAIZ KANAK-KANAK (KIDS)
-                                        </span>
-                                        {KIDS_SIZES.map((sz) => {
-                                          const q = Number(group.sizes?.[sz] || 0);
-                                          return (
-                                            <div key={sz} className="py-2.5 px-1 flex items-center justify-between hover:bg-[#F7F9FA] rounded-xl transition-colors">
-                                              <span className="text-xs font-extrabold text-[#111827] w-16">Saiz {sz}</span>
-
-                                              {/* INLINE STEPPER CONTROL */}
-                                              <div className="flex items-center space-x-2.5">
-                                                <button
-                                                  type="button"
-                                                  disabled={q <= 0}
-                                                  onClick={() => setGroupSizeQtyDirect(group.id, sz, Math.max(0, q - 1))}
-                                                  className="w-8 h-8 rounded-full bg-[#F7F9FA] border border-[#E5E7EB] text-[#111827] font-black text-sm flex items-center justify-center active:scale-95 disabled:opacity-30 cursor-pointer"
-                                                >
-                                                  -
-                                                </button>
-                                                <span className={`w-7 text-center text-xs font-mono font-black ${q > 0 ? 'text-[#111827]' : 'text-[#6B7280]/40'}`}>
-                                                  {q}
-                                                </span>
-                                                <button
-                                                  type="button"
-                                                  onClick={() => setGroupSizeQtyDirect(group.id, sz, q + 1)}
-                                                  className="w-8 h-8 rounded-full bg-[#1A1F2B] text-white font-black text-sm flex items-center justify-center active:scale-95 shadow-2xs cursor-pointer"
-                                                >
-                                                  +
-                                                </button>
-                                              </div>
-                                            </div>
-                                          );
-                                        })}
-                                      </div>
-
+                                {/* ── SECTION 3: SAIZ & KUANTITI (revealed after Kolar + Lengan) ── */}
+                                {group.cut && group.sleeve && (
+                                  <div className="bg-white border-b border-[#C6C6C8]/40 mt-3">
+                                    <div className="px-4 sm:px-6 py-3 border-b border-[#C6C6C8]/30 flex items-center justify-between">
+                                      <p className="text-[11px] font-semibold text-[#8E8E93] uppercase tracking-wider">3. Saiz & Kuantiti</p>
+                                      <span className="text-[11px] font-semibold text-[#8E8E93]">{group.qty} pcs</span>
                                     </div>
-                                  )}
 
-                                </div>
+                                    {/* SEGMENTED CONTROL — Dewasa | Kanak-kanak */}
+                                    <div className="px-4 sm:px-6 pt-4 pb-3">
+                                      <div className="flex bg-[#F2F2F7] rounded-xl p-0.5">
+                                        {['adult', 'kids'].map((tab) => (
+                                          <button
+                                            key={tab}
+                                            type="button"
+                                            onClick={() => setSizeSegmentTabs(prev => ({ ...prev, [group.id]: tab }))}
+                                            className={`flex-1 py-2 rounded-[10px] text-xs font-semibold transition-all duration-200 cursor-pointer ${
+                                              segTab === tab
+                                                ? 'bg-white text-[#1C1C1E] shadow-sm'
+                                                : 'text-[#8E8E93]'
+                                            }`}
+                                          >
+                                            {tab === 'adult' ? `Dewasa (${ADULT_SIZES.reduce((s, sz) => s + Number(group.sizes?.[sz] || 0), 0)})` : `Kanak-kanak (${KIDS_SIZES.reduce((s, sz) => s + Number(group.sizes?.[sz] || 0), 0)})`}
+                                          </button>
+                                        ))}
+                                      </div>
+                                    </div>
+
+                                    {/* INTERACTIVE SIZE GRID — 4 columns, no vertical list */}
+                                    <div className="px-4 sm:px-6 pb-5">
+                                      <div className="grid grid-cols-4 sm:grid-cols-5 gap-2">
+                                        {activeSizes.map((sz) => {
+                                          const q = Number(group.sizes?.[sz] || 0);
+                                          return (
+                                            <div
+                                              key={sz}
+                                              className={`rounded-2xl transition-all duration-150 select-none ${
+                                                q > 0
+                                                  ? 'bg-[#1C1C1E] text-white'
+                                                  : 'bg-[#F2F2F7] text-[#1C1C1E]'
+                                              }`}
+                                            >
+                                              {q === 0 ? (
+                                                /* IDLE STATE: just the size label, tap to start */
+                                                <button
+                                                  type="button"
+                                                  onClick={() => setGroupSizeQtyDirect(group.id, sz, 1)}
+                                                  className="w-full h-14 flex items-center justify-center cursor-pointer active:scale-95 transition-transform rounded-2xl"
+                                                >
+                                                  <span className="text-sm font-bold text-[#1C1C1E]">{sz}</span>
+                                                </button>
+                                              ) : (
+                                                /* ACTIVE STATE: micro-stepper in-place */
+                                                <div className="w-full h-14 flex flex-col items-center justify-center">
+                                                  <span className="text-[9px] font-semibold text-white/60 leading-none mb-0.5">{sz}</span>
+                                                  <div className="flex items-center space-x-1">
+                                                    <button
+                                                      type="button"
+                                                      onClick={() => setGroupSizeQtyDirect(group.id, sz, Math.max(0, q - 1))}
+                                                      className="w-6 h-6 rounded-full bg-white/20 text-white font-black text-sm flex items-center justify-center active:scale-90 cursor-pointer leading-none"
+                                                    >
+                                                      −
+                                                    </button>
+                                                    <span className="text-sm font-black text-white w-5 text-center tabular-nums">{q}</span>
+                                                    <button
+                                                      type="button"
+                                                      onClick={() => setGroupSizeQtyDirect(group.id, sz, q + 1)}
+                                                      className="w-6 h-6 rounded-full bg-white/20 text-white font-black text-sm flex items-center justify-center active:scale-90 cursor-pointer leading-none"
+                                                    >
+                                                      +
+                                                    </button>
+                                                  </div>
+                                                </div>
+                                              )}
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
+                                    </div>
+                                  </div>
+                                )}
 
                               </div>
-                            ))}
+                            );
+                          })}
 
-                            {/* BUTTON "+ TAMBAH POTONGAN BARU" (RULE 2) */}
+                          {/* "+ TAMBAH POTONGAN BARU" — edge-to-edge */}
+                          <div className="px-4 sm:px-6 pt-3 pb-2">
                             <button
                               type="button"
                               onClick={addCutGroup}
-                              className="w-full py-3.5 bg-white hover:bg-[#F7F9FA] text-[#111827] font-extrabold text-xs uppercase tracking-wider rounded-2xl transition-all border border-dashed border-[#E5E7EB] inline-flex items-center justify-center space-x-2 cursor-pointer shadow-2xs"
+                              className="w-full py-3 rounded-2xl bg-white border border-[#C6C6C8]/50 text-[#007AFF] text-sm font-semibold flex items-center justify-center space-x-1.5 cursor-pointer active:bg-[#F2F2F7] transition-colors"
                             >
-                              <Plus className="w-4 h-4 text-[#111827] shrink-0" />
-                              <span>+ Tambah Potongan Baru</span>
+                              <Plus className="w-4 h-4 shrink-0" />
+                              <span>Tambah Potongan Baru</span>
                             </button>
-
                           </div>
 
-                          {/* DESKTOP FOOTER NAVIGATION (HIDDEN ON MOBILE - RULE 5) */}
-                          <div className="pt-4 border-t border-[#E5E7EB] hidden md:flex items-center justify-between">
+                          {/* DESKTOP FOOTER NAVIGATION (HIDDEN ON MOBILE) */}
+                          <div className="px-4 sm:px-6 pt-4 border-t border-[#C6C6C8]/30 hidden md:flex items-center justify-between mt-4">
                             <button
                               type="button"
                               onClick={() => setOrderStep(1)}
-                              className="px-5 py-2.5 bg-[#F7F9FA] hover:bg-slate-200 text-[#111827] font-bold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer whitespace-nowrap shrink-0"
+                              className="px-5 py-2.5 bg-[#F2F2F7] hover:bg-[#E5E5EA] text-[#1C1C1E] font-semibold text-sm rounded-xl transition-all cursor-pointer whitespace-nowrap"
                             >
                               Kembali
                             </button>
-
                             <button
                               type="button"
                               onClick={() => setOrderStep(3)}
-                              className="px-6 py-3 bg-[#1A1F2B] hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all inline-flex items-center space-x-2 cursor-pointer shadow-sm whitespace-nowrap shrink-0"
+                              className="px-6 py-2.5 bg-[#1C1C1E] hover:bg-black text-white font-semibold text-sm rounded-xl transition-all inline-flex items-center space-x-2 cursor-pointer whitespace-nowrap"
                             >
                               <span>Teruskan</span>
                               <ChevronRight className="w-4 h-4 text-white shrink-0" />
                             </button>
                           </div>
-                        </div>
+              
+             </div>
                       )}
 
                       {/* ========================================================== */}
