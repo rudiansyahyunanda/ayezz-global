@@ -5,10 +5,20 @@ import CookieConsentBanner from '../components/CookieConsentBanner';
 export const metadata = {
   metadataBase: new URL('https://ayezz.com'),
   title: {
-    default: 'AYEZZ GLOBAL — Studio Pakaian Sublimasi High-End',
+    default: 'AYEZZ. Make It Real. AYEZZ GLOBAL',
     template: '%s | AYEZZ GLOBAL'
   },
   description: 'Kilang pengeluaran jersi sukan, esports, dan pakaian seragam komuniti cetakan penuh berpiawaian antarabangsa. Bebas reka bentuk 100%, tanpa pesanan minimum.',
+  icons: {
+    icon: [
+      { url: '/icon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+    ],
+    shortcut: ['/icon.svg'],
+    apple: [
+      { url: '/apple-icon.svg', sizes: '180x180', type: 'image/svg+xml' },
+    ],
+  },
   keywords: ['Sublimation Jersey', 'Jersi Sukan', 'Jersi Futsal', 'Jersi Esports', 'Custom Apparel Malaysia', 'AYEZZ GLOBAL', 'Jersi Custom'],
   authors: [{ name: 'AYEZZ GLOBAL' }],
   creator: 'AYEZZ GLOBAL',
