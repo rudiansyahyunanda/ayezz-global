@@ -278,7 +278,7 @@ function SpaciousCatalogContent() {
       </header>
 
       {/* 3. BREADCRUMB & HEADER BAR WITH SPACIOUS RESPONSIVE PADDING */}
-      <div className="w-full px-4 sm:px-8 lg:px-12 pt-6 sm:pt-8 pb-4 sm:pb-6">
+      <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-16 2xl:px-24 pt-6 sm:pt-8 pb-4 sm:pb-6">
         <div className="flex items-center space-x-2 text-[10px] sm:text-[11px] font-mono text-neutral-400 uppercase tracking-[0.15em] mb-3">
           <Link href="/" className="hover:text-[#111111]">UTAMA</Link>
           <span>/</span>
@@ -313,7 +313,7 @@ function SpaciousCatalogContent() {
       </div>
 
       {/* 4. SPACIOUS RESPONSIVE CATALOG CONTAINER */}
-      <div className="w-full px-4 sm:px-8 lg:px-12 py-4 sm:py-8 flex-1 flex flex-col md:flex-row items-start gap-6 md:gap-10 lg:gap-14">
+      <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-16 2xl:px-24 py-4 sm:py-8 flex-1 flex flex-col md:flex-row items-start gap-6 md:gap-10 lg:gap-14">
         
         {/* MOBILE HORIZONTAL SCROLL FILTER DOCK (MD:HIDDEN — FAST NATIVE MOBILE APP NAVIGATION) */}
         <div className="w-full md:hidden space-y-3 pb-2 select-none">

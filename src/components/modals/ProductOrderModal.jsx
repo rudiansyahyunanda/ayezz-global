@@ -156,42 +156,42 @@ Sila maklumkan sebut harga rasmi dan langkah pembayaran. Terima kasih!`;
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-[#1A1A1A]/60 backdrop-blur-sm animate-fade-in font-sans overflow-y-auto">
-      <div className="bg-white w-full max-w-2xl rounded-2xl border border-[#E5E5E5] shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center sm:p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in font-sans overflow-y-auto">
+      <div className="bg-white w-full max-w-2xl rounded-t-3xl sm:rounded-3xl border border-slate-200 shadow-2xl overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[88vh]">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-[#E5E5E5] bg-[#F6F5F3] flex items-center justify-between">
+        <div className="px-5 py-4 border-b border-slate-200 bg-white flex items-center justify-between shrink-0">
           <div className="flex items-center space-x-3 min-w-0">
-            <div className="p-2 bg-[#1A1A1A] text-white rounded-xl shrink-0">
-              <ShoppingBag className="w-5 h-5" />
+            <div className="p-2 bg-slate-900 text-white rounded-xl shrink-0">
+              <ShoppingBag className="w-5 h-5 shrink-0" />
             </div>
             <div className="min-w-0">
-              <span className="text-[10px] font-mono font-bold text-[#757575] tracking-widest uppercase">// BORANG PESANAN</span>
-              <h3 className="text-base font-extrabold text-[#1A1A1A] leading-tight truncate">{activeProduct.name}</h3>
+              <span className="text-[10px] font-mono font-bold text-slate-500 tracking-widest uppercase">BORANG PESANAN</span>
+              <h3 className="text-base font-extrabold text-slate-900 leading-tight truncate">{activeProduct.name}</h3>
             </div>
           </div>
 
           {/* NEXT / PREV CARD NAVIGATION BUTTONS IN HEADER */}
           <div className="flex items-center space-x-2 flex-nowrap shrink-0">
             {productList.length > 1 && (
-              <div className="flex items-center space-x-1 border-r border-[#E5E5E5] pr-3 mr-1 flex-nowrap shrink-0">
+              <div className="flex items-center space-x-1 border-r border-slate-200 pr-3 mr-1 flex-nowrap shrink-0">
                 <button
                   type="button"
                   onClick={handlePrevProduct}
-                  className="p-1.5 bg-white border border-[#E5E5E5] text-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-white rounded-lg transition-all inline-flex items-center justify-center text-xs font-bold space-x-1 shadow-2xs whitespace-nowrap shrink-0"
+                  className="p-1.5 bg-slate-100 hover:bg-slate-900 hover:text-white text-slate-900 rounded-lg transition-all inline-flex items-center justify-center text-xs font-bold space-x-1 whitespace-nowrap shrink-0"
                   title="Sebelumnya"
                 >
                   <ChevronLeft className="w-4 h-4 shrink-0" />
                   <span className="hidden sm:inline text-[11px] whitespace-nowrap">Sebelum</span>
                 </button>
 
-                <span className="text-[11px] font-mono font-extrabold text-[#1A1A1A] px-2 min-w-[42px] text-center whitespace-nowrap">
+                <span className="text-[11px] font-mono font-extrabold text-slate-900 px-2 min-w-[42px] text-center whitespace-nowrap">
                   {currentIndex >= 0 ? currentIndex + 1 : 1}/{productList.length}
                 </span>
 
                 <button
                   type="button"
                   onClick={handleNextProduct}
-                  className="p-1.5 bg-white border border-[#E5E5E5] text-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-white rounded-lg transition-all inline-flex items-center justify-center text-xs font-bold space-x-1 shadow-2xs whitespace-nowrap shrink-0"
+                  className="p-1.5 bg-slate-100 hover:bg-slate-900 hover:text-white text-slate-900 rounded-lg transition-all inline-flex items-center justify-center text-xs font-bold space-x-1 whitespace-nowrap shrink-0"
                   title="Seterusnya"
                 >
                   <span className="hidden sm:inline text-[11px] whitespace-nowrap">Seterusnya</span>
@@ -202,7 +202,7 @@ Sila maklumkan sebut harga rasmi dan langkah pembayaran. Terima kasih!`;
 
             <button
               onClick={onClose}
-              className="p-2 text-[#757575] hover:text-[#1A1A1A] hover:bg-slate-200/60 rounded-full transition-colors inline-flex items-center justify-center shrink-0"
+              className="p-2 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-full transition-colors inline-flex items-center justify-center shrink-0"
             >
               <X className="w-5 h-5 shrink-0" />
             </button>
@@ -210,17 +210,17 @@ Sila maklumkan sebut harga rasmi dan langkah pembayaran. Terima kasih!`;
         </div>
 
         {/* Form Body */}
-        <form onSubmit={handleSendWhatsApp} className="p-6 space-y-6 overflow-y-auto bg-[#F6F5F3]">
+        <form onSubmit={handleSendWhatsApp} className="p-4 sm:p-6 space-y-6 overflow-y-auto bg-white flex-1">
           {/* MULTI-PHOTO GALLERY PREVIEW CARD WITH OVERLAY NEXT CARD CONTROLS */}
-          <div className="p-4 bg-white rounded-xl border border-[#E5E5E5] flex flex-col sm:flex-row items-start sm:items-center gap-4 relative group/card">
+          <div className="p-4 bg-slate-50 rounded-2xl border border-slate-200/80 flex flex-col sm:flex-row items-start sm:items-center gap-4 relative group/card">
             <div className="flex flex-col items-center space-y-2 shrink-0 relative">
-              <div className="relative w-24 h-24 rounded-xl overflow-hidden group/img">
+              <div className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl overflow-hidden group/img">
                 <img
                   src={productGallery[activeImageIndex] || activeProduct.thumbnail}
                   alt={activeProduct.name}
                   decoding="async"
                   fetchPriority="high"
-                  className="w-full h-full object-cover rounded-xl border border-[#E5E5E5] aspect-square shadow-2xs img-crisp"
+                  className="w-full h-full object-cover rounded-2xl border border-slate-200 aspect-square shadow-2xs img-crisp"
                   style={{ imageRendering: '-webkit-optimize-contrast' }}
                   onError={(e) => {
                     e.target.onerror = null;
@@ -234,18 +234,18 @@ Sila maklumkan sebut harga rasmi dan langkah pembayaran. Terima kasih!`;
                     <button
                       type="button"
                       onClick={handlePrevProduct}
-                      className="absolute left-1 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[#1A1A1A]/80 hover:bg-[#1A1A1A] text-white flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-all shadow-md shrink-0"
+                      className="absolute left-1 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white flex items-center justify-center opacity-80 sm:opacity-0 group-hover/img:opacity-100 transition-all shadow-md shrink-0"
                       title="Sebelumnya"
                     >
-                      <ChevronLeft className="w-3.5 h-3.5 shrink-0" />
+                      <ChevronLeft className="w-4 h-4 shrink-0" />
                     </button>
                     <button
                       type="button"
                       onClick={handleNextProduct}
-                      className="absolute right-1 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[#1A1A1A]/80 hover:bg-[#1A1A1A] text-white flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-all shadow-md shrink-0"
+                      className="absolute right-1 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-slate-900/80 hover:bg-slate-900 text-white flex items-center justify-center opacity-80 sm:opacity-0 group-hover/img:opacity-100 transition-all shadow-md shrink-0"
                       title="Seterusnya"
                     >
-                      <ChevronRight className="w-3.5 h-3.5 shrink-0" />
+                      <ChevronRight className="w-4 h-4 shrink-0" />
                     </button>
                   </>
                 )}
@@ -259,8 +259,8 @@ Sila maklumkan sebut harga rasmi dan langkah pembayaran. Terima kasih!`;
                       type="button"
                       key={gIdx}
                       onClick={() => setActiveImageIndex(gIdx)}
-                      className={`w-5 h-5 rounded-md overflow-hidden border transition-all ${
-                        activeImageIndex === gIdx ? 'border-[#1A1A1A] ring-2 ring-[#1A1A1A]/20 scale-105' : 'border-slate-200 opacity-60 hover:opacity-100'
+                      className={`w-6 h-6 rounded-lg overflow-hidden border transition-all ${
+                        activeImageIndex === gIdx ? 'border-slate-900 ring-2 ring-slate-900/20 scale-105' : 'border-slate-200 opacity-60 hover:opacity-100'
                       }`}
                     >
                       <img src={gUrl} alt={`Thumb ${gIdx}`} decoding="async" className="w-full h-full object-cover img-crisp" style={{ imageRendering: '-webkit-optimize-contrast' }} />
@@ -270,21 +270,16 @@ Sila maklumkan sebut harga rasmi dan langkah pembayaran. Terima kasih!`;
               )}
             </div>
 
-            <div className="space-y-1 flex-1 min-w-0">
+            <div className="space-y-1.5 flex-1 min-w-0">
               <div className="flex items-center justify-between">
-                <h4 className="text-sm font-extrabold text-[#1A1A1A] truncate">{activeProduct.name}</h4>
+                <h4 className="text-base font-extrabold text-slate-900 truncate">{activeProduct.name}</h4>
                 {productList.length > 1 && (
-                  <span className="text-[10px] font-mono font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200 shrink-0 ml-2 whitespace-nowrap">
+                  <span className="text-[10px] font-mono font-bold text-slate-600 bg-white px-2 py-0.5 rounded-full border border-slate-200 shrink-0 ml-2 whitespace-nowrap">
                     {currentIndex >= 0 ? currentIndex + 1 : 1}/{productList.length}
                   </span>
                 )}
               </div>
-              <p className="text-xs text-[#757575] font-normal">{activeProduct.description || 'Reka bentuk sublimasi berkualiti tinggi.'}</p>
-              {productGallery.length > 1 && (
-                <span className="inline-block text-[10px] font-semibold text-slate-500 font-mono mt-0.5 whitespace-nowrap">
-                  {productGallery.length} Sudut Pandangan Foto
-                </span>
-              )}
+              <p className="text-xs text-slate-600 font-normal leading-relaxed">{activeProduct.description || 'Reka bentuk sublimasi berkualiti tinggi.'}</p>
 
               {/* NEXT / PREVIOUS CARD ACTION BANNER */}
               {productList.length > 1 && (
@@ -292,7 +287,7 @@ Sila maklumkan sebut harga rasmi dan langkah pembayaran. Terima kasih!`;
                   <button
                     type="button"
                     onClick={handleNextProduct}
-                    className="px-3 py-1 bg-slate-100 hover:bg-[#1A1A1A] hover:text-white text-[#1A1A1A] rounded-lg text-[11px] font-bold transition-all inline-flex items-center space-x-1 border border-slate-200 shadow-2xs whitespace-nowrap shrink-0"
+                    className="px-3.5 py-1.5 bg-white hover:bg-slate-900 hover:text-white text-slate-900 rounded-xl text-xs font-bold transition-all inline-flex items-center space-x-1 border border-slate-200 shadow-2xs whitespace-nowrap shrink-0"
                   >
                     <span className="whitespace-nowrap">Reka Seterusnya</span>
                     <ChevronRight className="w-3.5 h-3.5 shrink-0" />
@@ -303,8 +298,8 @@ Sila maklumkan sebut harga rasmi dan langkah pembayaran. Terima kasih!`;
           </div>
 
           {/* Cut Selection with 1:1 Cover Images */}
-          <div className="space-y-2">
-            <label className="block text-xs font-bold text-[#1A1A1A] uppercase tracking-wider">
+          <div className="space-y-2.5">
+            <label className="block text-xs font-extrabold text-slate-900 uppercase tracking-wider">
               1. Jenis Potongan / Kolar
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -313,29 +308,29 @@ Sila maklumkan sebut harga rasmi dan langkah pembayaran. Terima kasih!`;
                   type="button"
                   key={cut.id}
                   onClick={() => setSelectedCut(cut)}
-                  className={`p-2.5 rounded-xl border text-left transition-all flex items-center space-x-3 ${
+                  className={`p-3 rounded-2xl border text-left transition-all flex items-center space-x-3 cursor-pointer ${
                     selectedCut?.id === cut.id
-                      ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white shadow-sm font-bold'
-                      : 'border-[#E5E5E5] bg-white text-[#1A1A1A] hover:bg-slate-50'
+                      ? 'border-slate-900 bg-slate-900 text-white shadow-sm font-bold'
+                      : 'border-slate-200 bg-white text-slate-900 hover:bg-slate-50'
                   }`}
                 >
                   <img
                     src={cut.thumbnail || PLACEHOLDER_IMAGE}
                     alt={cut.name}
-                    className="w-12 h-12 object-cover rounded-lg border border-[#E5E5E5] shrink-0 aspect-square"
+                    className="w-12 h-12 object-cover rounded-xl border border-slate-200/80 shrink-0 aspect-square"
                     onError={(e) => {
                       e.target.onerror = null;
                       e.target.src = PLACEHOLDER_IMAGE;
                     }}
                   />
                   <div className="flex-1 min-w-0">
-                    <div className="text-xs font-bold flex items-center justify-between">
+                    <div className="text-xs font-extrabold flex items-center justify-between">
                       <span className="truncate">{cut.name}</span>
                       <span className="text-[10px] font-mono font-black shrink-0 ml-1">
                         {cut.addOnPrice > 0 ? `+RM ${cut.addOnPrice}` : 'Standard'}
                       </span>
                     </div>
-                    <div className={`text-[11px] mt-0.5 truncate ${selectedCut?.id === cut.id ? 'text-slate-300' : 'text-[#757575]'}`}>
+                    <div className={`text-[11px] mt-0.5 truncate ${selectedCut?.id === cut.id ? 'text-slate-300' : 'text-slate-500'}`}>
                       {cut.desc}
                     </div>
                   </div>
@@ -345,46 +340,43 @@ Sila maklumkan sebut harga rasmi dan langkah pembayaran. Terima kasih!`;
           </div>
 
           {/* Fabric Selection with 1:1 Cover Images & GSM */}
-          <div className="space-y-2">
-            <label className="block text-xs font-bold text-[#1A1A1A] uppercase tracking-wider">
-              2. Jenis Fabric Sublimasi
+          <div className="space-y-2.5">
+            <label className="block text-xs font-extrabold text-slate-900 uppercase tracking-wider">
+              2. Jenis Kain Sublimasi
             </label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {fabricTypes.map((f) => (
                 <button
                   key={f.id}
                   type="button"
                   onClick={() => setSelectedFabric(f)}
-                  className={`flex items-center space-x-3 p-3 rounded-2xl border text-left transition-all ${
+                  className={`flex items-center space-x-3 p-3 rounded-2xl border text-left transition-all cursor-pointer ${
                     selectedFabric?.id === f.id
-                      ? 'border-[#1A1A1A] bg-[#1A1A1A] text-white shadow-xs'
-                      : 'border-[#E5E5E5] bg-white text-[#1A1A1A] hover:border-[#757575]'
+                      ? 'border-slate-900 bg-slate-900 text-white shadow-sm'
+                      : 'border-slate-200 bg-white text-slate-900 hover:border-slate-400'
                   }`}
                 >
                   <img
                     src={f.thumbnail || PLACEHOLDER_IMAGE}
                     alt={f.name}
-                    className="w-12 h-12 object-cover rounded-lg border border-[#E5E5E5] shrink-0 aspect-square"
+                    className="w-12 h-12 object-cover rounded-xl border border-slate-200/80 shrink-0 aspect-square"
                     onError={(e) => {
                       e.target.onerror = null;
                       e.target.src = PLACEHOLDER_IMAGE;
                     }}
                   />
                   <div className="flex-1 min-w-0">
-                    <div className="text-xs font-bold flex items-center justify-between">
+                    <div className="text-xs font-extrabold flex items-center justify-between">
                       <span className="truncate">{f.name}</span>
                       <span className="text-[10px] font-mono font-black shrink-0 ml-1">RM {f.basePrice}/pcs</span>
                     </div>
                     <div className="flex items-center space-x-1.5 mt-0.5">
-                      <span className={`text-[9px] font-mono font-bold px-1.5 py-0.2 rounded ${selectedFabric?.id === f.id ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-800'}`}>
+                      <span className={`text-[9px] font-mono font-bold px-1.5 py-0.2 rounded ${selectedFabric?.id === f.id ? 'bg-white/20 text-white' : 'bg-slate-100 text-slate-800'}`}>
                         {f.gsm || '150 GSM'}
                       </span>
-                      <span className={`text-[9px] font-semibold truncate ${selectedFabric?.id === f.id ? 'text-slate-300' : 'text-[#757575]'}`}>
+                      <span className={`text-[9px] font-semibold truncate ${selectedFabric?.id === f.id ? 'text-slate-300' : 'text-slate-500'}`}>
                         {f.tier}
                       </span>
-                    </div>
-                    <div className={`text-[10px] mt-0.5 truncate ${selectedFabric?.id === f.id ? 'text-slate-300' : 'text-[#757575]'}`}>
-                      {f.desc}
                     </div>
                   </div>
                 </button>
@@ -395,57 +387,57 @@ Sila maklumkan sebut harga rasmi dan langkah pembayaran. Terima kasih!`;
           {/* Custom Name & Number */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-bold text-[#1A1A1A] uppercase tracking-wider mb-1.5">
-                3. Nama Sampel
+              <label className="block text-xs font-extrabold text-slate-900 uppercase tracking-wider mb-1.5">
+                3. Nama Cetakan (Sampel)
               </label>
               <input
                 type="text"
                 value={playerName}
                 onChange={(e) => setPlayerName(e.target.value)}
                 placeholder="Contoh: AYEZ"
-                className="w-full bg-white border border-[#E5E5E5] text-xs font-bold text-[#1A1A1A] rounded-xl px-4 py-2.5 outline-none focus:border-[#1A1A1A] uppercase"
+                className="w-full bg-slate-50 border border-slate-200 text-xs font-bold text-slate-900 rounded-xl px-4 py-3 outline-none focus:bg-white focus:border-slate-900 uppercase transition-all"
               />
             </div>
             <div>
-              <label className="block text-xs font-bold text-[#1A1A1A] uppercase tracking-wider mb-1.5">
-                4. Nombor Sampel
+              <label className="block text-xs font-extrabold text-slate-900 uppercase tracking-wider mb-1.5">
+                4. Nombor Cetakan (Sampel)
               </label>
               <input
                 type="text"
                 value={playerNumber}
                 onChange={(e) => setPlayerNumber(e.target.value)}
                 placeholder="Contoh: 10"
-                className="w-full bg-white border border-[#E5E5E5] text-xs font-bold text-[#1A1A1A] rounded-xl px-4 py-2.5 outline-none focus:border-[#1A1A1A] uppercase"
+                className="w-full bg-slate-50 border border-slate-200 text-xs font-bold text-slate-900 rounded-xl px-4 py-3 outline-none focus:bg-white focus:border-slate-900 uppercase transition-all"
               />
             </div>
           </div>
 
           {/* Size Breakdown */}
-          <div className="space-y-2">
-            <label className="block text-xs font-bold text-[#1A1A1A] uppercase tracking-wider">
+          <div className="space-y-2.5">
+            <label className="block text-xs font-extrabold text-slate-900 uppercase tracking-wider">
               5. Pecahan Saiz Pesanan
             </label>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
               {SIZE_CHART.map((size) => (
-                <div key={size} className="p-2.5 bg-white rounded-xl border border-[#E5E5E5] flex items-center justify-between">
-                  <span className="text-xs font-bold text-[#1A1A1A]">{size}</span>
-                  <div className="flex items-center space-x-1.5">
+                <div key={size} className="p-3 bg-slate-50 rounded-2xl border border-slate-200 flex items-center justify-between">
+                  <span className="text-xs font-black text-slate-900">{size}</span>
+                  <div className="flex items-center space-x-2">
                     <button
                       type="button"
                       onClick={() => handleQtyChange(size, -1)}
-                      className="w-5 h-5 rounded bg-[#F6F5F3] hover:bg-slate-200 text-[#1A1A1A] font-bold inline-flex items-center justify-center text-xs shrink-0"
+                      className="w-8 h-8 rounded-xl bg-white hover:bg-slate-200 border border-slate-200 text-slate-900 font-black inline-flex items-center justify-center text-sm shrink-0 active:scale-95 transition-all cursor-pointer"
                     >
-                      <Minus className="w-3 h-3 shrink-0" />
+                      <Minus className="w-3.5 h-3.5 shrink-0" />
                     </button>
-                    <span className="text-xs font-mono font-bold text-[#1A1A1A] w-5 text-center">
+                    <span className="text-xs font-mono font-bold text-slate-900 w-6 text-center">
                       {quantities[size] || 0}
                     </span>
                     <button
                       type="button"
                       onClick={() => handleQtyChange(size, 1)}
-                      className="w-5 h-5 rounded bg-[#F6F5F3] hover:bg-slate-200 text-[#1A1A1A] font-bold inline-flex items-center justify-center text-xs shrink-0"
+                      className="w-8 h-8 rounded-xl bg-white hover:bg-slate-200 border border-slate-200 text-slate-900 font-black inline-flex items-center justify-center text-sm shrink-0 active:scale-95 transition-all cursor-pointer"
                     >
-                      <Plus className="w-3 h-3 shrink-0" />
+                      <Plus className="w-3.5 h-3.5 shrink-0" />
                     </button>
                   </div>
                 </div>
@@ -454,31 +446,33 @@ Sila maklumkan sebut harga rasmi dan langkah pembayaran. Terima kasih!`;
           </div>
 
           {/* PRICE CALCULATOR CARD */}
-          <div className="p-5 bg-white rounded-xl border border-[#1A1A1A] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
+          <div className="p-4 sm:p-5 bg-slate-900 text-white rounded-2xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
             <div className="space-y-1">
               <div className="flex items-center space-x-2">
-                <Calculator className="w-4 h-4 text-[#1A1A1A] shrink-0" />
-                <span className="text-xs font-bold uppercase text-[#1A1A1A]">Anggaran Pengiraan Harga</span>
+                <Calculator className="w-4 h-4 text-white shrink-0" />
+                <span className="text-xs font-extrabold uppercase tracking-wider text-white">Ringkasan Anggaran Harga</span>
               </div>
-              <p className="text-xs text-[#757575] font-mono">
-                {selectedFabric?.name} ({selectedFabric?.gsm || '150 GSM'} - RM {selectedFabric?.basePrice}) + {selectedCut?.name} (+RM {selectedCut?.addOnPrice}) = <strong className="text-[#1A1A1A]">RM {unitPrice.toFixed(2)} / pcs</strong>
+              <p className="text-xs text-slate-300 font-sans">
+                {selectedFabric?.name} + {selectedCut?.name} = <strong className="text-white">RM {unitPrice.toFixed(2)} / pcs</strong>
               </p>
             </div>
 
-            <div className="text-right shrink-0">
-              <div className="text-[11px] text-[#757575] font-mono">Kuantiti: {totalQty} pcs</div>
-              <div className="text-2xl font-black text-[#1A1A1A]">RM {totalPrice.toFixed(2)}</div>
+            <div className="text-left sm:text-right shrink-0">
+              <div className="text-[11px] text-slate-400 font-mono">Jumlah: {totalQty} pcs</div>
+              <div className="text-2xl font-black text-white tabular-nums">RM {totalPrice.toFixed(2)}</div>
             </div>
           </div>
 
-          {/* Submit CTA */}
-          <button
-            type="submit"
-            className="w-full py-4 px-6 bg-[#1A1A1A] hover:bg-[#333333] text-white font-extrabold text-xs uppercase tracking-widest rounded-full shadow-md inline-flex items-center justify-center space-x-2 transition-all active:scale-[0.98] whitespace-nowrap shrink-0"
-          >
-            <MessageSquare className="w-4 h-4 fill-white shrink-0" />
-            <span className="whitespace-nowrap">Hantar WhatsApp</span>
-          </button>
+          {/* STICKY SUBMIT BUTTON */}
+          <div className="pt-2">
+            <button
+              type="submit"
+              className="w-full py-4 px-6 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs uppercase tracking-widest rounded-2xl shadow-md inline-flex items-center justify-center space-x-2 transition-all active:scale-[0.98] whitespace-nowrap shrink-0 cursor-pointer"
+            >
+              <MessageSquare className="w-4 h-4 fill-white shrink-0" />
+              <span className="whitespace-nowrap">Hantar Pesanan Ke WhatsApp</span>
+            </button>
+          </div>
         </form>
       </div>
     </div>

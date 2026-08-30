@@ -120,10 +120,10 @@ export default function SmoothHeaderHomepage() {
       <header
         className={`sticky top-0 z-40 w-full transition-all duration-500 ease-in-out ${isScrolled
             ? 'h-14 sm:h-16 bg-white/90 backdrop-blur-md border-b border-neutral-200/80 shadow-xs'
-            : 'h-16 sm:h-24 bg-white border-b border-neutral-100'
+            : 'h-16 sm:h-20 bg-white border-b border-neutral-100'
           }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-12 h-full flex items-center justify-between transition-all duration-500">
+        <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-16 2xl:px-24 h-full flex items-center justify-between transition-all duration-500">
           <Link href="/" className="flex items-center space-x-3 group py-2">
             <img
               src="/logo/ayezz-logo-01.svg"
@@ -143,7 +143,7 @@ export default function SmoothHeaderHomepage() {
             {currentUser ? (
               <Link
                 href="/dashboard"
-                className="px-3.5 py-1.5 sm:px-4 sm:py-2 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-[10px] sm:text-[11px] uppercase tracking-[0.12em] rounded-full transition-all flex items-center space-x-1.5 shadow-2xs"
+                className="px-3.5 py-1.5 sm:px-5 sm:py-2 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-[10px] sm:text-[11px] uppercase tracking-[0.12em] rounded-full transition-all flex items-center space-x-1.5 shadow-2xs"
               >
                 <User className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" />
                 <span className="line-clamp-1 max-w-[90px] sm:max-w-[110px]">{currentUser.fullName || 'Dashboard'}</span>
@@ -160,10 +160,10 @@ export default function SmoothHeaderHomepage() {
         </div>
       </header>
 
-      {/* 3. HERO SHOWCASE SECTION (EDITORIAL SPORTSWEAR AESTHETIC) */}
-      <section className="py-8 sm:py-32 px-4 sm:px-12 bg-[#F6F6F9] sm:bg-[#EFEFF4] border-b border-neutral-200/80">
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-16 lg:gap-20 items-center">
-          <div className="lg:col-span-6 space-y-3.5 sm:space-y-8 text-left">
+      {/* 3. HERO SHOWCASE SECTION (EDITORIAL SPORTSWEAR AESTHETIC - FULL WIDTH) */}
+      <section className="py-8 sm:py-24 px-4 sm:px-8 lg:px-16 2xl:px-24 bg-[#F8F8FA] border-b border-neutral-200/60 w-full">
+        <div className="w-full max-w-[1920px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-16 lg:gap-20 items-center">
+          <div className="lg:col-span-6 space-y-4 sm:space-y-8 text-left">
             
             {/* MINIMALIST TELEMETRY BADGE */}
             <div className="inline-flex items-center space-x-2 text-[9px] sm:text-[10px] font-mono font-bold tracking-[0.2em] text-neutral-500 uppercase">
@@ -177,38 +177,38 @@ export default function SmoothHeaderHomepage() {
               <span className="text-neutral-400 font-extrabold tracking-normal">PAKAIAN CUSTOM</span>
             </h1>
 
-            <p className="text-neutral-600 text-xs sm:text-base leading-relaxed max-w-lg font-normal">
+            <p className="text-neutral-600 text-xs sm:text-base leading-relaxed max-w-xl font-normal">
               Pilih daripada koleksi visual kategori di bawah. Pilih desain jersi, kustomisasikan jenis kolar dan kain sublimasi, dan proses tempahan terus secara dalam talian.
             </p>
 
             {/* SIDE-BY-SIDE COMPACT CTA BUTTONS */}
-            <div className="pt-2 flex items-center space-x-2.5 sm:space-x-4">
+            <div className="pt-2 flex items-center space-x-3 sm:space-x-4">
               <a
                 href="#kategori-utama"
-                className="px-5 py-3 sm:px-8 sm:py-4 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-[10px] sm:text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center space-x-2 active:scale-[0.98] shadow-sm whitespace-nowrap"
+                className="px-6 py-3.5 sm:px-8 sm:py-4 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center space-x-2 active:scale-[0.98] shadow-sm whitespace-nowrap"
               >
                 <span>Kategori Utama</span>
-                <ArrowRight className="w-3.5 h-3.5 text-white" />
+                <ArrowRight className="w-4 h-4 text-white" />
               </a>
 
               <Link
                 href="/katalog"
-                className="px-4 py-3 sm:px-7 sm:py-4 bg-white border border-neutral-300 hover:border-[#111111] text-[#111111] font-bold text-[10px] sm:text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center justify-center active:scale-[0.98] whitespace-nowrap"
+                className="px-5 py-3.5 sm:px-7 sm:py-4 bg-white border border-neutral-300 hover:border-[#111111] text-[#111111] font-bold text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center justify-center active:scale-[0.98] whitespace-nowrap"
               >
                 <span>Semua Katalog</span>
               </Link>
             </div>
           </div>
 
-          <div className="lg:col-span-6 flex items-center justify-center pt-2 sm:pt-0">
+          <div className="lg:col-span-6 flex items-center justify-center pt-4 lg:pt-0">
             <HeroCarousel />
           </div>
         </div>
       </section>
 
-      {/* 4. MASTER CATEGORIES SHOWCASE CAROUSEL (1:1 APPLE STORE STOREFRONT DESIGN SYSTEM) */}
-      <section id="kategori-utama" className="py-14 sm:py-24 px-4 sm:px-12 bg-[#F5F5F7]/70 border-b border-neutral-200/60 select-none">
-        <div className="max-w-7xl mx-auto space-y-6 sm:space-y-8">
+      {/* 4. MASTER CATEGORIES SHOWCASE CAROUSEL */}
+      <section id="kategori-utama" className="py-14 sm:py-24 px-4 sm:px-8 lg:px-16 2xl:px-24 bg-white border-b border-neutral-200/60 select-none w-full">
+        <div className="w-full max-w-[1920px] mx-auto space-y-6 sm:space-y-8">
           
           {/* APPLE STORE HEADER BAR */}
           <div className="flex items-end justify-between border-b border-neutral-200/40 pb-4">

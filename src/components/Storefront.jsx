@@ -41,10 +41,10 @@ export default function Storefront({ onOpenAdmin }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#F6F5F3] text-[#1A1A1A] selection:bg-[#1A1A1A] selection:text-white flex flex-col font-sans">
+    <div className="min-h-screen bg-white text-[#1A1A1A] selection:bg-[#1A1A1A] selection:text-white flex flex-col font-sans">
       {/* 1. SOPHISTICATED LUXURY BRAND NAVBAR */}
-      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-[#E5E5E5]">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+      <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md border-b border-[#E5E5E5] w-full">
+        <div className="w-full max-w-[1920px] mx-auto px-4 sm:px-8 lg:px-16 2xl:px-24 h-16 flex items-center justify-between">
           {/* Logo Mark */}
           <div className="flex items-center space-x-3 cursor-pointer" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}>
             <img
