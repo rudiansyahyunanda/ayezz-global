@@ -1799,142 +1799,107 @@ function DashboardContent() {
                       )}
 
                       {/* ========================================================== */}
-                      {/* LANGKAH 2: POTONGAN, LENGAN & SAIZ (FULL-WIDTH 100% SPACIOUS MATRIX TABLE!) */}
+                      {/* LANGKAH 2: POTONGAN, LENGAN & SAIZ (PROGRESSIVE DISCLOSURE MOBILE-FIRST) */}
                       {/* ========================================================== */}
                       {orderStep === 2 && (
-                        <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200/80 shadow-2xs flex flex-col max-h-[calc(100vh-220px)] w-full">
+                        <div className="bg-white p-4 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-2xs space-y-6 w-full">
                           
-                          {/* STEP CARD FIXED HEADER */}
-                          <div className="flex items-center justify-between border-b border-slate-100 pb-4 shrink-0">
+                          {/* STEP 2 HEADER */}
+                          <div className="flex items-center justify-between border-b border-slate-100 pb-4">
                             <div>
                               <span className="text-[10px] font-mono text-slate-400 font-bold uppercase tracking-widest block">LANGKAH 2 DARI 4</span>
-                              <h3 className="text-lg font-black uppercase text-slate-900 pt-0.5">SPESIFIKASI POTONGAN, LENGAN & SAIZ</h3>
+                              <h3 className="text-base sm:text-lg font-black uppercase text-slate-900 pt-0.5">Spesifikasi Potongan, Lengan & Saiz</h3>
                             </div>
 
-                            <span className="text-xs font-mono font-black text-slate-800 bg-slate-100 px-3.5 py-1.5 rounded-lg border border-slate-200">
-                              JUMLAH KESELURUHAN: {groupCalculations.totalQty} pcs
+                            <span className="text-xs font-mono font-black text-slate-900 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200">
+                              {groupCalculations.totalQty} pcs
                             </span>
                           </div>
 
-                          {/* SCROLLABLE CUT GROUPS CONTENT BODY */}
-                          <div className="flex-1 overflow-y-auto pr-1.5 my-4 space-y-6 w-full">
-                            {groupCalculations.groupDetails.map((group, idx) => {
-                              const activeCutName = group.cut?.name || 'Pilih Potongan Kolar';
-                              const activeSleeveName = group.sleeve?.name || 'Pilih Jenis Lengan';
-                              const activeCutImg = group.cut?.thumbnail || PLACEHOLDER_IMAGE;
-                              const activeSleeveImg = group.sleeve?.thumbnail || PLACEHOLDER_IMAGE;
+                          {/* FLATTENED CONTENT BODY (NO NESTED SCROLLING!) */}
+                          <div className="space-y-6 w-full">
 
-                              return (
-                                <div
-                                  key={group.id}
-                                  className="p-6 bg-white border border-slate-200/90 rounded-2xl space-y-6 relative shadow-2xs hover:border-slate-300 transition-all w-full"
-                                >
-                                  {/* GROUP CARD HEADER */}
-                                  <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-                                    <div className="flex items-center space-x-2.5">
-                                      <span className="w-6 h-6 rounded-full bg-slate-200 text-slate-900 text-xs font-mono font-black border border-slate-300 flex items-center justify-center">
-                                        {idx + 1}
-                                      </span>
-                                      <span className="text-xs font-mono font-extrabold text-slate-800 uppercase">
-                                        KUMPULAN #{idx + 1}: {activeCutName} • {activeSleeveName}
-                                      </span>
-                                    </div>
+                            {/* RINGKASAN & PENGATURAN KUMPULAN POTONGAN */}
+                            {groupCalculations.groupDetails.map((group, idx) => (
+                              <div key={group.id} className="p-4 sm:p-5 bg-slate-50/90 border border-slate-200/90 rounded-2xl space-y-4 shadow-2xs">
+                                
+                                {/* GROUP TITLE & REMOVE BUTTON */}
+                                <div className="flex items-center justify-between border-b border-slate-200/60 pb-2.5">
+                                  <div className="flex items-center space-x-2.5">
+                                    <span className="w-6 h-6 rounded-lg bg-slate-900 text-white text-xs font-mono font-black flex items-center justify-center shrink-0">
+                                      #{idx + 1}
+                                    </span>
+                                    <span className="text-xs font-extrabold uppercase text-slate-900">
+                                      KUMPULAN #{idx + 1}: {group.cut?.name || 'Kolar'} • {group.sleeve?.name || 'Lengan'}
+                                    </span>
+                                  </div>
 
-                                    <div className="flex items-center space-x-3">
-                                      <span className="text-xs font-mono font-bold text-slate-800 bg-slate-100 px-2.5 py-1 rounded-md">
-                                        {group.qty} pcs
-                                      </span>
+                                  <div className="flex items-center space-x-2">
+                                    <span className="text-xs font-mono font-bold text-slate-800 bg-white px-2.5 py-0.5 rounded-md border border-slate-200">
+                                      {group.qty} pcs
+                                    </span>
 
-                                      {cutGroups.length > 1 && (
-                                        <button
-                                          type="button"
-                                          onClick={() => removeCutGroup(group.id)}
-                                          className="p-1 text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
-                                          title="Padam Kumpulan Ini"
-                                        >
-                                          <Trash2 className="w-4 h-4" />
-                                        </button>
-                                      )}
+                                    {cutGroups.length > 1 && (
+                                      <button
+                                        type="button"
+                                        onClick={() => removeCutGroup(group.id)}
+                                        className="p-1 text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
+                                        title="Padam Kumpulan Ini"
+                                      >
+                                        <Trash2 className="w-4 h-4 shrink-0" />
+                                      </button>
+                                    )}
+                                  </div>
+                                </div>
+
+                                {/* PROGRESSIVE DISCLOSURE STEPS FOR THIS GROUP */}
+                                <div className="space-y-4 pt-1">
+                                  
+                                  {/* STEP 2.1: PILIH KOLAR (ALWAYS VISIBLE) */}
+                                  <div className="space-y-2">
+                                    <label className="text-[11px] font-extrabold text-slate-900 uppercase block">
+                                      1. Pilih Potongan Kolar:
+                                    </label>
+
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5">
+                                      {cutTypes.map((cut) => {
+                                        const isSelected = group.cut?.id === cut.id;
+                                        const addOn = Number(cut.addOnPrice ?? cut.add_on_price ?? 0);
+                                        return (
+                                          <div
+                                            key={cut.id}
+                                            onClick={() => setGroupCutDirect(group.id, cut)}
+                                            className={`p-3 rounded-2xl border cursor-pointer transition-all flex flex-col items-center justify-between text-center space-y-2 ${
+                                              isSelected
+                                                ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
+                                                : 'bg-white text-slate-800 border-slate-200 hover:border-slate-400'
+                                            }`}
+                                          >
+                                            <img
+                                              src={cut.thumbnail || PLACEHOLDER_IMAGE}
+                                              alt={cut.name}
+                                              className="w-14 h-14 object-contain bg-slate-50 rounded-xl p-1 shrink-0"
+                                            />
+                                            <div className="w-full text-center">
+                                              <span className="text-[11px] font-extrabold leading-snug block line-clamp-2">{cut.name}</span>
+                                              <span className={`text-[10px] font-mono block pt-0.5 ${isSelected ? 'text-slate-300' : 'text-slate-500'}`}>
+                                                {addOn > 0 ? `+RM ${addOn}` : 'Standard'}
+                                              </span>
+                                            </div>
+                                          </div>
+                                        );
+                                      })}
                                     </div>
                                   </div>
 
-                                  {/* COLLAR CUT & SLEEVE SELECTION VISUAL GRID FOR MOBILE & DESKTOP */}
-                                  <div className="grid grid-cols-1 md:grid-cols-12 gap-5 items-start">
-                                    
-                                    {/* COLLAR CUT */}
-                                    <div className="md:col-span-6 space-y-2">
-                                      <label className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block">
-                                        1. POTONGAN KOLAR
+                                  {/* STEP 2.2: PILIH LENGAN (REVEALED AFTER KOLAR IS SELECTED) */}
+                                  {group.cut && (
+                                    <div className="space-y-2 pt-2 border-t border-slate-200/60 animate-fade-in">
+                                      <label className="text-[11px] font-extrabold text-slate-900 uppercase block">
+                                        2. Pilih Jenis Lengan:
                                       </label>
 
-                                      {/* MOBILE VISUAL 2-COLUMN GRID (MD:HIDDEN) */}
-                                      <div className="md:hidden grid grid-cols-2 gap-2">
-                                        {cutTypes.map((cut) => {
-                                          const isSelected = group.cut?.id === cut.id;
-                                          const addOn = Number(cut.addOnPrice ?? cut.add_on_price ?? 0);
-                                          return (
-                                            <div
-                                              key={cut.id}
-                                              onClick={() => setGroupCutDirect(group.id, cut)}
-                                              className={`p-3 rounded-2xl border cursor-pointer transition-all flex flex-col items-center justify-between text-center space-y-2 ${
-                                                isSelected
-                                                  ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
-                                                  : 'bg-white text-slate-800 border-slate-200 hover:border-slate-400'
-                                              }`}
-                                            >
-                                              <img
-                                                src={cut.thumbnail || PLACEHOLDER_IMAGE}
-                                                alt={cut.name}
-                                                className="w-14 h-14 object-contain bg-slate-50 rounded-xl p-1 shrink-0"
-                                              />
-                                              <div>
-                                                <span className="text-xs font-extrabold block truncate">{cut.name}</span>
-                                                <span className="text-[10px] font-mono opacity-80 block">
-                                                  {addOn > 0 ? `+RM ${addOn}` : 'Standard'}
-                                                </span>
-                                              </div>
-                                            </div>
-                                          );
-                                        })}
-                                      </div>
-
-                                      {/* DESKTOP COLLAR CUT SELECTOR */}
-                                      <div className="hidden md:flex p-3 bg-slate-50/80 border border-slate-200 rounded-xl items-center justify-between">
-                                        <div className="flex items-center space-x-3 min-w-0">
-                                          <img
-                                            src={activeCutImg}
-                                            alt={activeCutName}
-                                            className="w-11 h-11 object-contain bg-white rounded-lg p-1 border border-slate-200 shrink-0"
-                                          />
-                                          <div className="min-w-0 flex-1">
-                                            <h4 className="text-xs font-extrabold uppercase text-slate-900 truncate">{activeCutName}</h4>
-                                            <span className="text-[10px] font-mono font-bold text-slate-500 block">
-                                              {Number(group.cut?.addOnPrice ?? 0) > 0 ? `+RM ${group.cut.addOnPrice}` : 'FREE'}
-                                            </span>
-                                          </div>
-                                        </div>
-
-                                        <button
-                                          type="button"
-                                          onClick={() => {
-                                            setActiveGroupIdForCut(group.id);
-                                            setIsCutModalOpen(true);
-                                          }}
-                                          className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase rounded-xl transition-colors cursor-pointer whitespace-nowrap shrink-0"
-                                        >
-                                          Pilih
-                                        </button>
-                                      </div>
-                                    </div>
-
-                                    {/* SLEEVE TYPE MODAL LIST TRIGGER */}
-                                    <div className="md:col-span-6 space-y-2">
-                                      <label className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block">
-                                        2. JENIS LENGAN (SLEEVE)
-                                      </label>
-
-                                      {/* MOBILE VISUAL 2-COLUMN GRID (MD:HIDDEN) */}
-                                      <div className="md:hidden grid grid-cols-2 gap-2">
+                                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5">
                                         {sleeveTypes.map((slv) => {
                                           const isSelected = group.sleeve?.id === slv.id;
                                           const addOn = Number(slv.addOnPrice ?? slv.add_on_price ?? 0);
@@ -1953,9 +1918,9 @@ function DashboardContent() {
                                                 alt={slv.name}
                                                 className="w-14 h-14 object-contain bg-slate-50 rounded-xl p-1 shrink-0"
                                               />
-                                              <div>
-                                                <span className="text-xs font-extrabold block truncate">{slv.name}</span>
-                                                <span className="text-[10px] font-mono opacity-80 block">
+                                              <div className="w-full text-center">
+                                                <span className="text-[11px] font-extrabold leading-snug block line-clamp-2">{slv.name}</span>
+                                                <span className={`text-[10px] font-mono block pt-0.5 ${isSelected ? 'text-slate-300' : 'text-slate-500'}`}>
                                                   {addOn > 0 ? `+RM ${addOn}` : 'Standard'}
                                                 </span>
                                               </div>
@@ -1963,52 +1928,12 @@ function DashboardContent() {
                                           );
                                         })}
                                       </div>
-
-                                      {/* DESKTOP SLEEVE SELECTOR */}
-                                      <div className="hidden md:flex p-3 bg-slate-50/80 border border-slate-200 rounded-xl items-center justify-between">
-                                        <div className="flex items-center space-x-3 min-w-0">
-                                          <img
-                                            src={activeSleeveImg}
-                                            alt={activeSleeveName}
-                                            className="w-11 h-11 object-contain bg-white rounded-lg p-1 border border-slate-200 shrink-0"
-                                          />
-                                          <div className="min-w-0 flex-1">
-                                            <h4 className="text-xs font-extrabold uppercase text-slate-900 truncate">{activeSleeveName}</h4>
-                                            <span className="text-[10px] font-mono font-bold text-slate-500 block">
-                                              {Number(group.sleeve?.addOnPrice ?? 0) > 0 ? `+RM ${group.sleeve.addOnPrice}` : 'FREE'}
-                                            </span>
-                                          </div>
-                                        </div>
-
-                                        <button
-                                          type="button"
-                                          onClick={() => {
-                                            setActiveGroupIdForSleeve(group.id);
-                                            setIsSleeveModalOpen(true);
-                                          }}
-                                          className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase rounded-xl transition-colors cursor-pointer whitespace-nowrap shrink-0"
-                                        >
-                                          Pilih
-                                        </button>
-                                      </div>
                                     </div>
+                                  )}
 
-                                  </div>
-
-                                  {/* SLEEK THIN-LINE GRID SIZE TABLE */}
-                                  <div className="space-y-4 pt-3 border-t border-slate-100 w-full">
-                                    <div className="flex items-center justify-between">
-                                      <label className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-wider block">
-                                        3. JADUAL SAIZ & KUANTITI
-                                      </label>
-
-                                      <span className="text-xs font-mono font-bold text-slate-800">
-                                        Subtotal Kumpulan #{idx + 1}: {group.qty} pcs
-                                      </span>
-                                    </div>
-
-                                    {/* MOBILE SIZE TRIGGER BUTTON (MD:HIDDEN) */}
-                                    <div className="md:hidden pt-1">
+                                  {/* STEP 2.3: ATUR SAIZ & KUANTITI ACTION BUTTON (REVEALED AFTER LENGAN IS SELECTED) */}
+                                  {group.cut && group.sleeve && (
+                                    <div className="pt-2 border-t border-slate-200/60 animate-fade-in">
                                       <button
                                         type="button"
                                         onClick={() => {
@@ -2019,107 +1944,35 @@ function DashboardContent() {
                                       >
                                         <div className="flex items-center space-x-2">
                                           <Ruler className="w-4 h-4 text-emerald-400 shrink-0" />
-                                          <span>Saiz & Kuantiti: <strong className="text-white font-mono">{group.qty} pcs</strong></span>
+                                          <span>3. Atur Saiz & Kuantiti: <strong className="text-white font-mono">{group.qty} pcs</strong></span>
                                         </div>
                                         <div className="flex items-center space-x-1 text-slate-300 text-[11px] uppercase font-bold">
-                                          <span>Kemaskini Saiz</span>
+                                          <span>Tetapkan Saiz</span>
                                           <ChevronRight className="w-4 h-4 shrink-0 text-white" />
                                         </div>
                                       </button>
                                     </div>
-
-                                    {/* DESKTOP SIZES THIN-BORDER TABLES (HIDDEN ON MOBILE) */}
-                                    <div className="hidden md:block space-y-4 w-full">
-                                      {/* ADULT SIZES THIN-BORDER TABLE */}
-                                      <div className="space-y-1.5 w-full">
-                                        <span className="text-[10px] font-mono text-slate-500 font-bold block">SAIZ DEWASA (ADULT)</span>
-                                        <div className="overflow-x-auto border border-slate-200 rounded-xl bg-white w-full">
-                                          <table className="w-full text-center divide-y divide-slate-200 text-xs">
-                                            <thead>
-                                              <tr className="bg-slate-50/80 divide-x divide-slate-200 text-[11px] font-mono font-bold text-slate-700 uppercase">
-                                                {ADULT_SIZES.map((sz) => (
-                                                  <th key={sz} className="py-2 px-2 font-extrabold">{sz}</th>
-                                                ))}
-                                              </tr>
-                                            </thead>
-                                            <tbody>
-                                              <tr className="divide-x divide-slate-200 bg-white">
-                                                {ADULT_SIZES.map((sz) => {
-                                                  const q = group.sizes?.[sz] || 0;
-                                                  return (
-                                                    <td key={sz} className="p-1">
-                                                      <input
-                                                        type="number"
-                                                        min="0"
-                                                        value={q === 0 ? '' : q}
-                                                        placeholder="0"
-                                                        onChange={(e) => setGroupSizeQtyDirect(group.id, sz, e.target.value)}
-                                                        className="w-full text-center py-1.5 px-1 font-mono font-bold text-slate-900 bg-transparent focus:bg-slate-50 outline-none text-xs"
-                                                      />
-                                                    </td>
-                                                  );
-                                                })}
-                                              </tr>
-                                            </tbody>
-                                          </table>
-                                        </div>
-                                      </div>
-
-                                      {/* KIDS SIZES THIN-BORDER TABLE */}
-                                      <div className="space-y-1.5 pt-1 w-full">
-                                        <span className="text-[10px] font-mono text-slate-500 font-bold block">SAIZ KANAK-KANAK (KIDS)</span>
-                                        <div className="overflow-x-auto border border-slate-200 rounded-xl bg-white w-full">
-                                          <table className="w-full text-center divide-y divide-slate-200 text-xs">
-                                            <thead>
-                                              <tr className="bg-slate-50/80 divide-x divide-slate-200 text-[11px] font-mono font-bold text-slate-700 uppercase">
-                                                {KIDS_SIZES.map((sz) => (
-                                                  <th key={sz} className="py-2 px-2 font-extrabold">Saiz {sz}</th>
-                                                ))}
-                                              </tr>
-                                            </thead>
-                                            <tbody>
-                                              <tr className="divide-x divide-slate-200 bg-white">
-                                                {KIDS_SIZES.map((sz) => {
-                                                  const q = group.sizes?.[sz] || 0;
-                                                  return (
-                                                    <td key={sz} className="p-1">
-                                                      <input
-                                                        type="number"
-                                                        min="0"
-                                                        value={q === 0 ? '' : q}
-                                                        placeholder="0"
-                                                        onChange={(e) => setGroupSizeQtyDirect(group.id, sz, e.target.value)}
-                                                        className="w-full text-center py-1.5 px-1 font-mono font-bold text-slate-900 bg-transparent focus:bg-slate-50 outline-none text-xs"
-                                                      />
-                                                    </td>
-                                                  );
-                                                })}
-                                              </tr>
-                                            </tbody>
-                                          </table>
-                                        </div>
-                                      </div>
-                                    </div>
-
-                                  </div>
+                                  )}
 
                                 </div>
-                              );
-                            })}
 
-                            {/* BUTTON ADD NEW CUT GROUP INSIDE SCROLLABLE AREA */}
+                              </div>
+                            ))}
+
+                            {/* BUTTON "+ TAMBAH POTONGAN LAIN" (DIRECTIVE 5) */}
                             <button
                               type="button"
                               onClick={addCutGroup}
-                              className="w-full py-3 bg-slate-100 hover:bg-slate-200 text-slate-900 font-bold text-xs uppercase tracking-wider rounded-xl transition-all border border-dashed border-slate-300 inline-flex items-center justify-center space-x-2 cursor-pointer whitespace-nowrap shrink-0"
+                              className="w-full py-3.5 bg-white hover:bg-slate-50 text-slate-900 font-extrabold text-xs uppercase tracking-wider rounded-2xl transition-all border border-dashed border-slate-300 inline-flex items-center justify-center space-x-2 cursor-pointer shadow-2xs"
                             >
                               <Plus className="w-4 h-4 text-slate-900 shrink-0" />
-                              <span className="whitespace-nowrap">Tambah Kumpulan Potongan</span>
+                              <span>+ Tambah Potongan Lain</span>
                             </button>
+
                           </div>
 
-                          {/* STEP CARD FIXED FOOTER NAVIGATION */}
-                          <div className="pt-4 border-t border-slate-100 flex items-center justify-between shrink-0">
+                          {/* DESKTOP FOOTER NAVIGATION (HIDDEN ON MOBILE TO AVOID DUPLICATE NAV BAR) */}
+                          <div className="pt-4 border-t border-slate-100 hidden md:flex items-center justify-between">
                             <button
                               type="button"
                               onClick={() => setOrderStep(1)}
@@ -3279,11 +3132,8 @@ function DashboardContent() {
                       const currentGroup = cutGroups.find(g => g.id === activeGroupIdForSize);
                       const q = Number(currentGroup?.sizes?.[sz] || 0);
                       return (
-                        <div key={sz} className="py-2 px-2 flex items-center justify-between hover:bg-slate-50 rounded-xl transition-colors">
-                          <div className="flex items-center space-x-2">
-                            <span className="text-xs font-black text-slate-900 w-12">{sz}</span>
-                            <span className="text-[10px] font-mono text-slate-400 font-medium">Size {sz}</span>
-                          </div>
+                        <div key={sz} className="py-2.5 px-3 flex items-center justify-between hover:bg-slate-50 rounded-xl transition-colors">
+                          <span className="text-sm font-black text-slate-900">{sz}</span>
 
                           {/* APPLE-STYLE STEPPER CONTROLS */}
                           <div className="flex items-center space-x-2">
@@ -3335,11 +3185,8 @@ function DashboardContent() {
                       const currentGroup = cutGroups.find(g => g.id === activeGroupIdForSize);
                       const q = Number(currentGroup?.sizes?.[sz] || 0);
                       return (
-                        <div key={sz} className="py-2 px-2 flex items-center justify-between hover:bg-slate-50 rounded-xl transition-colors">
-                          <div className="flex items-center space-x-2">
-                            <span className="text-xs font-black text-slate-900 w-16">Saiz {sz}</span>
-                            <span className="text-[10px] font-mono text-slate-400 font-medium">Kids</span>
-                          </div>
+                        <div key={sz} className="py-2.5 px-3 flex items-center justify-between hover:bg-slate-50 rounded-xl transition-colors">
+                          <span className="text-sm font-black text-slate-900">Saiz {sz}</span>
 
                           {/* APPLE-STYLE STEPPER CONTROLS */}
                           <div className="flex items-center space-x-2">
