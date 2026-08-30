@@ -561,10 +561,10 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
         <div className="p-4 border-t border-slate-800 bg-slate-900/40 space-y-2">
           <button
             onClick={onSwitchToStorefront}
-            className="w-full py-2 px-3 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-semibold uppercase tracking-wider transition-all flex items-center justify-center space-x-2 border border-slate-700 active:scale-95 cursor-pointer"
+            className="w-full py-2 px-3 bg-slate-800 hover:bg-slate-700 text-white rounded-lg text-xs font-semibold uppercase tracking-wider transition-all inline-flex items-center justify-center space-x-2 border border-slate-700 active:scale-95 cursor-pointer whitespace-nowrap shrink-0"
           >
-            <Globe className="w-3.5 h-3.5 text-slate-300" />
-            <span>Lihat Laman Awam</span>
+            <Globe className="w-3.5 h-3.5 text-slate-300 shrink-0" />
+            <span className="whitespace-nowrap">Laman Awam</span>
           </button>
 
           <button
@@ -572,10 +572,10 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
               logoutAdmin();
               if (onLogoutAdmin) onLogoutAdmin();
             }}
-            className="w-full py-2 px-3 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all flex items-center justify-center space-x-2 border border-rose-500/30 active:scale-95 cursor-pointer"
+            className="w-full py-2 px-3 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all inline-flex items-center justify-center space-x-2 border border-rose-500/30 active:scale-95 cursor-pointer whitespace-nowrap shrink-0"
           >
-            <LogOut className="w-3.5 h-3.5 text-rose-400" />
-            <span>Log Keluar Admin</span>
+            <LogOut className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+            <span className="whitespace-nowrap">Log Keluar</span>
           </button>
         </div>
       </aside>
@@ -665,37 +665,37 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
             <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs p-6 space-y-6">
               <div className="flex items-center justify-between pb-4 border-b border-slate-100">
                 <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">Jenis Potongan & Kolar</h2>
-                <button onClick={() => openAddModal('cut')} className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-lg flex items-center space-x-1.5 transition-colors shadow-xs active:scale-95">
-                  <Plus className="w-3.5 h-3.5" /> <span>Tambah Potongan</span>
+                <button onClick={() => openAddModal('cut')} className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-lg inline-flex items-center justify-center space-x-1.5 whitespace-nowrap shrink-0 transition-colors shadow-xs active:scale-95">
+                  <Plus className="w-3.5 h-3.5 shrink-0" /> <span className="whitespace-nowrap">Tambah Potongan</span>
                 </button>
               </div>
 
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto rounded-xl border border-slate-100">
                 <table className="w-full text-left border-collapse text-xs font-sans">
                   <thead>
-                    <tr className="bg-slate-50/80 border-b border-slate-200 text-[11px] font-mono font-semibold text-slate-500 uppercase tracking-wider">
-                      <th className="py-3 px-4">GAMBAR COVER (1:1)</th>
-                      <th className="py-3 px-4">JENIS POTONGAN / KOLAR</th>
-                      <th className="py-3 px-4">DESKRIPSI</th>
-                      <th className="py-3 px-4">CAS TAMBAHAN</th>
-                      <th className="py-3 px-4 text-right">TINDAKAN</th>
+                    <tr className="bg-slate-50/90 border-b border-slate-200/80 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                      <th className="py-3.5 px-4">GAMBAR COVER</th>
+                      <th className="py-3.5 px-4">POTONGAN / KOLAR</th>
+                      <th className="py-3.5 px-4">DESKRIPSI</th>
+                      <th className="py-3.5 px-4">CAS TAMBAHAN</th>
+                      <th className="py-3.5 px-4 text-right">TINDAKAN</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 font-medium text-slate-800">
+                  <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
                     {cutTypes.length === 0 ? (
                       <tr>
-                        <td colSpan={5} className="py-12 text-center text-slate-400 font-mono text-xs">
-                          Belum ada jenis potongan terrekod. Tekan "+ Tambah Potongan" untuk cipta rekod baharu.
+                        <td colSpan={5} className="py-14 text-center text-slate-400 font-mono text-xs">
+                          Belum ada jenis potongan terrekod.
                         </td>
                       </tr>
                     ) : (
                       cutTypes.map(cut => (
                         <tr key={cut.id} className="hover:bg-slate-50/60 transition-colors">
-                          <td className="py-3 px-4">
+                          <td className="py-3.5 px-4">
                             <img
                               src={cut.thumbnail || PLACEHOLDER_IMAGE}
                               alt={cut.name}
-                              className="w-12 h-12 object-cover rounded-lg border border-slate-200/80 shadow-2xs"
+                              className="w-12 h-12 object-cover rounded-xl border border-slate-200/80 shadow-2xs"
                               onError={(e) => {
                                 e.target.onerror = null;
                                 e.target.src = PLACEHOLDER_IMAGE;
@@ -704,12 +704,12 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                           </td>
                           <td className="py-3.5 px-4 font-bold text-slate-900 uppercase">{cut.name}</td>
                           <td className="py-3.5 px-4 text-slate-600 max-w-xs">{cut.desc}</td>
-                          <td className="py-3.5 px-4 font-mono font-bold text-slate-900">+RM {Number(cut.addOnPrice ?? cut.add_on_price ?? 0).toFixed(2)}</td>
+                          <td className="py-3.5 px-4 font-bold text-slate-900 tabular-nums">+RM {Number(cut.addOnPrice ?? cut.add_on_price ?? 0).toFixed(2)}</td>
                           <td className="py-3.5 px-4 text-right space-x-1">
-                            <button onClick={() => openEditModal('cut', cut)} className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors" title="Kemaskini">
+                            <button onClick={() => openEditModal('cut', cut)} className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors" title="Kemaskini">
                               <Edit2 className="w-4 h-4" />
                             </button>
-                            <button onClick={async () => { setCutTypes(prev => prev.filter(c => c.id !== cut.id)); await deleteCutTypeFromSupabase(cut.id); }} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-md transition-colors" title="Padam">
+                            <button onClick={async () => { setCutTypes(prev => prev.filter(c => c.id !== cut.id)); await deleteCutTypeFromSupabase(cut.id); }} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors" title="Padam">
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </td>
@@ -724,43 +724,40 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
 
           {/* TAB 3.5: JENIS LENGAN (SLEEVE TYPES) */}
           {currentTab === 'sleeves' && (
-            <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs p-6 space-y-6">
+            <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 space-y-6">
               <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-                <div>
-                  <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">Jenis Lengan (Sleeve Types)</h2>
-                  <p className="text-xs text-slate-500 mt-0.5">Uruskan pilihan jenis lengan (Lengan Pendek, Lengan Panjang, Muslimah, Singlet) beserta harga tambahan.</p>
-                </div>
-                <button onClick={() => openAddModal('sleeve')} className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-lg flex items-center space-x-1.5 transition-colors shadow-xs active:scale-95">
-                  <Plus className="w-3.5 h-3.5" /> <span>Tambah Jenis Lengan</span>
+                <h2 className="text-base font-extrabold text-slate-900 tracking-tight">Jenis Lengan</h2>
+                <button onClick={() => openAddModal('sleeve')} className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-xl inline-flex items-center justify-center space-x-1.5 whitespace-nowrap shrink-0 transition-colors shadow-xs active:scale-95">
+                  <Plus className="w-3.5 h-3.5 shrink-0" /> <span className="whitespace-nowrap">Tambah Lengan</span>
                 </button>
               </div>
 
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto rounded-xl border border-slate-100">
                 <table className="w-full text-left border-collapse text-xs font-sans">
                   <thead>
-                    <tr className="bg-slate-50/80 border-b border-slate-200 text-[11px] font-mono font-semibold text-slate-500 uppercase tracking-wider">
-                      <th className="py-3 px-4">GAMBAR COVER (1:1)</th>
-                      <th className="py-3 px-4">NAMA JENIS LENGAN</th>
-                      <th className="py-3 px-4">DESKRIPSI</th>
-                      <th className="py-3 px-4">CAS TAMBAHAN</th>
-                      <th className="py-3 px-4 text-right">TINDAKAN</th>
+                    <tr className="bg-slate-50/90 border-b border-slate-200/80 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                      <th className="py-3.5 px-4">GAMBAR COVER</th>
+                      <th className="py-3.5 px-4">JENIS LENGAN</th>
+                      <th className="py-3.5 px-4">DESKRIPSI</th>
+                      <th className="py-3.5 px-4">CAS TAMBAHAN</th>
+                      <th className="py-3.5 px-4 text-right">TINDAKAN</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 font-medium text-slate-800">
+                  <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
                     {sleeveTypes.length === 0 ? (
                       <tr>
-                        <td colSpan={5} className="py-12 text-center text-slate-400 font-mono text-xs">
-                          Belum ada jenis lengan terrekod. Tekan "+ Tambah Jenis Lengan" untuk cipta rekod baharu.
+                        <td colSpan={5} className="py-14 text-center text-slate-400 font-mono text-xs">
+                          Belum ada jenis lengan terrekod.
                         </td>
                       </tr>
                     ) : (
                       sleeveTypes.map(sleeve => (
                         <tr key={sleeve.id} className="hover:bg-slate-50/60 transition-colors">
-                          <td className="py-3 px-4">
+                          <td className="py-3.5 px-4">
                             <img
                               src={sleeve.thumbnail || PLACEHOLDER_IMAGE}
                               alt={sleeve.name}
-                              className="w-12 h-12 object-cover rounded-lg border border-slate-200/80 shadow-2xs"
+                              className="w-12 h-12 object-cover rounded-xl border border-slate-200/80 shadow-2xs"
                               onError={(e) => {
                                 e.target.onerror = null;
                                 e.target.src = PLACEHOLDER_IMAGE;
@@ -769,12 +766,12 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                           </td>
                           <td className="py-3.5 px-4 font-bold text-slate-900 uppercase">{sleeve.name}</td>
                           <td className="py-3.5 px-4 text-slate-600 max-w-xs">{sleeve.desc}</td>
-                          <td className="py-3.5 px-4 font-mono font-bold text-slate-900">+RM {Number(sleeve.addOnPrice ?? sleeve.add_on_price ?? 0).toFixed(2)}</td>
+                          <td className="py-3.5 px-4 font-bold text-slate-900 tabular-nums">+RM {Number(sleeve.addOnPrice ?? sleeve.add_on_price ?? 0).toFixed(2)}</td>
                           <td className="py-3.5 px-4 text-right space-x-1">
-                            <button onClick={() => openEditModal('sleeve', sleeve)} className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-md transition-colors" title="Kemaskini">
+                            <button onClick={() => openEditModal('sleeve', sleeve)} className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors" title="Kemaskini">
                               <Edit2 className="w-4 h-4" />
                             </button>
-                            <button onClick={async () => { setSleeveTypes(prev => prev.filter(s => s.id !== sleeve.id)); await deleteSleeveTypeFromSupabase(sleeve.id); }} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-md transition-colors" title="Padam">
+                            <button onClick={async () => { setSleeveTypes(prev => prev.filter(s => s.id !== sleeve.id)); await deleteSleeveTypeFromSupabase(sleeve.id); }} className="p-1.5 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors" title="Padam">
                               <Trash2 className="w-4 h-4" />
                             </button>
                           </td>
@@ -789,44 +786,44 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
 
           {/* TAB 4: ORDERS DATATABLE */}
           {currentTab === 'orders' && (
-            <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs p-6 space-y-6">
+            <div className="bg-white rounded-2xl border border-slate-200/80 shadow-xs p-6 space-y-6">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b border-slate-100">
                 <div>
-                  <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">Senarai Pesanan Pelanggan (Supabase DB)</h2>
-                  <p className="text-xs text-slate-500 mt-0.5">Semua tempahan jersi kustom dari pelanggan beserta status bayaran CHIP-IN dan butiran pemain.</p>
+                  <h2 className="text-base font-extrabold text-slate-900 tracking-tight">Senarai Pesanan Pelanggan</h2>
+                  <span className="text-xs text-slate-500 font-medium">{orders.length} rekod pesanan aktif</span>
                 </div>
 
-                <div className="relative w-full sm:w-72">
-                  <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
+                <div className="relative w-full sm:w-80">
+                  <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-2.5" />
                   <input
                     type="text"
                     value={orderSearchQuery}
                     onChange={(e) => setOrderSearchQuery(e.target.value)}
-                    placeholder="Cari ID Pesanan / Nama..."
-                    className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-9 pr-3 py-1.5 text-xs font-semibold text-slate-900 outline-none focus:bg-white focus:border-slate-900"
+                    placeholder="Cari ID Pesanan, Pelanggan, Emel..."
+                    className="w-full bg-slate-50 border border-slate-200/80 rounded-xl pl-9 pr-4 py-2 text-xs font-medium text-slate-900 outline-none focus:bg-white focus:border-slate-900 transition-all"
                   />
                 </div>
               </div>
 
-              <div className="overflow-x-auto">
+              <div className="overflow-x-auto rounded-xl border border-slate-100">
                 <table className="w-full text-left border-collapse text-xs font-sans">
                   <thead>
-                    <tr className="bg-slate-50/80 border-b border-slate-200 text-[11px] font-mono font-semibold text-slate-500 uppercase tracking-wider">
-                      <th className="py-3 px-4">KOD PESANAN</th>
-                      <th className="py-3 px-4">PELANGGAN & TEL</th>
-                      <th className="py-3 px-4">REKA BENTUK</th>
-                      <th className="py-3 px-4">SPESIFIKASI</th>
-                      <th className="py-3 px-4">JUMLAH (RM)</th>
-                      <th className="py-3 px-4">BAYARAN (CHIP)</th>
-                      <th className="py-3 px-4">STATUS KILANG</th>
-                      <th className="py-3 px-4 text-right">TINDAKAN</th>
+                    <tr className="bg-slate-50/90 border-b border-slate-200/80 text-[11px] font-semibold text-slate-500 uppercase tracking-wider">
+                      <th className="py-3.5 px-4">ID PESANAN</th>
+                      <th className="py-3.5 px-4">PELANGGAN</th>
+                      <th className="py-3.5 px-4">REKA BENTUK</th>
+                      <th className="py-3.5 px-4">SPESIFIKASI</th>
+                      <th className="py-3.5 px-4">JUMLAH</th>
+                      <th className="py-3.5 px-4">STATUS BAYARAN</th>
+                      <th className="py-3.5 px-4">STATUS PENGLUARAN</th>
+                      <th className="py-3.5 px-4 text-right">TINDAKAN</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 font-medium text-slate-800">
+                  <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
                     {orders.length === 0 ? (
                       <tr>
-                        <td colSpan={8} className="py-12 text-center text-slate-400 font-mono text-xs">
-                          Belum ada pesanan terrekod dalam Supabase DB.
+                        <td colSpan={8} className="py-14 text-center text-slate-400 font-mono text-xs">
+                          Belum ada rekod pesanan dalam sistem.
                         </td>
                       </tr>
                     ) : (
@@ -841,104 +838,110 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                             (o.template || '').toLowerCase().includes(q)
                           );
                         })
-                        .map(ord => (
-                          <tr key={ord.id} className="hover:bg-slate-50/60 transition-colors">
-                            <td className="py-3.5 px-4 font-mono font-bold text-slate-900">
-                              #{ord.orderId || ord.id}
-                              <span className="text-[10px] font-mono text-slate-400 block font-normal">{ord.date}</span>
-                            </td>
-                            <td className="py-3.5 px-4">
-                              <span className="font-bold text-slate-900 block">{ord.client}</span>
-                              <span className="text-[10px] text-slate-500 font-mono block">{ord.customerPhone || ord.userEmail || '-'}</span>
-                            </td>
-                            <td className="py-3.5 px-4 font-extrabold uppercase text-slate-900">{ord.template}</td>
-                            <td className="py-3.5 px-4 text-slate-600 max-w-xs truncate">
-                              {ord.cutType} • {ord.fabricMaterial}
-                            </td>
-                            <td className="py-3.5 px-4 font-mono font-bold text-slate-900">
-                              {ord.total}
-                              <span className="text-[10px] text-slate-500 block font-mono font-normal">({ord.qty} pcs)</span>
-                            </td>
-                            <td className="py-3.5 px-4">
-                              <span className={`px-2 py-1 rounded text-[10px] font-mono font-bold uppercase ${
-                                ord.status?.includes('Ditolak') || ord.paymentStatus === 'rejected'
-                                  ? 'bg-rose-100 text-rose-800 border border-rose-300'
-                                  : (ord.paymentStatus === 'paid' || ord.status?.includes('Lunas')
-                                      ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
-                                      : 'bg-amber-100 text-amber-800 border border-amber-300')
-                              }`}>
-                                {ord.status?.includes('Ditolak') || ord.paymentStatus === 'rejected'
-                                  ? '✕ DITOLAK'
-                                  : (ord.paymentStatus === 'paid' || ord.status?.includes('Lunas') ? '✓ LUNAS (CHIP)' : 'PENDING')}
-                              </span>
-                            </td>
-                            <td className="py-3.5 px-4">
-                              <select
-                                value={ord.status}
-                                onChange={async (e) => {
-                                  const newSt = e.target.value;
-                                  setOrders(prev => prev.map(item => item.id === ord.id ? { ...item, status: newSt } : item));
-                                  await updateOrderStatusInSupabase(ord.id, newSt);
-                                }}
-                                className="bg-slate-50 border border-slate-200 rounded px-2 py-1 text-[11px] font-bold text-slate-900 outline-none"
-                              >
-                                <option value="Pesanan Diterima">Pesanan Diterima</option>
-                                <option value="Pesanan Diterima & Lunas">Pesanan Diterima & Lunas</option>
-                                <option value="Dalam Cetakan Kilang">Dalam Cetakan Kilang</option>
-                                <option value="Siap & Dihantar">Siap & Dihantar</option>
-                                <option value="Ditolak / Dibatalkan">Ditolak / Dibatalkan</option>
-                              </select>
-                            </td>
-                            <td className="py-3.5 px-4 text-right">
-                              <div className="flex items-center justify-end gap-1.5">
-                                <a
-                                  href={`/invoice?orderId=${ord.orderId || ord.id}`}
-                                  target="_blank"
-                                  rel="noreferrer"
-                                  className="px-2.5 py-1 bg-emerald-600 hover:bg-emerald-700 text-white rounded-md text-[11px] font-semibold transition-colors inline-flex items-center gap-1 shadow-2xs"
-                                >
-                                  <FileText className="w-3.5 h-3.5" />
-                                  <span>Invois PDF</span>
-                                </a>
-                                <button
-                                  onClick={() => {
-                                    setSelectedOrderForDetail(ord);
-                                    setIsOrderDetailOpen(true);
+                        .map(ord => {
+                          const isPaid = ord.paymentStatus === 'paid' || ord.status?.includes('Lunas');
+                          const isRejected = ord.status?.includes('Ditolak') || ord.paymentStatus === 'rejected';
+
+                          return (
+                            <tr key={ord.id} className="hover:bg-slate-50/70 transition-colors">
+                              <td className="py-4 px-4">
+                                <span className="font-mono font-bold text-slate-900 text-xs bg-slate-100 px-2 py-1 rounded-md border border-slate-200/60 inline-block">
+                                  #{ord.orderId || ord.id}
+                                </span>
+                                <span className="text-[10px] text-slate-400 block mt-1 font-sans">{ord.date}</span>
+                              </td>
+                              <td className="py-4 px-4">
+                                <span className="font-bold text-slate-900 text-xs block">{ord.client}</span>
+                                <span className="text-[11px] text-slate-500 block">{ord.customerPhone || ord.userEmail || '-'}</span>
+                              </td>
+                              <td className="py-4 px-4">
+                                <span className="font-extrabold uppercase text-slate-900 text-xs">{ord.template}</span>
+                              </td>
+                              <td className="py-4 px-4 text-slate-600 max-w-xs">
+                                <span className="truncate block">{ord.cutType} • {ord.fabricMaterial}</span>
+                              </td>
+                              <td className="py-4 px-4">
+                                <span className="font-bold text-slate-900 text-xs tabular-nums block">{ord.total}</span>
+                                <span className="text-[10px] font-semibold text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded-md inline-block mt-0.5">
+                                  {ord.qty} pcs
+                                </span>
+                              </td>
+                              <td className="py-4 px-4">
+                                {isRejected ? (
+                                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-rose-50 text-rose-700 border border-rose-200/80 whitespace-nowrap">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500 shrink-0" />
+                                    DITOLAK
+                                  </span>
+                                ) : isPaid ? (
+                                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80 whitespace-nowrap">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 shrink-0" />
+                                    LUNAS
+                                  </span>
+                                ) : (
+                                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200/80 whitespace-nowrap">
+                                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shrink-0" />
+                                    PENDING
+                                  </span>
+                                )}
+                              </td>
+                              <td className="py-4 px-4">
+                                <select
+                                  value={ord.status}
+                                  onChange={async (e) => {
+                                    const newSt = e.target.value;
+                                    setOrders(prev => prev.map(item => item.id === ord.id ? { ...item, status: newSt } : item));
+                                    await updateOrderStatusInSupabase(ord.id, newSt);
                                   }}
-                                  className="px-2.5 py-1 bg-slate-900 hover:bg-slate-800 text-white rounded-md text-[11px] font-semibold transition-colors shadow-2xs"
+                                  className="bg-white border border-slate-200 hover:border-slate-300 focus:border-slate-900 rounded-lg px-2.5 py-1.5 text-[11px] font-semibold text-slate-800 outline-none transition-all shadow-2xs cursor-pointer"
                                 >
-                                  Butiran
-                                </button>
-                                <button
-                                  onClick={async () => {
-                                    const reason = prompt('Masukkan sebab pembatalan / reject pesanan ini:');
-                                    if (reason !== null) {
-                                      const newSt = 'Ditolak / Dibatalkan';
-                                      setOrders(prev => prev.map(item => item.id === ord.id ? { ...item, status: newSt, paymentStatus: 'rejected' } : item));
-                                      await updateOrderStatusInSupabase(ord.id, newSt, reason);
-                                    }
-                                  }}
-                                  className="px-2.5 py-1 bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200 rounded-md text-[11px] font-semibold transition-colors"
-                                  title="Batal Pesanan Ini"
-                                >
-                                  Tolak
-                                </button>
-                                <button
-                                  onClick={async () => {
-                                    if (confirm('Adakah anda pasti mahu memadam pesanan ini?')) {
-                                      setOrders(prev => prev.filter(o => o.id !== ord.id));
-                                      await deleteOrderFromSupabase(ord.id);
-                                    }
-                                  }}
-                                  className="p-1 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition-colors"
-                                  title="Padam Pesanan"
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                        ))
+                                  <option value="Pesanan Diterima">Pesanan Diterima</option>
+                                  <option value="Pesanan Diterima & Lunas">Pesanan Diterima & Lunas</option>
+                                  <option value="Dalam Cetakan Kilang">Dalam Cetakan Kilang</option>
+                                  <option value="Siap & Dihantar">Siap & Dihantar</option>
+                                  <option value="Ditolak / Dibatalkan">Ditolak / Dibatalkan</option>
+                                </select>
+                              </td>
+                              <td className="py-4 px-4 text-right">
+                                <div className="flex items-center justify-end gap-1.5 flex-nowrap shrink-0">
+                                  <button
+                                    onClick={() => {
+                                      setSelectedOrderForDetail(ord);
+                                      setIsOrderDetailOpen(true);
+                                    }}
+                                    className="px-3 py-1.5 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold transition-all inline-flex items-center gap-1.5 shadow-2xs whitespace-nowrap shrink-0 active:scale-95"
+                                  >
+                                    <Eye className="w-3.5 h-3.5 shrink-0" />
+                                    <span className="whitespace-nowrap">Butiran</span>
+                                  </button>
+
+                                  <a
+                                    href={`/invoice?orderId=${ord.orderId || ord.id}`}
+                                    target="_blank"
+                                    rel="noreferrer"
+                                    className="px-3 py-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 hover:text-slate-900 rounded-lg text-xs font-semibold transition-all inline-flex items-center gap-1.5 shadow-2xs whitespace-nowrap shrink-0 active:scale-95"
+                                    title="Muat Turun Invois PDF"
+                                  >
+                                    <FileText className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                                    <span className="whitespace-nowrap">Invois</span>
+                                  </a>
+
+                                  <button
+                                    onClick={async () => {
+                                      if (confirm('Adakah anda pasti mahu memadam pesanan ini?')) {
+                                        setOrders(prev => prev.filter(o => o.id !== ord.id));
+                                        await deleteOrderFromSupabase(ord.id);
+                                      }
+                                    }}
+                                    className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors inline-flex items-center justify-center shrink-0"
+                                    title="Padam Pesanan"
+                                  >
+                                    <Trash2 className="w-4 h-4 shrink-0" />
+                                  </button>
+                                </div>
+                              </td>
+                            </tr>
+                          );
+                        })
                     )}
                   </tbody>
                 </table>
@@ -950,12 +953,9 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
           {currentTab === 'categories' && (
             <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs p-6 space-y-6">
               <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-                <div>
-                  <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">Kategori Utama (Main Categories)</h2>
-                  <p className="text-xs text-slate-500 mt-0.5">Uruskan kategori utama seperti Sublimasi, Custom Design, dan Aksesori Sukan.</p>
-                </div>
-                <button onClick={() => openAddModal('category')} className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-lg flex items-center space-x-1.5 transition-colors shadow-xs active:scale-95">
-                  <Plus className="w-3.5 h-3.5" /> <span>Tambah Kategori</span>
+                <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">Kategori Utama</h2>
+                <button onClick={() => openAddModal('category')} className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-lg inline-flex items-center justify-center space-x-1.5 whitespace-nowrap shrink-0 transition-colors shadow-xs active:scale-95">
+                  <Plus className="w-3.5 h-3.5 shrink-0" /> <span className="whitespace-nowrap">Tambah Kategori</span>
                 </button>
               </div>
 
@@ -990,30 +990,31 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                             <td className="py-3.5 px-4 font-bold text-slate-900 uppercase">{cat.title}</td>
                             <td className="py-3.5 px-4 text-slate-600 max-w-xs">{cat.desc || cat.description}</td>
                             <td className="py-3.5 px-4">
-                              <button
-                                onClick={() => {
-                                  setSelectedParentCategory(cat);
-                                  setCurrentTab('subcategories');
-                                }}
-                                className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 border border-slate-200 text-slate-800 rounded-md text-[11px] font-semibold transition-colors inline-flex items-center gap-1.5"
-                                title="Urus Sub-Kategori bawah kategori ini"
-                              >
-                                <ListTree className="w-3.5 h-3.5 text-slate-600" />
-                                <span>Urus Sub-Kategori ({childCount})</span>
-                              </button>
+                              <span className="font-semibold text-slate-800 text-xs bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200/60 inline-block">
+                                {childCount} Sub-Kategori
+                              </span>
                             </td>
                             <td className="py-3.5 px-4 text-right">
-                              <div className="flex items-center justify-end gap-1">
+                              <div className="flex items-center justify-end gap-1 flex-nowrap shrink-0">
+                                <button
+                                  onClick={() => {
+                                    setSelectedParentCategory(cat);
+                                    setCurrentTab('subcategories');
+                                  }}
+                                  className="p-1.5 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
+                                  title={`Lihat Sub-Kategori (${childCount})`}
+                                >
+                                  <ListTree className="w-4 h-4" />
+                                </button>
                                 <button
                                   onClick={() => {
                                     setSelectedParentCategory(cat);
                                     openAddModal('subcategory');
                                   }}
-                                  className="px-2.5 py-1 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200 rounded-md text-[11px] font-semibold transition-colors flex items-center space-x-1"
-                                  title="Tambah Sub-Kategori Baharu"
+                                  className="p-1.5 text-emerald-600 hover:text-emerald-700 hover:bg-emerald-50 rounded-lg transition-colors"
+                                  title="Tambah Sub-Kategori"
                                 >
-                                  <Plus className="w-3.5 h-3.5" />
-                                  <span>+ Sub-Kategori</span>
+                                  <Plus className="w-4 h-4" />
                                 </button>
                                 <button onClick={() => openEditModal('category', cat)} className="p-1.5 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors" title="Edit Kategori">
                                   <Edit2 className="w-4 h-4" />
@@ -1037,13 +1038,10 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
           {currentTab === 'subcategories' && (
             <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs p-6 space-y-6">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b border-slate-100">
-                <div>
-                  <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">
-                    {selectedParentCategory ? `Sub-Kategori bawah "${selectedParentCategory.title}"` : 'Pengurusan Semua Sub-Kategori'}
-                  </h2>
-                  <p className="text-xs text-slate-500 mt-0.5">Uruskan pecahan sub-kategori seperti Jersi Sukan, Windbreaker, Jacket, Collar, Polo, dll.</p>
-                </div>
-                <div className="flex items-center space-x-2">
+                <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">
+                  {selectedParentCategory ? `Sub-Kategori "${selectedParentCategory.title}"` : 'Pengurusan Sub-Kategori'}
+                </h2>
+                <div className="flex items-center space-x-2 flex-nowrap shrink-0">
                   <select
                     value={selectedParentCategory?.id || ''}
                     onChange={(e) => {
@@ -1069,9 +1067,9 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                       }
                       openAddModal('subcategory');
                     }}
-                    className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-lg flex items-center space-x-1.5 transition-colors shadow-xs active:scale-95 cursor-pointer"
+                    className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-lg inline-flex items-center justify-center space-x-1.5 whitespace-nowrap shrink-0 transition-colors shadow-xs active:scale-95 cursor-pointer"
                   >
-                    <Plus className="w-3.5 h-3.5" /> <span>Tambah Sub-Kategori</span>
+                    <Plus className="w-3.5 h-3.5 shrink-0" /> <span className="whitespace-nowrap">Tambah Sub-Kategori</span>
                   </button>
                 </div>
               </div>
@@ -1108,7 +1106,7 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                             <td className="py-3.5 px-4 font-semibold text-slate-700">{parentCat?.title || '-'}</td>
                             <td className="py-3.5 px-4 text-slate-600 max-w-xs">{sub.description || '-'}</td>
                             <td className="py-3.5 px-4 text-right">
-                              <div className="flex items-center justify-end gap-1">
+                              <div className="flex items-center justify-end gap-1 flex-nowrap shrink-0">
                                 <button onClick={() => openEditModal('subcategory', sub)} className="p-1.5 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors" title="Edit Sub-Kategori">
                                   <Edit2 className="w-4 h-4" />
                                 </button>
@@ -1131,12 +1129,9 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
           {currentTab === 'fabrics' && (
             <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs p-6 space-y-6">
               <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-                <div>
-                  <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">Bahan Kain Sublimasi (Fabric Types)</h2>
-                  <p className="text-xs text-slate-500 mt-0.5">Urus jenis fabric/kain seperti Mini Eyelet 150 GSM, Micro-Dryfit Pro, Pin Dot Fabric, dll.</p>
-                </div>
-                <button onClick={() => openAddModal('fabric')} className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-lg flex items-center space-x-1.5 transition-colors shadow-xs active:scale-95">
-                  <Plus className="w-3.5 h-3.5" /> <span>Tambah Bahan Kain</span>
+                <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">Bahan Kain Sublimasi</h2>
+                <button onClick={() => openAddModal('fabric')} className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-lg inline-flex items-center justify-center space-x-1.5 whitespace-nowrap shrink-0 transition-colors shadow-xs active:scale-95">
+                  <Plus className="w-3.5 h-3.5 shrink-0" /> <span className="whitespace-nowrap">Tambah Kain</span>
                 </button>
               </div>
 
@@ -1154,7 +1149,7 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                     {fabricTypes.length === 0 ? (
                       <tr>
                         <td colSpan={4} className="py-12 text-center text-slate-400 font-mono text-xs">
-                          Belum ada jenis kain terrekod. Tekan "+ Tambah Bahan Kain" untuk cipta rekod baharu.
+                          Belum ada jenis kain terrekod. Tekan "+ Tambah Kain" untuk cipta rekod baharu.
                         </td>
                       </tr>
                     ) : (
@@ -1184,12 +1179,9 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
           {currentTab === 'templates' && (
             <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs p-6 space-y-6">
               <div className="flex items-center justify-between pb-4 border-b border-slate-100">
-                <div>
-                  <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">Template Reka Bentuk (Design Templates)</h2>
-                  <p className="text-xs text-slate-500 mt-0.5">Uruskan himpunan reka bentuk jersi sedia ada mengikut kod (cth: AG260001) dan kategori.</p>
-                </div>
-                <button onClick={() => openAddModal('template')} className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-lg flex items-center space-x-1.5 transition-colors shadow-xs active:scale-95">
-                  <Plus className="w-3.5 h-3.5" /> <span>Tambah Template</span>
+                <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">Template Reka Bentuk</h2>
+                <button onClick={() => openAddModal('template')} className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-lg inline-flex items-center justify-center space-x-1.5 whitespace-nowrap shrink-0 transition-colors shadow-xs active:scale-95">
+                  <Plus className="w-3.5 h-3.5 shrink-0" /> <span className="whitespace-nowrap">Tambah Template</span>
                 </button>
               </div>
 
@@ -1197,7 +1189,7 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                 <table className="w-full text-left border-collapse text-xs font-sans">
                   <thead>
                     <tr className="bg-slate-50/80 border-b border-slate-200 text-[11px] font-mono font-semibold text-slate-500 uppercase tracking-wider">
-                      <th className="py-3 px-4">GAMBAR COVER (1:1)</th>
+                      <th className="py-3 px-4">GAMBAR COVER</th>
                       <th className="py-3 px-4">NAMA TEMPLATE / KOD</th>
                       <th className="py-3 px-4">KATEGORI UTAMA</th>
                       <th className="py-3 px-4">SUB-KATEGORI</th>
@@ -1223,7 +1215,7 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                           <td className="py-3.5 px-4 text-slate-600 font-mono">{tpl.subCategory || '-'}</td>
                           <td className="py-3.5 px-4 text-slate-500 max-w-xs truncate">{tpl.description || 'Tiada deskripsi'}</td>
                           <td className="py-3.5 px-4 text-right">
-                            <div className="flex items-center justify-end gap-1">
+                            <div className="flex items-center justify-end gap-1 flex-nowrap shrink-0">
                               <button onClick={() => setViewingTemplate(tpl)} className="p-1.5 text-slate-500 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors" title="Pratonton Galeri Template">
                                 <Eye className="w-4 h-4" />
                               </button>
@@ -1253,10 +1245,7 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
           {currentTab === 'users' && (
             <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs p-6 space-y-6">
               <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pb-4 border-b border-slate-100">
-                <div>
-                  <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">Pengurusan Akaun Pengguna (Supabase DB)</h2>
-                  <p className="text-xs text-slate-500 mt-0.5">Senarai akaun pengguna terdaftar di AYEZZ Global beserta peranan (Customer vs Admin).</p>
-                </div>
+                <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">Pengurusan Pengguna</h2>
 
                 <div className="relative w-full sm:w-72">
                   <Search className="w-4 h-4 text-slate-400 absolute left-3 top-2.5" />
@@ -1332,8 +1321,7 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
           {currentTab === 'showcase' && (
             <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs p-6 space-y-6">
               <div className="pb-4 border-b border-slate-100">
-                <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">Pengurusan Banner Showcase (Lihat Lebih Dekat)</h2>
-                <p className="text-xs text-slate-500 mt-0.5">Urus maklumat banner promosi & gambar unggulan jersi sublimasi di Laman Utama.</p>
+                <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">Banner Showcase</h2>
               </div>
 
               <form
@@ -1353,7 +1341,7 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                 </div>
 
                 <div>
-                  <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1">Sub-Tajuk / Penerangan Banner</label>
+                  <label className="block text-[11px] font-semibold text-slate-600 uppercase tracking-wider mb-1">Sub-Tajuk Banner</label>
                   <textarea rows={3} value={showcaseFeature.subtitle || ''} onChange={(e) => setShowcaseFeature({ ...showcaseFeature, subtitle: e.target.value })} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3.5 py-2 text-xs font-medium text-slate-900 outline-none resize-none" required />
                 </div>
 
@@ -1366,10 +1354,10 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                 </div>
 
                 <div className="pt-3 flex items-center space-x-3">
-                  <button type="submit" disabled={isSavingShowcase} className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-xs cursor-pointer">
-                    {isSavingShowcase ? 'Menyimpan...' : 'Simpan Perubahan Banner'}
+                  <button type="submit" disabled={isSavingShowcase} className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-xs cursor-pointer inline-flex items-center justify-center whitespace-nowrap shrink-0">
+                    <span className="whitespace-nowrap">{isSavingShowcase ? 'Menyimpan...' : 'Simpan Banner'}</span>
                   </button>
-                  {saveSuccess && <span className="text-xs font-bold text-emerald-600 font-mono">✓ Tetapan Berjaya Disimpan!</span>}
+                  {saveSuccess && <span className="text-xs font-bold text-emerald-600 font-mono whitespace-nowrap">✓ Tetapan Berjaya Disimpan!</span>}
                 </div>
               </form>
             </div>
@@ -1379,16 +1367,13 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
           {currentTab === 'admin_management' && (
             <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs p-6 space-y-6">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-4 border-b border-slate-100">
-                <div>
-                  <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">Pengurusan Akaun Admin & Kawalan Akses Portal</h2>
-                  <p className="text-xs text-slate-500 mt-0.5">Uruskan senarai pentadbir (Admin) yang dibenarkan mengawal portal AYEZZ Global.</p>
-                </div>
+                <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">Pengurusan Admin</h2>
                 <button
                   onClick={() => setIsAddAdminModalOpen(true)}
-                  className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl flex items-center space-x-1.5 transition-all shadow-xs cursor-pointer active:scale-95"
+                  className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-xl inline-flex items-center justify-center space-x-1.5 whitespace-nowrap shrink-0 transition-all shadow-xs cursor-pointer active:scale-95"
                 >
-                  <Plus className="w-4 h-4 text-white" />
-                  <span>+ Tambah Admin Baharu</span>
+                  <Plus className="w-4 h-4 text-white shrink-0" />
+                  <span className="whitespace-nowrap">Tambah Admin</span>
                 </button>
               </div>
 
@@ -1414,7 +1399,7 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                         <td className="py-3.5 px-4 font-mono font-semibold text-slate-800">{adm.email}</td>
                         <td className="py-3.5 px-4 font-mono text-slate-600">{adm.phone || '-'}</td>
                         <td className="py-3.5 px-4 font-mono">
-                          <span className="px-2.5 py-1 bg-purple-100 text-purple-900 border border-purple-200 rounded-full text-[10px] font-bold uppercase">
+                          <span className="px-2.5 py-1 bg-purple-100 text-purple-900 border border-purple-200 rounded-full text-[10px] font-bold uppercase whitespace-nowrap inline-block">
                             FULL ADMIN ACCESS
                           </span>
                         </td>
@@ -1427,10 +1412,10 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                                   await deleteUserFromSupabase(adm.email);
                                 }
                               }}
-                              className="p-1.5 text-rose-500 hover:bg-rose-50 rounded transition-colors"
+                              className="p-1.5 text-rose-500 hover:bg-rose-50 rounded transition-colors inline-flex items-center justify-center shrink-0"
                               title="Revoke Admin Status"
                             >
-                              <Trash2 className="w-4 h-4" />
+                              <Trash2 className="w-4 h-4 shrink-0" />
                             </button>
                           )}
                         </td>
@@ -1443,8 +1428,7 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
               {/* MASTER SECURITY PIN FORM */}
               <div className="max-w-md bg-slate-50 p-6 rounded-2xl border border-slate-200 space-y-4 font-sans pt-4">
                 <div className="space-y-1">
-                  <span className="text-[10px] font-mono text-slate-400 font-bold uppercase tracking-widest block">TUKAR MASTER PIN (DESKTOP BACKUP)</span>
-                  <p className="text-xs text-slate-500">PIN Sandaran tambahan untuk akses kecemasan Admin.</p>
+                  <span className="text-[10px] font-mono text-slate-400 font-bold uppercase tracking-widest block">TUKAR PIN MASTER</span>
                 </div>
 
                 <form
@@ -1473,8 +1457,8 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                     />
                   </div>
 
-                  <button type="submit" className="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-xs cursor-pointer">
-                    Kemaskini PIN Master
+                  <button type="submit" className="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-xs cursor-pointer inline-flex items-center justify-center whitespace-nowrap shrink-0">
+                    <span className="whitespace-nowrap">Simpan PIN Master</span>
                   </button>
 
                   {adminPinNotice && (
@@ -1584,8 +1568,7 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
           {currentTab === 'settings' && (
             <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs p-6 space-y-6">
               <div className="pb-4 border-b border-slate-100">
-                <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">Tetapan Kedai & Maklumat Kilang</h2>
-                <p className="text-xs text-slate-500 mt-0.5">Urus maklumat rasmi perniagaan AYEZZ Global, WhatsApp hotline, dan gateway pembayaran.</p>
+                <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">Tetapan Kedai</h2>
               </div>
 
               <form
@@ -1620,10 +1603,10 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                 </div>
 
                 <div className="pt-3 flex items-center space-x-3">
-                  <button type="submit" className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-xs cursor-pointer">
-                    Simpan Tetapan Kedai
+                  <button type="submit" className="px-5 py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-xs cursor-pointer inline-flex items-center justify-center whitespace-nowrap shrink-0">
+                    <span className="whitespace-nowrap">Simpan Tetapan</span>
                   </button>
-                  {saveSuccess && <span className="text-xs font-bold text-emerald-600 font-mono">✓ Tetapan Berjaya Disimpan!</span>}
+                  {saveSuccess && <span className="text-xs font-bold text-emerald-600 font-mono whitespace-nowrap">✓ Tetapan Berjaya Disimpan!</span>}
                 </div>
               </form>
             </div>
@@ -1950,9 +1933,13 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                 </div>
               )}
 
-              <div className="pt-3 border-t border-slate-100 flex justify-end space-x-2">
-                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition-colors">Batal</button>
-                <button type="submit" className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-lg transition-colors shadow-xs">Simpan Data</button>
+              <div className="pt-3 border-t border-slate-100 flex justify-end space-x-2 flex-nowrap shrink-0">
+                <button type="button" onClick={() => setIsModalOpen(false)} className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold rounded-lg transition-colors inline-flex items-center justify-center whitespace-nowrap shrink-0">
+                  <span className="whitespace-nowrap">Batal</span>
+                </button>
+                <button type="submit" className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-semibold rounded-lg transition-colors shadow-xs inline-flex items-center justify-center whitespace-nowrap shrink-0">
+                  <span className="whitespace-nowrap">Simpan</span>
+                </button>
               </div>
             </form>
           </div>

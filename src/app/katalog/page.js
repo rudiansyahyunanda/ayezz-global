@@ -292,8 +292,8 @@ function SpaciousCatalogContent() {
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black uppercase tracking-tight text-[#111111]">
               {selectedCategory === 'Semua' ? 'Katalog Desain' : selectedCategory}
             </h1>
-            <span className="text-[11px] sm:text-xs font-mono text-neutral-500 font-medium whitespace-nowrap">
-              [{sortedTemplates.length} Template]
+            <span className="text-[11px] sm:text-xs text-neutral-500 font-medium whitespace-nowrap">
+              ({sortedTemplates.length} Template)
             </span>
           </div>
 

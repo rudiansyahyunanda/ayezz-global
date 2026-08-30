@@ -59,32 +59,32 @@ export default function Storefront({ onOpenAdmin }) {
 
           {/* Nav Links */}
           <nav className="hidden md:flex items-center space-x-8 text-xs font-bold uppercase tracking-wider text-[#1A1A1A]">
-            <Link href="/new" className="hover:text-[#757575] transition-colors flex items-center space-x-1.5 text-amber-600 font-extrabold">
-              <Flame className="w-3.5 h-3.5 text-amber-500 fill-amber-500 animate-pulse" />
-              <span>Keluaran Terbaru</span>
+            <Link href="/new" className="hover:text-[#757575] transition-colors flex items-center space-x-1.5 text-amber-600 font-extrabold whitespace-nowrap shrink-0">
+              <Flame className="w-3.5 h-3.5 text-amber-500 fill-amber-500 animate-pulse shrink-0" />
+              <span className="whitespace-nowrap">Keluaran Terbaru</span>
             </Link>
-            <a href="#katalog" className="hover:text-[#757575] transition-colors">Katalog</a>
-            <a href="#teknologi" className="hover:text-[#757575] transition-colors">Teknologi</a>
-            <a href="#mitra" className="hover:text-[#757575] transition-colors">Rakan Kongsi</a>
+            <a href="#katalog" className="hover:text-[#757575] transition-colors whitespace-nowrap">Katalog</a>
+            <a href="#teknologi" className="hover:text-[#757575] transition-colors whitespace-nowrap">Teknologi</a>
+            <a href="#mitra" className="hover:text-[#757575] transition-colors whitespace-nowrap">Rakan Kongsi</a>
             {onOpenAdmin && (
               <button
                 onClick={onOpenAdmin}
-                className="hover:text-[#757575] transition-colors flex items-center space-x-1 font-mono text-[11px]"
+                className="hover:text-[#757575] transition-colors inline-flex items-center space-x-1 font-mono text-[11px] whitespace-nowrap shrink-0"
               >
-                <Settings className="w-3.5 h-3.5" />
-                <span>Panel Admin</span>
+                <Settings className="w-3.5 h-3.5 shrink-0" />
+                <span className="whitespace-nowrap">Panel Admin</span>
               </button>
             )}
           </nav>
 
           {/* Direct Order CTA Button */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-3 flex-nowrap shrink-0">
             <button
               onClick={() => setOrderedProduct(featuredProduct)}
-              className="px-5 py-2.5 bg-[#1A1A1A] hover:bg-[#333333] text-white font-bold text-xs uppercase tracking-wider rounded-full transition-all active:scale-95 flex items-center space-x-2 shadow-sm"
+              className="px-5 py-2.5 bg-[#1A1A1A] hover:bg-[#333333] text-white font-bold text-xs uppercase tracking-wider rounded-full transition-all active:scale-95 inline-flex items-center justify-center space-x-2 shadow-sm whitespace-nowrap shrink-0"
             >
-              <ShoppingBag className="w-3.5 h-3.5" />
-              <span>Tempah Sekarang</span>
+              <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
+              <span className="whitespace-nowrap">Tempah Sekarang</span>
             </button>
           </div>
         </div>
@@ -116,20 +116,20 @@ export default function Storefront({ onOpenAdmin }) {
                   const el = document.getElementById('katalog');
                   if (el) el.scrollIntoView({ behavior: 'smooth' });
                 }}
-                className="px-8 py-4 bg-[#1A1A1A] hover:bg-[#333333] text-white font-bold text-xs uppercase tracking-widest rounded-full transition-all flex items-center space-x-3 active:scale-95 shadow-md"
+                className="px-8 py-4 bg-[#1A1A1A] hover:bg-[#333333] text-white font-bold text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center justify-center space-x-3 active:scale-95 shadow-md whitespace-nowrap shrink-0"
               >
-                <span>Pilih & Tempah Katalog</span>
-                <ArrowRight className="w-4 h-4" />
+                <span className="whitespace-nowrap">Tempah Katalog</span>
+                <ArrowRight className="w-4 h-4 shrink-0" />
               </button>
 
               <a
                 href="https://wa.me/6287818310416"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-8 py-4 bg-white border border-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-white text-[#1A1A1A] font-bold text-xs uppercase tracking-widest rounded-full transition-all flex items-center space-x-2"
+                className="px-8 py-4 bg-white border border-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-white text-[#1A1A1A] font-bold text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center justify-center space-x-2 whitespace-nowrap shrink-0"
               >
-                <MessageCircle className="w-4 h-4" />
-                <span>Konsultasi WhatsApp</span>
+                <MessageCircle className="w-4 h-4 shrink-0" />
+                <span className="whitespace-nowrap">WhatsApp</span>
               </a>
             </div>
 
@@ -219,10 +219,10 @@ export default function Storefront({ onOpenAdmin }) {
 
             <button
               onClick={() => setSelectedCatalog(allItemsCatalog)}
-              className="text-xs font-bold uppercase tracking-wider text-[#1A1A1A] hover:text-[#757575] flex items-center space-x-2 font-mono"
+              className="text-xs font-bold uppercase tracking-wider text-[#1A1A1A] hover:text-[#757575] inline-flex items-center space-x-2 font-mono whitespace-nowrap shrink-0"
             >
-              <span>Lihat Semua Katalog</span>
-              <ArrowRight className="w-4 h-4" />
+              <span className="whitespace-nowrap">Lihat Semua</span>
+              <ArrowRight className="w-4 h-4 shrink-0" />
             </button>
           </div>
 
@@ -234,18 +234,18 @@ export default function Storefront({ onOpenAdmin }) {
                   00
                 </div>
                 <div className="space-y-1">
-                  <h3 className="text-lg font-extrabold text-[#111111] uppercase tracking-wide">Pangkalan Data Bersih & Baharu</h3>
+                  <h3 className="text-lg font-extrabold text-[#111111] uppercase tracking-wide">Pangkalan Data Bersih</h3>
                   <p className="text-xs text-neutral-500 max-w-md mx-auto leading-relaxed">
-                    Belum ada kategori produk. Anda boleh mula memasukkan kategori, jenis potongan, dan template reka bentuk yang sebenar melalui Panel Admin.
+                    Belum ada kategori produk. Anda boleh mula memasukkan kategori dan template reka bentuk melalui Panel Admin.
                   </p>
                 </div>
                 {onOpenAdmin && (
                   <button
                     onClick={onOpenAdmin}
-                    className="mt-2 inline-flex items-center space-x-2 px-6 py-3 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-xs uppercase tracking-widest rounded-full transition-all active:scale-95"
+                    className="mt-2 inline-flex items-center justify-center space-x-2 px-6 py-3 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-xs uppercase tracking-widest rounded-full transition-all active:scale-95 whitespace-nowrap shrink-0"
                   >
-                    <Settings className="w-3.5 h-3.5" />
-                    <span>Buka Panel Admin</span>
+                    <Settings className="w-3.5 h-3.5 shrink-0" />
+                    <span className="whitespace-nowrap">Panel Admin</span>
                   </button>
                 )}
               </div>
@@ -271,7 +271,7 @@ export default function Storefront({ onOpenAdmin }) {
                     />
                     {/* Clean Top-Left Index Tag */}
                     <div className="absolute top-3.5 left-3.5 z-10">
-                      <span className="text-[10px] font-mono font-bold uppercase bg-[#111111] text-white px-3 py-1 rounded-full shadow-md">
+                      <span className="text-[10px] font-mono font-bold uppercase bg-[#111111] text-white px-3 py-1 rounded-full shadow-md whitespace-nowrap">
                         0{idx + 1} // {cat.code}
                       </span>
                     </div>
@@ -293,10 +293,10 @@ export default function Storefront({ onOpenAdmin }) {
                           e.stopPropagation();
                           setSelectedCatalog(cat);
                         }}
-                        className="font-extrabold uppercase text-[#111111] group-hover:underline flex items-center space-x-1 text-xs"
+                        className="font-extrabold uppercase text-[#111111] group-hover:underline inline-flex items-center space-x-1 text-xs whitespace-nowrap shrink-0"
                       >
-                        <span>Lihat Katalog</span>
-                        <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" />
+                        <span className="whitespace-nowrap">Papar Katalog</span>
+                        <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform shrink-0" />
                       </button>
                     </div>
                   </div>
@@ -324,8 +324,8 @@ export default function Storefront({ onOpenAdmin }) {
               </div>
 
               <div className="flex items-center justify-between text-xs font-extrabold uppercase tracking-widest pt-4 border-t border-neutral-800">
-                <span>Terokai Katalog Lengkap</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                <span className="whitespace-nowrap">Katalog Lengkap</span>
+                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform shrink-0" />
               </div>
             </div>
           </div>

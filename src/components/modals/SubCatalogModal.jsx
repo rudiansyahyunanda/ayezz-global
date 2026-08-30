@@ -41,15 +41,15 @@ export default function SubCatalogModal({ catalog, onClose, onSelectProduct }) {
         {/* Header */}
         <div className="px-6 py-5 border-b border-[#E5E5E5] flex items-center justify-between bg-[#F6F5F3]">
           <div>
-            <span className="text-[10px] font-mono font-bold text-slate-500 tracking-widest uppercase">// KATALOG KATEGORI UTAMA</span>
+            <span className="text-[10px] font-mono font-bold text-slate-500 tracking-widest uppercase">KATALOG UTAMA</span>
             <h3 className="text-xl font-extrabold text-[#1A1A1A] tracking-tight mt-0.5">{catalog.title}</h3>
           </div>
 
           <button
             onClick={onClose}
-            className="p-2 text-[#757575] hover:text-[#1A1A1A] hover:bg-slate-200/60 rounded-full transition-colors"
+            className="p-2 text-[#757575] hover:text-[#1A1A1A] hover:bg-slate-200/60 rounded-full transition-colors inline-flex items-center justify-center shrink-0"
           >
-            <X className="w-5 h-5" />
+            <X className="w-5 h-5 shrink-0" />
           </button>
         </div>
 
@@ -60,13 +60,13 @@ export default function SubCatalogModal({ catalog, onClose, onSelectProduct }) {
               <button
                 key={subCat}
                 onClick={() => setActiveSubCategory(subCat)}
-                className={`px-4 py-2 rounded-full transition-all whitespace-nowrap ${
+                className={`px-4 py-2 rounded-full transition-all whitespace-nowrap shrink-0 inline-flex items-center justify-center ${
                   activeSubCategory === subCat
                     ? 'bg-[#1A1A1A] text-white shadow-sm'
                     : 'bg-[#F6F5F3] hover:bg-slate-200 text-[#1A1A1A]'
                 }`}
               >
-                {subCat}
+                <span className="whitespace-nowrap">{subCat}</span>
               </button>
             ))}
           </div>
@@ -114,10 +114,10 @@ export default function SubCatalogModal({ catalog, onClose, onSelectProduct }) {
                     onClose();
                     onSelectProduct(item, filteredItems);
                   }}
-                  className="w-full mt-2 py-2 bg-[#1A1A1A] group-hover:bg-[#333333] text-white rounded-full text-xs font-bold transition-colors flex items-center justify-center space-x-2 shadow-sm"
+                  className="w-full mt-2 py-2 bg-[#1A1A1A] group-hover:bg-[#333333] text-white rounded-full text-xs font-bold transition-colors inline-flex items-center justify-center space-x-2 shadow-sm whitespace-nowrap shrink-0"
                 >
-                  <ShoppingBag className="w-3.5 h-3.5" />
-                  <span>Tempah Template</span>
+                  <ShoppingBag className="w-3.5 h-3.5 shrink-0" />
+                  <span className="whitespace-nowrap">Tempah Sekarang</span>
                 </button>
               </div>
             </div>
@@ -129,9 +129,9 @@ export default function SubCatalogModal({ catalog, onClose, onSelectProduct }) {
           <span>{filteredItems.length} TEMPLATE REKA BENTUK</span>
           <button
             onClick={onClose}
-            className="px-4 py-2 border border-[#E5E5E5] text-[#1A1A1A] font-bold rounded-full hover:bg-slate-100 transition-all font-sans"
+            className="px-4 py-2 border border-[#E5E5E5] text-[#1A1A1A] font-bold rounded-full hover:bg-slate-100 transition-all font-sans inline-flex items-center justify-center whitespace-nowrap shrink-0"
           >
-            Tutup
+            <span className="whitespace-nowrap">Tutup</span>
           </button>
         </div>
       </div>

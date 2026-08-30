@@ -265,18 +265,18 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
               <button
                 type="button"
                 onClick={() => setViewMode('preview')}
-                className="px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-[#111111] rounded-full text-[11px] font-bold transition-all flex items-center space-x-1"
+                className="px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 text-[#111111] rounded-full text-[11px] font-bold transition-all inline-flex items-center space-x-1 whitespace-nowrap shrink-0"
               >
-                <Eye className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Pratonton</span>
+                <Eye className="w-3.5 h-3.5 shrink-0" />
+                <span className="hidden sm:inline whitespace-nowrap">Pratonton</span>
               </button>
             )}
 
             <button
               onClick={onClose}
-              className="p-1.5 sm:p-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-600 rounded-full transition-colors"
+              className="p-1.5 sm:p-2 bg-neutral-100 hover:bg-neutral-200 text-neutral-600 rounded-full transition-colors inline-flex items-center justify-center shrink-0"
             >
-              <X className="w-4 h-4" />
+              <X className="w-4 h-4 shrink-0" />
             </button>
           </div>
         </div>
@@ -330,9 +330,9 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
 
               <button
                 onClick={onClose}
-                className="w-full py-3.5 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-xs uppercase tracking-widest rounded-2xl transition-all shadow-md"
+                className="w-full py-3.5 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-xs uppercase tracking-widest rounded-2xl transition-all shadow-md inline-flex items-center justify-center whitespace-nowrap shrink-0"
               >
-                Selesai & Kembali Ke Katalog
+                <span className="whitespace-nowrap">Selesai & Kembali</span>
               </button>
             </div>
           ) : viewMode === 'preview' ? (
@@ -403,18 +403,18 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
                         <>
                           <button
                             onClick={handlePrevProduct}
-                            className="hidden sm:flex absolute left-3 top-1/2 -translate-y-1/2 p-2.5 bg-white/90 hover:bg-white text-black rounded-full shadow-md transition-all active:scale-95 z-20 items-center justify-center"
+                            className="hidden sm:flex absolute left-3 top-1/2 -translate-y-1/2 p-2.5 bg-white/90 hover:bg-white text-black rounded-full shadow-md transition-all active:scale-95 z-20 items-center justify-center shrink-0"
                             title="Template Sebelumnya"
                           >
-                            <ChevronLeft className="w-4 h-4" />
+                            <ChevronLeft className="w-4 h-4 shrink-0" />
                           </button>
 
                           <button
                             onClick={handleNextProduct}
-                            className="hidden sm:flex absolute right-3 top-1/2 -translate-y-1/2 p-2.5 bg-white/90 hover:bg-white text-black rounded-full shadow-md transition-all active:scale-95 z-20 items-center justify-center"
+                            className="hidden sm:flex absolute right-3 top-1/2 -translate-y-1/2 p-2.5 bg-white/90 hover:bg-white text-black rounded-full shadow-md transition-all active:scale-95 z-20 items-center justify-center shrink-0"
                             title="Template Seterusnya"
                           >
-                            <ChevronRight className="w-4 h-4" />
+                            <ChevronRight className="w-4 h-4 shrink-0" />
                           </button>
                         </>
                       )}
@@ -423,21 +423,21 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
                     {/* DEDICATED MOBILE CONTROL BAR: THUMB NAVIGATION & ZOOM TOGGLE */}
                     <div className="flex items-center justify-between gap-2 px-1">
                       {allProducts && allProducts.length > 1 ? (
-                        <div className="flex items-center space-x-2">
+                        <div className="flex items-center space-x-2 flex-nowrap shrink-0">
                           <button
                             onClick={handlePrevProduct}
-                            className="px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 active:scale-95 text-[#111111] rounded-xl text-xs font-bold transition-all flex items-center space-x-1 border border-neutral-200"
+                            className="px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 active:scale-95 text-[#111111] rounded-xl text-xs font-bold transition-all inline-flex items-center space-x-1 border border-neutral-200 whitespace-nowrap shrink-0"
                           >
-                            <ChevronLeft className="w-3.5 h-3.5" />
-                            <span>Sebelum</span>
+                            <ChevronLeft className="w-3.5 h-3.5 shrink-0" />
+                            <span className="whitespace-nowrap">Sebelum</span>
                           </button>
 
                           <button
                             onClick={handleNextProduct}
-                            className="px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 active:scale-95 text-[#111111] rounded-xl text-xs font-bold transition-all flex items-center space-x-1 border border-neutral-200"
+                            className="px-3 py-1.5 bg-neutral-100 hover:bg-neutral-200 active:scale-95 text-[#111111] rounded-xl text-xs font-bold transition-all inline-flex items-center space-x-1 border border-neutral-200 whitespace-nowrap shrink-0"
                           >
-                            <span>Seterusnya</span>
-                            <ChevronRight className="w-3.5 h-3.5" />
+                            <span className="whitespace-nowrap">Seterusnya</span>
+                            <ChevronRight className="w-3.5 h-3.5 shrink-0" />
                           </button>
                         </div>
                       ) : <div />}
@@ -445,14 +445,14 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
                       {/* Dedicated Mobile Zoom Toggle */}
                       <button
                         onClick={() => setIsManualTouchZoom(!isManualTouchZoom)}
-                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center space-x-1 border ${
+                        className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all inline-flex items-center space-x-1 border whitespace-nowrap shrink-0 ${
                           isManualTouchZoom
                             ? 'bg-[#111111] text-white border-[#111111]'
                             : 'bg-neutral-100 text-neutral-700 border-neutral-200 hover:bg-neutral-200'
                         }`}
                       >
-                        <Sparkles className="w-3 h-3" />
-                        <span>{isManualTouchZoom ? 'Reset Zoom' : 'Zoom 2.2x'}</span>
+                        <Sparkles className="w-3 h-3 shrink-0" />
+                        <span className="whitespace-nowrap">{isManualTouchZoom ? 'Reset Zoom' : 'Zoom 2.2x'}</span>
                       </button>
                     </div>
                   </div>
@@ -495,11 +495,11 @@ export default function ProductPreviewModal({ product, allProducts, onClose, onS
                 <div className="pt-4">
                   <button
                     onClick={handleProceedToOrder}
-                    className="w-full py-3.5 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-xs uppercase tracking-widest rounded-2xl transition-all shadow-md active:scale-98 flex items-center justify-center space-x-2.5 whitespace-nowrap"
+                    className="w-full py-3.5 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-xs uppercase tracking-widest rounded-2xl transition-all shadow-md active:scale-98 inline-flex items-center justify-center space-x-2.5 whitespace-nowrap shrink-0"
                   >
-                    <ShoppingBag className="w-4 h-4 text-white" />
-                    <span>Tempah Desain Ini</span>
-                    <ArrowRight className="w-4 h-4 text-white" />
+                    <ShoppingBag className="w-4 h-4 text-white shrink-0" />
+                    <span className="whitespace-nowrap">Tempah Reka Bentuk</span>
+                    <ArrowRight className="w-4 h-4 text-white shrink-0" />
                   </button>
                 </div>
               </div>

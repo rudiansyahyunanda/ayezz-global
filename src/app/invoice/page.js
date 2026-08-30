@@ -115,7 +115,7 @@ function InvoiceContent() {
               unitPrice: unitPrice,
               totalPrice: totalPrice,
               paymentStatus: (data.status || '').includes('Lunas') ? 'paid' : (data.payment_status || 'pending'),
-              paymentId: data.payment_id || data.chip_purchase_id || 'CHIP-COLLECT-ONLINE',
+              paymentId: data.payment_id || data.chip_purchase_id || 'AYZ-PAY-ONLINE',
               date: new Date(data.created_at || Date.now()).toLocaleDateString('ms-MY', {
                 day: '2-digit', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit'
               }),
@@ -162,7 +162,7 @@ function InvoiceContent() {
           unitPrice: 70,
           totalPrice: 1400,
           paymentStatus: 'paid',
-          paymentId: 'CHIP-COLLECT-9921',
+          paymentId: 'AYZ-PAY-9921',
           date: new Date().toLocaleDateString('ms-MY', { day: '2-digit', month: 'long', year: 'numeric' }),
           status: 'Pesanan Diterima & Lunas',
           playerRows: [

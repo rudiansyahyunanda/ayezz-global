@@ -168,7 +168,7 @@ export default function SmoothHeaderHomepage() {
             {/* MINIMALIST TELEMETRY BADGE */}
             <div className="inline-flex items-center space-x-2 text-[9px] sm:text-[10px] font-mono font-bold tracking-[0.2em] text-neutral-500 uppercase">
               <span className="w-1.5 h-1.5 rounded-full bg-[#111111] animate-ping" />
-              <span>[ KILANG SUBLIMASI HIGH-PERFORMANCE ]</span>
+              <span>KILANG SUBLIMASI HIGH-PERFORMANCE</span>
             </div>
 
             {/* EDITORIAL HEADLINE TYPOGRAPHY */}

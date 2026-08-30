@@ -108,26 +108,26 @@ export default function TemplateGalleryViewModal({ template: initialTemplate, on
             <span className="text-[11px] text-slate-500 font-semibold">{activeTemplate.category} {activeTemplate.subCategory ? `• ${activeTemplate.subCategory}` : ''}</span>
           </div>
 
-          <div className="flex items-center space-x-2 shrink-0">
+          <div className="flex items-center space-x-2 shrink-0 flex-nowrap">
             {/* NEXT CARD NAVIGATION BUTTONS */}
             {templateList.length > 1 && (
-              <div className="flex items-center space-x-1 bg-white border border-slate-200 p-1 rounded-xl">
+              <div className="flex items-center space-x-1 bg-white border border-slate-200 p-1 rounded-xl shrink-0 flex-nowrap">
                 <button
                   onClick={handlePrevTemplate}
-                  className="p-1 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
-                  title="Template Reka Bentuk Sebelumnya"
+                  className="p-1 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors inline-flex items-center justify-center shrink-0"
+                  title="Sebelumnya"
                 >
-                  <ChevronLeft className="w-4 h-4" />
+                  <ChevronLeft className="w-4 h-4 shrink-0" />
                 </button>
-                <span className="text-[10px] font-mono font-bold text-slate-700 px-1">
+                <span className="text-[10px] font-mono font-bold text-slate-700 px-1 whitespace-nowrap">
                   {currentIndex >= 0 ? currentIndex + 1 : 1}/{templateList.length}
                 </span>
                 <button
                   onClick={handleNextTemplate}
-                  className="p-1 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
-                  title="Template Reka Bentuk Seterusnya"
+                  className="p-1 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors inline-flex items-center justify-center shrink-0"
+                  title="Seterusnya"
                 >
-                  <ChevronRight className="w-4 h-4" />
+                  <ChevronRight className="w-4 h-4 shrink-0" />
                 </button>
               </div>
             )}
@@ -136,19 +136,19 @@ export default function TemplateGalleryViewModal({ template: initialTemplate, on
             {galleryImages.length > 1 && (
               <button
                 onClick={() => setIsPlaying(!isPlaying)}
-                className="p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-200/60 rounded-full transition-colors"
-                title={isPlaying ? 'Jeda Slaid (Pause)' : 'Mainkan Slaid (Play)'}
+                className="p-1.5 text-slate-400 hover:text-slate-800 hover:bg-slate-200/60 rounded-full transition-colors inline-flex items-center justify-center shrink-0"
+                title={isPlaying ? 'Jeda' : 'Mainkan'}
               >
-                {isPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4" />}
+                {isPlaying ? <Pause className="w-4 h-4 shrink-0" /> : <Play className="w-4 h-4 shrink-0" />}
               </button>
             )}
 
             <button
               onClick={onClose}
-              className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-200/60 rounded-full transition-colors"
+              className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-200/60 rounded-full transition-colors inline-flex items-center justify-center shrink-0"
               title="Tutup"
             >
-              <X className="w-5 h-5" />
+              <X className="w-5 h-5 shrink-0" />
             </button>
           </div>
         </div>

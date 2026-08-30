@@ -972,7 +972,7 @@ function DashboardContent() {
                   className="px-6 py-3.5 bg-white hover:bg-slate-100 text-slate-900 font-black text-xs uppercase tracking-widest rounded-xl transition-all shadow-md active:scale-95 flex items-center space-x-2 shrink-0 relative z-10 cursor-pointer"
                 >
                   <ShoppingBag className="w-4 h-4 text-slate-900" />
-                  <span>Buat Tempahan Jersi Baru →</span>
+                  <span>Buat Tempahan Jersi Baru</span>
                 </button>
               </div>
 

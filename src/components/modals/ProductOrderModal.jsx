@@ -171,40 +171,40 @@ Sila maklumkan sebut harga rasmi dan langkah pembayaran. Terima kasih!`;
           </div>
 
           {/* NEXT / PREV CARD NAVIGATION BUTTONS IN HEADER */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 flex-nowrap shrink-0">
             {productList.length > 1 && (
-              <div className="flex items-center space-x-1 border-r border-[#E5E5E5] pr-3 mr-1">
+              <div className="flex items-center space-x-1 border-r border-[#E5E5E5] pr-3 mr-1 flex-nowrap shrink-0">
                 <button
                   type="button"
                   onClick={handlePrevProduct}
-                  className="p-1.5 bg-white border border-[#E5E5E5] text-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-white rounded-lg transition-all flex items-center text-xs font-bold space-x-1 shadow-2xs"
-                  title="Template Reka Bentuk Sebelumnya (Tekan Panah Kiri)"
+                  className="p-1.5 bg-white border border-[#E5E5E5] text-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-white rounded-lg transition-all inline-flex items-center justify-center text-xs font-bold space-x-1 shadow-2xs whitespace-nowrap shrink-0"
+                  title="Sebelumnya"
                 >
-                  <ChevronLeft className="w-4 h-4" />
-                  <span className="hidden sm:inline text-[11px]">Sebelum</span>
+                  <ChevronLeft className="w-4 h-4 shrink-0" />
+                  <span className="hidden sm:inline text-[11px] whitespace-nowrap">Sebelum</span>
                 </button>
 
-                <span className="text-[11px] font-mono font-extrabold text-[#1A1A1A] px-2 min-w-[42px] text-center">
+                <span className="text-[11px] font-mono font-extrabold text-[#1A1A1A] px-2 min-w-[42px] text-center whitespace-nowrap">
                   {currentIndex >= 0 ? currentIndex + 1 : 1}/{productList.length}
                 </span>
 
                 <button
                   type="button"
                   onClick={handleNextProduct}
-                  className="p-1.5 bg-white border border-[#E5E5E5] text-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-white rounded-lg transition-all flex items-center text-xs font-bold space-x-1 shadow-2xs"
-                  title="Template Reka Bentuk Seterusnya (Tekan Panah Kanan)"
+                  className="p-1.5 bg-white border border-[#E5E5E5] text-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-white rounded-lg transition-all inline-flex items-center justify-center text-xs font-bold space-x-1 shadow-2xs whitespace-nowrap shrink-0"
+                  title="Seterusnya"
                 >
-                  <span className="hidden sm:inline text-[11px]">Reka Seterusnya</span>
-                  <ChevronRight className="w-4 h-4" />
+                  <span className="hidden sm:inline text-[11px] whitespace-nowrap">Seterusnya</span>
+                  <ChevronRight className="w-4 h-4 shrink-0" />
                 </button>
               </div>
             )}
 
             <button
               onClick={onClose}
-              className="p-2 text-[#757575] hover:text-[#1A1A1A] hover:bg-slate-200/60 rounded-full transition-colors"
+              className="p-2 text-[#757575] hover:text-[#1A1A1A] hover:bg-slate-200/60 rounded-full transition-colors inline-flex items-center justify-center shrink-0"
             >
-              <X className="w-5 h-5" />
+              <X className="w-5 h-5 shrink-0" />
             </button>
           </div>
         </div>
@@ -234,18 +234,18 @@ Sila maklumkan sebut harga rasmi dan langkah pembayaran. Terima kasih!`;
                     <button
                       type="button"
                       onClick={handlePrevProduct}
-                      className="absolute left-1 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[#1A1A1A]/80 hover:bg-[#1A1A1A] text-white flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-all shadow-md"
-                      title="Reka Sebelumnya"
+                      className="absolute left-1 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[#1A1A1A]/80 hover:bg-[#1A1A1A] text-white flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-all shadow-md shrink-0"
+                      title="Sebelumnya"
                     >
-                      <ChevronLeft className="w-3.5 h-3.5" />
+                      <ChevronLeft className="w-3.5 h-3.5 shrink-0" />
                     </button>
                     <button
                       type="button"
                       onClick={handleNextProduct}
-                      className="absolute right-1 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[#1A1A1A]/80 hover:bg-[#1A1A1A] text-white flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-all shadow-md"
-                      title="Reka Seterusnya"
+                      className="absolute right-1 top-1/2 -translate-y-1/2 w-6 h-6 rounded-full bg-[#1A1A1A]/80 hover:bg-[#1A1A1A] text-white flex items-center justify-center opacity-0 group-hover/img:opacity-100 transition-all shadow-md shrink-0"
+                      title="Seterusnya"
                     >
-                      <ChevronRight className="w-3.5 h-3.5" />
+                      <ChevronRight className="w-3.5 h-3.5 shrink-0" />
                     </button>
                   </>
                 )}
@@ -253,7 +253,7 @@ Sila maklumkan sebut harga rasmi dan langkah pembayaran. Terima kasih!`;
 
               {/* GALLERY THUMBNAIL STRIP */}
               {productGallery.length > 1 && (
-                <div className="flex items-center space-x-1.5">
+                <div className="flex items-center space-x-1.5 shrink-0">
                   {productGallery.map((gUrl, gIdx) => (
                     <button
                       type="button"
@@ -274,15 +274,15 @@ Sila maklumkan sebut harga rasmi dan langkah pembayaran. Terima kasih!`;
               <div className="flex items-center justify-between">
                 <h4 className="text-sm font-extrabold text-[#1A1A1A] truncate">{activeProduct.name}</h4>
                 {productList.length > 1 && (
-                  <span className="text-[10px] font-mono font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200 shrink-0 ml-2">
-                    Katalog {currentIndex >= 0 ? currentIndex + 1 : 1} daripada {productList.length}
+                  <span className="text-[10px] font-mono font-bold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full border border-slate-200 shrink-0 ml-2 whitespace-nowrap">
+                    {currentIndex >= 0 ? currentIndex + 1 : 1}/{productList.length}
                   </span>
                 )}
               </div>
               <p className="text-xs text-[#757575] font-normal">{activeProduct.description || 'Reka bentuk sublimasi berkualiti tinggi.'}</p>
               {productGallery.length > 1 && (
-                <span className="inline-block text-[10px] font-semibold text-slate-500 font-mono mt-0.5">
-                  {productGallery.length} Sudut Pandangan Foto Disediakan
+                <span className="inline-block text-[10px] font-semibold text-slate-500 font-mono mt-0.5 whitespace-nowrap">
+                  {productGallery.length} Sudut Pandangan Foto
                 </span>
               )}
 
@@ -292,10 +292,10 @@ Sila maklumkan sebut harga rasmi dan langkah pembayaran. Terima kasih!`;
                   <button
                     type="button"
                     onClick={handleNextProduct}
-                    className="px-3 py-1 bg-slate-100 hover:bg-[#1A1A1A] hover:text-white text-[#1A1A1A] rounded-lg text-[11px] font-bold transition-all flex items-center space-x-1 border border-slate-200 shadow-2xs"
+                    className="px-3 py-1 bg-slate-100 hover:bg-[#1A1A1A] hover:text-white text-[#1A1A1A] rounded-lg text-[11px] font-bold transition-all inline-flex items-center space-x-1 border border-slate-200 shadow-2xs whitespace-nowrap shrink-0"
                   >
-                    <span>Lihat Reka Seterusnya</span>
-                    <ChevronRight className="w-3.5 h-3.5" />
+                    <span className="whitespace-nowrap">Reka Seterusnya</span>
+                    <ChevronRight className="w-3.5 h-3.5 shrink-0" />
                   </button>
                 </div>
               )}
@@ -305,7 +305,7 @@ Sila maklumkan sebut harga rasmi dan langkah pembayaran. Terima kasih!`;
           {/* Cut Selection with 1:1 Cover Images */}
           <div className="space-y-2">
             <label className="block text-xs font-bold text-[#1A1A1A] uppercase tracking-wider">
-              1. Jenis Potongan / Kolar (Bergambar 1:1)
+              1. Jenis Potongan / Kolar
             </label>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               {cutTypes.map((cut) => (
@@ -433,9 +433,9 @@ Sila maklumkan sebut harga rasmi dan langkah pembayaran. Terima kasih!`;
                     <button
                       type="button"
                       onClick={() => handleQtyChange(size, -1)}
-                      className="w-5 h-5 rounded bg-[#F6F5F3] hover:bg-slate-200 text-[#1A1A1A] font-bold flex items-center justify-center text-xs"
+                      className="w-5 h-5 rounded bg-[#F6F5F3] hover:bg-slate-200 text-[#1A1A1A] font-bold inline-flex items-center justify-center text-xs shrink-0"
                     >
-                      <Minus className="w-3 h-3" />
+                      <Minus className="w-3 h-3 shrink-0" />
                     </button>
                     <span className="text-xs font-mono font-bold text-[#1A1A1A] w-5 text-center">
                       {quantities[size] || 0}
@@ -443,9 +443,9 @@ Sila maklumkan sebut harga rasmi dan langkah pembayaran. Terima kasih!`;
                     <button
                       type="button"
                       onClick={() => handleQtyChange(size, 1)}
-                      className="w-5 h-5 rounded bg-[#F6F5F3] hover:bg-slate-200 text-[#1A1A1A] font-bold flex items-center justify-center text-xs"
+                      className="w-5 h-5 rounded bg-[#F6F5F3] hover:bg-slate-200 text-[#1A1A1A] font-bold inline-flex items-center justify-center text-xs shrink-0"
                     >
-                      <Plus className="w-3 h-3" />
+                      <Plus className="w-3 h-3 shrink-0" />
                     </button>
                   </div>
                 </div>
@@ -457,7 +457,7 @@ Sila maklumkan sebut harga rasmi dan langkah pembayaran. Terima kasih!`;
           <div className="p-5 bg-white rounded-xl border border-[#1A1A1A] flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-sm">
             <div className="space-y-1">
               <div className="flex items-center space-x-2">
-                <Calculator className="w-4 h-4 text-[#1A1A1A]" />
+                <Calculator className="w-4 h-4 text-[#1A1A1A] shrink-0" />
                 <span className="text-xs font-bold uppercase text-[#1A1A1A]">Anggaran Pengiraan Harga</span>
               </div>
               <p className="text-xs text-[#757575] font-mono">
@@ -474,10 +474,10 @@ Sila maklumkan sebut harga rasmi dan langkah pembayaran. Terima kasih!`;
           {/* Submit CTA */}
           <button
             type="submit"
-            className="w-full py-4 px-6 bg-[#1A1A1A] hover:bg-[#333333] text-white font-extrabold text-xs uppercase tracking-widest rounded-full shadow-md flex items-center justify-center space-x-2 transition-all active:scale-[0.98]"
+            className="w-full py-4 px-6 bg-[#1A1A1A] hover:bg-[#333333] text-white font-extrabold text-xs uppercase tracking-widest rounded-full shadow-md inline-flex items-center justify-center space-x-2 transition-all active:scale-[0.98] whitespace-nowrap shrink-0"
           >
-            <MessageSquare className="w-4 h-4 fill-white" />
-            <span>Hantar Pesanan Menerusi WhatsApp</span>
+            <MessageSquare className="w-4 h-4 fill-white shrink-0" />
+            <span className="whitespace-nowrap">Hantar WhatsApp</span>
           </button>
         </form>
       </div>
