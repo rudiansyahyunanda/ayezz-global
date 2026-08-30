@@ -767,6 +767,11 @@ export async function saveOrderToSupabase(orderData) {
   sizePayload._customer_phone = customerPhone;
   sizePayload._player_rows = orderData.playerRows || orderData.player_rows || [];
   sizePayload._notes = orderData.notes || '';
+  sizePayload._has_pants = orderData.has_pants || false;
+  sizePayload._pants_sync_mode = orderData.pants_sync_mode || '';
+  sizePayload._team_logo_placement = orderData.team_logo_placement || '';
+  sizePayload._pants_logo_placement = orderData.pants_logo_placement || '';
+  sizePayload._player_list_sync_mode = orderData.player_list_sync_mode || '';
 
   // Essential payload using EXACT Supabase DB columns
   const essentialPayload = {

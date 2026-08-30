@@ -110,6 +110,11 @@ function InvoiceContent() {
               playerListFileUrl: playerListFile,
               customDesignRefUrl: customDesignRef,
               notes: data.notes || parsedBreakdown?._notes || '',
+              hasPants: parsedBreakdown?._has_pants || false,
+              pantsSyncMode: parsedBreakdown?._pants_sync_mode || '',
+              teamLogoPlacement: parsedBreakdown?._team_logo_placement || '',
+              pantsLogoPlacement: parsedBreakdown?._pants_logo_placement || '',
+              playerListSyncMode: parsedBreakdown?._player_list_sync_mode || '',
               sizeBreakdown: parsedBreakdown,
               qty: totalQty,
               unitPrice: unitPrice,
@@ -197,7 +202,7 @@ function InvoiceContent() {
   const jobSheetNo = `JS-2026-${order?.orderId || 'AYZ-0000'}`;
 
   return (
-    <div className="min-h-screen bg-slate-100 text-slate-900 font-sans selection:bg-slate-900 selection:text-white print:bg-white print:p-0">
+    <div className="min-h-screen bg-slate-100 text-slate-900 font-sans selection:bg-slate-900 selection:text-white print:bg-white print:p-0 print:min-h-0 print:block print:overflow-visible">
       
       {/* TOP FLOATING ACTION & TOGGLE BAR (HIDDEN DURING PRINTING) */}
       <header className="sticky top-0 z-40 bg-slate-900 text-white shadow-md border-b border-slate-800 px-4 py-3 print:hidden">

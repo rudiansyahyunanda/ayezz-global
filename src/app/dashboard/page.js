@@ -153,6 +153,19 @@ function DashboardContent() {
   // SPONSOR LOGO STATE
   const [sponsorLogoUrl, setSponsorLogoUrl] = useState('');
   const [isUploadingSponsorLogo, setIsUploadingSponsorLogo] = useState(false);
+  const [sponsorLogoPlacement, setSponsorLogoPlacement] = useState('');
+
+  // PANTS (SELUAR) & SYNC MODES (STEP 4)
+  const [hasPants, setHasPants] = useState(false);
+  const [playerListSyncMode, setPlayerListSyncMode] = useState('sync_step2'); // 'sync_step2' | 'new'
+  const [pantsSyncMode, setPantsSyncMode] = useState('sync_shirt'); // 'sync_shirt' | 'new'
+
+  // TEAM LOGO & PANTS LOGO (STEP 4)
+  const [teamLogoPlacement, setTeamLogoPlacement] = useState('');
+  const [pantsLogoPlacement, setPantsLogoPlacement] = useState('');
+  const [isTeamLogoSheetOpen, setIsTeamLogoSheetOpen] = useState(false);
+  const [isPantsLogoSheetOpen, setIsPantsLogoSheetOpen] = useState(false);
+  const [isSponsorLogoSheetOpen, setIsSponsorLogoSheetOpen] = useState(false);
 
   const [orderTemplateName, setOrderTemplateName] = useState('');
   const [orderCategory, setOrderCategory] = useState('SUBLIMASI');
@@ -641,14 +654,13 @@ function DashboardContent() {
 
     const featuresList = [];
     if (hasPlayerNames) {
-      if (playerInputMode === 'manual') {
-        const validPlayers = playerRows.filter((r) => r.name.trim() || r.number.trim());
-        featuresList.push(`Nama & Nombor Pemain (${validPlayers.length} orang manual)`);
-      } else {
-        featuresList.push('Nama & Nombor Pemain (Fail Diumuat Naik)');
-      }
+      featuresList.push(`Nama & Nombor Pemain (Sync: ${playerListSyncMode})`);
     }
-    if (hasTeamLogo) featuresList.push('Logo Pasukan');
+    if (hasPants) {
+      featuresList.push(`Seluar (Sync: ${pantsSyncMode})`);
+    }
+    if (hasTeamLogo) featuresList.push(`Logo Pasukan: ${teamLogoPlacement || 'Kustom'}`);
+    if (hasPants && pantsLogoPlacement) featuresList.push(`Logo Seluar: ${pantsLogoPlacement}`);
     if (hasSponsorLogo) featuresList.push('Logo Sponsor');
 
     const orderPayload = {
@@ -676,7 +688,11 @@ function DashboardContent() {
       custom_logo_url: customLogoUrl || '',
       sponsor_logo_url: sponsorLogoUrl || '',
       player_list_file_url: playerListFileUrl || '',
-      player_rows: hasPlayerNames && playerInputMode === 'manual' ? playerRows : [],
+      has_pants: hasPants,
+      pants_sync_mode: pantsSyncMode,
+      team_logo_placement: teamLogoPlacement,
+      pants_logo_placement: pantsLogoPlacement,
+      player_list_sync_mode: playerListSyncMode,
       custom_design_ref_url: customDesignRefUrl || '',
       is_custom_design: isCustomDesign,
       status: 'Pesanan Diterima',
@@ -1227,12 +1243,12 @@ function DashboardContent() {
                         ? 'bg-emerald-600 text-white'
                         : 'bg-slate-100 text-slate-400 border border-slate-200'
                     }`}>
-                      <Scissors className="w-4 h-4 shrink-0" />
+                      <Layers className="w-4 h-4 shrink-0" />
                     </div>
                     <div className={orderStep === 2 ? 'block' : 'hidden sm:block'}>
                       <span className="text-[9px] font-mono uppercase text-slate-400 font-bold block">02</span>
                       <span className="text-xs font-extrabold uppercase text-slate-900">
-                        Specs
+                        Fabric
                       </span>
                     </div>
                   </div>
@@ -1251,12 +1267,12 @@ function DashboardContent() {
                         ? 'bg-emerald-600 text-white'
                         : 'bg-slate-100 text-slate-400 border border-slate-200'
                     }`}>
-                      <Layers className="w-4 h-4 shrink-0" />
+                      <Scissors className="w-4 h-4 shrink-0" />
                     </div>
                     <div className={orderStep === 3 ? 'block' : 'hidden sm:block'}>
                       <span className="text-[9px] font-mono uppercase text-slate-400 font-bold block">03</span>
                       <span className="text-xs font-extrabold uppercase text-slate-900">
-                        Fabric
+                        Specs
                       </span>
                     </div>
                   </div>
@@ -1271,12 +1287,36 @@ function DashboardContent() {
                     <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-mono font-black transition-all ${
                       orderStep === 4
                         ? 'bg-slate-900 text-white shadow-xs'
+                        : orderStep > 4
+                        ? 'bg-emerald-600 text-white'
+                        : 'bg-slate-100 text-slate-400 border border-slate-200'
+                    }`}>
+                      <Sparkles className="w-4 h-4 shrink-0" />
+                    </div>
+                    <div className={orderStep === 4 ? 'block' : 'hidden sm:block'}>
+                      <span className="text-[9px] font-mono uppercase text-slate-400 font-bold block">04</span>
+                      <span className="text-xs font-extrabold uppercase text-slate-900">
+                        Add-Ons
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className={`flex-1 h-0.5 mx-2 sm:mx-6 ${orderStep > 4 ? 'bg-emerald-600' : 'bg-slate-200'}`} />
+
+                  {/* STEP 5 BADGE */}
+                  <div
+                    onClick={() => setOrderStep(5)}
+                    className="flex items-center space-x-2 cursor-pointer group"
+                  >
+                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-mono font-black transition-all ${
+                      orderStep === 5
+                        ? 'bg-slate-900 text-white shadow-xs'
                         : 'bg-slate-100 text-slate-400 border border-slate-200'
                     }`}>
                       <CheckCircle2 className="w-4 h-4 shrink-0" />
                     </div>
-                    <div className={orderStep === 4 ? 'block' : 'hidden sm:block'}>
-                      <span className="text-[9px] font-mono uppercase text-slate-400 font-bold block">04</span>
+                    <div className={orderStep === 5 ? 'block' : 'hidden sm:block'}>
+                      <span className="text-[9px] font-mono uppercase text-slate-400 font-bold block">05</span>
                       <span className="text-xs font-extrabold uppercase text-slate-900">
                         Checkout
                       </span>
@@ -1341,7 +1381,7 @@ function DashboardContent() {
                 /* MAIN WIZARD FULL WIDTH CANVAS FOR STEPS 1-3, 2-COLS ONLY FOR STEP 4 */
                 <form id="order-wizard-form" onSubmit={handleCreateNewOrder} className="w-full space-y-6">
                   
-                  {orderStep < 4 ? (
+                  {orderStep < 5 ? (
                     /* STEPS 1, 2 & 3: 100% FULL-WIDTH SPACIOUS CANVAS (NO RIGHT SUMMARY CARD CLUTTER!) */
                     <div className="w-full space-y-6">
 
@@ -1563,220 +1603,9 @@ function DashboardContent() {
                                   </div>
                                 )}
 
-                                {/* CONDITIONAL SECTION 3: NAMA & NOMBOR PEMAIN (INPUT MANUAL vs UPLOAD FILE) */}
-                                {hasPlayerNames && (
-                                  <div className="p-5 bg-slate-50 rounded-2xl border border-slate-200 space-y-4">
-                                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200/80 pb-3">
-                                      <div>
-                                        <span className="text-xs font-extrabold text-slate-900 uppercase block">
-                                          SENARAI NAMA & NOMBOR PEMAIN
-                                        </span>
-                                        <span className="text-[10px] text-slate-500 block">Pilih kaedah memasukkan nama dan nombor pemain</span>
-                                      </div>
-
-                                      {/* MODE TOGGLE SWITCH */}
-                                      <div className="flex items-center bg-slate-200 p-1 rounded-xl shrink-0">
-                                        <button
-                                          type="button"
-                                          onClick={() => setPlayerInputMode('manual')}
-                                          className={`px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all flex items-center space-x-1 cursor-pointer ${
-                                            playerInputMode === 'manual'
-                                              ? 'bg-slate-800 text-white shadow-xs'
-                                              : 'text-slate-700 hover:text-slate-900'
-                                          }`}
-                                        >
-                                          <Edit3 className="w-3.5 h-3.5" />
-                                          <span>Input Manual</span>
-                                        </button>
-
-                                        <button
-                                          type="button"
-                                          onClick={() => setPlayerInputMode('upload')}
-                                          className={`px-3 py-1.5 rounded-lg text-xs font-extrabold transition-all flex items-center space-x-1 cursor-pointer ${
-                                            playerInputMode === 'upload'
-                                              ? 'bg-slate-800 text-white shadow-xs'
-                                              : 'text-slate-700 hover:text-slate-900'
-                                          }`}
-                                        >
-                                          <FileSpreadsheet className="w-3.5 h-3.5" />
-                                          <span>Muat Naik Fail</span>
-                                        </button>
-                                      </div>
-                                    </div>
-
-                                    {/* MODE 1: INPUT MANUAL DYNAMIC TABLE & MOBILE CARDS */}
-                                    {playerInputMode === 'manual' ? (
-                                      <div className="space-y-3">
-                                        {/* MOBILE RESPONSIVE VERTICAL CARDS FOR PLAYER INPUT (MD:HIDDEN) */}
-                                        <div className="space-y-2 md:hidden">
-                                          {playerRows.map((row, idx) => (
-                                            <div key={row.id} className="p-3 bg-white border border-slate-200 rounded-xl space-y-2 relative shadow-2xs">
-                                              <div className="flex items-center justify-between border-b border-slate-100 pb-1.5">
-                                                <span className="text-[11px] font-mono font-extrabold text-slate-900">
-                                                  Pemain #{idx + 1}
-                                                </span>
-                                                <button
-                                                  type="button"
-                                                  onClick={() => removePlayerRow(row.id)}
-                                                  className="p-1 text-rose-600 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
-                                                  title="Padam Pemain"
-                                                >
-                                                  <Trash2 className="w-3.5 h-3.5 shrink-0" />
-                                                </button>
-                                              </div>
-
-                                              <div className="space-y-2">
-                                                <div>
-                                                  <label className="text-[9px] font-bold text-slate-500 uppercase block mb-0.5">Nama Pemain</label>
-                                                  <input
-                                                    type="text"
-                                                    placeholder="Contoh: MUHAMMAD ALI"
-                                                    value={row.name}
-                                                    onChange={(e) => updatePlayerRow(row.id, 'name', e.target.value)}
-                                                    className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-xs font-bold text-slate-900 outline-none focus:bg-white focus:border-slate-900 uppercase"
-                                                  />
-                                                </div>
-
-                                                <div className="grid grid-cols-2 gap-2">
-                                                  <div>
-                                                    <label className="text-[9px] font-bold text-slate-500 uppercase block mb-0.5">No. Baju</label>
-                                                    <input
-                                                      type="text"
-                                                      placeholder="10"
-                                                      value={row.number}
-                                                      onChange={(e) => updatePlayerRow(row.id, 'number', e.target.value)}
-                                                      className="w-full text-center bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-2 text-xs font-black text-slate-900 outline-none focus:bg-white focus:border-slate-900"
-                                                    />
-                                                  </div>
-
-                                                  <div>
-                                                    <label className="text-[9px] font-bold text-slate-500 uppercase block mb-0.5">Saiz Jersi</label>
-                                                    <select
-                                                      value={row.size}
-                                                      onChange={(e) => updatePlayerRow(row.id, 'size', e.target.value)}
-                                                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-2 text-xs font-bold text-slate-900 outline-none focus:bg-white cursor-pointer"
-                                                    >
-                                                      {ALL_SIZES.map((sz) => (
-                                                        <option key={sz} value={sz}>{sz}</option>
-                                                      ))}
-                                                    </select>
-                                                  </div>
-                                                </div>
-                                              </div>
-                                            </div>
-                                          ))}
-
-                                          <button
-                                            type="button"
-                                            onClick={addPlayerRow}
-                                            className="w-full py-3 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all inline-flex items-center justify-center space-x-2 cursor-pointer shadow-xs whitespace-nowrap shrink-0"
-                                          >
-                                            <Plus className="w-4 h-4 text-white shrink-0" />
-                                            <span className="whitespace-nowrap">Tambah Pemain Baru</span>
-                                          </button>
-                                        </div>
-
-                                        {/* DESKTOP TABLE (HIDDEN ON MOBILE) */}
-                                        <div className="hidden md:block overflow-x-auto border border-slate-200 rounded-xl bg-white">
-                                          <table className="w-full text-left text-xs">
-                                            <thead>
-                                              <tr className="bg-slate-100/80 border-b border-slate-200 text-[10px] font-mono font-bold text-slate-600 uppercase">
-                                                <th className="py-2.5 px-3 text-center w-12">BIL</th>
-                                                <th className="py-2.5 px-3">NAMA PEMAIN</th>
-                                                <th className="py-2.5 px-3 w-28">NOMBOR BAJU</th>
-                                                <th className="py-2.5 px-3 w-28">SAIZ</th>
-                                                <th className="py-2.5 px-3 text-center w-12">PADAM</th>
-                                              </tr>
-                                            </thead>
-                                            <tbody className="divide-y divide-slate-100 font-mono text-slate-800">
-                                              {playerRows.map((row, idx) => (
-                                                <tr key={row.id} className="hover:bg-slate-50">
-                                                  <td className="py-2 px-3 text-center font-bold text-slate-500">{idx + 1}</td>
-                                                  <td className="py-2 px-3">
-                                                    <input
-                                                      type="text"
-                                                      placeholder="Contoh: MUHAMMAD ALI"
-                                                      value={row.name}
-                                                      onChange={(e) => updatePlayerRow(row.id, 'name', e.target.value)}
-                                                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 text-xs font-bold text-slate-900 outline-none focus:bg-white focus:border-slate-400 uppercase"
-                                                    />
-                                                  </td>
-                                                  <td className="py-2 px-3">
-                                                    <input
-                                                      type="text"
-                                                      placeholder="10"
-                                                      value={row.number}
-                                                      onChange={(e) => updatePlayerRow(row.id, 'number', e.target.value)}
-                                                      className="w-full text-center bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-black text-slate-900 outline-none focus:bg-white focus:border-slate-400"
-                                                    />
-                                                  </td>
-                                                  <td className="py-2 px-3">
-                                                    <select
-                                                      value={row.size}
-                                                      onChange={(e) => updatePlayerRow(row.id, 'size', e.target.value)}
-                                                      className="w-full bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 text-xs font-bold text-slate-900 outline-none focus:bg-white cursor-pointer"
-                                                    >
-                                                      {ALL_SIZES.map((sz) => (
-                                                        <option key={sz} value={sz}>{sz}</option>
-                                                      ))}
-                                                    </select>
-                                                  </td>
-                                                  <td className="py-2 px-3 text-center">
-                                                    <button
-                                                      type="button"
-                                                      onClick={() => removePlayerRow(row.id)}
-                                                      className="p-1 text-rose-500 hover:bg-rose-50 rounded-lg transition-colors cursor-pointer"
-                                                      title="Padam Baris"
-                                                    >
-                                                      <Trash2 className="w-4 h-4" />
-                                                    </button>
-                                                  </td>
-                                                </tr>
-                                              ))}
-                                            </tbody>
-                                          </table>
-                                        </div>
-
-                                        <button
-                                          type="button"
-                                          onClick={addPlayerRow}
-                                          className="w-full py-2.5 bg-white hover:bg-slate-100 text-slate-900 font-bold text-xs uppercase tracking-wider rounded-xl transition-all border border-slate-300 inline-flex items-center justify-center space-x-2 cursor-pointer shadow-2xs whitespace-nowrap shrink-0"
-                                        >
-                                          <Plus className="w-3.5 h-3.5 text-slate-900 shrink-0" />
-                                          <span className="whitespace-nowrap">Tambah Pemain</span>
-                                        </button>
-                                      </div>
-                                    ) : (
-                                      /* MODE 2: UPLOAD EXCEL / PDF / IMAGE FILE */
-                                      <div className="p-4 bg-white rounded-xl border border-slate-200 flex items-center justify-between">
-                                        <div className="flex items-center space-x-3">
-                                          {playerListFileUrl ? (
-                                            <div className="w-12 h-12 rounded-lg bg-emerald-100 text-emerald-700 flex items-center justify-center border border-emerald-300">
-                                              <CheckCircle2 className="w-6 h-6" />
-                                            </div>
-                                          ) : (
-                                            <div className="w-12 h-12 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400">
-                                              <FileSpreadsheet className="w-6 h-6" />
-                                            </div>
-                                          )}
-                                          <div>
-                                            <span className="text-xs font-bold text-slate-900 block">Fail Senarai Pemain (Excel / PDF / Gambar)</span>
-                                            <span className="text-[10px] text-slate-500 block">Muat naik dokumentasi senarai nama & saiz</span>
-                                          </div>
-                                        </div>
-
-                                        <label className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-bold text-xs rounded-xl cursor-pointer transition-all shrink-0">
-                                          {isUploadingPlayerListFile ? 'Muat Naik...' : playerListFileUrl ? 'Tukar Fail' : 'Muat Naik Fail'}
-                                          <input type="file" accept=".xlsx,.xls,.pdf,image/*" onChange={handlePlayerListFileUpload} className="hidden" />
-                                        </label>
-                                      </div>
-                                    )}
-                                  </div>
-                                )}
-
                                 <div className="space-y-1.5">
                                   <label className="text-xs font-bold text-slate-800 uppercase block">
-                                    4. CATATAN TAMBAHAN REKA BENTUK
+                                    1. CATATAN TAMBAHAN REKA BENTUK
                                   </label>
                                   <textarea
                                     rows={3}
@@ -1837,15 +1666,15 @@ function DashboardContent() {
                       )}
 
                       {/* ========================================================== */}
-                      {/* LANGKAH 2: SUMMARY LIST + BOTTOM SHEET ARCHITECTURE        */}
+                      {/* LANGKAH 3: SUMMARY LIST + BOTTOM SHEET ARCHITECTURE        */}
                       {/* ========================================================== */}
-                      {orderStep === 2 && (
+                      {orderStep === 3 && (
                         <div className="w-full font-sans">
 
                           {/* ── STEP HEADER ── */}
                           <div className="flex items-center justify-between mb-4">
                             <div>
-                              <p className="text-[10px] font-semibold text-[#8E8E93] uppercase tracking-widest">Langkah 2 dari 4</p>
+                              <p className="text-[10px] font-semibold text-[#8E8E93] uppercase tracking-widest">Langkah 3 dari 5</p>
                               <h3 className="text-base font-bold text-[#111827] mt-0.5">Potongan, Lengan &amp; Saiz</h3>
                             </div>
                             <span className="text-xs font-semibold text-[#8E8E93] tabular-nums">{groupCalculations.totalQty} pcs</span>
@@ -1921,14 +1750,14 @@ function DashboardContent() {
                           <div className="pt-5 border-t border-[#E5E7EB] mt-5 hidden md:flex items-center justify-between">
                             <button
                               type="button"
-                              onClick={() => setOrderStep(1)}
+                              onClick={() => setOrderStep(2)}
                               className="px-5 py-2.5 bg-[#F2F2F7] hover:bg-[#E5E5EA] text-[#111827] font-semibold text-sm rounded-xl transition-all cursor-pointer"
                             >
                               Kembali
                             </button>
                             <button
                               type="button"
-                              onClick={() => setOrderStep(3)}
+                              onClick={() => setOrderStep(4)}
                               className="px-6 py-2.5 bg-[#111827] hover:bg-black text-white font-semibold text-sm rounded-xl transition-all inline-flex items-center space-x-2 cursor-pointer"
                             >
                               <span>Teruskan</span>
@@ -2260,12 +2089,12 @@ function DashboardContent() {
 
                       {/* ========================================================== */}
 
-                      {/* LANGKAH 3: FABRIK SUBLIMASI (VISUAL FABRIC CARDS GRID - DIRECTIVE 6) */}
+                      {/* LANGKAH 2: FABRIK SUBLIMASI (VISUAL FABRIC CARDS GRID - DIRECTIVE 6) */}
                       {/* ========================================================== */}
-                      {orderStep === 3 && (
+                      {orderStep === 2 && (
                         <div className="w-full space-y-6">
                           <div className="border-b border-slate-100 pb-4">
-                            <span className="text-[10px] font-mono text-slate-400 font-bold uppercase tracking-widest block">LANGKAH 3 DARI 4</span>
+                            <span className="text-[10px] font-mono text-slate-400 font-bold uppercase tracking-widest block">LANGKAH 2 DARI 5</span>
                             <h3 className="text-base sm:text-lg font-black uppercase text-slate-900 pt-0.5">PILIH BAHAN KAIN / FABRIK SUBLIMASI</h3>
                           </div>
 
@@ -2322,6 +2151,186 @@ function DashboardContent() {
                         </div>
                       )}
 
+                      {/* ========================================================== */}
+                      {/* LANGKAH 4: CETAKAN TAMBAHAN (NAMA, NOMBOR, LOGO, SELUAR) */}
+                      {/* ========================================================== */}
+                      {orderStep === 4 && (
+                        <div className="w-full space-y-6">
+                           <div className="border-b border-slate-100 pb-4">
+                            <span className="text-[10px] font-mono text-slate-400 font-bold uppercase tracking-widest block">LANGKAH 4 DARI 5</span>
+                            <h3 className="text-base sm:text-lg font-black uppercase text-slate-900 pt-0.5">CETAKAN TAMBAHAN & ADD-ONS</h3>
+                          </div>
+                          
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+                            <div className="space-y-4">
+                              <label className="text-xs font-extrabold text-slate-900 uppercase block">
+                                Butiran Pemain & Seluar:
+                              </label>
+
+                              {/* TOGGLE 1: NAMA & NOMBOR PEMAIN */}
+                              <div
+                                onClick={() => setHasPlayerNames(!hasPlayerNames)}
+                                className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-center justify-between ${
+                                  hasPlayerNames
+                                    ? 'bg-white text-[#111827] border-[#111827] shadow-sm'
+                                    : 'bg-white text-slate-900 border-slate-200 hover:border-slate-300'
+                                }`}
+                              >
+                                <div className="flex items-center space-x-3">
+                                  <div className={`p-2 rounded-xl ${hasPlayerNames ? 'bg-[#111827] text-white' : 'bg-slate-100 text-slate-600'}`}>
+                                    <User className="w-4 h-4 shrink-0" />
+                                  </div>
+                                  <div>
+                                    <span className="text-xs font-extrabold block">Nama & Nombor Pemain</span>
+                                    <span className={`text-[10px] block ${hasPlayerNames ? 'text-slate-300' : 'text-slate-500'}`}>Cetak nama & no. di belakang baju</span>
+                                  </div>
+                                </div>
+                                <div className={`w-11 h-6 rounded-full transition-colors relative p-0.5 shrink-0 ${hasPlayerNames ? 'bg-[#111827]' : 'bg-slate-200'}`}>
+                                  <div className={`w-5 h-5 rounded-full bg-white shadow-xs transition-transform transform ${hasPlayerNames ? 'translate-x-5' : 'translate-x-0'}`} />
+                                </div>
+                              </div>
+
+                              {/* HAS PLAYER NAMES SYNC UI */}
+                              {hasPlayerNames && (
+                                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3 ml-4 relative before:absolute before:left-[-17px] before:top-[-20px] before:w-4 before:h-8 before:border-l-2 before:border-b-2 before:border-slate-200 before:rounded-bl-xl">
+                                  <span className="text-[10px] font-bold text-slate-700 uppercase block">Sumber Data Pemain:</span>
+                                  <select 
+                                    value={playerListSyncMode} 
+                                    onChange={(e) => setPlayerListSyncMode(e.target.value)}
+                                    className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold text-slate-900 outline-none"
+                                  >
+                                    <option value="sync_step2">Singkronkan saiz dari Langkah 2 (Specs)</option>
+                                    <option value="new">Buat senarai pemain baru</option>
+                                  </select>
+                                  <p className="text-[10px] text-slate-500">Anda boleh mengemaskini fail excel senarai nama pada bila-bila masa sebelum cetakan bermula.</p>
+                                </div>
+                              )}
+
+                              {/* TOGGLE 2: SELUAR */}
+                              <div
+                                onClick={() => setHasPants(!hasPants)}
+                                className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-center justify-between ${
+                                  hasPants
+                                    ? 'bg-white text-[#111827] border-[#111827] shadow-sm'
+                                    : 'bg-white text-slate-900 border-slate-200 hover:border-slate-300'
+                                }`}
+                              >
+                                <div className="flex items-center space-x-3">
+                                  <div className={`p-2 rounded-xl ${hasPants ? 'bg-[#111827] text-white' : 'bg-slate-100 text-slate-600'}`}>
+                                    <Scissors className="w-4 h-4 shrink-0" />
+                                  </div>
+                                  <div>
+                                    <span className="text-xs font-extrabold block">Tambah Seluar (Pants)</span>
+                                    <span className={`text-[10px] block ${hasPants ? 'text-slate-300' : 'text-slate-500'}`}>Cetak seluar sepadan dengan baju</span>
+                                  </div>
+                                </div>
+                                <div className={`w-11 h-6 rounded-full transition-colors relative p-0.5 shrink-0 ${hasPants ? 'bg-[#111827]' : 'bg-slate-200'}`}>
+                                  <div className={`w-5 h-5 rounded-full bg-white shadow-xs transition-transform transform ${hasPants ? 'translate-x-5' : 'translate-x-0'}`} />
+                                </div>
+                              </div>
+                              
+                              {/* HAS PANTS SYNC UI */}
+                              {hasPants && (
+                                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3 ml-4 relative before:absolute before:left-[-17px] before:top-[-20px] before:w-4 before:h-8 before:border-l-2 before:border-b-2 before:border-slate-200 before:rounded-bl-xl">
+                                  <span className="text-[10px] font-bold text-slate-700 uppercase block">Tetapan Saiz & Nombor Seluar:</span>
+                                  <select 
+                                    value={pantsSyncMode} 
+                                    onChange={(e) => setPantsSyncMode(e.target.value)}
+                                    className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold text-slate-900 outline-none"
+                                  >
+                                    <option value="sync_shirt">Ikut saiz & nombor baju</option>
+                                    <option value="new">Tetapan saiz seluar berbeza</option>
+                                  </select>
+                                </div>
+                              )}
+                            </div>
+
+                            <div className="space-y-4">
+                              <label className="text-xs font-extrabold text-slate-900 uppercase block">
+                                Pilihan Logo & Tajaan:
+                              </label>
+
+                              {/* TOGGLE 3: LOGO PASUKAN */}
+                              <div
+                                onClick={() => setIsTeamLogoSheetOpen(true)}
+                                className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-center justify-between ${
+                                  hasTeamLogo
+                                    ? 'bg-white text-[#111827] border-[#111827] shadow-sm'
+                                    : 'bg-white text-slate-900 border-slate-200 hover:border-slate-300'
+                                }`}
+                              >
+                                <div className="flex items-center space-x-3">
+                                  <div className={`p-2 rounded-xl ${hasTeamLogo ? 'bg-[#111827] text-white' : 'bg-slate-100 text-slate-600'}`}>
+                                    <ShieldCheck className="w-4 h-4 shrink-0" />
+                                  </div>
+                                  <div>
+                                    <span className="text-xs font-extrabold block">Logo Pasukan (Crest)</span>
+                                    <span className={`text-[10px] block ${hasTeamLogo ? 'text-slate-300' : 'text-slate-500'}`}>
+                                      {hasTeamLogo ? (teamLogoPlacement || 'Kedudukan dipilih') : 'Tambah & susun kedudukan logo'}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="flex items-center justify-center p-1">
+                                  <Check className={`w-4 h-4 ${hasTeamLogo ? 'text-[#111827]' : 'text-transparent'}`} />
+                                </div>
+                              </div>
+
+                              {/* TOGGLE 4: LOGO SELUAR (IF PANTS ACTIVE) */}
+                              {hasPants && (
+                                <div
+                                  onClick={() => setIsPantsLogoSheetOpen(true)}
+                                  className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-center justify-between ml-4 relative before:absolute before:left-[-17px] before:top-[-20px] before:w-4 before:h-8 before:border-l-2 before:border-b-2 before:border-slate-200 before:rounded-bl-xl ${
+                                    pantsLogoPlacement
+                                      ? 'bg-white text-[#111827] border-[#111827] shadow-sm'
+                                      : 'bg-white text-slate-900 border-slate-200 hover:border-slate-300'
+                                  }`}
+                                >
+                                  <div className="flex items-center space-x-3">
+                                    <div className={`p-2 rounded-xl ${pantsLogoPlacement ? 'bg-[#111827] text-white' : 'bg-slate-100 text-slate-600'}`}>
+                                      <ShieldCheck className="w-4 h-4 shrink-0" />
+                                    </div>
+                                    <div>
+                                      <span className="text-xs font-extrabold block">Logo Seluar</span>
+                                      <span className={`text-[10px] block ${pantsLogoPlacement ? 'text-slate-300' : 'text-slate-500'}`}>
+                                        {pantsLogoPlacement ? pantsLogoPlacement : 'Tambah & susun kedudukan logo'}
+                                      </span>
+                                    </div>
+                                  </div>
+                                  <div className="flex items-center justify-center p-1">
+                                    <Check className={`w-4 h-4 ${pantsLogoPlacement ? 'text-[#111827]' : 'text-transparent'}`} />
+                                  </div>
+                                </div>
+                              )}
+
+                              {/* TOGGLE 5: LOGO SPONSOR */}
+                              <div
+                                onClick={() => setIsSponsorLogoSheetOpen(true)}
+                                className={`p-4 rounded-2xl border cursor-pointer transition-all flex items-center justify-between ${
+                                  hasSponsorLogo
+                                    ? 'bg-white text-[#111827] border-[#111827] shadow-sm'
+                                    : 'bg-white text-slate-900 border-slate-200 hover:border-slate-300'
+                                }`}
+                              >
+                                <div className="flex items-center space-x-3">
+                                  <div className={`p-2 rounded-xl ${hasSponsorLogo ? 'bg-[#111827] text-white' : 'bg-slate-100 text-slate-600'}`}>
+                                    <Sparkles className="w-4 h-4 shrink-0" />
+                                  </div>
+                                  <div>
+                                    <span className="text-xs font-extrabold block">Logo Penaja / Sponsor</span>
+                                    <span className={`text-[10px] block ${hasSponsorLogo ? 'text-slate-300' : 'text-slate-500'}`}>
+                                      {hasSponsorLogo ? 'Penaja dimasukkan' : 'Muat naik tajaan kelab'}
+                                    </span>
+                                  </div>
+                                </div>
+                                <div className="flex items-center justify-center p-1">
+                                  <Check className={`w-4 h-4 ${hasSponsorLogo ? 'text-[#111827]' : 'text-transparent'}`} />
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+
                     </div>
                   ) : (
                     /* ========================================================== */
@@ -2333,7 +2342,7 @@ function DashboardContent() {
                       <div className="lg:col-span-7 space-y-6 w-full">
                         <div className="space-y-5">
                           <div className="border-b border-slate-100 pb-3">
-                            <span className="text-[10px] font-mono text-slate-400 font-bold uppercase tracking-widest block">LANGKAH 4 DARI 4</span>
+                            <span className="text-[10px] font-mono text-slate-400 font-bold uppercase tracking-widest block">LANGKAH 5 DARI 5</span>
                             <h3 className="text-lg font-black uppercase text-slate-900 pt-0.5">MAKLUMAT PELANGGAN & PENGESAHAN</h3>
                           </div>
 
@@ -2492,7 +2501,7 @@ function DashboardContent() {
                         </button>
                       )}
 
-                      {orderStep < 4 ? (
+                      {orderStep < 5 ? (
                         <button
                           type="button"
                           onClick={() => setOrderStep(orderStep + 1)}
@@ -3326,6 +3335,132 @@ function DashboardContent() {
               </button>
             </div>
 
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================== */}
+      {/* LOGO PLACEMENT BOTTOM SHEETS */}
+      {/* ========================================================== */}
+      {isTeamLogoSheetOpen && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-900/60 backdrop-blur-xs animate-fade-in font-sans">
+          <div className="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl p-6 flex flex-col space-y-4">
+            <div className="flex justify-between items-center pb-2 border-b border-slate-100">
+              <h3 className="text-sm font-black uppercase text-slate-900">Kedudukan Logo Pasukan</h3>
+              <button onClick={() => setIsTeamLogoSheetOpen(false)} className="p-2 bg-slate-100 hover:bg-slate-200 rounded-full">
+                <X className="w-4 h-4 text-slate-600" />
+              </button>
+            </div>
+
+            <div className="flex items-center justify-between bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+              <div className="flex items-center space-x-3">
+                {customLogoUrl ? (
+                  <img src={customLogoUrl} alt="Team Logo" className="w-12 h-12 object-contain bg-white rounded-lg p-1 border border-slate-200" />
+                ) : (
+                  <div className="w-12 h-12 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400">
+                    <Upload className="w-5 h-5" />
+                  </div>
+                )}
+                <div>
+                  <span className="text-xs font-bold text-slate-900 block">Logo Pasukan (PNG)</span>
+                  <span className="text-[10px] text-slate-500 block">Resolusi tinggi</span>
+                </div>
+              </div>
+              <label className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-bold text-xs rounded-xl cursor-pointer transition-all shrink-0">
+                {isUploadingLogo ? 'Muat Naik...' : customLogoUrl ? 'Tukar' : 'Upload'}
+                <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" />
+              </label>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[10px] font-bold text-slate-500 uppercase">Pilih Kedudukan:</label>
+              {['Dada Kiri', 'Dada Kanan', 'Dada Kiri + Kanan', 'Tengah (Center)', 'Dada Kiri (Logo) + Dada Kanan (No)'].map((loc) => (
+                <button
+                  key={loc}
+                  onClick={() => setTeamLogoPlacement(loc)}
+                  className={`w-full py-3 px-4 rounded-xl text-left font-bold text-xs transition-all flex justify-between items-center ${
+                    teamLogoPlacement === loc ? 'bg-slate-900 text-white' : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200'
+                  }`}
+                >
+                  <span>{loc}</span>
+                  {teamLogoPlacement === loc && <Check className="w-4 h-4 text-white" />}
+                </button>
+              ))}
+              <div className="pt-2">
+                <input 
+                  type="text" 
+                  placeholder="Atau taip kedudukan kustom (cth: Lengan Kanan)..." 
+                  value={teamLogoPlacement}
+                  onChange={(e) => setTeamLogoPlacement(e.target.value)}
+                  className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-xs font-semibold text-slate-900 outline-none focus:border-slate-400"
+                />
+              </div>
+            </div>
+            <button onClick={() => setIsTeamLogoSheetOpen(false)} className="w-full py-3 bg-slate-900 text-white rounded-xl font-bold text-xs uppercase tracking-wider shadow-md">Simpan Kedudukan</button>
+          </div>
+        </div>
+      )}
+
+      {isPantsLogoSheetOpen && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-900/60 backdrop-blur-xs animate-fade-in font-sans">
+          <div className="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl p-6 flex flex-col space-y-4">
+            <div className="flex justify-between items-center pb-2 border-b border-slate-100">
+              <h3 className="text-sm font-black uppercase text-slate-900">Kedudukan Logo Seluar</h3>
+              <button onClick={() => setIsPantsLogoSheetOpen(false)} className="p-2 bg-slate-100 hover:bg-slate-200 rounded-full">
+                <X className="w-4 h-4 text-slate-600" />
+              </button>
+            </div>
+            <div className="space-y-2">
+              {['Logo Kiri', 'Logo Kanan', 'Logo Kiri + Nombor Kanan', 'Nombor Kiri + Logo Kanan'].map((loc) => (
+                <button
+                  key={loc}
+                  onClick={() => setPantsLogoPlacement(loc)}
+                  className={`w-full py-3 px-4 rounded-xl text-left font-bold text-xs transition-all flex justify-between items-center ${
+                    pantsLogoPlacement === loc ? 'bg-slate-900 text-white' : 'bg-slate-50 hover:bg-slate-100 text-slate-700 border border-slate-200'
+                  }`}
+                >
+                  <span>{loc}</span>
+                  {pantsLogoPlacement === loc && <Check className="w-4 h-4 text-white" />}
+                </button>
+              ))}
+            </div>
+            <button onClick={() => setIsPantsLogoSheetOpen(false)} className="w-full py-3 bg-slate-900 text-white rounded-xl font-bold text-xs uppercase tracking-wider shadow-md">Simpan Kedudukan</button>
+          </div>
+        </div>
+      )}
+
+      {isSponsorLogoSheetOpen && (
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-4 bg-slate-900/60 backdrop-blur-xs animate-fade-in font-sans">
+          <div className="bg-white w-full max-w-md rounded-t-3xl sm:rounded-3xl shadow-2xl p-6 flex flex-col space-y-4">
+            <div className="flex justify-between items-center pb-2 border-b border-slate-100">
+              <h3 className="text-sm font-black uppercase text-slate-900">Logo Tajaan (Sponsor)</h3>
+              <button onClick={() => setIsSponsorLogoSheetOpen(false)} className="p-2 bg-slate-100 hover:bg-slate-200 rounded-full">
+                <X className="w-4 h-4 text-slate-600" />
+              </button>
+            </div>
+            
+            <div className="flex items-center justify-between bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+              <div className="flex items-center space-x-3">
+                {sponsorLogoUrl ? (
+                  <img src={sponsorLogoUrl} alt="Sponsor Logo" className="w-12 h-12 object-contain bg-white rounded-lg p-1 border border-slate-200" />
+                ) : (
+                  <div className="w-12 h-12 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400">
+                    <Upload className="w-5 h-5" />
+                  </div>
+                )}
+                <div>
+                  <span className="text-xs font-bold text-slate-900 block">Logo Penaja</span>
+                  <span className="text-[10px] text-slate-500 block">Muat naik logo tajaan</span>
+                </div>
+              </div>
+
+              <label className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-bold text-xs rounded-xl cursor-pointer transition-all shrink-0">
+                {isUploadingSponsorLogo ? 'Muat Naik...' : sponsorLogoUrl ? 'Tukar' : 'Upload'}
+                <input type="file" accept="image/*" onChange={handleSponsorLogoUpload} className="hidden" />
+              </label>
+            </div>
+
+            <button onClick={() => setIsSponsorLogoSheetOpen(false)} className="w-full py-3 bg-slate-900 text-white rounded-xl font-bold text-xs uppercase tracking-wider shadow-md">Selesai</button>
           </div>
         </div>
       )}
