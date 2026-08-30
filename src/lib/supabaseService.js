@@ -744,6 +744,11 @@ export async function saveOrderToSupabase(orderData) {
     cloudSponsorLogo = await ensureSupabaseCloudImageUrl(cloudSponsorLogo, `logo_sponsor_${generatedOrderId}`);
   }
 
+  let cloudCustomLogo2 = orderData.customLogoUrl2 || orderData.custom_logo_url_2 || '';
+  if (cloudCustomLogo2 && cloudCustomLogo2.startsWith('data:image/')) {
+    cloudCustomLogo2 = await ensureSupabaseCloudImageUrl(cloudCustomLogo2, `logo_pasukan_2_${generatedOrderId}`);
+  }
+
   let cloudDesignRef = orderData.customDesignRefUrl || orderData.custom_design_ref_url || '';
   if (cloudDesignRef && cloudDesignRef.startsWith('data:image/')) {
     cloudDesignRef = await ensureSupabaseCloudImageUrl(cloudDesignRef, `design_ref_${generatedOrderId}`);
@@ -760,6 +765,7 @@ export async function saveOrderToSupabase(orderData) {
 
   // Attach metadata keys to size_breakdown payload (prefixed with _)
   sizePayload._custom_logo_url = cloudCustomLogo;
+  sizePayload._custom_logo_url_2 = cloudCustomLogo2;
   sizePayload._sponsor_logo_url = cloudSponsorLogo;
   sizePayload._custom_design_ref_url = cloudDesignRef;
   sizePayload._player_list_file_url = cloudPlayerFile;

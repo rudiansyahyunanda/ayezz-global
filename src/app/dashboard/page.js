@@ -267,6 +267,8 @@ function DashboardContent() {
 
   const [customLogoUrl, setCustomLogoUrl] = useState('');
   const [isUploadingLogo, setIsUploadingLogo] = useState(false);
+  const [customLogoUrl2, setCustomLogoUrl2] = useState('');
+  const [isUploadingLogo2, setIsUploadingLogo2] = useState(false);
   const [isSubmittingOrder, setIsSubmittingOrder] = useState(false);
   const [orderSuccessData, setOrderSuccessData] = useState(null);
   const [paidSuccessOrderData, setPaidSuccessOrderData] = useState(null);
@@ -571,6 +573,26 @@ function DashboardContent() {
     }
   };
 
+  const handleLogoUpload2 = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploadingLogo2(true);
+    try {
+      const cloudUrl = await uploadDirectToSupabaseStorage(file, 'logo2');
+      if (cloudUrl) {
+        setCustomLogoUrl2(cloudUrl);
+      }
+    } catch (err) {
+      console.warn('Logo 2 upload fallback error:', err);
+      const reader = new FileReader();
+      reader.onload = (ev) => setCustomLogoUrl2(ev.target.result);
+      reader.readAsDataURL(file);
+    } finally {
+      setIsUploadingLogo2(false);
+    }
+  };
+
   const handleSponsorLogoUpload = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -686,8 +708,10 @@ function DashboardContent() {
       team_name: customerInfo.teamName || '-',
       notes: `${featuresList.length > 0 ? `[CIRI: ${featuresList.join(', ')}] ` : ''}${isCustomDesign ? `[KUSTOM DESIGN] ${customDesignNotes} ` : ''}${customerInfo.notes || ''}`.trim(),
       custom_logo_url: customLogoUrl || '',
+      custom_logo_url_2: customLogoUrl2 || '',
       sponsor_logo_url: sponsorLogoUrl || '',
       player_list_file_url: playerListFileUrl || '',
+      player_rows: hasPlayerNames && playerListSyncMode === 'new' && playerInputMode === 'manual' ? playerRows : [],
       has_pants: hasPants,
       pants_sync_mode: pantsSyncMode,
       team_logo_placement: teamLogoPlacement,
@@ -739,6 +763,7 @@ function DashboardContent() {
   const resetOrderForm = () => {
     setOrderSuccessData(null);
     setCustomLogoUrl('');
+    setCustomLogoUrl2('');
     setSponsorLogoUrl('');
     setPlayerListFileUrl('');
     setCustomDesignRefUrl('');
@@ -2190,21 +2215,112 @@ function DashboardContent() {
                                 </div>
                               </div>
 
-                              {/* HAS PLAYER NAMES SYNC UI */}
-                              {hasPlayerNames && (
-                                <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3 ml-4 relative before:absolute before:left-[-17px] before:top-[-20px] before:w-4 before:h-8 before:border-l-2 before:border-b-2 before:border-slate-200 before:rounded-bl-xl">
-                                  <span className="text-[10px] font-bold text-slate-700 uppercase block">Sumber Data Pemain:</span>
-                                  <select 
-                                    value={playerListSyncMode} 
-                                    onChange={(e) => setPlayerListSyncMode(e.target.value)}
-                                    className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold text-slate-900 outline-none"
-                                  >
-                                    <option value="sync_step2">Singkronkan saiz dari Langkah 2 (Specs)</option>
-                                    <option value="new">Buat senarai pemain baru</option>
-                                  </select>
-                                  <p className="text-[10px] text-slate-500">Anda boleh mengemaskini fail excel senarai nama pada bila-bila masa sebelum cetakan bermula.</p>
-                                </div>
-                              )}
+                                {/* HAS PLAYER NAMES SYNC UI */}
+                                {hasPlayerNames && (
+                                  <div className="p-4 bg-slate-50 rounded-xl border border-slate-200 space-y-3 ml-4 relative before:absolute before:left-[-17px] before:top-[-20px] before:w-4 before:h-8 before:border-l-2 before:border-b-2 before:border-slate-200 before:rounded-bl-xl">
+                                    <span className="text-[10px] font-bold text-slate-700 uppercase block">Sumber Data Pemain:</span>
+                                    <select 
+                                      value={playerListSyncMode} 
+                                      onChange={(e) => setPlayerListSyncMode(e.target.value)}
+                                      className="w-full bg-white border border-slate-300 rounded-lg px-3 py-2 text-xs font-semibold text-slate-900 outline-none"
+                                    >
+                                      <option value="sync_step2">Singkronkan saiz dari Langkah 3 (Specs)</option>
+                                      <option value="new">Buat senarai pemain baru</option>
+                                    </select>
+                                    <p className="text-[10px] text-slate-500">Anda boleh mengemaskini fail excel senarai nama pada bila-bila masa sebelum cetakan bermula.</p>
+
+                                    {playerListSyncMode === 'new' && (
+                                      <div className="pt-3 border-t border-slate-200 mt-3 space-y-3">
+                                        <div className="flex bg-slate-200/60 p-1 rounded-xl">
+                                          <button 
+                                            onClick={() => setPlayerInputMode('manual')}
+                                            className={`flex-1 text-[10px] font-bold py-1.5 rounded-lg transition-all ${playerInputMode === 'manual' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
+                                          >
+                                            Isi Manual
+                                          </button>
+                                          <button 
+                                            onClick={() => setPlayerInputMode('upload')}
+                                            className={`flex-1 text-[10px] font-bold py-1.5 rounded-lg transition-all ${playerInputMode === 'upload' ? 'bg-white shadow-sm text-slate-900' : 'text-slate-500 hover:text-slate-700'}`}
+                                          >
+                                            Muat Naik Excel
+                                          </button>
+                                        </div>
+
+                                        {playerInputMode === 'manual' && (
+                                          <div className="space-y-2">
+                                            <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+                                              <div className="grid grid-cols-12 gap-2 p-2 bg-slate-50 border-b border-slate-200 text-[10px] font-bold text-slate-500 text-center">
+                                                <div className="col-span-1">#</div>
+                                                <div className="col-span-5 text-left">NAMA</div>
+                                                <div className="col-span-3">NO.</div>
+                                                <div className="col-span-3">SAIZ</div>
+                                              </div>
+                                              <div className="divide-y divide-slate-100 max-h-[250px] overflow-y-auto">
+                                                {playerRows.map((row, idx) => (
+                                                  <div key={row.id} className="grid grid-cols-12 gap-2 p-2 items-center">
+                                                    <div className="col-span-1 text-[10px] font-bold text-slate-400 text-center">{idx + 1}</div>
+                                                    <div className="col-span-5">
+                                                      <input type="text" value={row.name} onChange={(e) => {
+                                                        const newRows = [...playerRows];
+                                                        newRows[idx].name = e.target.value;
+                                                        setPlayerRows(newRows);
+                                                      }} className="w-full bg-slate-50 border border-slate-200 rounded-md px-2 py-1 text-xs font-semibold text-slate-900 outline-none focus:border-slate-400" placeholder="Nama..." />
+                                                    </div>
+                                                    <div className="col-span-3">
+                                                      <input type="text" value={row.number} onChange={(e) => {
+                                                        const newRows = [...playerRows];
+                                                        newRows[idx].number = e.target.value;
+                                                        setPlayerRows(newRows);
+                                                      }} className="w-full bg-slate-50 border border-slate-200 rounded-md px-2 py-1 text-xs font-semibold text-slate-900 text-center outline-none focus:border-slate-400" placeholder="No." />
+                                                    </div>
+                                                    <div className="col-span-3">
+                                                      <select value={row.size} onChange={(e) => {
+                                                        const newRows = [...playerRows];
+                                                        newRows[idx].size = e.target.value;
+                                                        setPlayerRows(newRows);
+                                                      }} className="w-full bg-slate-50 border border-slate-200 rounded-md px-1 py-1 text-[10px] font-semibold text-slate-900 outline-none">
+                                                        <option value="XS">XS</option>
+                                                        <option value="S">S</option>
+                                                        <option value="M">M</option>
+                                                        <option value="L">L</option>
+                                                        <option value="XL">XL</option>
+                                                        <option value="2XL">2XL</option>
+                                                        <option value="3XL">3XL</option>
+                                                      </select>
+                                                    </div>
+                                                  </div>
+                                                ))}
+                                              </div>
+                                            </div>
+                                            <button onClick={() => setPlayerRows([...playerRows, { id: Date.now().toString(), name: '', number: '', size: 'M' }])} className="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-xs font-bold transition-colors">
+                                              + Tambah Baris
+                                            </button>
+                                          </div>
+                                        )}
+
+                                        {playerInputMode === 'upload' && (
+                                          <div className="p-4 border border-dashed border-slate-300 rounded-xl bg-white text-center space-y-2">
+                                            {playerListFileUrl ? (
+                                              <div className="flex flex-col items-center">
+                                                <FileText className="w-6 h-6 text-slate-400 mb-2" />
+                                                <span className="text-xs font-bold text-slate-700">Fail Sedia Dimuat Naik</span>
+                                              </div>
+                                            ) : (
+                                              <>
+                                                <Upload className="w-6 h-6 text-slate-300 mx-auto" />
+                                                <p className="text-[10px] text-slate-500">Sila guna format template disediakan</p>
+                                              </>
+                                            )}
+                                            <label className="inline-block mt-2 px-4 py-1.5 bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs rounded-lg cursor-pointer transition-colors">
+                                              {isUploadingPlayerListFile ? 'Memuat Naik...' : (playerListFileUrl ? 'Tukar Fail' : 'Muat Naik Excel/CSV')}
+                                              <input type="file" accept=".xlsx,.xls,.csv" onChange={handlePlayerListFileUpload} className="hidden" />
+                                            </label>
+                                          </div>
+                                        )}
+                                      </div>
+                                    )}
+                                  </div>
+                                )}
 
                               {/* TOGGLE 2: SELUAR */}
                               <div
@@ -3352,24 +3468,48 @@ function DashboardContent() {
               </button>
             </div>
 
-            <div className="flex items-center justify-between bg-slate-50 p-3.5 rounded-xl border border-slate-200">
-              <div className="flex items-center space-x-3">
-                {customLogoUrl ? (
-                  <img src={customLogoUrl} alt="Team Logo" className="w-12 h-12 object-contain bg-white rounded-lg p-1 border border-slate-200" />
-                ) : (
-                  <div className="w-12 h-12 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400">
-                    <Upload className="w-5 h-5" />
+            <div className="flex flex-col space-y-3">
+              <div className="flex items-center justify-between bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                <div className="flex items-center space-x-3">
+                  {customLogoUrl ? (
+                    <img src={customLogoUrl} alt="Team Logo" className="w-12 h-12 object-contain bg-white rounded-lg p-1 border border-slate-200" />
+                  ) : (
+                    <div className="w-12 h-12 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400">
+                      <Upload className="w-5 h-5" />
+                    </div>
+                  )}
+                  <div>
+                    <span className="text-xs font-bold text-slate-900 block">{teamLogoPlacement.includes('+') ? 'Logo 1 (PNG)' : 'Logo Pasukan (PNG)'}</span>
+                    <span className="text-[10px] text-slate-500 block">Resolusi tinggi</span>
                   </div>
-                )}
-                <div>
-                  <span className="text-xs font-bold text-slate-900 block">Logo Pasukan (PNG)</span>
-                  <span className="text-[10px] text-slate-500 block">Resolusi tinggi</span>
                 </div>
+                <label className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-bold text-xs rounded-xl cursor-pointer transition-all shrink-0">
+                  {isUploadingLogo ? 'Muat Naik...' : customLogoUrl ? 'Tukar' : 'Upload'}
+                  <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" />
+                </label>
               </div>
-              <label className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-bold text-xs rounded-xl cursor-pointer transition-all shrink-0">
-                {isUploadingLogo ? 'Muat Naik...' : customLogoUrl ? 'Tukar' : 'Upload'}
-                <input type="file" accept="image/*" onChange={handleLogoUpload} className="hidden" />
-              </label>
+
+              {teamLogoPlacement.includes('+') && (
+                <div className="flex items-center justify-between bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                  <div className="flex items-center space-x-3">
+                    {customLogoUrl2 ? (
+                      <img src={customLogoUrl2} alt="Team Logo 2" className="w-12 h-12 object-contain bg-white rounded-lg p-1 border border-slate-200" />
+                    ) : (
+                      <div className="w-12 h-12 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-400">
+                        <Upload className="w-5 h-5" />
+                      </div>
+                    )}
+                    <div>
+                      <span className="text-xs font-bold text-slate-900 block">Logo 2 (PNG)</span>
+                      <span className="text-[10px] text-slate-500 block">Resolusi tinggi</span>
+                    </div>
+                  </div>
+                  <label className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-900 border border-slate-300 font-bold text-xs rounded-xl cursor-pointer transition-all shrink-0">
+                    {isUploadingLogo2 ? 'Muat Naik...' : customLogoUrl2 ? 'Tukar' : 'Upload'}
+                    <input type="file" accept="image/*" onChange={handleLogoUpload2} className="hidden" />
+                  </label>
+                </div>
+              )}
             </div>
 
             <div className="space-y-2">
