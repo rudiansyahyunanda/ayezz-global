@@ -658,7 +658,7 @@ export async function getOrdersFromSupabase() {
       total: `RM ${Number(item.total_price || 0).toFixed(2)}`,
       paymentStatus: item.payment_status || 'pending',
       paymentId: item.payment_id || item.chip_purchase_id || '',
-      date: new Date(item.created_at).toLocaleDateString('en-MY', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
+      date: item.created_at ? new Date(item.created_at).toLocaleDateString('en-MY', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : new Date().toLocaleDateString('en-MY'),
       status: item.status || 'Pesanan Diterima'
     }));
   } catch (err) {

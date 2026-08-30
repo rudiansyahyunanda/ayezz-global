@@ -20,6 +20,12 @@ export default function ErrorBoundary({ error, reset }) {
         <p className="text-xs text-neutral-500 font-normal">
           Sistem mengalami masalah sementara saat memuatkan halaman. Sila tekan butang muat semula di bawah.
         </p>
+        {error?.message && (
+          <div className="mt-3 p-3 bg-rose-50 border border-rose-200 rounded-xl text-[11px] font-mono text-rose-700 text-left overflow-x-auto max-w-lg">
+            <span className="font-bold block uppercase mb-1">Butiran Ralat Sistem:</span>
+            <span>{error.message}</span>
+          </div>
+        )}
       </div>
 
       <div className="flex items-center space-x-3">

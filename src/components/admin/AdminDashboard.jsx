@@ -30,7 +30,8 @@ import {
   Tv,
   Film,
   KeyRound,
-  LogOut
+  LogOut,
+  Scissors
 } from 'lucide-react';
 import ImageUploadCropper from './ImageUploadCropper';
 import MultiImageUploadCropper from './MultiImageUploadCropper';
