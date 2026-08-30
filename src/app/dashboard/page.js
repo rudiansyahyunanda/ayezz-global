@@ -1799,43 +1799,43 @@ function DashboardContent() {
                       )}
 
                       {/* ========================================================== */}
-                      {/* LANGKAH 2: POTONGAN, LENGAN & SAIZ (PROGRESSIVE DISCLOSURE MOBILE-FIRST) */}
+                      {/* LANGKAH 2: POTONGAN, LENGAN & SAIZ (NATIVE APPLE STORE STYLE INLINE CONFIG) */}
                       {/* ========================================================== */}
                       {orderStep === 2 && (
-                        <div className="bg-white p-4 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-200/80 shadow-2xs space-y-6 w-full">
+                        <div className="bg-white p-4 sm:p-8 rounded-2xl sm:rounded-3xl border border-[#E5E7EB] shadow-2xs space-y-6 w-full font-sans">
                           
                           {/* STEP 2 HEADER */}
-                          <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+                          <div className="flex items-center justify-between border-b border-[#E5E7EB] pb-4">
                             <div>
-                              <span className="text-[10px] font-mono text-slate-400 font-bold uppercase tracking-widest block">LANGKAH 2 DARI 4</span>
-                              <h3 className="text-base sm:text-lg font-black uppercase text-slate-900 pt-0.5">Spesifikasi Potongan, Lengan & Saiz</h3>
+                              <span className="text-[10px] font-mono text-[#6B7280] font-bold uppercase tracking-widest block">LANGKAH 2 DARI 4</span>
+                              <h3 className="text-base sm:text-lg font-black uppercase text-[#111827] pt-0.5">Spesifikasi Potongan, Lengan & Saiz</h3>
                             </div>
 
-                            <span className="text-xs font-mono font-black text-slate-900 bg-slate-100 px-3 py-1.5 rounded-xl border border-slate-200">
+                            <span className="text-xs font-mono font-black text-[#111827] bg-[#F7F9FA] px-3 py-1.5 rounded-xl border border-[#E5E7EB]">
                               {groupCalculations.totalQty} pcs
                             </span>
                           </div>
 
-                          {/* FLATTENED CONTENT BODY (NO NESTED SCROLLING!) */}
+                          {/* INLINE CONTENT BODY (NO NESTED SCROLLING, NO POPUPS!) */}
                           <div className="space-y-6 w-full">
 
                             {/* RINGKASAN & PENGATURAN KUMPULAN POTONGAN */}
                             {groupCalculations.groupDetails.map((group, idx) => (
-                              <div key={group.id} className="p-4 sm:p-5 bg-slate-50/90 border border-slate-200/90 rounded-2xl space-y-4 shadow-2xs">
+                              <div key={group.id} className="p-4 sm:p-5 bg-[#F7F9FA] border border-[#E5E7EB] rounded-2xl space-y-5 shadow-2xs">
                                 
                                 {/* GROUP TITLE & REMOVE BUTTON */}
-                                <div className="flex items-center justify-between border-b border-slate-200/60 pb-2.5">
+                                <div className="flex items-center justify-between border-b border-[#E5E7EB] pb-3">
                                   <div className="flex items-center space-x-2.5">
-                                    <span className="w-6 h-6 rounded-lg bg-slate-900 text-white text-xs font-mono font-black flex items-center justify-center shrink-0">
+                                    <span className="w-6 h-6 rounded-lg bg-[#1A1F2B] text-white text-xs font-mono font-black flex items-center justify-center shrink-0">
                                       #{idx + 1}
                                     </span>
-                                    <span className="text-xs font-extrabold uppercase text-slate-900">
+                                    <span className="text-xs font-extrabold uppercase text-[#111827]">
                                       KUMPULAN #{idx + 1}: {group.cut?.name || 'Kolar'} • {group.sleeve?.name || 'Lengan'}
                                     </span>
                                   </div>
 
                                   <div className="flex items-center space-x-2">
-                                    <span className="text-xs font-mono font-bold text-slate-800 bg-white px-2.5 py-0.5 rounded-md border border-slate-200">
+                                    <span className="text-xs font-mono font-bold text-[#111827] bg-white px-2.5 py-0.5 rounded-md border border-[#E5E7EB]">
                                       {group.qty} pcs
                                     </span>
 
@@ -1853,11 +1853,11 @@ function DashboardContent() {
                                 </div>
 
                                 {/* PROGRESSIVE DISCLOSURE STEPS FOR THIS GROUP */}
-                                <div className="space-y-4 pt-1">
+                                <div className="space-y-5">
                                   
                                   {/* STEP 2.1: PILIH KOLAR (ALWAYS VISIBLE) */}
-                                  <div className="space-y-2">
-                                    <label className="text-[11px] font-extrabold text-slate-900 uppercase block">
+                                  <div className="space-y-2.5">
+                                    <label className="text-xs font-extrabold text-[#111827] uppercase tracking-wide block">
                                       1. Pilih Potongan Kolar:
                                     </label>
 
@@ -1869,20 +1869,20 @@ function DashboardContent() {
                                           <div
                                             key={cut.id}
                                             onClick={() => setGroupCutDirect(group.id, cut)}
-                                            className={`p-3 rounded-2xl border cursor-pointer transition-all flex flex-col items-center justify-between text-center space-y-2 ${
+                                            className={`p-3.5 rounded-2xl border cursor-pointer transition-all flex flex-col items-center justify-between text-center space-y-2 ${
                                               isSelected
-                                                ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
-                                                : 'bg-white text-slate-800 border-slate-200 hover:border-slate-400'
+                                                ? 'bg-[#1A1F2B] text-white border-[#1A1F2B] shadow-xs'
+                                                : 'bg-white text-[#111827] border-[#E5E7EB] hover:border-slate-300'
                                             }`}
                                           >
                                             <img
                                               src={cut.thumbnail || PLACEHOLDER_IMAGE}
                                               alt={cut.name}
-                                              className="w-14 h-14 object-contain bg-slate-50 rounded-xl p-1 shrink-0"
+                                              className="w-14 h-14 object-contain bg-[#F7F9FA] rounded-xl p-1 shrink-0"
                                             />
                                             <div className="w-full text-center">
                                               <span className="text-[11px] font-extrabold leading-snug block line-clamp-2">{cut.name}</span>
-                                              <span className={`text-[10px] font-mono block pt-0.5 ${isSelected ? 'text-slate-300' : 'text-slate-500'}`}>
+                                              <span className={`text-[10px] font-mono block pt-0.5 ${isSelected ? 'text-slate-300' : 'text-[#6B7280]'}`}>
                                                 {addOn > 0 ? `+RM ${addOn}` : 'Standard'}
                                               </span>
                                             </div>
@@ -1894,8 +1894,8 @@ function DashboardContent() {
 
                                   {/* STEP 2.2: PILIH LENGAN (REVEALED AFTER KOLAR IS SELECTED) */}
                                   {group.cut && (
-                                    <div className="space-y-2 pt-2 border-t border-slate-200/60 animate-fade-in">
-                                      <label className="text-[11px] font-extrabold text-slate-900 uppercase block">
+                                    <div className="space-y-2.5 pt-3 border-t border-[#E5E7EB] animate-fade-in">
+                                      <label className="text-xs font-extrabold text-[#111827] uppercase tracking-wide block">
                                         2. Pilih Jenis Lengan:
                                       </label>
 
@@ -1907,20 +1907,20 @@ function DashboardContent() {
                                             <div
                                               key={slv.id}
                                               onClick={() => setGroupSleeveDirect(group.id, slv)}
-                                              className={`p-3 rounded-2xl border cursor-pointer transition-all flex flex-col items-center justify-between text-center space-y-2 ${
+                                              className={`p-3.5 rounded-2xl border cursor-pointer transition-all flex flex-col items-center justify-between text-center space-y-2 ${
                                                 isSelected
-                                                  ? 'bg-slate-900 text-white border-slate-900 shadow-xs'
-                                                  : 'bg-white text-slate-800 border-slate-200 hover:border-slate-400'
+                                                  ? 'bg-[#1A1F2B] text-white border-[#1A1F2B] shadow-xs'
+                                                  : 'bg-white text-[#111827] border-[#E5E7EB] hover:border-slate-300'
                                               }`}
                                             >
                                               <img
                                                 src={slv.thumbnail || PLACEHOLDER_IMAGE}
                                                 alt={slv.name}
-                                                className="w-14 h-14 object-contain bg-slate-50 rounded-xl p-1 shrink-0"
+                                                className="w-14 h-14 object-contain bg-[#F7F9FA] rounded-xl p-1 shrink-0"
                                               />
                                               <div className="w-full text-center">
                                                 <span className="text-[11px] font-extrabold leading-snug block line-clamp-2">{slv.name}</span>
-                                                <span className={`text-[10px] font-mono block pt-0.5 ${isSelected ? 'text-slate-300' : 'text-slate-500'}`}>
+                                                <span className={`text-[10px] font-mono block pt-0.5 ${isSelected ? 'text-slate-300' : 'text-[#6B7280]'}`}>
                                                   {addOn > 0 ? `+RM ${addOn}` : 'Standard'}
                                                 </span>
                                               </div>
@@ -1931,26 +1931,92 @@ function DashboardContent() {
                                     </div>
                                   )}
 
-                                  {/* STEP 2.3: ATUR SAIZ & KUANTITI ACTION BUTTON (REVEALED AFTER LENGAN IS SELECTED) */}
+                                  {/* STEP 2.3: INLINE SIZE & QUANTITY STEPPER LIST (RULE 1 & 4 - NO MODALS, NO OVERLAYS!) */}
                                   {group.cut && group.sleeve && (
-                                    <div className="pt-2 border-t border-slate-200/60 animate-fade-in">
-                                      <button
-                                        type="button"
-                                        onClick={() => {
-                                          setActiveGroupIdForSize(group.id);
-                                          setIsMobileSizeModalOpen(true);
-                                        }}
-                                        className="w-full py-3.5 px-4 bg-slate-900 hover:bg-slate-800 text-white rounded-2xl font-extrabold text-xs flex items-center justify-between shadow-xs active:scale-98 transition-all cursor-pointer"
-                                      >
-                                        <div className="flex items-center space-x-2">
-                                          <Ruler className="w-4 h-4 text-emerald-400 shrink-0" />
-                                          <span>3. Atur Saiz & Kuantiti: <strong className="text-white font-mono">{group.qty} pcs</strong></span>
-                                        </div>
-                                        <div className="flex items-center space-x-1 text-slate-300 text-[11px] uppercase font-bold">
-                                          <span>Tetapkan Saiz</span>
-                                          <ChevronRight className="w-4 h-4 shrink-0 text-white" />
-                                        </div>
-                                      </button>
+                                    <div className="pt-4 border-t border-[#E5E7EB] space-y-4 animate-fade-in">
+                                      <div className="flex items-center justify-between">
+                                        <label className="text-xs font-black text-[#111827] uppercase tracking-wide block">
+                                          3. Atur Saiz & Kuantiti (Inline Stepper):
+                                        </label>
+                                        <span className="text-xs font-mono font-bold text-[#111827] bg-white px-2.5 py-1 rounded-lg border border-[#E5E7EB]">
+                                          {group.qty} pcs
+                                        </span>
+                                      </div>
+
+                                      {/* ADULT SIZES INLINE STEPPER LIST */}
+                                      <div className="space-y-1 bg-white border border-[#E5E7EB] rounded-2xl p-3 sm:p-4 divide-y divide-slate-100">
+                                        <span className="text-[10px] font-mono font-bold text-[#6B7280] uppercase tracking-wider block pb-2">
+                                          SAIZ DEWASA (ADULT)
+                                        </span>
+                                        {ADULT_SIZES.map((sz) => {
+                                          const q = Number(group.sizes?.[sz] || 0);
+                                          return (
+                                            <div key={sz} className="py-2.5 px-1 flex items-center justify-between hover:bg-[#F7F9FA] rounded-xl transition-colors">
+                                              <span className="text-xs font-extrabold text-[#111827] w-12">{sz}</span>
+
+                                              {/* INLINE STEPPER CONTROL */}
+                                              <div className="flex items-center space-x-2.5">
+                                                <button
+                                                  type="button"
+                                                  disabled={q <= 0}
+                                                  onClick={() => setGroupSizeQtyDirect(group.id, sz, Math.max(0, q - 1))}
+                                                  className="w-8 h-8 rounded-full bg-[#F7F9FA] border border-[#E5E7EB] text-[#111827] font-black text-sm flex items-center justify-center active:scale-95 disabled:opacity-30 cursor-pointer"
+                                                >
+                                                  -
+                                                </button>
+                                                <span className={`w-7 text-center text-xs font-mono font-black ${q > 0 ? 'text-[#111827]' : 'text-[#6B7280]/40'}`}>
+                                                  {q}
+                                                </span>
+                                                <button
+                                                  type="button"
+                                                  onClick={() => setGroupSizeQtyDirect(group.id, sz, q + 1)}
+                                                  className="w-8 h-8 rounded-full bg-[#1A1F2B] text-white font-black text-sm flex items-center justify-center active:scale-95 shadow-2xs cursor-pointer"
+                                                >
+                                                  +
+                                                </button>
+                                              </div>
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
+
+                                      {/* KIDS SIZES INLINE STEPPER LIST */}
+                                      <div className="space-y-1 bg-white border border-[#E5E7EB] rounded-2xl p-3 sm:p-4 divide-y divide-slate-100">
+                                        <span className="text-[10px] font-mono font-bold text-[#6B7280] uppercase tracking-wider block pb-2">
+                                          SAIZ KANAK-KANAK (KIDS)
+                                        </span>
+                                        {KIDS_SIZES.map((sz) => {
+                                          const q = Number(group.sizes?.[sz] || 0);
+                                          return (
+                                            <div key={sz} className="py-2.5 px-1 flex items-center justify-between hover:bg-[#F7F9FA] rounded-xl transition-colors">
+                                              <span className="text-xs font-extrabold text-[#111827] w-16">Saiz {sz}</span>
+
+                                              {/* INLINE STEPPER CONTROL */}
+                                              <div className="flex items-center space-x-2.5">
+                                                <button
+                                                  type="button"
+                                                  disabled={q <= 0}
+                                                  onClick={() => setGroupSizeQtyDirect(group.id, sz, Math.max(0, q - 1))}
+                                                  className="w-8 h-8 rounded-full bg-[#F7F9FA] border border-[#E5E7EB] text-[#111827] font-black text-sm flex items-center justify-center active:scale-95 disabled:opacity-30 cursor-pointer"
+                                                >
+                                                  -
+                                                </button>
+                                                <span className={`w-7 text-center text-xs font-mono font-black ${q > 0 ? 'text-[#111827]' : 'text-[#6B7280]/40'}`}>
+                                                  {q}
+                                                </span>
+                                                <button
+                                                  type="button"
+                                                  onClick={() => setGroupSizeQtyDirect(group.id, sz, q + 1)}
+                                                  className="w-8 h-8 rounded-full bg-[#1A1F2B] text-white font-black text-sm flex items-center justify-center active:scale-95 shadow-2xs cursor-pointer"
+                                                >
+                                                  +
+                                                </button>
+                                              </div>
+                                            </div>
+                                          );
+                                        })}
+                                      </div>
+
                                     </div>
                                   )}
 
@@ -1959,24 +2025,24 @@ function DashboardContent() {
                               </div>
                             ))}
 
-                            {/* BUTTON "+ TAMBAH POTONGAN LAIN" (DIRECTIVE 5) */}
+                            {/* BUTTON "+ TAMBAH POTONGAN BARU" (RULE 2) */}
                             <button
                               type="button"
                               onClick={addCutGroup}
-                              className="w-full py-3.5 bg-white hover:bg-slate-50 text-slate-900 font-extrabold text-xs uppercase tracking-wider rounded-2xl transition-all border border-dashed border-slate-300 inline-flex items-center justify-center space-x-2 cursor-pointer shadow-2xs"
+                              className="w-full py-3.5 bg-white hover:bg-[#F7F9FA] text-[#111827] font-extrabold text-xs uppercase tracking-wider rounded-2xl transition-all border border-dashed border-[#E5E7EB] inline-flex items-center justify-center space-x-2 cursor-pointer shadow-2xs"
                             >
-                              <Plus className="w-4 h-4 text-slate-900 shrink-0" />
-                              <span>+ Tambah Potongan Lain</span>
+                              <Plus className="w-4 h-4 text-[#111827] shrink-0" />
+                              <span>+ Tambah Potongan Baru</span>
                             </button>
 
                           </div>
 
-                          {/* DESKTOP FOOTER NAVIGATION (HIDDEN ON MOBILE TO AVOID DUPLICATE NAV BAR) */}
-                          <div className="pt-4 border-t border-slate-100 hidden md:flex items-center justify-between">
+                          {/* DESKTOP FOOTER NAVIGATION (HIDDEN ON MOBILE - RULE 5) */}
+                          <div className="pt-4 border-t border-[#E5E7EB] hidden md:flex items-center justify-between">
                             <button
                               type="button"
                               onClick={() => setOrderStep(1)}
-                              className="px-5 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer whitespace-nowrap shrink-0"
+                              className="px-5 py-2.5 bg-[#F7F9FA] hover:bg-slate-200 text-[#111827] font-bold text-xs uppercase tracking-wider rounded-xl transition-all cursor-pointer whitespace-nowrap shrink-0"
                             >
                               Kembali
                             </button>
@@ -1984,7 +2050,7 @@ function DashboardContent() {
                             <button
                               type="button"
                               onClick={() => setOrderStep(3)}
-                              className="px-6 py-3 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all inline-flex items-center space-x-2 cursor-pointer shadow-sm whitespace-nowrap shrink-0"
+                              className="px-6 py-3 bg-[#1A1F2B] hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all inline-flex items-center space-x-2 cursor-pointer shadow-sm whitespace-nowrap shrink-0"
                             >
                               <span>Teruskan</span>
                               <ChevronRight className="w-4 h-4 text-white shrink-0" />
@@ -2225,16 +2291,16 @@ function DashboardContent() {
                 </form>
               )}
 
-              {/* FIXED NATIVE MOBILE BOTTOM NAVIGATION BAR (DIRECTIVE 7 & 8) */}
+              {/* FIXED NATIVE MOBILE BOTTOM NAVIGATION BAR (RULE 3 & 5) */}
               {!orderSuccessData && (
-                <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-slate-200 p-3 sm:p-4 shadow-xl md:hidden font-sans">
+                <div className="fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-[#E5E7EB] p-3 sm:p-4 shadow-xl md:hidden font-sans">
                   <div className="flex items-center justify-between gap-3 max-w-lg mx-auto">
                     {/* Total Price Summary */}
                     <div className="min-w-0 flex-1">
-                      <span className="text-[9px] font-mono font-bold text-slate-400 uppercase tracking-widest block">ANGGARAN HARGA</span>
+                      <span className="text-[9px] font-mono font-bold text-[#6B7280] uppercase tracking-widest block">ANGGARAN HARGA</span>
                       <div className="flex items-baseline space-x-1 truncate">
-                        <span className="text-base font-black text-slate-900 truncate">RM {groupCalculations.totalPrice.toFixed(2)}</span>
-                        <span className="text-[10px] font-mono text-slate-500 font-bold">({groupCalculations.totalQty} pcs)</span>
+                        <span className="text-base font-black text-[#111827] truncate">RM {groupCalculations.totalPrice.toFixed(2)}</span>
+                        <span className="text-[10px] font-mono text-[#6B7280] font-bold">({groupCalculations.totalQty} pcs)</span>
                       </div>
                     </div>
 
@@ -2244,7 +2310,7 @@ function DashboardContent() {
                         <button
                           type="button"
                           onClick={() => setOrderStep(orderStep - 1)}
-                          className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-extrabold text-xs rounded-xl transition-all border border-slate-200 active:scale-95 whitespace-nowrap shrink-0 cursor-pointer"
+                          className="px-3.5 py-2.5 bg-[#F7F9FA] hover:bg-slate-200 text-[#111827] font-extrabold text-xs rounded-xl transition-all border border-[#E5E7EB] active:scale-95 whitespace-nowrap shrink-0 cursor-pointer"
                         >
                           ← Kembali
                         </button>
@@ -2254,7 +2320,7 @@ function DashboardContent() {
                         <button
                           type="button"
                           onClick={() => setOrderStep(orderStep + 1)}
-                          className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-95 flex items-center space-x-1 whitespace-nowrap shrink-0 cursor-pointer"
+                          className="px-4 py-2.5 bg-[#1A1F2B] hover:bg-slate-800 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-95 flex items-center space-x-1 whitespace-nowrap shrink-0 cursor-pointer"
                         >
                           <span>Teruskan: {orderStep === 1 ? 'Specs' : orderStep === 2 ? 'Fabrik' : 'Checkout'}</span>
                           <ChevronRight className="w-4 h-4 text-white shrink-0" />
@@ -2264,7 +2330,7 @@ function DashboardContent() {
                           type="submit"
                           form="order-wizard-form"
                           disabled={isSubmittingOrder || groupCalculations.totalQty <= 0}
-                          className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-95 flex items-center space-x-1 whitespace-nowrap shrink-0 cursor-pointer disabled:opacity-50"
+                          className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs uppercase tracking-wider rounded-xl transition-all shadow-md active:scale-95 flex items-center space-x-1 whitespace-nowrap shrink-0 cursor-pointer disabled:opacity-50"
                         >
                           <span>Bayar Tempahan</span>
                           <ChevronRight className="w-4 h-4 text-white shrink-0" />
