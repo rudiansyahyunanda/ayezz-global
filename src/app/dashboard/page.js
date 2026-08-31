@@ -53,8 +53,11 @@ import {
   Ruler,
   PlusCircle,
   MinusCircle,
-  ChevronUp
+  ChevronUp,
+  Heart
 } from 'lucide-react';
+
+import InteractiveProductCard from '../../components/InteractiveProductCard';
 
 import { getCurrentUser, logoutUser, updateUserProfile } from '../../lib/authService';
 import {
@@ -66,6 +69,8 @@ import {
   getFabricTypes,
   getDesignTemplates,
   saveOrderToSupabase,
+  getUserFavorites,
+  toggleUserFavorite,
   FALLBACK_SLEEVE_TYPES,
   PLACEHOLDER_IMAGE
 } from '../../lib/supabaseService';
@@ -88,6 +93,7 @@ function DashboardContent() {
   const [user, setUser] = useState(null);
   const [orders, setOrders] = useState([]);
   const [templates, setTemplates] = useState([]);
+  const [userFavorites, setUserFavorites] = useState([]);
   const [categories, setCategories] = useState([]);
   const [subCategories, setSubCategories] = useState([]);
   const [cutTypes, setCutTypes] = useState(FALLBACK_CUTS);
@@ -321,17 +327,19 @@ function DashboardContent() {
         }));
 
         // Load User Orders, Cut Types, Sleeve Types, Fabric Types, Design Templates, Categories & Subcategories directly from Supabase DB
-        const [userOrders, cuts, sleeves, fabrics, tpls, cats, subs] = await Promise.all([
+        const [userOrders, cuts, sleeves, fabrics, tpls, cats, subs, favs] = await Promise.all([
           getUserOrdersFromSupabase(currentUser.email),
           getCutTypes(),
           getSleeveTypes(),
           getFabricTypes(),
           getDesignTemplates(),
           getCategories(),
-          getSubCategories()
+          getSubCategories(),
+          getUserFavorites(currentUser.email)
         ]);
 
         setOrders(userOrders || []);
+        setUserFavorites(favs || []);
         if (cats && cats.length > 0) setCategories(cats);
         if (subs && subs.length > 0) setSubCategories(subs);
 
@@ -973,6 +981,18 @@ function DashboardContent() {
             >
               <FileText className="w-4 h-4 text-slate-400" />
               <span>Invois & Resit</span>
+            </button>
+
+            <button
+              onClick={() => { setActiveTab('favorites'); setIsMobileSidebarOpen(false); }}
+              className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors font-bold ${
+                activeTab === 'favorites'
+                  ? 'bg-slate-800 text-white font-extrabold shadow-xs border-l-4 border-white'
+                  : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+              }`}
+            >
+              <Heart className="w-4 h-4 text-slate-400" />
+              <span>Katalog Disukai</span>
             </button>
 
             <button
@@ -2777,6 +2797,51 @@ function DashboardContent() {
           )}
 
           {/* TAB 4: INVOIS & RESIT */}
+          {activeTab === 'favorites' && (
+            <div className="space-y-6">
+              <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="flex items-center space-x-3">
+                  <div className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center shrink-0">
+                    <Heart className="w-5 h-5 text-red-500 fill-red-500" />
+                  </div>
+                  <div>
+                    <h2 className="text-lg font-bold text-slate-900 uppercase tracking-wider">Katalog Disukai</h2>
+                    <p className="text-xs text-slate-500">Senarai reka bentuk yang anda gemari</p>
+                  </div>
+                </div>
+              </div>
+
+              {userFavorites.length === 0 ? (
+                <div className="bg-white rounded-2xl border border-slate-200 p-12 flex flex-col items-center justify-center text-center">
+                  <Heart className="w-12 h-12 text-slate-300 mb-4" />
+                  <h3 className="text-slate-900 font-bold mb-2 uppercase">Tiada Kegemaran</h3>
+                  <p className="text-xs text-slate-500 max-w-sm mb-6">Anda belum menandakan mana-mana katalog reka bentuk sebagai kegemaran.</p>
+                  <Link href="/katalog" className="px-5 py-2.5 bg-slate-900 text-white text-xs font-bold uppercase tracking-wider rounded-lg hover:bg-slate-800 transition-colors">
+                    Lihat Katalog
+                  </Link>
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  {templates.filter(t => userFavorites.includes(t.id)).map(item => (
+                    <InteractiveProductCard
+                      key={item.id}
+                      item={item}
+                      isFavorited={true}
+                      onToggleFavorite={async (isFav) => {
+                        await toggleUserFavorite(user.email, item.id, isFav);
+                        setUserFavorites(prev => prev.filter(id => id !== item.id));
+                      }}
+                      currentUser={user}
+                      onClick={() => {
+                        window.location.href = `/katalog?category=${item.category}&templateName=${item.name}`;
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
           {activeTab === 'invoices' && (
             <div className="space-y-6">
               <div className="bg-white p-6 sm:p-8 rounded-2xl border border-slate-200/80 shadow-2xs space-y-6">

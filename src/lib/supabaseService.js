@@ -1205,3 +1205,58 @@ export async function deleteHeroSlideFromSupabase(slideId) {
     console.error('deleteHeroSlideFromSupabase error:', err);
   }
 }
+
+// ==========================================
+// USER FAVORITES (HEART)
+// ==========================================
+export async function getUserFavorites(userEmail) {
+  if (!userEmail) return [];
+  try {
+    if (isSupabaseConnected) {
+      const { data, error } = await supabase
+        .from('user_favorites')
+        .select('template_id')
+        .eq('user_email', userEmail);
+      if (!error && data) {
+        return data.map(d => d.template_id);
+      }
+    }
+  } catch (err) {
+    console.warn('Fallback to local favorites:', err);
+  }
+  // Fallback
+  return JSON.parse(localStorage.getItem(`ayezz_favs_${userEmail}`) || '[]');
+}
+
+export async function toggleUserFavorite(userEmail, templateId, isFavorited) {
+  if (!userEmail || !templateId) return false;
+  try {
+    if (isSupabaseConnected) {
+      if (isFavorited) {
+        // Add
+        const { error } = await supabase
+          .from('user_favorites')
+          .insert([{ user_email: userEmail, template_id: templateId }]);
+        if (error && error.code !== '23505') throw error; // Ignore unique violation
+      } else {
+        // Remove
+        const { error } = await supabase
+          .from('user_favorites')
+          .delete()
+          .match({ user_email: userEmail, template_id: templateId });
+        if (error) throw error;
+      }
+    }
+  } catch (err) {
+    console.warn('Fallback to local toggle:', err);
+  }
+  // Fallback
+  let favs = JSON.parse(localStorage.getItem(`ayezz_favs_${userEmail}`) || '[]');
+  if (isFavorited && !favs.includes(templateId)) {
+    favs.push(templateId);
+  } else if (!isFavorited) {
+    favs = favs.filter(id => id !== templateId);
+  }
+  localStorage.setItem(`ayezz_favs_${userEmail}`, JSON.stringify(favs));
+  return true;
+}

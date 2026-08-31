@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { Heart } from 'lucide-react';
 import TransparentImage from './TransparentImage';
 import { PLACEHOLDER_IMAGE } from '../lib/supabaseService';
 
-export default function CleanPricelessProductCard({ item, onClick, isPriority }) {
+export default function CleanPricelessProductCard({ item, onClick, isPriority, isFavorited = false, onToggleFavorite, currentUser }) {
   const imageList = Array.isArray(item.images) && item.images.length > 0
     ? item.images
     : (item.thumbnail ? [item.thumbnail] : [PLACEHOLDER_IMAGE]);
@@ -46,6 +47,22 @@ export default function CleanPricelessProductCard({ item, onClick, isPriority })
             className="w-full h-full object-contain img-crisp"
           />
         </div>
+
+        {/* Heart Icon (Top Left) */}
+        {currentUser && onToggleFavorite && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleFavorite(!isFavorited);
+            }}
+            className="absolute top-2 left-2 sm:top-3 sm:left-3 z-20 w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center rounded-full bg-white/80 hover:bg-white backdrop-blur-sm shadow-xs transition-all active:scale-95"
+            aria-label={isFavorited ? "Buang dari Kegemaran" : "Tambah ke Kegemaran"}
+          >
+            <Heart 
+              className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-colors ${isFavorited ? 'fill-red-500 text-red-500' : 'text-[#111111]'}`} 
+            />
+          </button>
+        )}
 
         {/* Minimalist Image Indicator Dots if multiple images */}
         {imageList.length > 1 && (

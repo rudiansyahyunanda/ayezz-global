@@ -19,7 +19,8 @@ import {
   User,
   Play,
   Film,
-  X
+  X,
+  Heart
 } from 'lucide-react';
 import ProductOrderModal from '../components/modals/ProductOrderModal';
 import HeroCarousel from '../components/HeroCarousel';
@@ -222,8 +223,34 @@ export default function SmoothHeaderHomepage() {
           </nav>
 
           <div className="flex items-center space-x-1 sm:space-x-2">
+            
+            {/* Heart Icon (Favorites) */}
+            <Link
+              href="/dashboard?tab=favorites"
+              className="relative group w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full hover:bg-neutral-100 transition-colors"
+              aria-label="Katalog Disukai"
+            >
+              <Heart className="w-[18px] h-[18px] sm:w-5 sm:h-5 text-[#111111]" />
+              <div className="absolute right-0 top-full mt-1 w-max bg-white border border-neutral-200 shadow-lg rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 p-2 text-center">
+                <div className="text-xs font-bold text-[#111111]">Katalog Disukai</div>
+              </div>
+            </Link>
+
+            {/* Bag Icon (Order History) */}
+            <Link
+              href="/dashboard?tab=orders"
+              className="relative group w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full hover:bg-neutral-100 transition-colors"
+              aria-label="Sejarah Pesanan"
+            >
+              <ShoppingBag className="w-[18px] h-[18px] sm:w-5 sm:h-5 text-[#111111]" />
+              <div className="absolute right-0 top-full mt-1 w-max bg-white border border-neutral-200 shadow-lg rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 p-2 text-center">
+                <div className="text-xs font-bold text-[#111111]">Sejarah Pesanan</div>
+              </div>
+            </Link>
+
+            {/* User Icon */}
             {currentUser ? (
-              <div className="relative group">
+              <div className="relative group ml-1">
                 <Link
                   href="/dashboard"
                   className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full hover:bg-neutral-100 transition-colors"
@@ -238,7 +265,7 @@ export default function SmoothHeaderHomepage() {
                 </div>
               </div>
             ) : (
-              <div className="relative group">
+              <div className="relative group ml-1">
                 <Link
                   href="/login"
                   className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full hover:bg-neutral-100 transition-colors"

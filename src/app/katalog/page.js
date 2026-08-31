@@ -11,9 +11,11 @@ import {
   Settings,
   ShoppingBag,
   SlidersHorizontal,
+  SlidersHorizontal,
   User,
   RotateCcw,
-  Sparkles
+  Sparkles,
+  Heart
 } from 'lucide-react';
 import InteractiveProductCard from '../../components/InteractiveProductCard';
 import ProductPreviewModal from '../../components/modals/ProductPreviewModal';
@@ -23,7 +25,9 @@ import {
   getDesignTemplates,
   getCategories,
   getCutTypes,
-  getFabricTypes
+  getFabricTypes,
+  getUserFavorites,
+  toggleUserFavorite
 } from '../../lib/supabaseService';
 import {
   DESIGN_TEMPLATES,
@@ -75,6 +79,7 @@ function SpaciousCatalogContent() {
   const [currentUser, setCurrentUser] = useState(null);
   const [selectedProduct, setSelectedProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [userFavorites, setUserFavorites] = useState([]);
 
   useEffect(() => {
     async function loadAllData() {
@@ -94,6 +99,10 @@ function SpaciousCatalogContent() {
         setCutTypes(Array.isArray(fetchedCuts) ? fetchedCuts : []);
         setFabricTypes(Array.isArray(fetchedFabrics) ? fetchedFabrics : []);
         setCurrentUser(usr);
+        if (usr?.email) {
+          const favs = await getUserFavorites(usr.email);
+          setUserFavorites(favs || []);
+        }
       } catch (err) {
         console.error('Error loading catalog data from Supabase:', err);
         setTemplates([]);
@@ -112,6 +121,14 @@ function SpaciousCatalogContent() {
       setSelectedSubCategory('Semua');
     }
   }, [initialCategoryQuery]);
+
+  const handleToggleFavorite = async (templateId, isFavorited) => {
+    if (!currentUser?.email) return;
+    await toggleUserFavorite(currentUser.email, templateId, isFavorited);
+    setUserFavorites(prev => 
+      isFavorited ? [...prev, templateId] : prev.filter(id => id !== templateId)
+    );
+  };
 
   // Helper to find sub-categories dynamically from Supabase database categories & templates
   const getSubCategoriesForCategory = (catTitle) => {
@@ -239,8 +256,8 @@ function SpaciousCatalogContent() {
             <Link href="/katalog" className="text-[#111111] border-b-2 border-[#111111] pb-1 font-bold">Katalog Desain</Link>
           </nav>
 
-          <div className="flex items-center space-x-5 text-[#111111]">
-            <div className="relative hidden sm:block">
+          <div className="flex items-center space-x-1 sm:space-x-2 text-[#111111]">
+            <div className="relative hidden sm:block mr-2">
               <input
                 type="text"
                 placeholder="Cari..."
@@ -253,21 +270,60 @@ function SpaciousCatalogContent() {
               <Search className="w-3.5 h-3.5 text-neutral-400 absolute left-3 top-1/2 -translate-y-1/2" />
             </div>
 
+            {/* Heart Icon (Favorites) */}
+            <Link
+              href="/dashboard?tab=favorites"
+              className="relative group w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full hover:bg-neutral-100 transition-colors"
+              aria-label="Katalog Disukai"
+            >
+              <Heart className="w-[18px] h-[18px] sm:w-5 sm:h-5 text-[#111111]" />
+              <div className="absolute right-0 top-full mt-1 w-max bg-white border border-neutral-200 shadow-lg rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 p-2 text-center">
+                <div className="text-xs font-bold text-[#111111]">Katalog Disukai</div>
+              </div>
+            </Link>
+
+            {/* Bag Icon (Order History) */}
+            <Link
+              href="/dashboard?tab=orders"
+              className="relative group w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full hover:bg-neutral-100 transition-colors"
+              aria-label="Sejarah Pesanan"
+            >
+              <ShoppingBag className="w-[18px] h-[18px] sm:w-5 sm:h-5 text-[#111111]" />
+              <div className="absolute right-0 top-full mt-1 w-max bg-white border border-neutral-200 shadow-lg rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 p-2 text-center">
+                <div className="text-xs font-bold text-[#111111]">Sejarah Pesanan</div>
+              </div>
+            </Link>
+
             {currentUser ? (
-              <Link
-                href="/dashboard"
-                className="px-3.5 py-1.5 bg-[#111111] text-white hover:bg-neutral-800 font-bold text-[11px] uppercase tracking-widest rounded-full transition-all flex items-center space-x-1.5"
-              >
-                <User className="w-3.5 h-3.5 text-white" />
-                <span className="line-clamp-1 max-w-[100px]">{currentUser.fullName || 'Dashboard'}</span>
-              </Link>
+              <div className="relative group ml-1">
+                <Link
+                  href="/dashboard"
+                  className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full hover:bg-neutral-100 transition-colors"
+                  aria-label="Dashboard Pengguna"
+                >
+                  <User className="w-[18px] h-[18px] sm:w-5 sm:h-5 text-[#111111]" />
+                </Link>
+                {/* Hover Tooltip */}
+                <div className="absolute right-0 top-full mt-1 w-48 bg-white border border-neutral-200 shadow-lg rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 p-3">
+                  <div className="text-xs sm:text-sm font-bold text-[#111111] line-clamp-1">{currentUser.fullName || 'Pengguna'}</div>
+                  <div className="text-[10px] sm:text-xs text-neutral-500 mt-1">Urus Profil & Tempahan</div>
+                </div>
+              </div>
             ) : (
-              <Link
-                href="/login?redirect=/katalog"
-                className="px-3.5 py-1.5 bg-[#111111] text-white hover:bg-neutral-800 font-bold text-[11px] uppercase tracking-widest rounded-full transition-all"
-              >
-                Log Masuk
-              </Link>
+              <div className="relative group ml-1">
+                <Link
+                  href="/login?redirect=/katalog"
+                  className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full hover:bg-neutral-100 transition-colors"
+                  aria-label="Log Masuk"
+                >
+                  <User className="w-[18px] h-[18px] sm:w-5 sm:h-5 text-[#111111]" />
+                </Link>
+                {/* Hover Tooltip */}
+                <div className="absolute right-0 top-full mt-1 w-36 bg-white border border-neutral-200 shadow-lg rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 p-3 text-center">
+                  <div className="text-xs sm:text-sm font-bold text-[#111111]">Log Masuk</div>
+                  <div className="text-[10px] text-neutral-500 mt-1">Daftar / Log Masuk</div>
+                </div>
+              </div>
             )}
 
             <Link href="/admin" className="hover:text-neutral-600 transition-colors" title="Panel Admin">
@@ -521,6 +577,9 @@ function SpaciousCatalogContent() {
                   item={item}
                   isPriority={idx < 5}
                   onClick={() => setSelectedProduct(item)}
+                  isFavorited={userFavorites.includes(item.id)}
+                  onToggleFavorite={(isFav) => handleToggleFavorite(item.id, isFav)}
+                  currentUser={currentUser}
                 />
               ))}
             </div>
