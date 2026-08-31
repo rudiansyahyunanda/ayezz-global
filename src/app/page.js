@@ -91,7 +91,8 @@ export default function SmoothHeaderHomepage() {
     elapsedBeforePauseRef.current = 0;
     slideStartTimeRef.current = Date.now();
     pauseTimeRef.current = 0;
-    setActiveHeroSlide((prev) => (prev + 1) % heroSlides.filter(s => s.is_active).length || 1);
+    const activeCount = heroSlides.filter(s => s.is_active).length;
+    setActiveHeroSlide((prev) => activeCount > 0 ? (prev + 1) % activeCount : 0);
   };
 
   const prevHeroSlide = () => {
@@ -239,7 +240,7 @@ export default function SmoothHeaderHomepage() {
       </header>
 
       {/* 3. HERO SHOWCASE SECTION (NIKE REPLICA DESIGN) */}
-      <section className="relative w-full overflow-hidden bg-black min-h-[75vh] sm:min-h-[85vh] lg:min-h-screen flex items-center">
+      <section className="relative w-full overflow-hidden bg-black h-[60vh] min-h-[500px] lg:min-h-[650px] lg:max-h-[800px] flex items-center">
         
         {/* Backgrounds */}
         {heroSlides.filter(s => s.is_active).sort((a, b) => a.order_index - b.order_index).map((slide, idx) => (
@@ -279,7 +280,7 @@ export default function SmoothHeaderHomepage() {
             <div className="w-full flex items-center justify-start lg:justify-center mb-6 lg:mb-10">
               {heroSlides.filter(s => s.is_active).sort((a, b) => a.order_index - b.order_index).map((slide, idx) => (
                 slide.slide_type === 'carousel' ? (
-                  <div key={`carousel-${slide.id}`} className={`relative w-full max-w-xl transition-all duration-1000 ease-out transform ${activeHeroSlide === idx ? 'translate-y-0 opacity-100 pointer-events-auto' : 'translate-y-8 opacity-0 pointer-events-none absolute'}`}>
+                  <div key={`carousel-${slide.id}`} className={`relative w-full max-w-sm sm:max-w-md transition-all duration-1000 ease-out transform ${activeHeroSlide === idx ? 'translate-y-0 opacity-100 pointer-events-auto' : 'translate-y-8 opacity-0 pointer-events-none absolute'}`}>
                     <HeroCarousel />
                   </div>
                 ) : null
@@ -293,7 +294,7 @@ export default function SmoothHeaderHomepage() {
                 <div key={`text-${slide.id}`} className={`col-start-1 row-start-1 space-y-2 sm:space-y-4 transition-all duration-1000 ease-out transform ${activeHeroSlide === idx ? 'translate-y-0 opacity-100 pointer-events-auto z-10' : 'translate-y-4 opacity-0 pointer-events-none z-0'}`}>
                   {/* EDITORIAL HEADLINE TYPOGRAPHY - Nike Futura ND */}
                   <h1 
-                    className="text-4xl sm:text-6xl lg:text-8xl text-white tracking-tighter leading-[0.9] uppercase mx-auto"
+                    className="text-4xl sm:text-6xl lg:text-8xl text-white tracking-normal leading-[0.9] uppercase mx-auto [&_span]:!text-white"
                     style={{ fontFamily: "'Nike Futura ND', Impact, sans-serif" }}
                     dangerouslySetInnerHTML={{ __html: slide.headline_html }}
                   />
