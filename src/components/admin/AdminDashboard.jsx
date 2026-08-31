@@ -74,6 +74,10 @@ import {
   getShowcaseFeatureFromSupabase,
   saveShowcaseFeatureToSupabase,
   DEFAULT_SHOWCASE_FEATURE,
+  getHeroSlidesFromSupabase,
+  saveHeroSlideToSupabase,
+  deleteHeroSlideFromSupabase,
+  DEFAULT_HERO_SLIDES,
   PLACEHOLDER_IMAGE
 } from '../../lib/supabaseService';
 import { updateAdminMasterPin, getAdminUsersList, addNewAdminAccount, logoutAdmin } from '../../lib/authService';
@@ -103,6 +107,8 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
   const [storeSettings, setStoreSettings] = useState({ storeName: 'AYEZZ GLOBAL', whatsappNumber: '6287818310416', currencySymbol: 'RM' });
   const [showcaseFeature, setShowcaseFeature] = useState(DEFAULT_SHOWCASE_FEATURE);
   const [isSavingShowcase, setIsSavingShowcase] = useState(false);
+  const [heroSlides, setHeroSlides] = useState([]);
+  const [isSavingHeroSlide, setIsSavingHeroSlide] = useState(false);
 
   const [adminPinInput, setAdminPinInput] = useState('');
   const [adminPinNotice, setAdminPinNotice] = useState('');
@@ -128,7 +134,7 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
   const fetchAllData = async () => {
     setIsLoading(true);
     try {
-      const [cats, subs, cuts, sleeves, fabs, tpls, ords, settings, uList, showcase, admins] = await Promise.all([
+      const [cats, subs, cuts, sleeves, fabs, tpls, ords, settings, uList, showcase, admins, slides] = await Promise.all([
         getCategories(),
         getSubCategories(),
         getCutTypes(),
@@ -139,7 +145,8 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
         getStoreSettingsFromSupabase(),
         getUsersFromSupabase(),
         getShowcaseFeatureFromSupabase(),
-        getAdminUsersList()
+        getAdminUsersList(),
+        getHeroSlidesFromSupabase()
       ]);
       setCategories(cats);
       setSubCategoryItems(subs || []);
@@ -150,8 +157,9 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
       setOrders(ords);
       if (settings) setStoreSettings(settings);
       setSystemUsers(uList || []);
+      setShowcaseFeature(showcase);
       setAdminAccounts(admins || []);
-      if (showcase) setShowcaseFeature(showcase);
+      setHeroSlides(slides || []);
     } catch (err) {
       console.warn('Error loading data:', err);
     } finally {
@@ -534,6 +542,16 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
             >
               <Tv className="w-4 h-4 text-slate-400" />
               <span>Lihat Lebih Dekat</span>
+            </button>
+
+            <button
+              onClick={() => { setCurrentTab('hero_slides'); setSelectedParentCategory(null); }}
+              className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors ${
+                currentTab === 'hero_slides' ? 'bg-slate-800 text-white font-semibold shadow-xs' : 'text-slate-400 hover:text-white hover:bg-slate-800/50'
+              }`}
+            >
+              <Film className="w-4 h-4 text-slate-400" />
+              <span>Pengaturan Hero</span>
             </button>
 
             <button
@@ -945,6 +963,187 @@ export default function AdminDashboard({ onSwitchToStorefront, onLogoutAdmin }) 
                     )}
                   </tbody>
                 </table>
+              </div>
+            </div>
+          )}
+
+          {/* TAB: HERO SLIDES (PENGATURAN HERO) */}
+          {currentTab === 'hero_slides' && (
+            <div className="bg-white rounded-xl border border-slate-200/80 shadow-xs p-6 space-y-6">
+              <div className="flex items-center justify-between pb-4 border-b border-slate-100">
+                <div>
+                  <h2 className="text-sm font-bold text-slate-900 uppercase tracking-tight">Pengaturan Hero Utama</h2>
+                  <p className="text-xs text-slate-500 mt-1">Urus tampilan Hero pada laman utama (Slide 1, Slide 2, dst).</p>
+                </div>
+                <button
+                  onClick={async () => {
+                    const newSlide = {
+                      id: `hero_${Date.now()}`,
+                      is_active: true,
+                      order_index: heroSlides.length,
+                      slide_type: 'video',
+                      media_url: '',
+                      badge_text: 'LABEL BARU',
+                      headline_html: 'JUDUL <br class="hidden sm:block" />\n<span class="text-neutral-500 font-extrabold tracking-normal">BARU</span>',
+                      description: 'Keterangan slide baru...'
+                    };
+                    setHeroSlides([...heroSlides, newSlide]);
+                    await saveHeroSlideToSupabase(newSlide);
+                  }}
+                  className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white font-semibold text-xs rounded-lg inline-flex items-center space-x-1.5 transition-colors shadow-xs active:scale-95"
+                >
+                  <Plus className="w-3.5 h-3.5" /> <span>Tambah Slide</span>
+                </button>
+              </div>
+
+              <div className="space-y-6">
+                {heroSlides.length === 0 ? (
+                  <div className="text-center py-10 text-slate-400 text-sm font-mono border-2 border-dashed border-slate-200 rounded-xl">
+                    Tiada hero slide dijumpai.
+                  </div>
+                ) : (
+                  heroSlides.sort((a, b) => a.order_index - b.order_index).map((slide, index) => (
+                    <div key={slide.id} className="p-5 border border-slate-200 rounded-xl bg-slate-50/50 space-y-4">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center space-x-3">
+                          <span className="font-mono font-bold text-xs bg-slate-200 text-slate-600 px-2 py-1 rounded">
+                            Slide {index + 1}
+                          </span>
+                          <span className="text-xs font-semibold text-slate-500">
+                            ID: {slide.id}
+                          </span>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                          <label className="flex items-center space-x-2 cursor-pointer">
+                            <input
+                              type="checkbox"
+                              checked={slide.is_active}
+                              onChange={async (e) => {
+                                const active = e.target.checked;
+                                const updated = { ...slide, is_active: active };
+                                setHeroSlides(prev => prev.map(s => s.id === slide.id ? updated : s));
+                                await saveHeroSlideToSupabase(updated);
+                              }}
+                              className="w-4 h-4 text-emerald-500 rounded border-slate-300 focus:ring-emerald-500"
+                            />
+                            <span className="text-xs font-semibold text-slate-700">Aktif</span>
+                          </label>
+                          <button
+                            onClick={async () => {
+                              if (confirm('Padam slide ini?')) {
+                                setHeroSlides(prev => prev.filter(s => s.id !== slide.id));
+                                await deleteHeroSlideFromSupabase(slide.id);
+                              }
+                            }}
+                            className="p-1.5 text-rose-500 hover:bg-rose-100 rounded-md transition-colors"
+                            title="Padam Slide"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        {/* Kiri: Media */}
+                        <div className="space-y-3">
+                          <label className="text-xs font-bold text-slate-700 uppercase">Tipe Slide (Media)</label>
+                          <select
+                            value={slide.slide_type}
+                            onChange={(e) => setHeroSlides(prev => prev.map(s => s.id === slide.id ? { ...s, slide_type: e.target.value } : s))}
+                            className="w-full text-xs font-semibold px-3 py-2 border border-slate-300 rounded-lg outline-none focus:border-slate-900"
+                          >
+                            <option value="video">Video Latar Belakang</option>
+                            <option value="image">Gambar Statik</option>
+                            <option value="carousel">Carousel (Koleksi Produk)</option>
+                          </select>
+
+                          {slide.slide_type !== 'carousel' && (
+                            <div className="mt-3">
+                              <label className="text-xs font-bold text-slate-700 uppercase block mb-2">Media URL (Video / Imej)</label>
+                              <div className="flex items-center space-x-2">
+                                <input
+                                  type="text"
+                                  value={slide.media_url || ''}
+                                  onChange={(e) => setHeroSlides(prev => prev.map(s => s.id === slide.id ? { ...s, media_url: e.target.value } : s))}
+                                  placeholder={slide.slide_type === 'video' ? '/hero-1.webm' : 'URL Gambar...'}
+                                  className="flex-1 text-xs px-3 py-2 border border-slate-300 rounded-lg outline-none focus:border-slate-900"
+                                />
+                              </div>
+                              <p className="text-[10px] text-slate-500 mt-1.5 leading-relaxed">
+                                Untuk video, gunakan fail .webm atau .mp4 yang disimpan di folder <code>public/</code> (cth: <code>/hero-1.webm</code>). Untuk gambar, masukkan pautan penuh atau unggah imej.
+                              </p>
+                              {slide.slide_type === 'image' && (
+                                <div className="mt-2">
+                                  <ImageUploadCropper
+                                    aspectRatio={16/9}
+                                    onUploadComplete={(url) => {
+                                      setHeroSlides(prev => prev.map(s => s.id === slide.id ? { ...s, media_url: url } : s));
+                                    }}
+                                  />
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Kanan: Teks & Kandungan */}
+                        <div className="space-y-3">
+                          <div>
+                            <label className="text-xs font-bold text-slate-700 uppercase block mb-1">Teks Badge (Kecil)</label>
+                            <input
+                              type="text"
+                              value={slide.badge_text || ''}
+                              onChange={(e) => setHeroSlides(prev => prev.map(s => s.id === slide.id ? { ...s, badge_text: e.target.value } : s))}
+                              className="w-full text-xs px-3 py-2 border border-slate-300 rounded-lg outline-none focus:border-slate-900 font-mono"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-xs font-bold text-slate-700 uppercase block mb-1">Judul Utama (HTML)</label>
+                            <textarea
+                              value={slide.headline_html || ''}
+                              onChange={(e) => setHeroSlides(prev => prev.map(s => s.id === slide.id ? { ...s, headline_html: e.target.value } : s))}
+                              rows={3}
+                              className="w-full text-[11px] font-mono p-3 border border-slate-300 rounded-lg outline-none focus:border-slate-900"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-xs font-bold text-slate-700 uppercase block mb-1">Deskripsi</label>
+                            <textarea
+                              value={slide.description || ''}
+                              onChange={(e) => setHeroSlides(prev => prev.map(s => s.id === slide.id ? { ...s, description: e.target.value } : s))}
+                              rows={3}
+                              className="w-full text-xs p-3 border border-slate-300 rounded-lg outline-none focus:border-slate-900"
+                            />
+                          </div>
+                          <div>
+                            <label className="text-xs font-bold text-slate-700 uppercase block mb-1">Susunan (Order Index)</label>
+                            <input
+                              type="number"
+                              value={slide.order_index}
+                              onChange={(e) => setHeroSlides(prev => prev.map(s => s.id === slide.id ? { ...s, order_index: parseInt(e.target.value) || 0 } : s))}
+                              className="w-24 text-xs px-3 py-2 border border-slate-300 rounded-lg outline-none focus:border-slate-900 font-mono"
+                            />
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="pt-3 border-t border-slate-200 flex justify-end">
+                        <button
+                          onClick={async () => {
+                            setIsSavingHeroSlide(true);
+                            await saveHeroSlideToSupabase(slide);
+                            setIsSavingHeroSlide(false);
+                            alert('Slide disimpan!');
+                          }}
+                          disabled={isSavingHeroSlide}
+                          className="px-6 py-2 bg-[#111111] hover:bg-neutral-800 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold text-xs rounded-lg transition-colors shadow-sm"
+                        >
+                          {isSavingHeroSlide ? 'Menyimpan...' : 'Simpan Perubahan Slide'}
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
             </div>
           )}

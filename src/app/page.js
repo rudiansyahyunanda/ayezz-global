@@ -31,6 +31,8 @@ import {
   getDesignTemplates,
   getShowcaseFeatureFromSupabase,
   DEFAULT_SHOWCASE_FEATURE,
+  getHeroSlidesFromSupabase,
+  DEFAULT_HERO_SLIDES,
   PLACEHOLDER_IMAGE
 } from '../lib/supabaseService';
 import { MAIN_CATALOGS, DESIGN_TEMPLATES } from '../data/sublimationProducts';
@@ -41,6 +43,7 @@ export default function SmoothHeaderHomepage() {
   const [categories, setCategories] = useState([]);
   const [templates, setTemplates] = useState([]);
   const [showcaseFeature, setShowcaseFeature] = useState(DEFAULT_SHOWCASE_FEATURE);
+  const [heroSlides, setHeroSlides] = useState(DEFAULT_HERO_SLIDES);
   const [isVideoModalOpen, setIsVideoModalOpen] = useState(false);
   const [orderedProduct, setOrderedProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -88,7 +91,7 @@ export default function SmoothHeaderHomepage() {
     elapsedBeforePauseRef.current = 0;
     slideStartTimeRef.current = Date.now();
     pauseTimeRef.current = 0;
-    setActiveHeroSlide((prev) => (prev === 0 ? 1 : 0));
+    setActiveHeroSlide((prev) => (prev + 1) % heroSlides.filter(s => s.is_active).length || 1);
   };
 
   const prevHeroSlide = () => {
@@ -96,16 +99,21 @@ export default function SmoothHeaderHomepage() {
     elapsedBeforePauseRef.current = 0;
     slideStartTimeRef.current = Date.now();
     pauseTimeRef.current = 0;
-    setActiveHeroSlide((prev) => (prev === 0 ? 1 : 0));
+    const activeCount = heroSlides.filter(s => s.is_active).length;
+    setActiveHeroSlide((prev) => (prev - 1 + activeCount) % activeCount);
   };
 
   // Hero Slideshow Timer Logic
   useEffect(() => {
     let rafId;
     const duration = 6000;
+    const activeSlides = heroSlides.filter(s => s.is_active);
+    const currentSlide = activeSlides[activeHeroSlide];
+
+    if (!currentSlide) return;
 
     if (isHeroPaused) {
-      if (heroVideoRef.current) heroVideoRef.current.pause();
+      if (heroVideoRef.current && currentSlide.slide_type === 'video') heroVideoRef.current.pause();
       if (pauseTimeRef.current === 0) {
         pauseTimeRef.current = Date.now();
       }
@@ -117,7 +125,7 @@ export default function SmoothHeaderHomepage() {
       }
     }
     
-    if (activeHeroSlide === 0) {
+    if (currentSlide.slide_type !== 'video') {
       const animate = () => {
         const now = Date.now();
         const elapsed = (now - slideStartTimeRef.current) - elapsedBeforePauseRef.current;
@@ -131,7 +139,7 @@ export default function SmoothHeaderHomepage() {
         }
       };
       rafId = requestAnimationFrame(animate);
-    } else if (activeHeroSlide === 1) {
+    } else if (currentSlide.slide_type === 'video') {
       if (heroVideoRef.current) {
         heroVideoRef.current.play().catch(e => console.warn('Video play error:', e));
       }
@@ -140,21 +148,25 @@ export default function SmoothHeaderHomepage() {
     return () => {
       if (rafId) cancelAnimationFrame(rafId);
     };
-  }, [activeHeroSlide, isHeroPaused]);
+  }, [activeHeroSlide, isHeroPaused, heroSlides]);
 
   const loadData = async () => {
     setIsLoading(true);
     try {
-      const [cats, tpls, usr, showcase] = await Promise.all([
+      const [cats, tpls, usr, showcase, slides] = await Promise.all([
         getCategories(),
         getDesignTemplates(),
         getCurrentUser(),
-        getShowcaseFeatureFromSupabase()
+        getShowcaseFeatureFromSupabase(),
+        getHeroSlidesFromSupabase()
       ]);
       setCategories(Array.isArray(cats) ? cats : []);
       setTemplates(Array.isArray(tpls) ? tpls : []);
       setCurrentUser(usr);
       setShowcaseFeature(showcase || DEFAULT_SHOWCASE_FEATURE);
+      if (slides && slides.length > 0) {
+        setHeroSlides(slides);
+      }
     } catch (err) {
       console.warn('Error loading homepage data from Supabase:', err);
       setCategories([]);
@@ -230,26 +242,32 @@ export default function SmoothHeaderHomepage() {
       <section className="relative w-full border-b border-neutral-200/60 overflow-hidden bg-[#F8F8FA] min-h-[500px] sm:min-h-[700px] flex items-center pt-10 pb-20 sm:py-24 px-4 sm:px-8 lg:px-16 2xl:px-24">
         
         {/* Backgrounds */}
-        {/* Slide 2 Video Background (Fades in over the default #F8F8FA background) */}
-        <div className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${activeHeroSlide === 1 ? 'opacity-100' : 'opacity-0'}`}>
-          <video 
-            ref={heroVideoRef}
-            muted 
-            playsInline
-            onEnded={nextHeroSlide}
-            onTimeUpdate={(e) => {
-              if (activeHeroSlide === 1) {
-                const progress = (e.target.currentTime / e.target.duration) * 100;
-                setSlideProgress(progress || 0);
-              }
-            }}
-            className="w-full h-full object-cover"
-          >
-            <source src="/hero-1.webm" type="video/webm" />
-          </video>
-          {/* White frosted glass overlay */}
-          <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px]"></div>
-        </div>
+        {heroSlides.filter(s => s.is_active).sort((a, b) => a.order_index - b.order_index).map((slide, idx) => (
+          slide.slide_type === 'video' ? (
+            <div key={slide.id} className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${activeHeroSlide === idx ? 'opacity-100' : 'opacity-0'}`}>
+              <video 
+                ref={activeHeroSlide === idx ? heroVideoRef : null}
+                muted 
+                playsInline
+                onEnded={nextHeroSlide}
+                onTimeUpdate={(e) => {
+                  if (activeHeroSlide === idx) {
+                    const progress = (e.target.currentTime / e.target.duration) * 100;
+                    setSlideProgress(progress || 0);
+                  }
+                }}
+                className="w-full h-full object-cover"
+              >
+                <source src={slide.media_url} type={slide.media_url.endsWith('.mp4') ? 'video/mp4' : 'video/webm'} />
+              </video>
+              <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px]"></div>
+            </div>
+          ) : slide.slide_type === 'image' ? (
+            <div key={slide.id} className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${activeHeroSlide === idx ? 'opacity-100' : 'opacity-0'}`}>
+              <img src={slide.media_url} alt="Hero Background" className="w-full h-full object-cover opacity-30" />
+            </div>
+          ) : null
+        ))}
         
         {/* Content Container */}
         <div className="relative z-10 w-full max-w-[1920px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-16 lg:gap-20 items-center">
@@ -259,45 +277,32 @@ export default function SmoothHeaderHomepage() {
             {/* Animated Text Container */}
             <div className="grid grid-cols-1 grid-rows-1 relative w-full">
               
-              {/* Slide 1 Text */}
-              <div className={`col-start-1 row-start-1 space-y-3 sm:space-y-8 transition-all duration-1000 delay-100 ease-out transform ${activeHeroSlide === 0 ? 'translate-y-0 opacity-100 pointer-events-auto z-10' : 'translate-y-8 opacity-0 pointer-events-none z-0'}`}>
-                {/* MINIMALIST TELEMETRY BADGE */}
-                <div className="inline-flex items-center space-x-2 text-[9px] sm:text-[10px] font-mono font-bold tracking-[0.2em] text-neutral-500 uppercase justify-center lg:justify-start w-full lg:w-auto">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#111111] animate-ping" />
-                  <span>KILANG SUBLIMASI HIGH-PERFORMANCE</span>
+              {heroSlides.filter(s => s.is_active).sort((a, b) => a.order_index - b.order_index).map((slide, idx) => (
+                <div key={`text-${slide.id}`} className={`col-start-1 row-start-1 space-y-3 sm:space-y-8 transition-all duration-1000 delay-100 ease-out transform ${slide.slide_type === 'video' ? 'drop-shadow-[0_0px_4px_rgba(255,255,255,0.9)]' : ''} ${activeHeroSlide === idx ? 'translate-y-0 opacity-100 pointer-events-auto z-10' : 'translate-y-8 opacity-0 pointer-events-none z-0'}`}>
+                  {/* MINIMALIST TELEMETRY BADGE */}
+                  {slide.badge_text && (
+                    <div className="inline-flex items-center space-x-2 text-[9px] sm:text-[10px] font-mono font-bold tracking-[0.2em] text-neutral-500 uppercase justify-center lg:justify-start w-full lg:w-auto">
+                      <span className="w-1.5 h-1.5 rounded-full bg-[#111111] animate-ping" />
+                      <span>{slide.badge_text}</span>
+                    </div>
+                  )}
+                  {/* EDITORIAL HEADLINE TYPOGRAPHY */}
+                  <h1 
+                    className="text-4xl sm:text-5xl lg:text-7xl font-black text-[#111111] tracking-tight leading-[1.05] uppercase px-2 sm:px-0 mx-auto lg:mx-0 max-w-[400px] sm:max-w-none"
+                    dangerouslySetInnerHTML={{ __html: slide.headline_html }}
+                  />
+                  {slide.description && (
+                    <>
+                      <p className="hidden sm:block text-neutral-600 text-xs sm:text-base leading-relaxed max-w-xl font-normal mx-auto lg:mx-0">
+                        {slide.description}
+                      </p>
+                      <p className="block sm:hidden text-neutral-600 text-sm leading-relaxed max-w-xs font-normal mx-auto">
+                        {slide.description.length > 80 ? slide.description.substring(0, 80) + '...' : slide.description}
+                      </p>
+                    </>
+                  )}
                 </div>
-                {/* EDITORIAL HEADLINE TYPOGRAPHY */}
-                <h1 className="text-4xl sm:text-5xl lg:text-7xl font-black text-[#111111] tracking-tight leading-[1.05] uppercase px-2 sm:px-0 mx-auto lg:mx-0 max-w-[400px] sm:max-w-none">
-                  REKA BENTUK JERSI <br className="hidden sm:block" />
-                  <span className="text-neutral-400 font-extrabold tracking-normal">PAKAIAN CUSTOM</span>
-                </h1>
-                <p className="hidden sm:block text-neutral-600 text-xs sm:text-base leading-relaxed max-w-xl font-normal mx-auto lg:mx-0">
-                  Pilih daripada koleksi visual kategori di bawah. Pilih desain jersi, kustomisasikan jenis kolar dan kain sublimasi, dan proses tempahan terus secara dalam talian.
-                </p>
-                <p className="block sm:hidden text-neutral-600 text-sm leading-relaxed max-w-xs font-normal mx-auto">
-                  Tempah jersi & pakaian sukan custom secara online dengan kualiti premium.
-                </p>
-              </div>
-
-              {/* Slide 2 Text */}
-              <div className={`col-start-1 row-start-1 space-y-3 sm:space-y-8 transition-all duration-1000 delay-100 ease-out transform drop-shadow-[0_0px_4px_rgba(255,255,255,0.9)] ${activeHeroSlide === 1 ? 'translate-y-0 opacity-100 pointer-events-auto z-10' : 'translate-y-8 opacity-0 pointer-events-none z-0'}`}>
-                {/* MINIMALIST TELEMETRY BADGE */}
-                <div className="inline-flex items-center space-x-2 text-[9px] sm:text-[10px] font-mono font-bold tracking-[0.2em] text-neutral-500 uppercase justify-center lg:justify-start w-full lg:w-auto">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#111111] animate-ping" />
-                  <span>KUALITI PREMIUM ANTARABANGSA</span>
-                </div>
-                {/* EDITORIAL HEADLINE TYPOGRAPHY */}
-                <h2 className="text-4xl sm:text-5xl lg:text-7xl font-black text-[#111111] tracking-tight leading-[1.05] uppercase px-2 sm:px-0 mx-auto lg:mx-0 max-w-[400px] sm:max-w-none">
-                  EVOLUSI <br className="hidden sm:block" />
-                  <span className="text-neutral-500 font-extrabold tracking-normal">PEMBUATAN JERSI</span>
-                </h2>
-                <p className="hidden sm:block text-neutral-700 text-xs sm:text-base leading-relaxed max-w-xl font-normal mx-auto lg:mx-0">
-                  Kami membawa evolusi dalam pembuatan jersi dengan kualiti cetakan dan fabrik bertaraf antarabangsa. Saksikan proses kilang kami yang berteknologi tinggi.
-                </p>
-                <p className="block sm:hidden text-neutral-700 text-sm leading-relaxed max-w-xs font-normal mx-auto">
-                  Saksikan kilang berteknologi tinggi dengan kualiti cetakan bertaraf antarabangsa.
-                </p>
-              </div>
+              ))}
               
             </div>
 
@@ -321,16 +326,19 @@ export default function SmoothHeaderHomepage() {
             
           </div>
 
-          {/* Right Side Carousel (Visible on Slide 1 only) */}
+          {/* Right Side Carousel (Visible when slide_type === carousel) */}
           <div className="lg:col-span-6 flex items-center justify-center pt-8 lg:pt-0 w-full">
-            <div className={`w-full transition-all duration-1000 delay-300 ease-out transform ${activeHeroSlide === 0 ? 'translate-y-0 opacity-100 pointer-events-auto' : 'translate-y-8 opacity-0 pointer-events-none'}`}>
-              <HeroCarousel />
-            </div>
+            {heroSlides.filter(s => s.is_active).sort((a, b) => a.order_index - b.order_index).map((slide, idx) => (
+              slide.slide_type === 'carousel' ? (
+                <div key={`carousel-${slide.id}`} className={`absolute lg:relative w-full transition-all duration-1000 delay-300 ease-out transform ${activeHeroSlide === idx ? 'translate-y-0 opacity-100 pointer-events-auto z-10' : 'translate-y-8 opacity-0 pointer-events-none z-0'}`}>
+                  <HeroCarousel />
+                </div>
+              ) : null
+            ))}
           </div>
           
         </div>
 
-        {/* Nike Style Slideshow Controls */}
         <div className="absolute bottom-5 left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:bottom-10 sm:right-12 z-40 flex items-center space-x-3 sm:space-x-4 scale-[0.85] sm:scale-100 origin-bottom">
           <button 
             onClick={() => setIsHeroPaused(!isHeroPaused)}
@@ -338,27 +346,46 @@ export default function SmoothHeaderHomepage() {
             aria-label={isHeroPaused ? 'Play' : 'Pause'}
           >
             {isHeroPaused ? (
-              <Play className="w-4 h-4 sm:w-5 sm:h-5 ml-1 text-[#111111] fill-current" />
+               <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#111111] translate-x-0.5" fill="currentColor" />
             ) : (
-              <div className="flex space-x-1">
-                <div className="w-1 sm:w-1.5 h-3.5 sm:h-4 bg-[#111111] rounded-sm"></div>
-                <div className="w-1 sm:w-1.5 h-3.5 sm:h-4 bg-[#111111] rounded-sm"></div>
-              </div>
+               <div className="flex space-x-[2px] sm:space-x-1">
+                 <div className="w-1 sm:w-1.5 h-3 sm:h-4 bg-[#111111] rounded-full"></div>
+                 <div className="w-1 sm:w-1.5 h-3 sm:h-4 bg-[#111111] rounded-full"></div>
+               </div>
             )}
             
-            {/* Real Progress Ring (Synced to duration) */}
+            {/* SVG Progress Ring */}
             <svg className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none" viewBox="0 0 100 100">
-              <circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" strokeWidth="3" strokeDasharray="301.59" strokeDashoffset={301.59 - (slideProgress / 100) * 301.59} className="opacity-60 transition-all duration-75 ease-linear" />
+              <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(0,0,0,0.05)" strokeWidth="4" />
+              <circle 
+                cx="50" cy="50" r="48" 
+                fill="none" 
+                stroke="#111111" 
+                strokeWidth="4" 
+                strokeDasharray="301.59" 
+                strokeDashoffset={301.59 - (301.59 * slideProgress) / 100}
+                strokeLinecap="round"
+                className="transition-all duration-100 ease-linear"
+              />
             </svg>
           </button>
-
-          <button onClick={prevHeroSlide} className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/70 backdrop-blur-md hover:bg-white border border-neutral-200 flex items-center justify-center transition-all shadow-sm text-[#111111]">
-            <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
-          </button>
-
-          <button onClick={nextHeroSlide} className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/70 backdrop-blur-md hover:bg-white border border-neutral-200 flex items-center justify-center transition-all shadow-sm text-[#111111]">
-            <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
-          </button>
+          
+          <div className="flex space-x-1.5 bg-white/70 backdrop-blur-md px-3 sm:px-4 py-2 sm:py-2.5 rounded-full shadow-sm border border-neutral-200/50">
+            {heroSlides.filter(s => s.is_active).sort((a,b) => a.order_index - b.order_index).map((slide, idx) => (
+              <button 
+                key={`dot-${slide.id}`}
+                onClick={() => {
+                  setSlideProgress(0);
+                  elapsedBeforePauseRef.current = 0;
+                  slideStartTimeRef.current = Date.now();
+                  pauseTimeRef.current = 0;
+                  setActiveHeroSlide(idx);
+                }}
+                className={`transition-all duration-500 rounded-full h-1.5 sm:h-2 ${activeHeroSlide === idx ? 'w-6 sm:w-8 bg-[#111111]' : 'w-1.5 sm:w-2 bg-neutral-300 hover:bg-neutral-400'}`}
+                aria-label={`Pergi ke slide ${idx + 1}`}
+              />
+            ))}
+          </div>
         </div>
       </section>
 

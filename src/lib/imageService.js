@@ -164,20 +164,24 @@ export async function uploadDirectToSupabaseStorage(fileOrDataUrl, filenameHint 
   let mimeType = 'image/webp';
   let fileExt = 'webp';
 
-  // 1. Try converting to Ultra HD WebP Blob on client browser (1920px max, 0.92 quality)
-  try {
-    const webpBlob = await convertImageToWebpBlob(fileOrDataUrl, 1920, 0.92);
-    if (webpBlob && webpBlob.size > 0) {
-      finalFileBody = webpBlob;
-      mimeType = 'image/webp';
-      fileExt = 'webp';
+  const isVideo = typeof fileOrDataUrl === 'string' && fileOrDataUrl.startsWith('data:video/');
+
+  // 1. Try converting to Ultra HD WebP Blob on client browser (1920px max, 0.92 quality) - Skip for video
+  if (!isVideo) {
+    try {
+      const webpBlob = await convertImageToWebpBlob(fileOrDataUrl, 1920, 0.92);
+      if (webpBlob && webpBlob.size > 0) {
+        finalFileBody = webpBlob;
+        mimeType = 'image/webp';
+        fileExt = 'webp';
+      }
+    } catch (convErr) {
+      console.warn('[ImageService] Client webp conversion warning:', convErr);
     }
-  } catch (convErr) {
-    console.warn('[ImageService] Client webp conversion warning:', convErr);
   }
 
-  // 2. Base64 fallback parsing if conversion was skipped
-  if (!(finalFileBody instanceof Blob) && typeof fileOrDataUrl === 'string' && fileOrDataUrl.startsWith('data:image/')) {
+  // 2. Base64 fallback parsing if conversion was skipped or it's a video
+  if (!(finalFileBody instanceof Blob) && typeof fileOrDataUrl === 'string' && fileOrDataUrl.startsWith('data:')) {
     const parts = fileOrDataUrl.split(',');
     const match = parts[0].match(/:(.*?);/);
     if (match) mimeType = match[1];
@@ -196,7 +200,7 @@ export async function uploadDirectToSupabaseStorage(fileOrDataUrl, filenameHint 
   const safeName = String(filenameHint).replace(/[^a-zA-Z0-9_-]/g, '_').toLowerCase();
   const filename = `${safeName}_${Date.now()}_${Math.random().toString(36).substring(2, 7)}.${fileExt}`;
 
-  console.log(`[SupabaseStorage] Uploading WebP ${filename} to bucket 'ayezz-assets'...`);
+  console.log(`[SupabaseStorage] Uploading ${filename} to bucket 'ayezz-assets'...`);
 
   const { data: uploadData, error: uploadError } = await supabase.storage
     .from('ayezz-assets')

@@ -1104,3 +1104,104 @@ export async function saveShowcaseFeatureToSupabase(payload) {
   }
   return payload;
 }
+
+// ==========================================
+// 8. HERO SLIDES MANAGER
+// ==========================================
+export const DEFAULT_HERO_SLIDES = [
+  {
+    id: 'hero_1',
+    is_active: true,
+    order_index: 0,
+    slide_type: 'carousel',
+    media_url: '',
+    badge_text: 'KILANG SUBLIMASI HIGH-PERFORMANCE',
+    headline_html: 'REKA BENTUK JERSI <br class="hidden sm:block" />\n<span class="text-neutral-400 font-extrabold tracking-normal">PAKAIAN CUSTOM</span>',
+    description: 'Pilih daripada koleksi visual kategori di bawah. Pilih desain jersi, kustomisasikan jenis kolar dan kain sublimasi, dan proses tempahan terus secara dalam talian.'
+  },
+  {
+    id: 'hero_2',
+    is_active: true,
+    order_index: 1,
+    slide_type: 'video',
+    media_url: '/hero-1.webm',
+    badge_text: 'KUALITI PREMIUM ANTARABANGSA',
+    headline_html: 'EVOLUSI <br class="hidden sm:block" />\n<span class="text-neutral-500 font-extrabold tracking-normal">PEMBUATAN JERSI</span>',
+    description: 'Kami membawa evolusi dalam pembuatan jersi dengan kualiti cetakan dan fabrik bertaraf antarabangsa. Saksikan proses kilang kami yang berteknologi tinggi.'
+  }
+];
+
+export async function getHeroSlidesFromSupabase() {
+  if (!isSupabaseConnected) {
+    if (typeof window !== 'undefined') {
+      try {
+        const stored = localStorage.getItem('ayezz_hero_slides');
+        if (stored) return JSON.parse(stored);
+      } catch (e) {}
+    }
+    return DEFAULT_HERO_SLIDES;
+  }
+  try {
+    const { data, error } = await supabase.from('hero_slides').select('*').order('order_index', { ascending: true });
+    if (error || !data || data.length === 0) {
+       return DEFAULT_HERO_SLIDES;
+    }
+    return data;
+  } catch (err) {
+    console.warn('Supabase getHeroSlides error:', err);
+    return DEFAULT_HERO_SLIDES;
+  }
+}
+
+export async function saveHeroSlideToSupabase(slide) {
+  if (typeof window !== 'undefined' && !isSupabaseConnected) {
+    try {
+      const stored = localStorage.getItem('ayezz_hero_slides');
+      let slides = stored ? JSON.parse(stored) : DEFAULT_HERO_SLIDES;
+      const idx = slides.findIndex(s => s.id === slide.id);
+      if (idx >= 0) slides[idx] = slide;
+      else slides.push(slide);
+      localStorage.setItem('ayezz_hero_slides', JSON.stringify(slides));
+    } catch(e) {}
+    return slide;
+  }
+  
+  let mediaUrl = slide.media_url;
+  if (mediaUrl && mediaUrl.startsWith('data:')) {
+    mediaUrl = await ensureSupabaseCloudImageUrl(mediaUrl, `hero_${Date.now()}`);
+  }
+
+  const payload = {
+    id: slide.id || `hero_${Date.now()}`,
+    is_active: slide.is_active !== undefined ? slide.is_active : true,
+    order_index: slide.order_index || 0,
+    slide_type: slide.slide_type || 'video',
+    media_url: mediaUrl,
+    badge_text: slide.badge_text || '',
+    headline_html: slide.headline_html || '',
+    description: slide.description || '',
+    updated_at: new Date().toISOString()
+  };
+
+  try {
+    const { error } = await supabase.from('hero_slides').upsert([payload], { onConflict: 'id' });
+    if (error) console.error('saveHeroSlideToSupabase error:', error);
+    return payload;
+  } catch (err) {
+    console.error('saveHeroSlideToSupabase exception:', err);
+    return null;
+  }
+}
+
+export async function deleteHeroSlideFromSupabase(slideId) {
+  if (!isSupabaseConnected || !slideId) return;
+  try {
+    const { data } = await supabase.from('hero_slides').select('media_url').eq('id', slideId).single();
+    if (data && data.media_url && data.media_url.includes('ayezz-assets')) {
+      await deleteImageFromSupabaseStorage(data.media_url);
+    }
+    await supabase.from('hero_slides').delete().eq('id', slideId);
+  } catch (err) {
+    console.error('deleteHeroSlideFromSupabase error:', err);
+  }
+}
