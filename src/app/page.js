@@ -219,8 +219,8 @@ export default function SmoothHeaderHomepage() {
         </div>
 
         {/* SLIDE 2: Video Background */}
-        <div className={`col-start-1 row-start-1 transition-opacity duration-1000 ease-in-out w-full h-full flex flex-col ${activeHeroSlide === 1 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
-          <div className="absolute inset-0 w-full h-full">
+        <div className={`col-start-1 row-start-1 transition-opacity duration-1000 ease-in-out w-full py-8 sm:py-24 px-4 sm:px-8 lg:px-16 2xl:px-24 flex items-center ${activeHeroSlide === 1 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
+          <div className="absolute inset-0 w-full h-full -z-10">
             <video 
               autoPlay 
               loop 
@@ -230,34 +230,51 @@ export default function SmoothHeaderHomepage() {
             >
               <source src="/hero-1.webm" type="video/webm" />
             </video>
-            {/* Overlay */}
-            <div className="absolute inset-0 bg-black/60"></div>
+            {/* White frosted glass overlay */}
+            <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px]"></div>
           </div>
           
           {/* Content for Slide 2 */}
-          <div className="relative z-10 w-full h-full flex-grow flex flex-col items-center justify-center text-center px-4 sm:px-8 py-20">
-             <h2 className="text-4xl sm:text-6xl lg:text-8xl font-black text-white tracking-tighter uppercase leading-[1.05] drop-shadow-2xl">
-                KUALITI <br /> <span className="text-[#0071E3] font-extrabold tracking-normal">PREMIUM.</span>
-             </h2>
-             <p className="mt-4 sm:mt-8 text-xs sm:text-lg text-neutral-300 max-w-2xl font-normal drop-shadow-md leading-relaxed">
-                Kami membawa evolusi dalam pembuatan jersi dengan kualiti cetakan dan fabrik bertaraf antarabangsa. Saksikan proses kami.
-             </p>
-             <div className="mt-8 flex items-center justify-center space-x-4">
-               <Link
+          <div className="relative z-10 w-full max-w-[1920px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-16 lg:gap-20 items-center">
+            <div className="lg:col-span-6 space-y-4 sm:space-y-8 text-left">
+              
+              {/* MINIMALIST TELEMETRY BADGE */}
+              <div className="inline-flex items-center space-x-2 text-[9px] sm:text-[10px] font-mono font-bold tracking-[0.2em] text-[#0066CC] uppercase">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#0066CC] animate-ping" />
+                <span>KUALITI PREMIUM ANTARABANGSA</span>
+              </div>
+
+              {/* EDITORIAL HEADLINE TYPOGRAPHY */}
+              <h2 className="text-3xl sm:text-5xl lg:text-7xl font-black text-[#111111] tracking-tight leading-[1.05] uppercase">
+                EVOLUSI <br />
+                <span className="text-neutral-500 font-extrabold tracking-normal">PEMBUATAN JERSI</span>
+              </h2>
+
+              <p className="text-neutral-700 text-xs sm:text-base leading-relaxed max-w-xl font-normal">
+                Kami membawa evolusi dalam pembuatan jersi dengan kualiti cetakan dan fabrik bertaraf antarabangsa. Saksikan proses kilang kami yang berteknologi tinggi.
+              </p>
+
+              {/* SIDE-BY-SIDE COMPACT CTA BUTTONS */}
+              <div className="pt-2 flex items-center space-x-3 sm:space-x-4">
+                <Link
                   href="/katalog"
-                  className="px-8 py-4 sm:px-10 sm:py-5 bg-white text-[#111111] hover:bg-neutral-200 font-bold text-xs sm:text-sm uppercase tracking-widest rounded-full transition-all inline-flex items-center space-x-2 shadow-xl active:scale-[0.98]"
+                  className="px-6 py-3.5 sm:px-8 sm:py-4 bg-[#0066CC] hover:bg-[#0055BB] text-white font-bold text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center space-x-2 active:scale-[0.98] shadow-md whitespace-nowrap"
                 >
                   <span>Mula Menempah</span>
-                  <ArrowRight className="w-4 h-4 text-[#111111]" />
+                  <ArrowRight className="w-4 h-4 text-white" />
                 </Link>
-             </div>
+              </div>
+            </div>
+            
+            {/* Empty space on the right for video visibility */}
+            <div className="hidden lg:block lg:col-span-6"></div>
           </div>
         </div>
 
         {/* Slide Controls (Dots) */}
         <div className="absolute bottom-6 sm:bottom-10 left-0 right-0 z-30 flex justify-center space-x-3">
-          <button onClick={() => setActiveHeroSlide(0)} className={`h-2.5 sm:h-3 rounded-full transition-all duration-300 ${activeHeroSlide === 0 ? 'w-8 bg-[#111111]' : (activeHeroSlide === 1 ? 'w-2.5 sm:w-3 bg-white/50 hover:bg-white' : 'w-2.5 sm:w-3 bg-neutral-400/50 hover:bg-neutral-400')}`} aria-label="Slide 1"></button>
-          <button onClick={() => setActiveHeroSlide(1)} className={`h-2.5 sm:h-3 rounded-full transition-all duration-300 ${activeHeroSlide === 1 ? 'w-8 bg-white' : 'w-2.5 sm:w-3 bg-neutral-400/50 hover:bg-neutral-400'}`} aria-label="Slide 2"></button>
+          <button onClick={() => setActiveHeroSlide(0)} className={`h-2.5 sm:h-3 rounded-full transition-all duration-300 ${activeHeroSlide === 0 ? 'w-8 bg-[#111111]' : 'w-2.5 sm:w-3 bg-neutral-400/50 hover:bg-neutral-400'}`} aria-label="Slide 1"></button>
+          <button onClick={() => setActiveHeroSlide(1)} className={`h-2.5 sm:h-3 rounded-full transition-all duration-300 ${activeHeroSlide === 1 ? 'w-8 bg-[#111111]' : 'w-2.5 sm:w-3 bg-neutral-400/50 hover:bg-neutral-400'}`} aria-label="Slide 2"></button>
         </div>
       </section>
 
