@@ -11,7 +11,6 @@ import {
   Settings,
   ShoppingBag,
   SlidersHorizontal,
-  SlidersHorizontal,
   User,
   RotateCcw,
   Sparkles,
