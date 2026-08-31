@@ -272,7 +272,7 @@ export default function SmoothHeaderHomepage() {
         ))}
         
         {/* Content Container */}
-        <div className="absolute inset-0 z-10 w-full max-w-[1920px] mx-auto flex flex-col justify-end lg:justify-center items-start lg:items-center pb-24 lg:pb-0 px-6 sm:px-12 lg:px-16">
+        <div className="absolute inset-0 z-10 w-full max-w-[1920px] mx-auto flex flex-col justify-end lg:justify-center items-start lg:items-center pb-32 lg:pb-0 px-6 sm:px-12 lg:px-16">
           
           <div className="w-full flex flex-col items-start lg:items-center text-left lg:text-center">
             
@@ -294,13 +294,13 @@ export default function SmoothHeaderHomepage() {
                 <div key={`text-${slide.id}`} className={`col-start-1 row-start-1 space-y-2 sm:space-y-4 transition-all duration-1000 ease-out transform ${activeHeroSlide === idx ? 'translate-y-0 opacity-100 pointer-events-auto z-10' : 'translate-y-4 opacity-0 pointer-events-none z-0'}`}>
                   {/* EDITORIAL HEADLINE TYPOGRAPHY - Nike Futura ND */}
                   <h1 
-                    className="text-4xl sm:text-6xl lg:text-8xl text-white tracking-normal leading-[0.9] uppercase mx-auto [&_span]:!text-white"
+                    className="text-4xl sm:text-5xl lg:text-7xl text-white tracking-normal leading-[0.95] uppercase mx-auto [&_span]:!text-white drop-shadow-sm"
                     style={{ fontFamily: "'Nike Futura ND', Impact, sans-serif" }}
                     dangerouslySetInnerHTML={{ __html: slide.headline_html }}
                   />
                   {slide.description && (
                     <p 
-                      className="text-white text-sm sm:text-base lg:text-lg leading-relaxed max-w-2xl font-normal mx-auto"
+                      className="text-white text-sm sm:text-base lg:text-lg leading-relaxed max-w-xl font-normal mx-auto line-clamp-3 lg:line-clamp-none drop-shadow-md"
                       style={{ fontFamily: "'Helvetica Now', 'Helvetica', 'Arial', sans-serif" }}
                     >
                       {slide.description}
@@ -356,7 +356,7 @@ export default function SmoothHeaderHomepage() {
         <div className="absolute bottom-6 right-6 lg:right-12 z-40 flex items-center space-x-2 sm:space-x-3">
           <button 
             onClick={() => setIsHeroPaused(!isHeroPaused)}
-            className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-[1.5px] border-white text-white flex items-center justify-center hover:bg-white/10 transition-colors"
+            className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full border-[1.5px] border-white/20 text-white flex items-center justify-center hover:bg-white/10 transition-colors"
             aria-label={isHeroPaused ? 'Play' : 'Pause'}
           >
             {isHeroPaused ? (
@@ -367,6 +367,21 @@ export default function SmoothHeaderHomepage() {
                  <div className="w-[2px] h-[10px] sm:h-[12px] bg-white rounded-sm"></div>
                </div>
             )}
+            
+            {/* SVG Progress Ring */}
+            <svg className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="4" />
+              <circle 
+                cx="50" cy="50" r="48" 
+                fill="none" 
+                stroke="#FFFFFF" 
+                strokeWidth="4" 
+                strokeDasharray="301.59" 
+                strokeDashoffset={301.59 - (301.59 * slideProgress) / 100}
+                strokeLinecap="round"
+                className="transition-all duration-100 ease-linear"
+              />
+            </svg>
           </button>
           
           <button 
