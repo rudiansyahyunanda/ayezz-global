@@ -298,7 +298,10 @@ export default function SmoothHeaderHomepage() {
                     dangerouslySetInnerHTML={{ __html: slide.headline_html }}
                   />
                   {slide.description && (
-                    <p className="text-white text-sm sm:text-base lg:text-lg leading-relaxed max-w-2xl font-normal mx-auto">
+                    <p 
+                      className="text-white text-sm sm:text-base lg:text-lg leading-relaxed max-w-2xl font-normal mx-auto"
+                      style={{ fontFamily: "'Helvetica Now', 'Helvetica', 'Arial', sans-serif" }}
+                    >
                       {slide.description}
                     </p>
                   )}
