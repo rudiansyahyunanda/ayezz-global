@@ -472,14 +472,17 @@ export default function SmoothHeaderHomepage() {
                   >
                     {/* CATEGORY CARD CONTAINER */}
                     <div className="w-full aspect-[3/4] sm:aspect-[4/5] rounded-[24px] overflow-hidden bg-neutral-100 relative flex flex-col justify-end p-0 shadow-xs hover:shadow-md transition-all duration-500 border-none group">
-                      <TransparentImage
-                        src={cat.thumbnail || PLACEHOLDER_IMAGE}
-                        alt={cat.title}
-                        className="absolute inset-0 w-full h-full object-cover rounded-[24px] transition-transform duration-700 ease-out group-hover:scale-[1.05] img-crisp"
-                      />
+                      {/* Background Image Container */}
+                      <div className="absolute inset-0 w-full h-full z-0">
+                        <TransparentImage
+                          src={cat.thumbnail || PLACEHOLDER_IMAGE}
+                          alt={cat.title}
+                          className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05] img-crisp"
+                        />
+                      </div>
                       
                       {/* Gradient Overlay */}
-                      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none" />
+                      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none z-0" />
 
                       {/* Content Overlay */}
                       <div className="relative z-10 w-full p-5 sm:p-6 flex flex-col items-start mt-auto">
