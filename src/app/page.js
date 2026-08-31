@@ -45,6 +45,7 @@ export default function SmoothHeaderHomepage() {
   const [orderedProduct, setOrderedProduct] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
+  const [activeHeroSlide, setActiveHeroSlide] = useState(0);
   const categoryScrollRef = useRef(null);
 
   const scrollCategories = (direction) => {
@@ -74,6 +75,14 @@ export default function SmoothHeaderHomepage() {
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Hero Slideshow Timer
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setActiveHeroSlide((prev) => (prev === 0 ? 1 : 0));
+    }, 6000);
+    return () => clearInterval(timer);
   }, []);
 
   const loadData = async () => {
@@ -160,49 +169,95 @@ export default function SmoothHeaderHomepage() {
         </div>
       </header>
 
-      {/* 3. HERO SHOWCASE SECTION (EDITORIAL SPORTSWEAR AESTHETIC - FULL WIDTH) */}
-      <section className="py-8 sm:py-24 px-4 sm:px-8 lg:px-16 2xl:px-24 bg-[#F8F8FA] border-b border-neutral-200/60 w-full">
-        <div className="w-full max-w-[1920px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-16 lg:gap-20 items-center">
-          <div className="lg:col-span-6 space-y-4 sm:space-y-8 text-left">
-            
-            {/* MINIMALIST TELEMETRY BADGE */}
-            <div className="inline-flex items-center space-x-2 text-[9px] sm:text-[10px] font-mono font-bold tracking-[0.2em] text-neutral-500 uppercase">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#111111] animate-ping" />
-              <span>KILANG SUBLIMASI HIGH-PERFORMANCE</span>
+      {/* 3. HERO SHOWCASE SECTION (EDITORIAL SPORTSWEAR AESTHETIC - FULL WIDTH & SLIDESHOW) */}
+      <section className="relative w-full border-b border-neutral-200/60 overflow-hidden bg-[#F8F8FA] min-h-[500px] sm:min-h-[700px] grid">
+        
+        {/* SLIDE 1: Existing Hero */}
+        <div className={`col-start-1 row-start-1 transition-opacity duration-1000 ease-in-out w-full py-8 sm:py-24 px-4 sm:px-8 lg:px-16 2xl:px-24 flex items-center ${activeHeroSlide === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
+          <div className="w-full max-w-[1920px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-16 lg:gap-20 items-center">
+            <div className="lg:col-span-6 space-y-4 sm:space-y-8 text-left">
+              
+              {/* MINIMALIST TELEMETRY BADGE */}
+              <div className="inline-flex items-center space-x-2 text-[9px] sm:text-[10px] font-mono font-bold tracking-[0.2em] text-neutral-500 uppercase">
+                <span className="w-1.5 h-1.5 rounded-full bg-[#111111] animate-ping" />
+                <span>KILANG SUBLIMASI HIGH-PERFORMANCE</span>
+              </div>
+
+              {/* EDITORIAL HEADLINE TYPOGRAPHY */}
+              <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black text-[#111111] tracking-tight leading-[1.05] uppercase">
+                REKA BENTUK JERSI <br />
+                <span className="text-neutral-400 font-extrabold tracking-normal">PAKAIAN CUSTOM</span>
+              </h1>
+
+              <p className="text-neutral-600 text-xs sm:text-base leading-relaxed max-w-xl font-normal">
+                Pilih daripada koleksi visual kategori di bawah. Pilih desain jersi, kustomisasikan jenis kolar dan kain sublimasi, dan proses tempahan terus secara dalam talian.
+              </p>
+
+              {/* SIDE-BY-SIDE COMPACT CTA BUTTONS */}
+              <div className="pt-2 flex items-center space-x-3 sm:space-x-4">
+                <a
+                  href="#kategori-utama"
+                  className="px-6 py-3.5 sm:px-8 sm:py-4 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center space-x-2 active:scale-[0.98] shadow-sm whitespace-nowrap"
+                >
+                  <span>Kategori Utama</span>
+                  <ArrowRight className="w-4 h-4 text-white" />
+                </a>
+
+                <Link
+                  href="/katalog"
+                  className="px-5 py-3.5 sm:px-7 sm:py-4 bg-white border border-neutral-300 hover:border-[#111111] text-[#111111] font-bold text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center justify-center active:scale-[0.98] whitespace-nowrap"
+                >
+                  <span>Semua Katalog</span>
+                </Link>
+              </div>
             </div>
 
-            {/* EDITORIAL HEADLINE TYPOGRAPHY */}
-            <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black text-[#111111] tracking-tight leading-[1.05] uppercase">
-              REKA BENTUK JERSI <br />
-              <span className="text-neutral-400 font-extrabold tracking-normal">PAKAIAN CUSTOM</span>
-            </h1>
-
-            <p className="text-neutral-600 text-xs sm:text-base leading-relaxed max-w-xl font-normal">
-              Pilih daripada koleksi visual kategori di bawah. Pilih desain jersi, kustomisasikan jenis kolar dan kain sublimasi, dan proses tempahan terus secara dalam talian.
-            </p>
-
-            {/* SIDE-BY-SIDE COMPACT CTA BUTTONS */}
-            <div className="pt-2 flex items-center space-x-3 sm:space-x-4">
-              <a
-                href="#kategori-utama"
-                className="px-6 py-3.5 sm:px-8 sm:py-4 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center space-x-2 active:scale-[0.98] shadow-sm whitespace-nowrap"
-              >
-                <span>Kategori Utama</span>
-                <ArrowRight className="w-4 h-4 text-white" />
-              </a>
-
-              <Link
-                href="/katalog"
-                className="px-5 py-3.5 sm:px-7 sm:py-4 bg-white border border-neutral-300 hover:border-[#111111] text-[#111111] font-bold text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center justify-center active:scale-[0.98] whitespace-nowrap"
-              >
-                <span>Semua Katalog</span>
-              </Link>
+            <div className="lg:col-span-6 flex items-center justify-center pt-4 lg:pt-0">
+              <HeroCarousel />
             </div>
           </div>
+        </div>
 
-          <div className="lg:col-span-6 flex items-center justify-center pt-4 lg:pt-0">
-            <HeroCarousel />
+        {/* SLIDE 2: Video Background */}
+        <div className={`col-start-1 row-start-1 transition-opacity duration-1000 ease-in-out w-full h-full flex flex-col ${activeHeroSlide === 1 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
+          <div className="absolute inset-0 w-full h-full">
+            <video 
+              autoPlay 
+              loop 
+              muted 
+              playsInline
+              className="w-full h-full object-cover"
+            >
+              <source src="/hero-1.webm" type="video/webm" />
+            </video>
+            {/* Overlay */}
+            <div className="absolute inset-0 bg-black/60"></div>
           </div>
+          
+          {/* Content for Slide 2 */}
+          <div className="relative z-10 w-full h-full flex-grow flex flex-col items-center justify-center text-center px-4 sm:px-8 py-20">
+             <h2 className="text-4xl sm:text-6xl lg:text-8xl font-black text-white tracking-tighter uppercase leading-[1.05] drop-shadow-2xl">
+                KUALITI <br /> <span className="text-[#0071E3] font-extrabold tracking-normal">PREMIUM.</span>
+             </h2>
+             <p className="mt-4 sm:mt-8 text-xs sm:text-lg text-neutral-300 max-w-2xl font-normal drop-shadow-md leading-relaxed">
+                Kami membawa evolusi dalam pembuatan jersi dengan kualiti cetakan dan fabrik bertaraf antarabangsa. Saksikan proses kami.
+             </p>
+             <div className="mt-8 flex items-center justify-center space-x-4">
+               <Link
+                  href="/katalog"
+                  className="px-8 py-4 sm:px-10 sm:py-5 bg-white text-[#111111] hover:bg-neutral-200 font-bold text-xs sm:text-sm uppercase tracking-widest rounded-full transition-all inline-flex items-center space-x-2 shadow-xl active:scale-[0.98]"
+                >
+                  <span>Mula Menempah</span>
+                  <ArrowRight className="w-4 h-4 text-[#111111]" />
+                </Link>
+             </div>
+          </div>
+        </div>
+
+        {/* Slide Controls (Dots) */}
+        <div className="absolute bottom-6 sm:bottom-10 left-0 right-0 z-30 flex justify-center space-x-3">
+          <button onClick={() => setActiveHeroSlide(0)} className={`h-2.5 sm:h-3 rounded-full transition-all duration-300 ${activeHeroSlide === 0 ? 'w-8 bg-[#111111]' : (activeHeroSlide === 1 ? 'w-2.5 sm:w-3 bg-white/50 hover:bg-white' : 'w-2.5 sm:w-3 bg-neutral-400/50 hover:bg-neutral-400')}`} aria-label="Slide 1"></button>
+          <button onClick={() => setActiveHeroSlide(1)} className={`h-2.5 sm:h-3 rounded-full transition-all duration-300 ${activeHeroSlide === 1 ? 'w-8 bg-white' : 'w-2.5 sm:w-3 bg-neutral-400/50 hover:bg-neutral-400'}`} aria-label="Slide 2"></button>
         </div>
       </section>
 
