@@ -116,38 +116,7 @@ export default function AutoBackgroundStrippedHeroCarousel() {
         })}
       </div>
 
-      {/* MINIMALIST CONTROL ARROWS & DOTS */}
-      {items.length > 1 && (
-        <div className="flex items-center space-x-4 z-40 mt-1 pointer-events-auto">
-          <button
-            onClick={handlePrev}
-            className="p-2 bg-white hover:bg-neutral-100 text-[#111111] border border-neutral-200 rounded-full transition-all active:scale-95 shadow-none cursor-pointer"
-            title="Sebelumnya"
-          >
-            <ChevronLeft className="w-4 h-4" />
-          </button>
-
-          <div className="flex items-center space-x-2">
-            {items.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setActiveIndex(i)}
-                className={`h-1.5 rounded-full transition-all duration-300 ${
-                  activeIndex === i ? 'w-5 bg-[#111111]' : 'w-1.5 bg-neutral-300 hover:bg-neutral-400'
-                }`}
-              />
-            ))}
-          </div>
-
-          <button
-            onClick={handleNext}
-            className="p-2 bg-white hover:bg-neutral-100 text-[#111111] border border-neutral-200 rounded-full transition-all active:scale-95 shadow-none cursor-pointer"
-            title="Seterusnya"
-          >
-            <ChevronRight className="w-4 h-4" />
-          </button>
-        </div>
-      )}
+      {/* MINIMALIST CONTROL ARROWS & DOTS REMOVED AS PER REQUEST */}
     </div>
   );
 }

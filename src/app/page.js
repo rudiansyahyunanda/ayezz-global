@@ -46,7 +46,10 @@ export default function SmoothHeaderHomepage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeHeroSlide, setActiveHeroSlide] = useState(0);
+  const [isHeroPaused, setIsHeroPaused] = useState(false);
   const categoryScrollRef = useRef(null);
+  const heroVideoRef = useRef(null);
+  const heroTimerRef = useRef(null);
 
   const scrollCategories = (direction) => {
     if (categoryScrollRef.current) {
@@ -77,13 +80,34 @@ export default function SmoothHeaderHomepage() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Hero Slideshow Timer
+  const nextHeroSlide = () => {
+    setActiveHeroSlide((prev) => (prev === 0 ? 1 : 0));
+  };
+
+  // Hero Slideshow Timer Logic
   useEffect(() => {
-    const timer = setInterval(() => {
-      setActiveHeroSlide((prev) => (prev === 0 ? 1 : 0));
-    }, 6000);
-    return () => clearInterval(timer);
-  }, []);
+    if (isHeroPaused) {
+      if (heroTimerRef.current) clearTimeout(heroTimerRef.current);
+      if (heroVideoRef.current) heroVideoRef.current.pause();
+      return;
+    }
+    
+    if (activeHeroSlide === 0) {
+      if (heroTimerRef.current) clearTimeout(heroTimerRef.current);
+      heroTimerRef.current = setTimeout(() => {
+        nextHeroSlide();
+      }, 6000);
+    } else if (activeHeroSlide === 1) {
+      if (heroTimerRef.current) clearTimeout(heroTimerRef.current);
+      if (heroVideoRef.current) {
+        heroVideoRef.current.play().catch(e => console.warn('Video play error:', e));
+      }
+    }
+
+    return () => {
+      if (heroTimerRef.current) clearTimeout(heroTimerRef.current);
+    };
+  }, [activeHeroSlide, isHeroPaused]);
 
   const loadData = async () => {
     setIsLoading(true);
@@ -175,7 +199,7 @@ export default function SmoothHeaderHomepage() {
         {/* SLIDE 1: Existing Hero */}
         <div className={`col-start-1 row-start-1 transition-opacity duration-1000 ease-in-out w-full py-8 sm:py-24 px-4 sm:px-8 lg:px-16 2xl:px-24 flex items-center ${activeHeroSlide === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
           <div className="w-full max-w-[1920px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-16 lg:gap-20 items-center">
-            <div className="lg:col-span-6 space-y-4 sm:space-y-8 text-left">
+            <div className={`lg:col-span-6 space-y-4 sm:space-y-8 text-left transition-all duration-1000 delay-100 ease-out transform ${activeHeroSlide === 0 ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
               
               {/* MINIMALIST TELEMETRY BADGE */}
               <div className="inline-flex items-center space-x-2 text-[9px] sm:text-[10px] font-mono font-bold tracking-[0.2em] text-neutral-500 uppercase">
@@ -212,7 +236,7 @@ export default function SmoothHeaderHomepage() {
               </div>
             </div>
 
-            <div className="lg:col-span-6 flex items-center justify-center pt-4 lg:pt-0">
+            <div className={`lg:col-span-6 flex items-center justify-center pt-4 lg:pt-0 transition-all duration-1000 delay-300 ease-out transform ${activeHeroSlide === 0 ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
               <HeroCarousel />
             </div>
           </div>
@@ -222,10 +246,10 @@ export default function SmoothHeaderHomepage() {
         <div className={`col-start-1 row-start-1 transition-opacity duration-1000 ease-in-out w-full py-8 sm:py-24 px-4 sm:px-8 lg:px-16 2xl:px-24 flex items-center ${activeHeroSlide === 1 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
           <div className="absolute inset-0 w-full h-full -z-10">
             <video 
-              autoPlay 
-              loop 
+              ref={heroVideoRef}
               muted 
               playsInline
+              onEnded={nextHeroSlide}
               className="w-full h-full object-cover"
             >
               <source src="/hero-1.webm" type="video/webm" />
@@ -236,7 +260,7 @@ export default function SmoothHeaderHomepage() {
           
           {/* Content for Slide 2 */}
           <div className="relative z-10 w-full max-w-[1920px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-16 lg:gap-20 items-center">
-            <div className="lg:col-span-6 space-y-4 sm:space-y-8 text-left">
+            <div className={`lg:col-span-6 space-y-4 sm:space-y-8 text-left transition-all duration-1000 delay-100 ease-out transform ${activeHeroSlide === 1 ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
               
               {/* MINIMALIST TELEMETRY BADGE */}
               <div className="inline-flex items-center space-x-2 text-[9px] sm:text-[10px] font-mono font-bold tracking-[0.2em] text-[#0066CC] uppercase">
@@ -271,10 +295,37 @@ export default function SmoothHeaderHomepage() {
           </div>
         </div>
 
-        {/* Slide Controls (Dots) */}
-        <div className="absolute bottom-6 sm:bottom-10 left-0 right-0 z-30 flex justify-center space-x-3">
-          <button onClick={() => setActiveHeroSlide(0)} className={`h-2.5 sm:h-3 rounded-full transition-all duration-300 ${activeHeroSlide === 0 ? 'w-8 bg-[#111111]' : 'w-2.5 sm:w-3 bg-neutral-400/50 hover:bg-neutral-400'}`} aria-label="Slide 1"></button>
-          <button onClick={() => setActiveHeroSlide(1)} className={`h-2.5 sm:h-3 rounded-full transition-all duration-300 ${activeHeroSlide === 1 ? 'w-8 bg-[#111111]' : 'w-2.5 sm:w-3 bg-neutral-400/50 hover:bg-neutral-400'}`} aria-label="Slide 2"></button>
+        {/* Nike Style Slideshow Controls */}
+        <div className="absolute bottom-6 sm:bottom-10 right-6 sm:right-12 z-40 flex items-center space-x-3 sm:space-x-4">
+          <button 
+            onClick={() => setIsHeroPaused(!isHeroPaused)}
+            className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-neutral-300/80 hover:border-neutral-400 flex items-center justify-center transition-all bg-white/70 backdrop-blur-md shadow-sm text-[#111111]"
+            aria-label={isHeroPaused ? 'Play' : 'Pause'}
+          >
+            {isHeroPaused ? (
+              <Play className="w-4 h-4 sm:w-5 sm:h-5 ml-1 text-[#111111] fill-current" />
+            ) : (
+              <div className="flex space-x-1">
+                <div className="w-1 sm:w-1.5 h-3.5 sm:h-4 bg-[#111111] rounded-sm"></div>
+                <div className="w-1 sm:w-1.5 h-3.5 sm:h-4 bg-[#111111] rounded-sm"></div>
+              </div>
+            )}
+            
+            {/* Pseudo Progress Ring (Animated when playing) */}
+            {!isHeroPaused && (
+              <svg className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none" viewBox="0 0 100 100">
+                <circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="301.59" strokeDashoffset="0" className="opacity-20 animate-[spin_6s_linear_infinite]" />
+              </svg>
+            )}
+          </button>
+
+          <button onClick={nextHeroSlide} className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/70 backdrop-blur-md hover:bg-white border border-neutral-200 flex items-center justify-center transition-all shadow-sm text-[#111111]">
+            <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
+          </button>
+
+          <button onClick={nextHeroSlide} className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/70 backdrop-blur-md hover:bg-white border border-neutral-200 flex items-center justify-center transition-all shadow-sm text-[#111111]">
+            <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
+          </button>
         </div>
       </section>
 
