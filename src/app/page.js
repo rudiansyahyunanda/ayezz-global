@@ -279,8 +279,8 @@ export default function SmoothHeaderHomepage() {
               {/* Slide 2 Text */}
               <div className={`col-start-1 row-start-1 space-y-4 sm:space-y-8 text-left transition-all duration-1000 delay-100 ease-out transform drop-shadow-[0_0px_4px_rgba(255,255,255,0.9)] ${activeHeroSlide === 1 ? 'translate-y-0 opacity-100 pointer-events-auto z-10' : 'translate-y-8 opacity-0 pointer-events-none z-0'}`}>
                 {/* MINIMALIST TELEMETRY BADGE */}
-                <div className="inline-flex items-center space-x-2 text-[9px] sm:text-[10px] font-mono font-bold tracking-[0.2em] text-[#0066CC] uppercase">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#0066CC] animate-ping" />
+                <div className="inline-flex items-center space-x-2 text-[9px] sm:text-[10px] font-mono font-bold tracking-[0.2em] text-neutral-500 uppercase">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#111111] animate-ping" />
                   <span>KUALITI PREMIUM ANTARABANGSA</span>
                 </div>
                 {/* EDITORIAL HEADLINE TYPOGRAPHY */}
