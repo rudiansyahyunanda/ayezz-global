@@ -268,6 +268,8 @@ export default function SmoothHeaderHomepage() {
               <img src={slide.media_url} alt="Hero Background" className="w-full h-full object-cover" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
             </div>
+          ) : slide.slide_type === 'carousel' ? (
+            <div key={slide.id} className={`absolute inset-0 w-full h-full bg-[#151515] transition-opacity duration-1000 ease-in-out ${activeHeroSlide === idx ? 'opacity-100' : 'opacity-0'}`}></div>
           ) : null
         ))}
         
@@ -277,7 +279,7 @@ export default function SmoothHeaderHomepage() {
           <div className="w-full flex flex-col items-start lg:items-center text-left lg:text-center">
             
             {/* Hero Carousel Container (Positioned ABOVE text per user request) */}
-            <div className="w-full flex items-center justify-start lg:justify-center mb-6 lg:mb-10">
+            <div className="w-full flex items-center justify-start lg:justify-center mb-0 sm:mb-2 lg:mb-4">
               {heroSlides.filter(s => s.is_active).sort((a, b) => a.order_index - b.order_index).map((slide, idx) => (
                 slide.slide_type === 'carousel' ? (
                   <div key={`carousel-${slide.id}`} className={`relative w-full max-w-sm sm:max-w-md transition-all duration-1000 ease-out transform ${activeHeroSlide === idx ? 'translate-y-0 opacity-100 pointer-events-auto' : 'translate-y-8 opacity-0 pointer-events-none absolute'}`}>
