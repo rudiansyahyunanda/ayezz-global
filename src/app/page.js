@@ -240,7 +240,7 @@ export default function SmoothHeaderHomepage() {
       </header>
 
       {/* 3. HERO SHOWCASE SECTION (NIKE REPLICA DESIGN) */}
-      <section className="relative w-full overflow-hidden bg-black h-[65vh] min-h-[550px] lg:min-h-[750px] lg:max-h-[900px] lg:h-screen flex items-center">
+      <section className="relative w-full overflow-hidden bg-black h-[65vh] min-h-[550px] lg:min-h-[600px] lg:max-h-[850px] lg:h-[85vh] flex items-center">
         
         {/* Backgrounds */}
         {heroSlides.filter(s => s.is_active).sort((a, b) => a.order_index - b.order_index).map((slide, idx) => (
@@ -274,7 +274,7 @@ export default function SmoothHeaderHomepage() {
         ))}
         
         {/* Content Container */}
-        <div className="absolute inset-0 z-10 w-full max-w-[1920px] mx-auto flex flex-col justify-end lg:justify-center items-start lg:items-center pb-20 lg:pb-0 px-6 sm:px-12 lg:px-16">
+        <div className="absolute inset-0 z-10 w-full max-w-[1920px] mx-auto flex flex-col justify-end lg:justify-end items-start lg:items-center pb-20 lg:pb-24 px-6 sm:px-12 lg:px-16">
           
           <div className="w-full flex flex-col items-start lg:items-center text-left lg:text-center">
             
@@ -290,13 +290,13 @@ export default function SmoothHeaderHomepage() {
             </div>
 
             {/* Animated Text Container */}
-            <div className="grid grid-cols-1 grid-rows-1 relative w-full lg:max-w-4xl mx-auto lg:mt-8">
+            <div className="grid grid-cols-1 grid-rows-1 relative w-full lg:max-w-4xl mx-auto">
               
               {heroSlides.filter(s => s.is_active).sort((a, b) => a.order_index - b.order_index).map((slide, idx) => (
-                <div key={`text-${slide.id}`} className={`col-start-1 row-start-1 space-y-2 sm:space-y-4 transition-all duration-1000 ease-out transform ${activeHeroSlide === idx ? 'translate-y-0 opacity-100 pointer-events-auto z-10' : 'translate-y-4 opacity-0 pointer-events-none z-0'}`}>
+                <div key={`text-${slide.id}`} className={`col-start-1 row-start-1 space-y-1 sm:space-y-1.5 transition-all duration-1000 ease-out transform ${activeHeroSlide === idx ? 'translate-y-0 opacity-100 pointer-events-auto z-10' : 'translate-y-4 opacity-0 pointer-events-none z-0'}`}>
                   {/* EDITORIAL HEADLINE TYPOGRAPHY - Nike Futura ND */}
                   <h1 
-                    className="text-4xl sm:text-5xl lg:text-7xl text-white tracking-normal leading-[0.95] uppercase mx-auto [&_span]:!text-white drop-shadow-sm"
+                    className="text-4xl sm:text-5xl lg:text-[4.5rem] text-white tracking-normal leading-[0.95] uppercase mx-auto [&_span]:!text-white drop-shadow-sm"
                     style={{ fontFamily: "'Nike Futura ND', Impact, sans-serif" }}
                     dangerouslySetInnerHTML={{ __html: slide.headline_html }}
                   />
@@ -314,7 +314,7 @@ export default function SmoothHeaderHomepage() {
             </div>
 
             {/* NIKE STYLE BUTTONS */}
-            <div className="pt-6 sm:pt-8 lg:pt-0 flex flex-row items-center justify-start lg:justify-center space-x-3 sm:space-x-4 w-full">
+            <div className="pt-4 sm:pt-5 lg:pt-6 flex flex-row items-center justify-start lg:justify-center space-x-3 sm:space-x-4 w-full">
               <a
                 href="#kategori-utama"
                 className="px-5 py-2.5 sm:px-6 sm:py-3 bg-white hover:bg-neutral-200 text-[#111111] font-bold text-xs sm:text-sm rounded-full transition-colors inline-flex items-center space-x-1 sm:space-x-1.5 whitespace-nowrap"
