@@ -188,6 +188,9 @@ export default function SmoothHeaderHomepage() {
     router.push(`/katalog?category=${encodeURIComponent(catTitle)}`);
   };
 
+  const activeSlideObj = heroSlides.filter(s => s.is_active).sort((a,b) => a.order_index - b.order_index)[activeHeroSlide];
+  const isLightBg = activeSlideObj?.slide_type === 'carousel';
+
   return (
     <div className="min-h-screen bg-white text-[#111111] font-sans antialiased selection:bg-[#111111] selection:text-white flex flex-col">
       {/* 1. TOP ANNOUNCEMENT BAR */}
@@ -269,7 +272,7 @@ export default function SmoothHeaderHomepage() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
             </div>
           ) : slide.slide_type === 'carousel' ? (
-            <div key={slide.id} className={`absolute inset-0 w-full h-full bg-[#151515] transition-opacity duration-1000 ease-in-out ${activeHeroSlide === idx ? 'opacity-100' : 'opacity-0'}`}></div>
+            <div key={slide.id} className={`absolute inset-0 w-full h-full bg-[#F5F5F5] transition-opacity duration-1000 ease-in-out ${activeHeroSlide === idx ? 'opacity-100' : 'opacity-0'}`}></div>
           ) : null
         ))}
         
@@ -279,7 +282,7 @@ export default function SmoothHeaderHomepage() {
           <div className="w-full flex flex-col items-start lg:items-center text-left lg:text-center">
             
             {/* Hero Carousel Container (Positioned ABOVE text per user request) */}
-            <div className="w-full flex items-center justify-start lg:justify-center mb-0 sm:mb-2 lg:mb-4">
+            <div className="w-full flex items-center justify-start lg:justify-center mb-4 sm:mb-8 lg:mb-12">
               {heroSlides.filter(s => s.is_active).sort((a, b) => a.order_index - b.order_index).map((slide, idx) => (
                 slide.slide_type === 'carousel' ? (
                   <div key={`carousel-${slide.id}`} className={`relative w-full max-w-sm sm:max-w-md transition-all duration-1000 ease-out transform ${activeHeroSlide === idx ? 'translate-y-0 opacity-100 pointer-events-auto' : 'translate-y-8 opacity-0 pointer-events-none absolute'}`}>
@@ -296,13 +299,13 @@ export default function SmoothHeaderHomepage() {
                 <div key={`text-${slide.id}`} className={`col-start-1 row-start-1 space-y-1 sm:space-y-1.5 transition-all duration-1000 ease-out transform ${activeHeroSlide === idx ? 'translate-y-0 opacity-100 pointer-events-auto z-10' : 'translate-y-4 opacity-0 pointer-events-none z-0'}`}>
                   {/* EDITORIAL HEADLINE TYPOGRAPHY - Nike Futura ND */}
                   <h1 
-                    className="text-4xl sm:text-5xl lg:text-[4.5rem] text-white tracking-normal leading-[0.95] uppercase mx-auto [&_span]:!text-white drop-shadow-sm"
+                    className={`text-4xl sm:text-5xl lg:text-[4.5rem] tracking-normal leading-[0.95] uppercase mx-auto ${slide.slide_type === 'carousel' ? 'text-[#111111] [&_span]:!text-[#111111]' : 'text-white [&_span]:!text-white drop-shadow-sm'}`}
                     style={{ fontFamily: "'Nike Futura ND', Impact, sans-serif" }}
                     dangerouslySetInnerHTML={{ __html: slide.headline_html }}
                   />
                   {slide.description && (
                     <p 
-                      className="text-white text-sm sm:text-base lg:text-lg leading-relaxed max-w-md lg:max-w-xl font-normal mx-auto line-clamp-2 lg:line-clamp-1 drop-shadow-md"
+                      className={`text-sm sm:text-base lg:text-lg leading-relaxed max-w-md lg:max-w-xl font-normal mx-auto line-clamp-2 lg:line-clamp-1 ${slide.slide_type === 'carousel' ? 'text-neutral-600' : 'text-white drop-shadow-md'}`}
                       style={{ fontFamily: "'Helvetica Now', 'Helvetica', 'Arial', sans-serif" }}
                     >
                       {slide.description}
@@ -317,17 +320,17 @@ export default function SmoothHeaderHomepage() {
             <div className="pt-4 sm:pt-5 lg:pt-6 flex flex-row items-center justify-start lg:justify-center space-x-3 sm:space-x-4 w-full">
               <a
                 href="#kategori-utama"
-                className="px-5 py-2.5 sm:px-6 sm:py-3 bg-white hover:bg-neutral-200 text-[#111111] font-bold text-xs sm:text-sm rounded-full transition-colors inline-flex items-center space-x-1 sm:space-x-1.5 whitespace-nowrap"
+                className={`px-5 py-2.5 sm:px-6 sm:py-3 font-bold text-xs sm:text-sm rounded-full transition-colors inline-flex items-center space-x-1 sm:space-x-1.5 whitespace-nowrap ${isLightBg ? 'bg-[#111111] text-white hover:bg-neutral-800' : 'bg-white hover:bg-neutral-200 text-[#111111]'}`}
               >
                 <span>Shop Her Look</span>
               </a>
 
               <Link
                 href="/katalog"
-                className="px-5 py-2.5 sm:px-6 sm:py-3 bg-white hover:bg-neutral-200 text-[#111111] font-bold text-xs sm:text-sm rounded-full transition-colors inline-flex items-center space-x-1 sm:space-x-1.5 whitespace-nowrap"
+                className={`px-5 py-2.5 sm:px-6 sm:py-3 font-bold text-xs sm:text-sm rounded-full transition-colors inline-flex items-center space-x-1 sm:space-x-1.5 whitespace-nowrap ${isLightBg ? 'bg-[#111111] text-white hover:bg-neutral-800' : 'bg-white hover:bg-neutral-200 text-[#111111]'}`}
               >
-                <span>Watch</span>
-                <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#111111]" fill="currentColor" />
+                <span>Katalog</span>
+                <Play className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${isLightBg ? 'text-white' : 'text-[#111111]'}`} fill="currentColor" />
               </Link>
             </div>
             
@@ -348,7 +351,7 @@ export default function SmoothHeaderHomepage() {
                 pauseTimeRef.current = 0;
                 setActiveHeroSlide(idx);
               }}
-              className={`transition-all duration-300 rounded-full h-1.5 sm:h-2 w-1.5 sm:w-2 ${activeHeroSlide === idx ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/80'}`}
+              className={`transition-all duration-300 rounded-full h-1.5 sm:h-2 w-1.5 sm:w-2 ${activeHeroSlide === idx ? (isLightBg ? 'bg-[#111111] scale-125' : 'bg-white scale-125') : (isLightBg ? 'bg-[#111111]/30 hover:bg-[#111111]/60' : 'bg-white/50 hover:bg-white/80')}`}
               aria-label={`Pergi ke slide ${idx + 1}`}
             />
           ))}
@@ -358,25 +361,25 @@ export default function SmoothHeaderHomepage() {
         <div className="absolute bottom-6 right-6 lg:right-12 z-40 flex items-center space-x-2 sm:space-x-3">
           <button 
             onClick={() => setIsHeroPaused(!isHeroPaused)}
-            className="relative w-8 h-8 sm:w-10 sm:h-10 rounded-full border-[1.5px] border-white/20 text-white flex items-center justify-center hover:bg-white/10 transition-colors"
+            className={`relative w-8 h-8 sm:w-10 sm:h-10 rounded-full border-[1.5px] ${isLightBg ? 'border-[#111111]/20 text-[#111111] hover:bg-[#111111]/10' : 'border-white/20 text-white hover:bg-white/10'} flex items-center justify-center transition-colors`}
             aria-label={isHeroPaused ? 'Play' : 'Pause'}
           >
             {isHeroPaused ? (
-               <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white translate-x-[1px]" fill="currentColor" />
+               <Play className={`w-3.5 h-3.5 sm:w-4 sm:h-4 translate-x-[1px] ${isLightBg ? 'text-[#111111]' : 'text-white'}`} fill="currentColor" />
             ) : (
                <div className="flex space-x-[2px]">
-                 <div className="w-[2px] h-[10px] sm:h-[12px] bg-white rounded-sm"></div>
-                 <div className="w-[2px] h-[10px] sm:h-[12px] bg-white rounded-sm"></div>
+                 <div className={`w-[2px] h-[10px] sm:h-[12px] rounded-sm ${isLightBg ? 'bg-[#111111]' : 'bg-white'}`}></div>
+                 <div className={`w-[2px] h-[10px] sm:h-[12px] rounded-sm ${isLightBg ? 'bg-[#111111]' : 'bg-white'}`}></div>
                </div>
             )}
             
             {/* SVG Progress Ring */}
             <svg className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none" viewBox="0 0 100 100">
-              <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="4" />
+              <circle cx="50" cy="50" r="48" fill="none" stroke={isLightBg ? "rgba(17,17,17,0.15)" : "rgba(255,255,255,0.2)"} strokeWidth="4" />
               <circle 
                 cx="50" cy="50" r="48" 
                 fill="none" 
-                stroke="#FFFFFF" 
+                stroke={isLightBg ? "#111111" : "#FFFFFF"} 
                 strokeWidth="4" 
                 strokeDasharray="301.59" 
                 strokeDashoffset={301.59 - (301.59 * slideProgress) / 100}
@@ -388,14 +391,14 @@ export default function SmoothHeaderHomepage() {
           
           <button 
             onClick={prevHeroSlide} 
-            className="hidden lg:flex w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#E5E5E5] hover:bg-white text-black items-center justify-center transition-colors"
+            className={`hidden lg:flex w-8 h-8 sm:w-10 sm:h-10 rounded-full items-center justify-center transition-colors ${isLightBg ? 'bg-[#111111]/10 hover:bg-[#111111]/20 text-[#111111]' : 'bg-[#E5E5E5] hover:bg-white text-black'}`}
           >
             <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 -translate-x-[1px]" />
           </button>
           
           <button 
             onClick={nextHeroSlide} 
-            className="hidden lg:flex w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#E5E5E5] hover:bg-white text-black items-center justify-center transition-colors"
+            className={`hidden lg:flex w-8 h-8 sm:w-10 sm:h-10 rounded-full items-center justify-center transition-colors ${isLightBg ? 'bg-[#111111]/10 hover:bg-[#111111]/20 text-[#111111]' : 'bg-[#E5E5E5] hover:bg-white text-black'}`}
           >
             <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 translate-x-[1px]" />
           </button>

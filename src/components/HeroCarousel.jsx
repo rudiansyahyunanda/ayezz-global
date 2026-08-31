@@ -56,8 +56,8 @@ export default function AutoBackgroundStrippedHeroCarousel() {
 
   if (isLoading) {
     return (
-      <div className="w-full h-[180px] sm:h-[280px] flex items-center justify-center relative select-none pointer-events-none">
-        <div className="w-[140px] sm:w-[200px] h-[160px] sm:h-[260px] bg-neutral-200/50 animate-pulse rounded-3xl flex flex-col items-center justify-center space-y-3">
+      <div className="w-full h-[220px] sm:h-[340px] flex items-center justify-center relative select-none pointer-events-none">
+        <div className="w-[180px] sm:w-[260px] h-[200px] sm:h-[320px] bg-neutral-200/50 animate-pulse rounded-3xl flex flex-col items-center justify-center space-y-3">
           <RefreshCw className="w-6 h-6 text-neutral-400 animate-spin" />
         </div>
       </div>
@@ -83,7 +83,7 @@ export default function AutoBackgroundStrippedHeroCarousel() {
   return (
     <div className="w-full flex flex-col items-center justify-center relative select-none py-1 bg-transparent">
       {/* REAL-TIME CANVAS STRIPPED 100% TRANSPARENT PNG CAROUSEL (PURE NON-CLICKABLE VISUAL SHOWCASE) */}
-      <div className="relative w-full h-[180px] sm:h-[280px] flex items-center justify-center bg-transparent cursor-default pointer-events-none">
+      <div className="relative w-full h-[220px] sm:h-[340px] flex items-center justify-center bg-transparent cursor-default pointer-events-none">
         {items.map((item, index) => {
           const count = items.length;
           let offset = (index - activeIndex + count) % count;
@@ -103,7 +103,7 @@ export default function AutoBackgroundStrippedHeroCarousel() {
           return (
             <div
               key={item.id + index}
-              className={`absolute w-[140px] sm:w-[220px] h-[180px] sm:h-[270px] transition-all duration-700 ease-out flex items-center justify-center bg-transparent border-0 shadow-none outline-none cursor-default pointer-events-none ${positionClasses}`}
+              className={`absolute w-[180px] sm:w-[260px] h-[220px] sm:h-[320px] transition-all duration-700 ease-out flex items-center justify-center bg-transparent border-0 shadow-none outline-none cursor-default pointer-events-none ${positionClasses}`}
             >
               {/* TRANSPARENT IMAGE COMPONENT — PURE VISUAL NO CLICK */}
               <TransparentImage
