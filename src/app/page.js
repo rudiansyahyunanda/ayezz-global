@@ -47,9 +47,12 @@ export default function SmoothHeaderHomepage() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [activeHeroSlide, setActiveHeroSlide] = useState(0);
   const [isHeroPaused, setIsHeroPaused] = useState(false);
+  const [slideProgress, setSlideProgress] = useState(0);
   const categoryScrollRef = useRef(null);
   const heroVideoRef = useRef(null);
-  const heroTimerRef = useRef(null);
+  const slideStartTimeRef = useRef(Date.now());
+  const pauseTimeRef = useRef(0);
+  const elapsedBeforePauseRef = useRef(0);
 
   const scrollCategories = (direction) => {
     if (categoryScrollRef.current) {
@@ -81,31 +84,61 @@ export default function SmoothHeaderHomepage() {
   }, []);
 
   const nextHeroSlide = () => {
+    setSlideProgress(0);
+    elapsedBeforePauseRef.current = 0;
+    slideStartTimeRef.current = Date.now();
+    pauseTimeRef.current = 0;
+    setActiveHeroSlide((prev) => (prev === 0 ? 1 : 0));
+  };
+
+  const prevHeroSlide = () => {
+    setSlideProgress(0);
+    elapsedBeforePauseRef.current = 0;
+    slideStartTimeRef.current = Date.now();
+    pauseTimeRef.current = 0;
     setActiveHeroSlide((prev) => (prev === 0 ? 1 : 0));
   };
 
   // Hero Slideshow Timer Logic
   useEffect(() => {
+    let rafId;
+    const duration = 6000;
+
     if (isHeroPaused) {
-      if (heroTimerRef.current) clearTimeout(heroTimerRef.current);
       if (heroVideoRef.current) heroVideoRef.current.pause();
+      if (pauseTimeRef.current === 0) {
+        pauseTimeRef.current = Date.now();
+      }
       return;
+    } else {
+      if (pauseTimeRef.current > 0) {
+         elapsedBeforePauseRef.current += (Date.now() - pauseTimeRef.current);
+         pauseTimeRef.current = 0;
+      }
     }
     
     if (activeHeroSlide === 0) {
-      if (heroTimerRef.current) clearTimeout(heroTimerRef.current);
-      heroTimerRef.current = setTimeout(() => {
-        nextHeroSlide();
-      }, 6000);
+      const animate = () => {
+        const now = Date.now();
+        const elapsed = (now - slideStartTimeRef.current) - elapsedBeforePauseRef.current;
+        const progress = Math.min((elapsed / duration) * 100, 100);
+        setSlideProgress(progress);
+        
+        if (elapsed >= duration) {
+           nextHeroSlide();
+        } else {
+           rafId = requestAnimationFrame(animate);
+        }
+      };
+      rafId = requestAnimationFrame(animate);
     } else if (activeHeroSlide === 1) {
-      if (heroTimerRef.current) clearTimeout(heroTimerRef.current);
       if (heroVideoRef.current) {
         heroVideoRef.current.play().catch(e => console.warn('Video play error:', e));
       }
     }
 
     return () => {
-      if (heroTimerRef.current) clearTimeout(heroTimerRef.current);
+      if (rafId) cancelAnimationFrame(rafId);
     };
   }, [activeHeroSlide, isHeroPaused]);
 
@@ -250,6 +283,12 @@ export default function SmoothHeaderHomepage() {
               muted 
               playsInline
               onEnded={nextHeroSlide}
+              onTimeUpdate={(e) => {
+                if (activeHeroSlide === 1) {
+                  const progress = (e.target.currentTime / e.target.duration) * 100;
+                  setSlideProgress(progress || 0);
+                }
+              }}
               className="w-full h-full object-cover"
             >
               <source src="/hero-1.webm" type="video/webm" />
@@ -311,15 +350,13 @@ export default function SmoothHeaderHomepage() {
               </div>
             )}
             
-            {/* Pseudo Progress Ring (Animated when playing) */}
-            {!isHeroPaused && (
-              <svg className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none" viewBox="0 0 100 100">
-                <circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" strokeWidth="2" strokeDasharray="301.59" strokeDashoffset="0" className="opacity-20 animate-[spin_6s_linear_infinite]" />
-              </svg>
-            )}
+            {/* Real Progress Ring (Synced to duration) */}
+            <svg className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="48" fill="none" stroke="currentColor" strokeWidth="3" strokeDasharray="301.59" strokeDashoffset={301.59 - (slideProgress / 100) * 301.59} className="opacity-60 transition-all duration-75 ease-linear" />
+            </svg>
           </button>
 
-          <button onClick={nextHeroSlide} className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/70 backdrop-blur-md hover:bg-white border border-neutral-200 flex items-center justify-center transition-all shadow-sm text-[#111111]">
+          <button onClick={prevHeroSlide} className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white/70 backdrop-blur-md hover:bg-white border border-neutral-200 flex items-center justify-center transition-all shadow-sm text-[#111111]">
             <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
           </button>
 
