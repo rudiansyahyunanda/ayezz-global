@@ -240,7 +240,7 @@ export default function SmoothHeaderHomepage() {
       </header>
 
       {/* 3. HERO SHOWCASE SECTION (NIKE REPLICA DESIGN) */}
-      <section className="relative w-full overflow-hidden bg-black h-[60vh] min-h-[500px] lg:min-h-[650px] lg:max-h-[800px] flex items-center">
+      <section className="relative w-full overflow-hidden bg-black h-[65vh] min-h-[550px] lg:min-h-[750px] lg:max-h-[900px] lg:h-screen flex items-center">
         
         {/* Backgrounds */}
         {heroSlides.filter(s => s.is_active).sort((a, b) => a.order_index - b.order_index).map((slide, idx) => (
@@ -272,7 +272,7 @@ export default function SmoothHeaderHomepage() {
         ))}
         
         {/* Content Container */}
-        <div className="absolute inset-0 z-10 w-full max-w-[1920px] mx-auto flex flex-col justify-end lg:justify-center items-start lg:items-center pb-32 lg:pb-0 px-6 sm:px-12 lg:px-16">
+        <div className="absolute inset-0 z-10 w-full max-w-[1920px] mx-auto flex flex-col justify-end lg:justify-center items-start lg:items-center pb-20 lg:pb-0 px-6 sm:px-12 lg:px-16">
           
           <div className="w-full flex flex-col items-start lg:items-center text-left lg:text-center">
             
@@ -300,7 +300,7 @@ export default function SmoothHeaderHomepage() {
                   />
                   {slide.description && (
                     <p 
-                      className="text-white text-sm sm:text-base lg:text-lg leading-relaxed max-w-xl font-normal mx-auto line-clamp-3 lg:line-clamp-none drop-shadow-md"
+                      className="text-white text-sm sm:text-base lg:text-lg leading-relaxed max-w-md lg:max-w-xl font-normal mx-auto line-clamp-2 lg:line-clamp-1 drop-shadow-md"
                       style={{ fontFamily: "'Helvetica Now', 'Helvetica', 'Arial', sans-serif" }}
                     >
                       {slide.description}
