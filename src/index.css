@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Nike Futura ND';
+  src: url('/Nike Futura ND.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
 @layer base {
   body {
     background-color: #FFFFFF;

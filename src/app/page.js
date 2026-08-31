@@ -238,8 +238,8 @@ export default function SmoothHeaderHomepage() {
         </div>
       </header>
 
-      {/* 3. HERO SHOWCASE SECTION (EDITORIAL SPORTSWEAR AESTHETIC - FULL WIDTH & SLIDESHOW) */}
-      <section className="relative w-full border-b border-neutral-200/60 overflow-hidden bg-[#F8F8FA] min-h-[500px] sm:min-h-[700px] flex items-center pt-10 pb-20 sm:py-24 px-4 sm:px-8 lg:px-16 2xl:px-24">
+      {/* 3. HERO SHOWCASE SECTION (NIKE REPLICA DESIGN) */}
+      <section className="relative w-full overflow-hidden bg-black min-h-[75vh] sm:min-h-[85vh] lg:min-h-screen flex items-center">
         
         {/* Backgrounds */}
         {heroSlides.filter(s => s.is_active).sort((a, b) => a.order_index - b.order_index).map((slide, idx) => (
@@ -260,133 +260,126 @@ export default function SmoothHeaderHomepage() {
               >
                 <source src={slide.media_url} type={slide.media_url.endsWith('.mp4') ? 'video/mp4' : 'video/webm'} />
               </video>
-              <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px]"></div>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
             </div>
           ) : slide.slide_type === 'image' ? (
             <div key={slide.id} className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${activeHeroSlide === idx ? 'opacity-100' : 'opacity-0'}`}>
-              <img src={slide.media_url} alt="Hero Background" className="w-full h-full object-cover opacity-30" />
+              <img src={slide.media_url} alt="Hero Background" className="w-full h-full object-cover" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
             </div>
           ) : null
         ))}
         
         {/* Content Container */}
-        <div className="relative z-10 w-full max-w-[1920px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-16 lg:gap-20 items-center">
+        <div className="absolute inset-0 z-10 w-full max-w-[1920px] mx-auto flex flex-col justify-end lg:justify-center items-start lg:items-center pb-24 lg:pb-0 px-6 sm:px-12 lg:px-16">
           
-          <div className="lg:col-span-6 flex flex-col justify-center text-center lg:text-left items-center lg:items-start">
+          <div className="w-full flex flex-col items-start lg:items-center text-left lg:text-center">
             
+            {/* Hero Carousel Container (Positioned ABOVE text per user request) */}
+            <div className="w-full flex items-center justify-start lg:justify-center mb-6 lg:mb-10">
+              {heroSlides.filter(s => s.is_active).sort((a, b) => a.order_index - b.order_index).map((slide, idx) => (
+                slide.slide_type === 'carousel' ? (
+                  <div key={`carousel-${slide.id}`} className={`relative w-full max-w-xl transition-all duration-1000 ease-out transform ${activeHeroSlide === idx ? 'translate-y-0 opacity-100 pointer-events-auto' : 'translate-y-8 opacity-0 pointer-events-none absolute'}`}>
+                    <HeroCarousel />
+                  </div>
+                ) : null
+              ))}
+            </div>
+
             {/* Animated Text Container */}
-            <div className="grid grid-cols-1 grid-rows-1 relative w-full">
+            <div className="grid grid-cols-1 grid-rows-1 relative w-full lg:max-w-4xl mx-auto">
               
               {heroSlides.filter(s => s.is_active).sort((a, b) => a.order_index - b.order_index).map((slide, idx) => (
-                <div key={`text-${slide.id}`} className={`col-start-1 row-start-1 space-y-3 sm:space-y-8 transition-all duration-1000 delay-100 ease-out transform ${slide.slide_type === 'video' ? 'drop-shadow-[0_0px_4px_rgba(255,255,255,0.9)]' : ''} ${activeHeroSlide === idx ? 'translate-y-0 opacity-100 pointer-events-auto z-10' : 'translate-y-8 opacity-0 pointer-events-none z-0'}`}>
-                  {/* MINIMALIST TELEMETRY BADGE */}
-                  {slide.badge_text && (
-                    <div className="inline-flex items-center space-x-2 text-[9px] sm:text-[10px] font-mono font-bold tracking-[0.2em] text-neutral-500 uppercase justify-center lg:justify-start w-full lg:w-auto">
-                      <span className="w-1.5 h-1.5 rounded-full bg-[#111111] animate-ping" />
-                      <span>{slide.badge_text}</span>
-                    </div>
-                  )}
-                  {/* EDITORIAL HEADLINE TYPOGRAPHY */}
+                <div key={`text-${slide.id}`} className={`col-start-1 row-start-1 space-y-2 sm:space-y-4 transition-all duration-1000 ease-out transform ${activeHeroSlide === idx ? 'translate-y-0 opacity-100 pointer-events-auto z-10' : 'translate-y-4 opacity-0 pointer-events-none z-0'}`}>
+                  {/* EDITORIAL HEADLINE TYPOGRAPHY - Nike Futura ND */}
                   <h1 
-                    className="text-4xl sm:text-5xl lg:text-7xl font-black text-[#111111] tracking-tight leading-[1.05] uppercase px-2 sm:px-0 mx-auto lg:mx-0 max-w-[400px] sm:max-w-none"
+                    className="text-4xl sm:text-6xl lg:text-8xl text-white tracking-tighter leading-[0.9] uppercase mx-auto"
+                    style={{ fontFamily: "'Nike Futura ND', Impact, sans-serif" }}
                     dangerouslySetInnerHTML={{ __html: slide.headline_html }}
                   />
                   {slide.description && (
-                    <>
-                      <p className="hidden sm:block text-neutral-600 text-xs sm:text-base leading-relaxed max-w-xl font-normal mx-auto lg:mx-0">
-                        {slide.description}
-                      </p>
-                      <p className="block sm:hidden text-neutral-600 text-sm leading-relaxed max-w-xs font-normal mx-auto">
-                        {slide.description.length > 80 ? slide.description.substring(0, 80) + '...' : slide.description}
-                      </p>
-                    </>
+                    <p className="text-white text-sm sm:text-base lg:text-lg leading-relaxed max-w-2xl font-normal mx-auto">
+                      {slide.description}
+                    </p>
                   )}
                 </div>
               ))}
               
             </div>
 
-            {/* STATIC CTA BUTTONS (Outside of animation, always identical) */}
-            <div className="pt-6 sm:pt-10 flex flex-col sm:flex-row items-center justify-center lg:justify-start space-y-3 sm:space-y-0 sm:space-x-4 w-full sm:w-auto px-4 sm:px-0">
+            {/* NIKE STYLE BUTTONS */}
+            <div className="pt-6 sm:pt-8 flex flex-row items-center justify-start lg:justify-center space-x-3 sm:space-x-4 w-full">
               <a
                 href="#kategori-utama"
-                className="w-full sm:w-auto justify-center px-6 py-3.5 sm:px-8 sm:py-4 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center space-x-2 active:scale-[0.98] shadow-sm whitespace-nowrap"
+                className="px-5 py-2.5 sm:px-6 sm:py-3 bg-white hover:bg-neutral-200 text-[#111111] font-bold text-xs sm:text-sm rounded-full transition-colors inline-flex items-center space-x-1 sm:space-x-1.5 whitespace-nowrap"
               >
-                <span>Kategori Utama</span>
-                <ArrowRight className="w-4 h-4 text-white" />
+                <span>Shop Her Look</span>
               </a>
 
               <Link
                 href="/katalog"
-                className="w-full sm:w-auto justify-center px-5 py-3.5 sm:px-7 sm:py-4 bg-white border border-neutral-300 hover:border-[#111111] text-[#111111] font-bold text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center active:scale-[0.98] whitespace-nowrap"
+                className="px-5 py-2.5 sm:px-6 sm:py-3 bg-white hover:bg-neutral-200 text-[#111111] font-bold text-xs sm:text-sm rounded-full transition-colors inline-flex items-center space-x-1 sm:space-x-1.5 whitespace-nowrap"
               >
-                <span>Semua Katalog</span>
+                <span>Watch</span>
+                <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#111111]" fill="currentColor" />
               </Link>
             </div>
             
           </div>
-
-          {/* Right Side Carousel (Visible when slide_type === carousel) */}
-          <div className="lg:col-span-6 flex items-center justify-center pt-8 lg:pt-0 w-full">
-            {heroSlides.filter(s => s.is_active).sort((a, b) => a.order_index - b.order_index).map((slide, idx) => (
-              slide.slide_type === 'carousel' ? (
-                <div key={`carousel-${slide.id}`} className={`absolute lg:relative w-full transition-all duration-1000 delay-300 ease-out transform ${activeHeroSlide === idx ? 'translate-y-0 opacity-100 pointer-events-auto z-10' : 'translate-y-8 opacity-0 pointer-events-none z-0'}`}>
-                  <HeroCarousel />
-                </div>
-              ) : null
-            ))}
-          </div>
           
         </div>
 
-        <div className="absolute bottom-5 left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:bottom-10 sm:right-12 z-40 flex items-center space-x-3 sm:space-x-4 scale-[0.85] sm:scale-100 origin-bottom">
+        {/* NIKE STYLE CONTROLS */}
+        {/* Dots (Bottom Center) */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center space-x-1.5 sm:space-x-2">
+          {heroSlides.filter(s => s.is_active).sort((a,b) => a.order_index - b.order_index).map((slide, idx) => (
+            <button 
+              key={`dot-${slide.id}`}
+              onClick={() => {
+                setSlideProgress(0);
+                elapsedBeforePauseRef.current = 0;
+                slideStartTimeRef.current = Date.now();
+                pauseTimeRef.current = 0;
+                setActiveHeroSlide(idx);
+              }}
+              className={`transition-all duration-300 rounded-full h-1.5 sm:h-2 w-1.5 sm:w-2 ${activeHeroSlide === idx ? 'bg-white scale-125' : 'bg-white/50 hover:bg-white/80'}`}
+              aria-label={`Pergi ke slide ${idx + 1}`}
+            />
+          ))}
+        </div>
+
+        {/* Play/Pause & Arrows (Bottom Right) */}
+        <div className="absolute bottom-6 right-6 lg:right-12 z-40 flex items-center space-x-2 sm:space-x-3">
           <button 
             onClick={() => setIsHeroPaused(!isHeroPaused)}
-            className="relative w-10 h-10 sm:w-12 sm:h-12 rounded-full border-2 border-neutral-300/80 hover:border-neutral-400 flex items-center justify-center transition-all bg-white/70 backdrop-blur-md shadow-sm text-[#111111]"
+            className="w-8 h-8 sm:w-10 sm:h-10 rounded-full border-[1.5px] border-white text-white flex items-center justify-center hover:bg-white/10 transition-colors"
             aria-label={isHeroPaused ? 'Play' : 'Pause'}
           >
             {isHeroPaused ? (
-               <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#111111] translate-x-0.5" fill="currentColor" />
+               <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white translate-x-[1px]" fill="currentColor" />
             ) : (
-               <div className="flex space-x-[2px] sm:space-x-1">
-                 <div className="w-1 sm:w-1.5 h-3 sm:h-4 bg-[#111111] rounded-full"></div>
-                 <div className="w-1 sm:w-1.5 h-3 sm:h-4 bg-[#111111] rounded-full"></div>
+               <div className="flex space-x-[2px]">
+                 <div className="w-[2px] h-[10px] sm:h-[12px] bg-white rounded-sm"></div>
+                 <div className="w-[2px] h-[10px] sm:h-[12px] bg-white rounded-sm"></div>
                </div>
             )}
-            
-            {/* SVG Progress Ring */}
-            <svg className="absolute inset-0 w-full h-full -rotate-90 pointer-events-none" viewBox="0 0 100 100">
-              <circle cx="50" cy="50" r="48" fill="none" stroke="rgba(0,0,0,0.05)" strokeWidth="4" />
-              <circle 
-                cx="50" cy="50" r="48" 
-                fill="none" 
-                stroke="#111111" 
-                strokeWidth="4" 
-                strokeDasharray="301.59" 
-                strokeDashoffset={301.59 - (301.59 * slideProgress) / 100}
-                strokeLinecap="round"
-                className="transition-all duration-100 ease-linear"
-              />
-            </svg>
           </button>
           
-          <div className="flex space-x-1.5 bg-white/70 backdrop-blur-md px-3 sm:px-4 py-2 sm:py-2.5 rounded-full shadow-sm border border-neutral-200/50">
-            {heroSlides.filter(s => s.is_active).sort((a,b) => a.order_index - b.order_index).map((slide, idx) => (
-              <button 
-                key={`dot-${slide.id}`}
-                onClick={() => {
-                  setSlideProgress(0);
-                  elapsedBeforePauseRef.current = 0;
-                  slideStartTimeRef.current = Date.now();
-                  pauseTimeRef.current = 0;
-                  setActiveHeroSlide(idx);
-                }}
-                className={`transition-all duration-500 rounded-full h-1.5 sm:h-2 ${activeHeroSlide === idx ? 'w-6 sm:w-8 bg-[#111111]' : 'w-1.5 sm:w-2 bg-neutral-300 hover:bg-neutral-400'}`}
-                aria-label={`Pergi ke slide ${idx + 1}`}
-              />
-            ))}
-          </div>
+          <button 
+            onClick={prevHeroSlide} 
+            className="hidden lg:flex w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#E5E5E5] hover:bg-white text-black items-center justify-center transition-colors"
+          >
+            <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5 -translate-x-[1px]" />
+          </button>
+          
+          <button 
+            onClick={nextHeroSlide} 
+            className="hidden lg:flex w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-[#E5E5E5] hover:bg-white text-black items-center justify-center transition-colors"
+          >
+            <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 translate-x-[1px]" />
+          </button>
         </div>
+
       </section>
 
       {/* 4. MASTER CATEGORIES SHOWCASE CAROUSEL */}
