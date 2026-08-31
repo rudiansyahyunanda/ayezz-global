@@ -1116,8 +1116,8 @@ export const DEFAULT_HERO_SLIDES = [
     slide_type: 'carousel',
     media_url: '',
     badge_text: 'KILANG SUBLIMASI HIGH-PERFORMANCE',
-    headline_html: 'REKA BENTUK JERSI <br class="hidden sm:block" />\n<span class="text-neutral-400 font-extrabold tracking-normal">PAKAIAN CUSTOM</span>',
-    description: 'Pilih daripada koleksi visual kategori di bawah. Pilih desain jersi, kustomisasikan jenis kolar dan kain sublimasi, dan proses tempahan terus secara dalam talian.'
+    headline_html: 'REKA BENTUK JERSI',
+    description: 'Pilih desain jersi, kustomisasikan jenis kolar dan kain sublimasi, lalu tempah secara dalam talian.'
   },
   {
     id: 'hero_2',
@@ -1126,8 +1126,8 @@ export const DEFAULT_HERO_SLIDES = [
     slide_type: 'video',
     media_url: '/hero-1.webm',
     badge_text: 'KUALITI PREMIUM ANTARABANGSA',
-    headline_html: 'EVOLUSI <br class="hidden sm:block" />\n<span class="text-neutral-500 font-extrabold tracking-normal">PEMBUATAN JERSI</span>',
-    description: 'Kami membawa evolusi dalam pembuatan jersi dengan kualiti cetakan dan fabrik bertaraf antarabangsa. Saksikan proses kilang kami yang berteknologi tinggi.'
+    headline_html: 'EVOLUSI TEMPAH JERSI',
+    description: 'Saksikan proses pembuatan jersi di kilang kami dengan kualiti cetakan bertaraf antarabangsa.'
   }
 ];
 
