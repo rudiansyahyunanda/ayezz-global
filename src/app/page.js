@@ -227,111 +227,101 @@ export default function SmoothHeaderHomepage() {
       </header>
 
       {/* 3. HERO SHOWCASE SECTION (EDITORIAL SPORTSWEAR AESTHETIC - FULL WIDTH & SLIDESHOW) */}
-      <section className="relative w-full border-b border-neutral-200/60 overflow-hidden bg-[#F8F8FA] min-h-[500px] sm:min-h-[700px] grid">
+      <section className="relative w-full border-b border-neutral-200/60 overflow-hidden bg-[#F8F8FA] min-h-[500px] sm:min-h-[700px] flex items-center py-8 sm:py-24 px-4 sm:px-8 lg:px-16 2xl:px-24">
         
-        {/* SLIDE 1: Existing Hero */}
-        <div className={`col-start-1 row-start-1 transition-opacity duration-1000 ease-in-out w-full py-8 sm:py-24 px-4 sm:px-8 lg:px-16 2xl:px-24 flex items-center ${activeHeroSlide === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
-          <div className="w-full max-w-[1920px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-16 lg:gap-20 items-center">
-            <div className={`lg:col-span-6 space-y-4 sm:space-y-8 text-left transition-all duration-1000 delay-100 ease-out transform ${activeHeroSlide === 0 ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+        {/* Backgrounds */}
+        {/* Slide 2 Video Background (Fades in over the default #F8F8FA background) */}
+        <div className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ease-in-out ${activeHeroSlide === 1 ? 'opacity-100' : 'opacity-0'}`}>
+          <video 
+            ref={heroVideoRef}
+            muted 
+            playsInline
+            onEnded={nextHeroSlide}
+            onTimeUpdate={(e) => {
+              if (activeHeroSlide === 1) {
+                const progress = (e.target.currentTime / e.target.duration) * 100;
+                setSlideProgress(progress || 0);
+              }
+            }}
+            className="w-full h-full object-cover"
+          >
+            <source src="/hero-1.webm" type="video/webm" />
+          </video>
+          {/* White frosted glass overlay */}
+          <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px]"></div>
+        </div>
+        
+        {/* Content Container */}
+        <div className="relative z-10 w-full max-w-[1920px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-16 lg:gap-20 items-center">
+          
+          <div className="lg:col-span-6 flex flex-col justify-center">
+            
+            {/* Animated Text Container */}
+            <div className="grid grid-cols-1 grid-rows-1 relative">
               
-              {/* MINIMALIST TELEMETRY BADGE */}
-              <div className="inline-flex items-center space-x-2 text-[9px] sm:text-[10px] font-mono font-bold tracking-[0.2em] text-neutral-500 uppercase">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#111111] animate-ping" />
-                <span>KILANG SUBLIMASI HIGH-PERFORMANCE</span>
+              {/* Slide 1 Text */}
+              <div className={`col-start-1 row-start-1 space-y-4 sm:space-y-8 text-left transition-all duration-1000 delay-100 ease-out transform ${activeHeroSlide === 0 ? 'translate-y-0 opacity-100 pointer-events-auto z-10' : 'translate-y-8 opacity-0 pointer-events-none z-0'}`}>
+                {/* MINIMALIST TELEMETRY BADGE */}
+                <div className="inline-flex items-center space-x-2 text-[9px] sm:text-[10px] font-mono font-bold tracking-[0.2em] text-neutral-500 uppercase">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#111111] animate-ping" />
+                  <span>KILANG SUBLIMASI HIGH-PERFORMANCE</span>
+                </div>
+                {/* EDITORIAL HEADLINE TYPOGRAPHY */}
+                <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black text-[#111111] tracking-tight leading-[1.05] uppercase">
+                  REKA BENTUK JERSI <br />
+                  <span className="text-neutral-400 font-extrabold tracking-normal">PAKAIAN CUSTOM</span>
+                </h1>
+                <p className="text-neutral-600 text-xs sm:text-base leading-relaxed max-w-xl font-normal">
+                  Pilih daripada koleksi visual kategori di bawah. Pilih desain jersi, kustomisasikan jenis kolar dan kain sublimasi, dan proses tempahan terus secara dalam talian.
+                </p>
               </div>
 
-              {/* EDITORIAL HEADLINE TYPOGRAPHY */}
-              <h1 className="text-3xl sm:text-5xl lg:text-7xl font-black text-[#111111] tracking-tight leading-[1.05] uppercase">
-                REKA BENTUK JERSI <br />
-                <span className="text-neutral-400 font-extrabold tracking-normal">PAKAIAN CUSTOM</span>
-              </h1>
-
-              <p className="text-neutral-600 text-xs sm:text-base leading-relaxed max-w-xl font-normal">
-                Pilih daripada koleksi visual kategori di bawah. Pilih desain jersi, kustomisasikan jenis kolar dan kain sublimasi, dan proses tempahan terus secara dalam talian.
-              </p>
-
-              {/* SIDE-BY-SIDE COMPACT CTA BUTTONS */}
-              <div className="pt-2 flex items-center space-x-3 sm:space-x-4">
-                <a
-                  href="#kategori-utama"
-                  className="px-6 py-3.5 sm:px-8 sm:py-4 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center space-x-2 active:scale-[0.98] shadow-sm whitespace-nowrap"
-                >
-                  <span>Kategori Utama</span>
-                  <ArrowRight className="w-4 h-4 text-white" />
-                </a>
-
-                <Link
-                  href="/katalog"
-                  className="px-5 py-3.5 sm:px-7 sm:py-4 bg-white border border-neutral-300 hover:border-[#111111] text-[#111111] font-bold text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center justify-center active:scale-[0.98] whitespace-nowrap"
-                >
-                  <span>Semua Katalog</span>
-                </Link>
+              {/* Slide 2 Text */}
+              <div className={`col-start-1 row-start-1 space-y-4 sm:space-y-8 text-left transition-all duration-1000 delay-100 ease-out transform ${activeHeroSlide === 1 ? 'translate-y-0 opacity-100 pointer-events-auto z-10' : 'translate-y-8 opacity-0 pointer-events-none z-0'}`}>
+                {/* MINIMALIST TELEMETRY BADGE */}
+                <div className="inline-flex items-center space-x-2 text-[9px] sm:text-[10px] font-mono font-bold tracking-[0.2em] text-[#0066CC] uppercase">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[#0066CC] animate-ping" />
+                  <span>KUALITI PREMIUM ANTARABANGSA</span>
+                </div>
+                {/* EDITORIAL HEADLINE TYPOGRAPHY */}
+                <h2 className="text-3xl sm:text-5xl lg:text-7xl font-black text-[#111111] tracking-tight leading-[1.05] uppercase">
+                  EVOLUSI <br />
+                  <span className="text-neutral-500 font-extrabold tracking-normal">PEMBUATAN JERSI</span>
+                </h2>
+                <p className="text-neutral-700 text-xs sm:text-base leading-relaxed max-w-xl font-normal">
+                  Kami membawa evolusi dalam pembuatan jersi dengan kualiti cetakan dan fabrik bertaraf antarabangsa. Saksikan proses kilang kami yang berteknologi tinggi.
+                </p>
               </div>
+              
             </div>
 
-            <div className={`lg:col-span-6 flex items-center justify-center pt-4 lg:pt-0 transition-all duration-1000 delay-300 ease-out transform ${activeHeroSlide === 0 ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
+            {/* STATIC CTA BUTTONS (Outside of animation, always identical) */}
+            <div className="pt-6 sm:pt-10 flex items-center space-x-3 sm:space-x-4">
+              <a
+                href="#kategori-utama"
+                className="px-6 py-3.5 sm:px-8 sm:py-4 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center space-x-2 active:scale-[0.98] shadow-sm whitespace-nowrap"
+              >
+                <span>Kategori Utama</span>
+                <ArrowRight className="w-4 h-4 text-white" />
+              </a>
+
+              <Link
+                href="/katalog"
+                className="px-5 py-3.5 sm:px-7 sm:py-4 bg-white border border-neutral-300 hover:border-[#111111] text-[#111111] font-bold text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center justify-center active:scale-[0.98] whitespace-nowrap"
+              >
+                <span>Semua Katalog</span>
+              </Link>
+            </div>
+            
+          </div>
+
+          {/* Right Side Carousel (Visible on Slide 1 only) */}
+          <div className="lg:col-span-6 flex items-center justify-center pt-8 lg:pt-0">
+            <div className={`transition-all duration-1000 delay-300 ease-out transform ${activeHeroSlide === 0 ? 'translate-y-0 opacity-100 pointer-events-auto' : 'translate-y-8 opacity-0 pointer-events-none'}`}>
               <HeroCarousel />
             </div>
           </div>
-        </div>
-
-        {/* SLIDE 2: Video Background */}
-        <div className={`col-start-1 row-start-1 transition-opacity duration-1000 ease-in-out w-full py-8 sm:py-24 px-4 sm:px-8 lg:px-16 2xl:px-24 flex items-center ${activeHeroSlide === 1 ? 'opacity-100 z-10' : 'opacity-0 z-0 pointer-events-none'}`}>
-          <div className="absolute inset-0 w-full h-full -z-10">
-            <video 
-              ref={heroVideoRef}
-              muted 
-              playsInline
-              onEnded={nextHeroSlide}
-              onTimeUpdate={(e) => {
-                if (activeHeroSlide === 1) {
-                  const progress = (e.target.currentTime / e.target.duration) * 100;
-                  setSlideProgress(progress || 0);
-                }
-              }}
-              className="w-full h-full object-cover"
-            >
-              <source src="/hero-1.webm" type="video/webm" />
-            </video>
-            {/* White frosted glass overlay */}
-            <div className="absolute inset-0 bg-white/60 backdrop-blur-[2px]"></div>
-          </div>
           
-          {/* Content for Slide 2 */}
-          <div className="relative z-10 w-full max-w-[1920px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 sm:gap-16 lg:gap-20 items-center">
-            <div className={`lg:col-span-6 space-y-4 sm:space-y-8 text-left transition-all duration-1000 delay-100 ease-out transform ${activeHeroSlide === 1 ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'}`}>
-              
-              {/* MINIMALIST TELEMETRY BADGE */}
-              <div className="inline-flex items-center space-x-2 text-[9px] sm:text-[10px] font-mono font-bold tracking-[0.2em] text-[#0066CC] uppercase">
-                <span className="w-1.5 h-1.5 rounded-full bg-[#0066CC] animate-ping" />
-                <span>KUALITI PREMIUM ANTARABANGSA</span>
-              </div>
-
-              {/* EDITORIAL HEADLINE TYPOGRAPHY */}
-              <h2 className="text-3xl sm:text-5xl lg:text-7xl font-black text-[#111111] tracking-tight leading-[1.05] uppercase">
-                EVOLUSI <br />
-                <span className="text-neutral-500 font-extrabold tracking-normal">PEMBUATAN JERSI</span>
-              </h2>
-
-              <p className="text-neutral-700 text-xs sm:text-base leading-relaxed max-w-xl font-normal">
-                Kami membawa evolusi dalam pembuatan jersi dengan kualiti cetakan dan fabrik bertaraf antarabangsa. Saksikan proses kilang kami yang berteknologi tinggi.
-              </p>
-
-              {/* SIDE-BY-SIDE COMPACT CTA BUTTONS */}
-              <div className="pt-2 flex items-center space-x-3 sm:space-x-4">
-                <Link
-                  href="/katalog"
-                  className="px-6 py-3.5 sm:px-8 sm:py-4 bg-[#0066CC] hover:bg-[#0055BB] text-white font-bold text-xs uppercase tracking-widest rounded-full transition-all inline-flex items-center space-x-2 active:scale-[0.98] shadow-md whitespace-nowrap"
-                >
-                  <span>Mula Menempah</span>
-                  <ArrowRight className="w-4 h-4 text-white" />
-                </Link>
-              </div>
-            </div>
-            
-            {/* Empty space on the right for video visibility */}
-            <div className="hidden lg:block lg:col-span-6"></div>
-          </div>
         </div>
 
         {/* Nike Style Slideshow Controls */}
