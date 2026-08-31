@@ -290,7 +290,7 @@ export default function SmoothHeaderHomepage() {
             </div>
 
             {/* Animated Text Container */}
-            <div className="grid grid-cols-1 grid-rows-1 relative w-full lg:max-w-4xl mx-auto">
+            <div className="grid grid-cols-1 grid-rows-1 relative w-full lg:max-w-4xl mx-auto lg:mt-8">
               
               {heroSlides.filter(s => s.is_active).sort((a, b) => a.order_index - b.order_index).map((slide, idx) => (
                 <div key={`text-${slide.id}`} className={`col-start-1 row-start-1 space-y-2 sm:space-y-4 transition-all duration-1000 ease-out transform ${activeHeroSlide === idx ? 'translate-y-0 opacity-100 pointer-events-auto z-10' : 'translate-y-4 opacity-0 pointer-events-none z-0'}`}>
@@ -314,7 +314,7 @@ export default function SmoothHeaderHomepage() {
             </div>
 
             {/* NIKE STYLE BUTTONS */}
-            <div className="pt-6 sm:pt-8 flex flex-row items-center justify-start lg:justify-center space-x-3 sm:space-x-4 w-full">
+            <div className="pt-6 sm:pt-8 lg:pt-0 flex flex-row items-center justify-start lg:justify-center space-x-3 sm:space-x-4 w-full">
               <a
                 href="#kategori-utama"
                 className="px-5 py-2.5 sm:px-6 sm:py-3 bg-white hover:bg-neutral-200 text-[#111111] font-bold text-xs sm:text-sm rounded-full transition-colors inline-flex items-center space-x-1 sm:space-x-1.5 whitespace-nowrap"
