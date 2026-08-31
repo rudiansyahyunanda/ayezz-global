@@ -470,41 +470,32 @@ export default function SmoothHeaderHomepage() {
                     onClick={() => handleCategoryClick(cat.title)}
                     className="group shrink-0 w-[280px] sm:w-[325px] snap-start cursor-pointer flex flex-col items-center select-none"
                   >
-                    {/* APPLE SQUIRCLE CARD CONTAINER (FRAMELESS / BORDERLESS FULL EDGE-TO-EDGE IMAGE) */}
-                    <div className="w-full aspect-[4/4.5] sm:aspect-square rounded-[28px] sm:rounded-[32px] overflow-hidden bg-[#F5F5F7] relative flex items-center justify-center p-0 shadow-xs hover:shadow-md transition-all duration-500 border-none">
+                    {/* CATEGORY CARD CONTAINER */}
+                    <div className="w-full aspect-[3/4] sm:aspect-[4/5] rounded-[24px] overflow-hidden bg-neutral-100 relative flex flex-col justify-end p-0 shadow-xs hover:shadow-md transition-all duration-500 border-none group">
                       <TransparentImage
                         src={cat.thumbnail || PLACEHOLDER_IMAGE}
                         alt={cat.title}
-                        className="w-full h-full object-cover rounded-[28px] sm:rounded-[32px] transition-transform duration-700 ease-out group-hover:scale-[1.05] img-crisp"
+                        className="absolute inset-0 w-full h-full object-cover rounded-[24px] transition-transform duration-700 ease-out group-hover:scale-[1.05] img-crisp"
                       />
-                    </div>
+                      
+                      {/* Gradient Overlay */}
+                      <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none" />
 
-                    {/* APPLE STYLE SWATCH DOTS */}
-                    <div className="flex items-center justify-center space-x-1.5 my-3">
-                      <span className={`w-2.5 h-2.5 rounded-full transition-all ${idx % 3 === 0 ? 'bg-[#1D1D1F]' : 'bg-neutral-300'}`} />
-                      <span className={`w-2.5 h-2.5 rounded-full transition-all ${idx % 3 === 1 ? 'bg-[#1D1D1F]' : 'bg-neutral-300'}`} />
-                      <span className={`w-2.5 h-2.5 rounded-full transition-all ${idx % 3 === 2 ? 'bg-[#1D1D1F]' : 'bg-neutral-300'}`} />
-                    </div>
-
-                    {/* APPLE TYPOGRAPHY BELOW CARD */}
-                    <h3 className="text-lg sm:text-xl font-semibold text-[#1D1D1F] text-center tracking-tight group-hover:text-[#0066CC] transition-colors">
-                      {cat.title}
-                    </h3>
-                    <p className="text-xs sm:text-sm text-[#86868B] font-normal text-center max-w-[240px] leading-relaxed mt-1 mb-4 line-clamp-2">
-                      {cat.description || cat.itemCount || 'Reka bentuk sublimasi berkualiti tinggi dengan kustomisasi bebas.'}
-                    </p>
-
-                    {/* APPLE ACTION BUTTON (CLEAN SINGLE PRIMARY BLUE CAPSULE) */}
-                    <div className="mt-auto pt-1 pb-2">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleCategoryClick(cat.title);
-                        }}
-                        className="bg-[#0071E3] hover:bg-[#0077ED] active:scale-95 text-white font-medium text-xs sm:text-sm px-5 py-2 rounded-full transition-all shadow-2xs"
-                      >
-                        Selengkapnya
-                      </button>
+                      {/* Content Overlay */}
+                      <div className="relative z-10 w-full p-5 sm:p-6 flex flex-col items-start mt-auto">
+                        <h3 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight uppercase leading-none drop-shadow-sm mb-4">
+                          {cat.title}
+                        </h3>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleCategoryClick(cat.title);
+                          }}
+                          className="bg-white hover:bg-neutral-200 active:scale-95 text-[#111111] font-bold text-xs sm:text-sm px-5 py-2.5 rounded-full transition-all shadow-md"
+                        >
+                          Selengkapnya
+                        </button>
+                      </div>
                     </div>
                   </div>
                 ))}
