@@ -385,17 +385,13 @@ export default function Storefront({ onOpenAdmin }) {
               alt="AYEZZ Logo"
               className="h-5 w-auto brightness-0 invert opacity-90"
             />
-            <span className="font-bold text-slate-300">© 2026 AYEZZ GLOBAL — Studio Pakaian Sublimasi</span>
+            <span className="font-bold text-slate-300">© 2026 AYEZZ GLOBAL — All rights reserved</span>
           </div>
           <div className="flex items-center space-x-6 text-slate-400 font-mono text-[11px]">
-            <a href="#katalog" className="hover:text-white transition-colors">Katalog</a>
-            <a href="#teknologi" className="hover:text-white transition-colors">Teknologi</a>
-            <a href="#mitra" className="hover:text-white transition-colors">Rakan Kongsi</a>
-            {onOpenAdmin && (
-              <button onClick={onOpenAdmin} className="hover:text-white transition-colors underline">
-                Panel Admin
-              </button>
-            )}
+            <a href="#" className="hover:text-white transition-colors">Terms of Sale</a>
+            <a href="#" className="hover:text-white transition-colors">Terms of Use</a>
+            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-white transition-colors">Privacy Settings</a>
           </div>
         </div>
       </footer>

@@ -723,13 +723,14 @@ export default function SmoothHeaderHomepage() {
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-6">
           <div className="flex items-center space-x-4">
             <img src="/logo/ayezz-logo-01.svg" alt="AYEZZ Logo" className="h-6 w-auto brightness-0 invert" />
-            <span className="text-neutral-500 font-mono">© 2026 AYEZZ GLOBAL — Studio Pakaian Sublimasi</span>
+            <span className="text-neutral-500 font-mono">© 2026 AYEZZ GLOBAL — All rights reserved</span>
           </div>
 
           <div className="flex items-center space-x-6 text-[11px] font-mono text-neutral-400">
-            <a href="#" className="hover:text-white transition-colors">Utama</a>
-            <Link href="/katalog" className="hover:text-white transition-colors">Katalog Desain</Link>
-            <Link href="/admin" className="hover:text-white transition-colors">Admin</Link>
+            <a href="#" className="hover:text-white transition-colors">Terms of Sale</a>
+            <a href="#" className="hover:text-white transition-colors">Terms of Use</a>
+            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-white transition-colors">Privacy Settings</a>
           </div>
         </div>
       </footer>

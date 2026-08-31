@@ -455,12 +455,13 @@ export default function CleanSpecsStyleCatalogPage() {
               alt="AYEZZ Logo"
               className="h-5 w-auto brightness-0 invert opacity-90"
             />
-            <span className="font-medium text-slate-400">© 2026 AYEZZ GLOBAL — Studio Pakaian Sublimasi</span>
+            <span className="font-medium text-slate-400">© 2026 AYEZZ GLOBAL — All rights reserved</span>
           </div>
           <div className="flex items-center space-x-6 text-slate-400 font-mono text-[11px]">
-            <Link href="/" className="hover:text-white transition-colors">Utama</Link>
-            <Link href="/new" className="hover:text-white transition-colors">New</Link>
-            <Link href="/admin" className="hover:text-white transition-colors underline">Admin</Link>
+            <a href="#" className="hover:text-white transition-colors">Terms of Sale</a>
+            <a href="#" className="hover:text-white transition-colors">Terms of Use</a>
+            <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
+            <a href="#" className="hover:text-white transition-colors">Privacy Settings</a>
           </div>
         </div>
       </footer>
