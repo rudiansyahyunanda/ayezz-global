@@ -316,8 +316,8 @@ export default function SmoothHeaderHomepage() {
           </div>
 
           {/* Right Side Carousel (Visible on Slide 1 only) */}
-          <div className="lg:col-span-6 flex items-center justify-center pt-8 lg:pt-0">
-            <div className={`transition-all duration-1000 delay-300 ease-out transform ${activeHeroSlide === 0 ? 'translate-y-0 opacity-100 pointer-events-auto' : 'translate-y-8 opacity-0 pointer-events-none'}`}>
+          <div className="lg:col-span-6 flex items-center justify-center pt-8 lg:pt-0 w-full">
+            <div className={`w-full transition-all duration-1000 delay-300 ease-out transform ${activeHeroSlide === 0 ? 'translate-y-0 opacity-100 pointer-events-auto' : 'translate-y-8 opacity-0 pointer-events-none'}`}>
               <HeroCarousel />
             </div>
           </div>
