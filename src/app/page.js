@@ -221,22 +221,37 @@ export default function SmoothHeaderHomepage() {
             <a href="#teknologi" className="hover:text-neutral-500 transition-colors">Teknologi Kilang</a>
           </nav>
 
-          <div className="flex items-center space-x-2 sm:space-x-4">
+          <div className="flex items-center space-x-1 sm:space-x-2">
             {currentUser ? (
-              <Link
-                href="/dashboard"
-                className="px-3.5 py-1.5 sm:px-5 sm:py-2 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-[10px] sm:text-[11px] uppercase tracking-[0.12em] rounded-full transition-all flex items-center space-x-1.5 shadow-2xs"
-              >
-                <User className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white" />
-                <span className="line-clamp-1 max-w-[90px] sm:max-w-[110px]">{currentUser.fullName || 'Dashboard'}</span>
-              </Link>
+              <div className="relative group">
+                <Link
+                  href="/dashboard"
+                  className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full hover:bg-neutral-100 transition-colors"
+                  aria-label="Dashboard Pengguna"
+                >
+                  <User className="w-[18px] h-[18px] sm:w-5 sm:h-5 text-[#111111]" />
+                </Link>
+                {/* Hover Tooltip */}
+                <div className="absolute right-0 top-full mt-1 w-48 bg-white border border-neutral-200 shadow-lg rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 p-3">
+                  <div className="text-xs sm:text-sm font-bold text-[#111111] line-clamp-1">{currentUser.fullName || 'Pengguna'}</div>
+                  <div className="text-[10px] sm:text-xs text-neutral-500 mt-1">Urus Profil & Tempahan</div>
+                </div>
+              </div>
             ) : (
-              <Link
-                href="/login"
-                className="px-3.5 py-1.5 sm:px-5 sm:py-2 bg-[#111111] hover:bg-neutral-800 text-white font-bold text-[10px] sm:text-[11px] uppercase tracking-[0.12em] rounded-full transition-all shadow-2xs"
-              >
-                Log Masuk
-              </Link>
+              <div className="relative group">
+                <Link
+                  href="/login"
+                  className="w-9 h-9 sm:w-10 sm:h-10 flex items-center justify-center rounded-full hover:bg-neutral-100 transition-colors"
+                  aria-label="Log Masuk"
+                >
+                  <User className="w-[18px] h-[18px] sm:w-5 sm:h-5 text-[#111111]" />
+                </Link>
+                {/* Hover Tooltip */}
+                <div className="absolute right-0 top-full mt-1 w-36 bg-white border border-neutral-200 shadow-lg rounded-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50 p-3 text-center">
+                  <div className="text-xs sm:text-sm font-bold text-[#111111]">Log Masuk</div>
+                  <div className="text-[10px] text-neutral-500 mt-1">Daftar / Log Masuk</div>
+                </div>
+              </div>
             )}
           </div>
         </div>
